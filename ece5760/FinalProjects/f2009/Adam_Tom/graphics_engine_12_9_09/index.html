@@ -1,0 +1,667 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<!--
+	This document provides the basis of a semantically structured web page 
+	authored in XHTML 1.0 Transitional using established Cornell University
+	naming conventions.
+-->
+
+<head>
+	<title>Generic Hardware Graphics Engine</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+	<meta http-equiv="Content-Language" content="en-us" />
+	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+	
+<!--
+	All layout and formatting should be controlled through Cascading Stylesheets (CSS).
+	The following link tag should appear in the head of every page in the website. see
+	styles/screen.css.
+-->
+	<link rel="stylesheet" type="text/css" media="screen" href="styles/screen.css" />
+</head>
+
+<body class="onecolumn">
+
+<!--
+	The following link provides a way for people using text-based browsers and
+	screen readers to skip over repetitive navigation elements so that they can 
+	get directly to the content. It is hidden from general users through CSS.
+-->
+<div id="skipnav">
+	<a href="#content">Skip to main content</a>
+</div>
+
+<hr />
+
+<!-- The following div contains the Cornell University logo with unit signature -->
+<div id="cu-identity">
+	<div id="cu-logo">
+		<a id="insignia-link" href="../../../../../../../../www.cornell.edu/default.htm"><img src="images/unit_signature_unstyled.gif" alt="Cornell University" width="416" height="88" border="0" /></a>
+		<div id="unit-signature-links">
+			<a id="cornell-link" href="../../../../../../../../www.cornell.edu/default.htm">Cornell University</a>
+			<a id="unit-link1" href="../../../../../../../../ece.cornell.edu/default.htm">Cornell University ECE</a>
+			<a id="unit-link2" href="../../../../../../../../ece.cornell.edu/default.htm">Cornell University ECE</a>
+		</div>
+	</div>
+	
+	<!-- 
+		The search-form div contains a form that allows the user to search 
+		either pages or people within cornell.edu directly from the banner.
+	-->
+	<div id="search-form">
+		<form action="http://www.cornell.edu/search/" method="get" enctype="application/x-www-form-urlencoded">
+			<div id="search-input">
+				<label for="search-form-query">SEARCH CORNELL:</label>
+				<input type="text" id="search-form-query" name="q" value="" size="20" />
+				<input type="submit" id="search-form-submit" name="submit" value="go" />
+			</div>
+
+			<div id="search-filters">
+					<input type="radio" id="search-filters1" name="tab" value="" checked="checked" />
+					<label for="search-filters1">Pages</label>
+				
+					<input type="radio" id="search-filters2" name="tab" value="people" />
+					<label for="search-filters2">People</label>
+					
+					<a href="../../../../../../../../www.cornell.edu/search/default.htm">more options</a>
+			</div>	
+		</form>
+	</div>
+</div>
+
+<!-- The header div contains the main identity and main navigation for the site -->
+<div id="header">	
+	<!--
+		The navigation div contains the site's main navigation. These
+		links will be displayed in a horizontal, gray navigation bar 
+		under the unit signature banner.
+	-->	
+	<div id="navigation">
+		<ul>
+			<li><a href="#introduction">Introduction</a></li>
+			<li><a href="#implementation">Implementation</a></li>
+			<li><a href="#results">Results</a></li>
+			<li><a href="#conclusion">Conclusion</a></li>
+			<li><a href="#appendix">Appendix</a></li>
+			<li><a href="#results">Results</a></li>
+			
+			<!-- More navigation as needed
+			<li><a href="#">Navigation 6</a></li>
+			-->
+						
+		</ul>
+	</div>
+	
+	<hr />
+	
+	<!-- 
+		The identity div contains the name of a main site section
+	-->
+	<div id="identity">
+		<h1>
+		Generic Hardware Graphics Engine
+		<br>
+		<small>
+			Adam Shapiro (<a href="mailto:ams348@cornell.edu">ams348@cornell.edu</a>) and Tom Chatt (<a href="mailto:tjc42@cornell.edu">tjc42@cornell.edu</a>).
+		</small>
+		</h1>
+	</div>
+</div>
+
+<hr />
+
+<div id="wrap">
+
+<!-- The content div contains the main content of the page -->
+<div id="content">
+	<div id="main">
+		<h2 id="introduction">Introduction</h2>
+		<p>
+		The goal for this project was to design a capable, generically definable graphics processing unit (GPU) in hardware that could easily be interfaced to a CPU or other onboard hardware to provide easy and efficient graphics capabilities. The GPU provides support for many useful functions, including drawing points, rectangles, lines, images (via bitmap file decoding), and text. Additionally, the GPU provides dual-layer display capabilities, allowing the user to draw a transparent top overlay over a bottom graphics layer. The hardware was designed to allow for easy inclusion of additional graphics drawing features through use of a standard hardware function interface, and allows a Nios II developer to generate elaborate graphical displays with minimal effort.
+		</p>
+		<p>
+		As a proof of concept, the graphics engine was demonstrated by developing a rudimentary digital picture frame using a Nios II processor core. The processor drew a selection of images to the screen and overlayed the images with menus a user could use to control various features.  Development of the C code for the picture frame was quick and simple, confirming the usefulness of the GPU.
+		</p>
+
+		<h2 id="implementation">Implementation</h2>
+		<p>
+		<a href="#implementation.high_level">High-Level Design</a> |
+		<a href="#implementation.instruction_controller">Instruction Controller</a> |
+		<a href="#implementation.display_controller">Display Controller</a> |
+		<a href="#implementation.foreground_controller">Foreground Controller</a> |
+		<a href="#implementation.bmp_decoder">Bitmap Image Decoder</a>
+        <a href="#implementation.software">Software</a> |
+        <a href="#implementation.proof_of_concept">Proof of Concept - Simple Digital Picture Frame</a>
+		<br><br>
+		The following section discusses the implementation details of the project, including the graphics engine design and software design considerations.
+		</p>
+		
+		<h3 id="implementation.high_level">High-Level Design</h3>
+		<p>
+		<img src="images/high_level.png" />
+		<p class="caption">High-Level Graphics Engine Design</p>
+		</p>
+		
+		<p>
+		The graphics engine is comprised of three major components: the instruction controller, the display controller, and the individual function units. Additionally, it is responsible for generating its own clocks (including the required display clock), buffering instructions and memory transfers from the CPU, and managing video memory. The user controls issues commands to the GPU, which activate various functions or control internal registers.
+		</p>
+		
+		<p>
+		The graphics engine was designed from the beginning to be generically definable. This meant ensuring two key functional points:
+		</p>
+		
+		<ol>
+		<li>Functions could be added and removed from the hardware easily, without affecting functionality.
+		<li>Instruction parameters, including color bit-widths and screen dimensions, were independent from the type of display used.
+		</ol>
+		
+		<p>
+		Additionally, to isolate the user hardware entirely from the GPU operation, the interface from the CPU is buffered through dual-ported FIFOs. This gives the advantage of allowing the CPU to issue multiple non-blocking commands at a time and continue operating, as well as allowing the CPU to operate entirely asynchronously from the GPU.
+		</p>
+		
+		<h3 id="implementation.instruction_controller">Instruction Controller</h3>
+		<p>
+		The instruction controller is responsible for decoding user instructions, managing function activity, and updating and distributing internal registers. Instruction control parameters, including displayable screen dimensions, individual color bit-widths, and instruction parameter structures, are defined in <i>gpu_inst_controller.csv</i> and can be redefined as desired.
+		</p>
+		
+		<p>
+		Each function has a standard interface into the instruction controller that must be met for proper operation. The interface is described in the following table.
+		</p>
+		
+		<table cellspacing="0" cellpadding="5" border="1">
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>I/O</th>
+					<th>Description</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr class="row2">
+					<td>func_&lt;name&gt;_start</td>
+					<td>O</td>
+					<td>Start signal asserted when an instruction is issued.</td>
+				</tr>
+				<tr class="row1">
+					<td>func_&lt;name&gt;_active</td>
+					<td>O</td>
+					<td>Function active signal, asserted while a function is in operation.</td>
+				</tr>
+				<tr class="row2">
+					<td>func_&lt;name&gt;_finished</td>
+					<td>I</td>
+					<td>Function finished signal, asserted after the last pixel has been drawn.</td>
+				</tr>
+			</tbody>
+		</table>
+		
+		<p>
+		The instruction controller maintains a number of internal registers that can be passed to functions for internal usage. Each register has a dedicated value set instruction. The following table includes descriptions of all of the available registers. Note that color values are defined as instruction parameters, and are not stored between instructions.
+		</p>
+		
+		<table cellspacing="0" cellpadding="5" border="1">
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Width</th>
+					<th>Default Value</th>
+					<th>Description</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr class="row2">
+					<td>layer</td>
+					<td>1</td>
+					<td>Background</td>
+					<td>Currently selected layer (foreground or background).</td>
+				</tr>
+				<tr class="row1">
+					<td>fg_en</td>
+					<td>1</td>
+					<td>1</td>
+					<td>Foreground display enable control.</td>
+				</tr>
+				<tr class="row2">
+					<td>x1</td>
+					<td>`GPU_X_WIDTH</td>
+					<td>0</td>
+					<td>X1 coordinate register.</td>
+				</tr>
+				<tr class="row1">
+					<td>y1</td>
+					<td>`GPU_X_WIDTH</td>
+					<td>0</td>
+					<td>Y1 coordinate register.</td>
+				</tr>
+				<tr class="row2">
+					<td>x2</td>
+					<td>`GPU_X_WIDTH</td>
+					<td>0</td>
+					<td>X2 coordinate register.</td>
+				</tr>
+				<tr class="row1">
+					<td>y2</td>
+					<td>`GPU_X_WIDTH</td>
+					<td>0</td>
+					<td>Y2 coordinate register.</td>
+				</tr>
+				<tr class="row2">
+					<td>r</td>
+					<td>`INST_COLOR_R_WIDTH</td>
+					<td>N/A</td>
+					<td>Red color value.</td>
+				</tr>
+				<tr class="row1">
+					<td>g</td>
+					<td>`INST_COLOR_G_WIDTH</td>
+					<td>N/A</td>
+					<td>Green color value.</td>
+				</tr>
+				<tr class="row2">
+					<td>b</td>
+					<td>`INST_COLOR_B_WIDTH</td>
+					<td>N/A</td>
+					<td>Blue color value.</td>
+				</tr>
+			</tbody>
+		</table>
+		
+		<p>
+		Instructions follow the following format: {command, parameter}, where the parameter value depends on the type of instruction (command) being issued. The following table includes the command types for all instructions currently implemented.
+		</p>
+		
+		<table cellspacing="0" cellpadding="5" border="1">
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Value</th>
+					<th>Description</th>
+					<th>Parameter Type</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr class="row2">
+					<td><i>reserved</i></td>
+					<td>0</td>
+					<td>Reserved for future use.</td>
+					<td>&nbsp;</td>
+				</tr>
+				<tr class="row1">
+					<td>set_xy1</td>
+					<td>1</td>
+					<td>Set (X1,Y1) coordinate register.</td>
+					<td>XY</td>
+				</tr>
+				<tr class="row2">
+					<td>set_xy2</td>
+					<td>2</td>
+					<td>Set (X2,Y2) coordinate register.</td>
+					<td>XY</td>
+				</tr>
+				<tr class="row1">
+					<td>clear</td>
+					<td>3</td>
+					<td>Clear currently selected layer to black.</td>
+					<td>Layer</td>
+				</tr>
+				<tr class="row2">
+					<td>draw_rect</td>
+					<td>4</td>
+					<td>Draw rectangle from (X1,Y1) to (X2,Y2).</td>
+					<td>Color</td>
+				</tr>
+				<tr class="row1">
+					<td>draw_line</td>
+					<td>5</td>
+					<td>Draw line from (X1,Y1) to (X2,Y2) using the Bresenham algorithm.</td>
+					<td>Color</td>
+				</tr>
+				<tr class="row2">
+					<td>draw_image</td>
+					<td>6</td>
+					<td>Draw bitmap image from DMA at position (X1,Y1).</td>
+					<td>Priority</td>
+				</tr>
+				<tr class="row1">
+					<td>set_layer</td>
+					<td>7</td>
+					<td>Set layer select register (0=foreground, 1=background).</td>
+					<td>Layer</td>
+				</tr>
+				<tr class="row2">
+					<td>clear_rect</td>
+					<td>8</td>
+					<td>Clear rectangle from (X1,Y1) to (X2,Y2) to black.</td>
+					<td>Priority</td>
+				</tr>
+				<tr class="row1">
+					<td>show_fg</td>
+					<td>9</td>
+					<td>Set foreground visibility.</td>
+					<td>FG Enable</td>
+				</tr>
+				<tr class="row2">
+					<td>load_font</td>
+					<td>10</td>
+					<td>Load bitmap font using specified transparency color.</td>
+					<td>Color</td>
+				</tr>
+				<tr class="row1">
+					<td>draw_string</td>
+					<td>11</td>
+					<td>Draw string from DMA using specified color.</td>
+					<td>Color</td>
+				</tr>
+			</tbody>
+		</table>
+		
+		<p>
+		The following table describes the parameter types used above.
+		</p>
+		
+		<table cellspacing="0" cellpadding="5" border="1">
+			<thead>
+				<tr>
+					<th>Name</th>
+					<th>Structure</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr class="row2">
+					<td>XY</td>
+					<td>{Y,X}</td>
+				</tr>
+				<tr class="row1">
+					<td>Color</td>
+					<td>{r,g,b}</td>
+				</tr>
+				<tr class="row2">
+					<td>Layer</td>
+					<td>{layer}</td>
+				</tr>
+				<tr class="row1">
+					<td>Priority</td>
+					<td>{priority,0}</td>
+				</tr>
+				<tr class="row2">
+					<td>FG Enable</td>
+					<td>{enable}</td>
+				</tr>
+			</tbody>
+		</table>
+		
+		<h3 id="implementation.display_controller">Display Controller</h3>
+		<p>
+		The display controller is responsible for driving a parallel display interface and generating vertical and horizontal sync signals to produce the desired resolution and frame rate. In the case of this project, the connected display was a 640x480 pixel, 60 Hz VGA display with 10b color widths. The resolution, synchronization timing (used to set refresh rate), and color widths are defined in <i>disp_controller.csv</i> and can be modified to support most displays.
+		</p>
+		
+		<p>
+		The display controller provides X and Y position values to the hardware, as well as a signal indicating when it is drawing to the display. The position values indicate the next pixel to be drawn. When drawing, the display controller expects that the color values for the specified pixel position will be provided to it one display clock cycle later.
+		</p>
+		
+		<p>
+		The display controller is responsible for generating the display horizontal and vertical sync signals (active low), an active low display blanking signal, which is asserted when either sync signal is asserted, and parallel color values.
+		</p>
+		
+		<h3 id="implementation.foreground_controller">Foreground Controller</h3>
+		<p>
+		The foreground controller maintains enable bits in local memory for each pixel on the foreground layer. These enable bits allow the display adapter to quickly determine to which memory sector (foreground or background) it should issue a read when drawing the screen. When an enable bit is set for a pixel, the foreground sector is read and its pixel value is displayed on the screen, regardless of the background pixel value. The foreground display layer can be entirely disabled using the show_fg instruction.
+		</p>
+		
+		<h3 id="implementation.bmp_decoder">Bitmap Image Decoder</h3>
+		<p>
+		The bitmap image decoder is capable of decoding Microsoft BMP-formatted image files into pixel position/color values. The decoder is designed to read from the DMA interface provided by the CPU, but image data can be provided from any source with a 16-bit interface.
+		</p>
+		
+		<p>
+		The decoder currently supports only uncompressed bitmaps using 24-bit color mode with no color tables, but can be easily modified to support the other formats defined in the BMP specification.
+		</p>
+
+		<h3 id="implementation.software">Software</h3>
+		<p>
+        Since the GPU was designed to perform generic graphics operations in dedicated hardware, the C code running on the Nios II is very simple.  Graphical operations are performed using wrapper functions which call a series of GPU commands; for example, the C function GPUDrawLine() issues three commands: one to set the starting coordinate of the line, one to set the end coordinate of the line, and one to call the GPU DrawLine function.  This allows the processor to quickly issue a graphical instruction and then return to other computation while graphical processing is carried out by the hardware.  In situations where the CPU is using a high percentage of its available cycles for some other computation (for example, a physical simulation), the ability to initiate and "forget" a graphical instruction in a few instructions is crucial.
+		</p>
+
+        <h3 id="implementation.proof_of_concept">Proof of Concept - Simple Digital Picture Frame</h3>
+        <p>
+        To prove the usefulness of the GPU, a simple digital picture frame was implemented as a proof of concept using a Nios II processor and the GPU.  In only a few hundred lines of code, the picture frame was created which displays a rotation of four images at one of three selectable intervals and contains menu support for changing interval, pausing, and toggling the display of picture captions.  The GPU was used to create pop-up menus to control these functions.  The DE2 board pushbuttons were used to open, navigate, and select from menus.  A sample menu is shown below.
+        </p>
+
+		<p>
+		<img src="images/image_with_menu.png" width="800" height="600" />
+		<p class="caption">An image with the main pop-up menu displayed</p>
+		</p>
+
+		<h2 id="results">Results</h2>
+        <p>
+        The GPU functioned according to expectation.  The addition of additional graphics commands is simple, graphics instructions are robust, and the set of supported functions makes the generation of complex menus and graphical interfaces simple.  Even complex graphics commands (such as drawing a full-screen image) execute quickly and without any noticeable video artifacts.  Using the GPU in a Nios II C program is not difficult, and can be done using a very small number of CPU cycles.  All graphics functions appear to be accurate, with the exception of an artifact which appears when diagonal lines are drawn.  This artifact appears to be a result of a timing problem between the calculation of new (x,y) coordinates via the Bresenham algorithm and the VGA horizontal sync functions.  Finally, since all operations of the GPU occur on-chip, with the exception of VGA output, there are absolutely no safety concerns or reasonable potential for interference with other electronic devices.  
+        </p>
+		
+		<h2 id="conclusion">Concusion</h2>
+		<p>
+		We experienced a great deal of success in implementing this project. The graphics engine, once completed, performed quite nicely and was capable of performing all of the functions initially intended well. The digital picture frame software, written for demonstration, was quite simple to put together using the C GPU driver. This demonstrated the benefits of the GPU handily, as well as the ease with which a CPU could be interfaced to the hardware to develop a quick graphical display.
+		</p>
+		<p>
+		A few functions were still in development at the time of this writing, including anti-aliased line drawing using the Wu line algorithm and arc drawing. Those functions will hopefully be integrated with the graphics engine in the short term.
+		</p>
+		<p>
+		We were very happy with the results of this project, and intend to use the hardware to provide graphics for projects in the future.
+		</p>
+		
+		<h2 id="appendix">Appendix</h2>
+		<p>
+		The hardware for this project is written in Verilog, with header files  defined using the <a href="../../../../../../../../gps.theengineersden.com/index.php/Defines_parser">Defines Parser</a> developed for the Cornell University Hardware GPS Project. The software was written in C using the Nios II API. A snapshot of the software repository, archived on 12/9/09, is available here: <a href="code_12_9_09.zip">code_12_9_09.zip</a>. The following table includes a listing of all hardware and software files required for the project.
+		</p>
+		
+		<p>
+		All code is released under the GNU General Public License, version 2. For terms and conditions, please see <a href="../../../../../../../../www.gnu.org/licenses/gpl-2.0.html">http://www.gnu.org/licenses/gpl-2.0.html</a>.
+		</p>
+		
+		<table cellspacing="0" cellpadding="5" border="1">
+			<thead>
+				<tr>
+					<th>File</th>
+					<th>Description</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr class="row1">
+					<td colspan="2" align="center"><i>Hardware</i></td>
+				</tr>
+				<tr class="row2">
+					<td><a href="code/cpu_pll.v">cpu_pll.v</a></td>
+					<td>CPU clock generating PLL</td>
+				</tr>
+				<tr class="row1">
+					<td><a href="code/DE2_TOP.qsf">DE2_TOP.qsf</a></td>
+					<td>Top-level Quartus description file</td>
+				</tr>
+				<tr class="row2">
+					<td><a href="code/DE2_TOP.v">DE2_TOP.v</a></td>
+					<td>Top-level hardware module</td>
+				</tr>
+				<tr class="row1">
+					<td><a href="code/debug.vh">debug.vh</a></td>
+					<td>Debug definition header file</td>
+				</tr>
+				<tr class="row2">
+					<td><a href="code/delay.v">delay.v</a></td>
+					<td>Generic delay module</td>
+				</tr>
+				<tr class="row1">
+					<td><a href="code/delay_1.v">delay_1.v</a></td>
+					<td>Single-cycle delay module</td>
+				</tr>
+				<tr class="row2">
+					<td><a href="code/disp_controller.csv">disp_controller.csv</a> (<a href="code/disp_controller.vh">disp_controller.vh</a>)</td>
+					<td>Display controller header file</td>
+				</tr>
+				<tr class="row1">
+					<td><a href="code/disp_controller.v">disp_controller.v</a></td>
+					<td>Display controller</td>
+				</tr>
+				<tr class="row2">
+					<td><a href="code/draw_line.csv">draw_line.csv</a> (<a href="code/draw_line.vh">draw_line.vh</a>)</td>
+					<td>Line drawer header file</td>
+				</tr>
+				<tr class="row1">
+					<td><a href="code/gpu.v">gpu.v</a></td>
+					<td>Graphics processor</td>
+				</tr>
+				<tr class="row2">
+					<td><a href="code/gpu_dma_fifo.v">gpu_dma_fifo.v</a></td>
+					<td>DMA FIFO</td>
+				</tr>
+				<tr class="row1">
+					<td><a href="code/gpu_fg_controller.csv">gpu_fg_controller.csv</a> (<a href="code/gpu_fg_controller.vh">gpu_fg_controller.vh</a>)</td>
+					<td>Foreground controller header file</td>
+				</tr>
+				<tr class="row2">
+					<td><a href="code/gpu_fg_controller.v">gpu_fg_controller.v</a></td>
+					<td>Foreground controller</td>
+				</tr>
+				<tr class="row1">
+					<td><a href="code/gpu_fg_en_ram.v">gpu_fg_en_ram.v</a></td>
+					<td>Foreground enable memory</td>
+				</tr>
+				<tr class="row2">
+					<td><a href="code/gpu_func_draw_image.v">gpu_func_draw_image.v</a></td>
+					<td>Draw image function</td>
+				</tr>
+				<tr class="row1">
+					<td><a href="code/gpu_func_draw_line.v">gpu_func_draw_line.v</a></td>
+					<td>Draw line function (Bresenham algorithm)</td>
+				</tr>
+				<tr class="row2">
+					<td><a href="code/gpu_func_draw_rect.v">gpu_func_draw_rect.v</a></td>
+					<td>Draw rectangle function</td>
+				</tr>
+				<tr class="row1">
+					<td><a href="code/gpu_func_draw_string.csv">gpu_func_draw_string.csv</a> (<a href="code/gpu_func_draw_string.vh">gpu_func_draw_string.vh</a>)</td>
+					<td>Draw string function header file</td>
+				</tr>
+				<tr class="row2">
+					<td><a href="code/gpu_func_draw_string.v">gpu_func_draw_string.v</a></td>
+					<td>Draw string function</td>
+				</tr>
+				<tr class="row1">
+					<td><a href="code/gpu_func_load_font.csv">gpu_func_load_font.csv</a> (<a href="code/gpu_func_load_font.vh">gpu_func_load_font.vh</a>)</td>
+					<td>Load font function header file</td>
+				</tr>
+				<tr class="row2">
+					<td><a href="code/gpu_func_load_font.v">gpu_func_load_font.v</a></td>
+					<td>Load font function</td>
+				</tr>
+				<tr class="row1">
+					<td><a href="code/gpu_inst_controller.csv">gpu_inst_controller.csv</a> (<a href="code/gpu_inst_controller.vh">gpu_inst_controller.vh</a>)</td>
+					<td>Instruction controller header file</td>
+				</tr>
+				<tr class="row2">
+					<td><a href="code/gpu_inst_controller.v">gpu_inst_controller.v</a></td>
+					<td>Instruction controller</td>
+				</tr>
+				<tr class="row1">
+					<td><a href="code/gpu_inst_fifo.v">gpu_inst_fifo.v</a></td>
+					<td>Instruction FIFO</td>
+				</tr>
+				<tr class="row2">
+					<td><a href="code/gpu_pll.v">gpu_pll.v</a></td>
+					<td>GPU clock generator PLL</td>
+				</tr>
+				<tr class="row1">
+					<td><a href="code/hex_driver.v">hex_driver.v</a></td>
+					<td>Hex display driver</td>
+				</tr>
+				<tr class="row2">
+					<td><a href="code/image_decode_bmp.csv">image_decode_bmp.csv</a> (<a href="code/image_decode_bmp.vh">image_decode_bmp.vh</a>)</td>
+					<td>Bitmap decoder header file</td>
+				</tr>
+				<tr class="row1">
+					<td><a href="code/image_decode_bmp.v">image_decode_bmp.v</a></td>
+					<td>Bitmap image decoder</td>
+				</tr>
+				<tr class="row2">
+					<td><a href="code/pixel_map.v">pixel_map.v</a></td>
+					<td>Pixel memory mapping function</td>
+				</tr>
+				<tr class="row1">
+					<td><a href="code/power_on_reset.v">power_on_reset.v</a></td>
+					<td>Power-on reset function</td>
+				</tr>
+				<tr class="row2">
+					<td><a href="code/strobe.v">strobe.v</a></td>
+					<td>Single-cycle strobe module</td>
+				</tr>
+				<tr class="row1">
+					<td colspan="2" align="center"><i>Software</i></td>
+				</tr>
+				<tr class="row2">
+					<td><a href="code/bmp_to_c.pl">bmp_to_c.pl</a></td>
+					<td>Perl bitmap to C array conversion script</td>
+				</tr>
+				<tr class="row1">
+					<td><a href="code/controller/controller.sopc">controller/controller.sopc</a></td>
+					<td>Digital picture frame Nios II definition</td>
+				</tr>
+				<tr class="row2">
+					<td><a href="code/controller/gpu_dma_interface.v">controller/gpu_dma_interface.v</a></td>
+					<td>DMA SOPC interface module</td>
+				</tr>
+				<tr class="row1">
+					<td><a href="code/controller/gpu_dma_interface_hw.tcl">controller/gpu_dma_interface_hw.tcl</a></td>
+					<td>DMA SOPC interface module TCL file</td>
+				</tr>
+				<tr class="row2">
+					<td><a href="code/controller/graphics_driver/gpu.c">controller/graphics_driver/gpu.c</a></td>
+					<td>Graphics driver</td>
+				</tr>
+				<tr class="row1">
+					<td><a href="code/controller/graphics_driver/gpu.h">controller/graphics_driver/gpu.h</a></td>
+					<td>Graphics driver internal header file</td>
+				</tr>
+				<tr class="row2">
+					<td><a href="code/controller/graphics_driver/graphics.h">controller/graphics_driver/graphics.h</a></td>
+					<td>Graphics driver header file</td>
+				</tr>
+				<tr class="row1">
+					<td><a href="code/controller/graphics_driver/gui.h">controller/graphics_driver/gui.h</a></td>
+					<td>GUI header file</td>
+				</tr>
+				<tr class="row2">
+					<td><a href="code/controller/graphics_driver/menu_handler.c">controller/graphics_driver/menu_handler.c</a></td>
+					<td>Menu handler</td>
+				</tr>
+				<tr class="row1">
+					<td><a href="code/controller/graphics_driver/picture_frame.h">controller/graphics_driver/picture_frame.h</a></td>
+					<td>Picture frame header file</td>
+				</tr>
+				<tr class="row2">
+					<td><a href="code/controller/graphics_driver/picture_frame_main.c">controller/graphics_driver/picture_frame_main.c</a></td>
+					<td>Picure frame display/control</td>
+				</tr>
+			</tbody>
+		</table>
+		
+		<h2 id="references">References</h2>
+		<p>
+		<a href="../../../../../../../../en.wikipedia.org/wiki/BMP_format">Microsoft BMP specification</a>
+		<br><a href="../../../../../../../../instruct1.cit.cornell.edu/courses/ee476/video/videoGCC/3D/video_144x150_16MHz_3D_GCC644.c">Bresenham line drawing algorithm</a> (written by Bruce Land)
+		<br><a href="../../../../../../../../tinyvga.com/vga-timing">VGA timing specification</a>
+		<br><a href="../../../../../../../../gps.theengineersden.com/index.php/Defines_parser">Defines parser</a>
+		</p>
+<hr />
+
+<div id="footer">
+<!-- The footer-content div contains the Cornell University copyright -->
+<div id="footer-content">
+	&copy;2009 <a href="../../../../../../../../www.cornell.edu/default.htm">Cornell University</a>
+	<br>
+	<a href ="mailto:tjc42@cornell.edu">Tom Chatt</a>,
+	<a href ="mailto:ams348@cornell.edu">Adam Shapiro</a>
+</div>
+</div>
+
+</body>
+</html>

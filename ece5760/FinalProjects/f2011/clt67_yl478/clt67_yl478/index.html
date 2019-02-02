@@ -1,0 +1,491 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<!--
+	This document provides the basis of a semantically structured web page 
+	authored in XHTML 1.0 Transitional using established Cornell University
+	naming conventions.
+-->
+
+<head>
+	<title>Cornell University Website Template - Two Column</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+	<meta http-equiv="Content-Language" content="en-us" />
+	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+	
+<!--
+	All layout and formatting should be controlled through Cascading Stylesheets (CSS).
+	The following link tag should appear in the head of every page in the website. see
+	styles/screen.css.
+-->
+	<link rel="stylesheet" type="text/css" media="screen" href="styles/screen.css" />
+</head>
+
+<body class="twocolumn">
+
+<!--
+	The following link provides a way for people using text-based browsers and
+	screen readers to skip over repetitive navigation elements so that they can 
+	get directly to the content. It is hidden from general users through CSS.
+-->
+<div id="skipnav">
+	<a href="#content">Skip to main content</a>
+</div>
+
+<hr />
+
+<!-- The following div contains the Cornell University logo with unit signature -->
+<div id="cu-identity">
+	<div id="cu-logo">
+		<a id="insignia-link" href="../../../../../../../../www.cornell.edu/default.htm"><img src="images/unit_signature_unstyled.gif" alt="Cornell University" width="416" height="88" border="0" /></a>
+		<div id="unit-signature-links">
+			<a id="cornell-link" href="../../../../../../../../www.cornell.edu/default.htm">Cornell University</a>
+			<a id="unit-link1" href="UNIT 1 URL GOES HERE">Unit Name 1</a>
+			<a id="unit-link2" href="UNIT 2 URL GOES HERE">Unit Name 2</a>
+		</div>
+	</div>
+	
+	<!-- 
+		The search-form div contains a form that allows the user to search 
+		either pages or people within cornell.edu directly from the banner.
+	-->
+	<div id="search-form">
+		<form action="http://www.cornell.edu/search/" method="get" enctype="application/x-www-form-urlencoded">
+			<div id="search-input">
+				<label for="search-form-query">SEARCH CORNELL:</label>
+				<input type="text" id="search-form-query" name="q" value="" size="20" />
+				<input type="submit" id="search-form-submit" name="submit" value="go" />
+			</div>
+
+			<div id="search-filters">
+					<input type="radio" id="search-filters1" name="tab" value="" checked="checked" />
+					<label for="search-filters1">Pages</label>
+				
+					<input type="radio" id="search-filters2" name="tab" value="people" />
+					<label for="search-filters2">People</label>
+					
+					<a href="../../../../../../../../www.cornell.edu/search/default.htm">more options</a>
+			</div>	
+		</form>
+	</div>
+	
+	<!-- 
+		The search-form div contains a form that allows the user to search 
+		either the unit website or all of cornell.edu directly from the banner.
+	<div id="search-form">
+		<form action="#" method="post" enctype="application/x-www-form-urlencoded">
+			<div id="search-input">
+				<label for="search-form-query">SEARCH:</label>
+				<input type="text" id="search-form-query" name="query" value="" size="20" />
+				<input type="submit" id="search-form-submit" name="submit" value="go" />
+			</div>
+
+			<div id="search-filters">
+					<input type="radio" id="search-filters1" name="target" value="unit" checked="checked" />
+					<label for="search-filters1">Unit name</label>
+				
+					<input type="radio" id="search-filters2" name="target" value="cornell" />
+					<label for="search-filters2">Cornell</label>
+					
+					<a href="#">more options</a>
+			</div>	
+		</form>
+	</div>
+	-->
+	
+	<!--
+		The search-navigation div contains links that allow the user to search
+		either the unit website or all of cornell.edu.
+		These links will be displayed in the unit signature banner and will
+		be aligned with the right edge of the page.
+	<div id="search-navigation">
+		<ul>
+			<li><a href="#">Search Unit Name</a></li>
+			<li><a href="http://www.cornell.edu/search/">Search Cornell</a></li>
+		</ul>
+	</div>
+	-->
+</div>
+
+<!-- The header div contains the main identity and main navigation for the site -->
+<div id="header">	
+	<!--
+		The navigation div contains the site's main navigation. These
+		links will be displayed in a horizontal, gray navigation bar 
+		under the unit signature banner.
+	-->	
+	<div id="navigation">
+		<ul>
+			<li><a href="#introduction">Introduction</a></li>
+			<li><a href="#high_level_design">High Level Design</a></li>
+			<li><a href="#hardware_design">Hardware Design</a></li>		
+			<li><a href="#software_design">Software Design</a></li>		
+			<li><a href="#results">Results</a></li>		
+            <li><a href="#conclusions">Conclusions</a></li>	
+            <li><a href="#appendix">Appendix</a></li>	
+			
+			<!-- More navigation as needed
+			<li><a href="#">Navigation 6</a></li>
+			-->
+						
+		</ul>
+	</div>
+	
+	<hr />
+	
+	<!-- 
+		The identity div contains the name of a main site section
+	-->
+	<div id="identity">
+		<h1>Prime Number Generator and RSA 
+		Encrypter/Decrypter </h1>
+	</div>
+</div>
+
+<hr />
+
+<div id="wrap">
+
+<!-- The content div contains the main content of the page -->
+<div id="content">
+
+	<!--
+		The section-navigation div contains the second level of site navigation.
+		These links appear at the top of the left sidebar of the two-column page.
+	-->
+	<div id="section-navigation">
+		<ul>
+			<li><a href="#introduction">Introduction</a></li>
+			<li><a href="#high_level_design">High Level Design</a></li>
+			<li><a href="#rationale"><font size=0.8em color=black>&nbsp;&nbsp;Rationale and Sources of Project Idea</font></a></li>
+			<li><a href="#millerbg"><font size=0.8em color=black>&nbsp;&nbsp;Background Math of Miller-Rabin Primality Test</font></a></li>
+			<li><a href="#rsabg"><font size=0.8em color=black>&nbsp;&nbsp;Background Math of RSA Encryption</font></a></li>
+			<li><a href="#logical"><font size=0.8em color=black>&nbsp;&nbsp;Logical Structure</font></a></li>
+			<li><a href="#tradeoffs"><font size=0.8em color=black>&nbsp;&nbsp;Hardware/Software Tradeoffs</font></a></li>
+			<li><a href="#relationship"><font size=0.8em color=black>&nbsp;&nbsp;Relationship of Design to Standards and Patents</font></a></li>
+      <li><a href="#hardware_design">Hardware Design</a></li>
+			<li><a href="#niosii"><font size=0.8em color=black>&nbsp;&nbsp;NiosII processor</font></a></li>
+			<li><a href="#millertest"><font size=0.8em color=black>&nbsp;&nbsp;Miller-Rabin Primality Test</font></a></li>
+			<li><a href="#extended"><font size=0.8em color=black>&nbsp;&nbsp;Extended Euclidean Algorithm</font></a></li>
+			<li><a href="#encrypter"><font size=0.8em color=black>&nbsp;&nbsp;Encrypter/Decrypter</font></a></li>
+			<li><a href="#SDinterface"><font size=0.8em color=black>&nbsp;&nbsp;SD card interface</font></a></li>
+			<li><a href="#vgacontroller"><font size=0.8em color=black>&nbsp;&nbsp;VGA Controller and Character Buffer</font></a></li>
+			<li><a href="#software_design">Software Design</a></li>
+			<li><a href="#results">Results</a></li> 
+			<li><a href="#safetyusability"><font size=0.8em color=black>&nbsp;&nbsp;Safety and Usability</font></a></li>
+			<li><a href="#conclusions">Conclusions</a></li>
+			<li><a href="#intellectual"><font size=0.8em color=black>&nbsp;&nbsp;Intellectual Property Considerations</font></a></li>
+      <li><a href="#appendix">Appendix</a></li>
+		</ul>
+	</div>
+	
+	<hr />
+
+	<!--
+		The main div contains the main contents of the page. It will be displayed
+		as the wide right column with the beige background.
+	-->
+	<div id="main">
+		
+		<p>Christopher Torng (clt67), Yi Heng Lee (yl478)</p>
+		<p><a href="images/photos/setup.JPG"><img src="images/thumbnails/setupsmall.jpg" width="512" height="384" /></a></p>
+        <a name="introduction"></a>
+	  <h3>Introduction</h3>
+		<p>
+		Our project implements a prime number generator and RSA 
+		encrypter/decrypter on the Altera DE2 FPGA.
+		</p>
+		<p>
+		The project uses the Miller-Rabin primality test to search for prime 
+		numbers. The primes are displayed on a VGA monitor as they are 
+		generated. The user selects two generated primes that are multiplied to 
+		form the RSA public encryption key. The extended Euclidean algorithm is 
+		used to generate the encryption exponent and the decryption exponent. The 
+		encryption key is used to encrypt a text file on an SD 
+		card. The decrypted text is displayed on the VGA screen and written back to the SD card. 
+		The decryption key can be used to decrypt the file.&nbsp;The user can also enter the encryption and decryption keys to be used through the console.
+		</p>
+		<a name="high_level_design"></a>
+	  <h3>High Level Design</h3>
+<p><a href="images/photos/finalprojtop.JPG"><img src="images/photos/finalprojtop.jpg" width="512" height="384" /></a></p>
+		<a name="rationale"></a><h4>Rationale and Sources of Project Idea</h4>
+	  <p>
+		RSA is perhaps the most well known public key cryptography system and is 
+		used to secure many commercial electronic transactions. The security of 
+		RSA revolves around the difficulty of factoring a number into two prime 
+		factors. Since RSA encryption and finding prime numbers are both 
+		computationally intensive tasks, we thought it would be interesting to 
+		implement them in hardware on the FPGA to see how these algorithms can 
+		be implemented in an application specific integrated circuit. In 
+		addition, many companies such as Oracle and Intel have added onchip 
+		hardware support for encryption such as AES to their products. This 
+		project may help us understand the complexities involved in such 
+		implementations.</p>
+		<a name="millerbg"></a><h4>Background Math of Miller-Rabin Primality Test</h4>
+	  <p>The <a href="../../../../../../../../mathworld.wolfram.com/Rabin-MillerStrongPseudoprimeTest.html">Miller-Rabin primality test</a> is based on the properties  of <a href="../../../../../../../../mathworld.wolfram.com/StrongPseudoprime.html">strong pseudoprimes</a> and relies on a series of inequalities that hold true for composite numbers. These inequalities are used to check if a number is composite.  If some of these tests fail, the number is <em>maybe prime</em>. If many of these tests fail, we become more convinced that the  number is prime. Therefore, by trying a larger number of these tests, we can gain more confidence in a number&rsquo;s primality, although we can never be completely sure of it. On the other hand, if a test passes, we immediately know  that it is composite and can mark it as such.</p>
+	  <p>Monier (1980) and Rabin (1980) showed that a composite number passes the test for at most &frac14; of the possible bases. Thus, if N independent tests are performed on a composite number, the probability that it passes each test is 1/4<sup>N</sup> or less.</p>
+      <p>
+        The inequalities rely on square roots of unity. Suppose that x is a square root of 1 mod p, where p is a  prime greater than 2. The following must be true: x<sup>2</sup> &equiv; 1 (mod p), which results in (x-1)(x+1) &equiv; 0 (mod p). This means that x is  either (1 mod p) or (-1 mod p).</p>
+        <p>Now suppose that n is an odd prime. Then n-1 is an even  number and can be written as 2<sup>s</sup> * d with s and d as positive  integers and d odd. If we choose an <em>a</em> in (&#8484;/n&#8484;)*,  then: a<sup>d</sup> &equiv; 1 (mod n) or a<sup>d</sup> &equiv; -1 (mod n) for some 0 &#8804; r &#8804; s-1.</p>
+        <p>Recall <a href="../../../../../../../../mathworld.wolfram.com/FermatsLittleTheorem.html">Fermat&rsquo;s Little Theorem</a>: a<sup>n-1</sup> &equiv; 1 (mod n).</p>
+        <p>If we repeatedly take square roots of a<sup>n-1</sup>, we  will get either 1 or -1. This means that if a<sup>d</sup> !&equiv; 1 (mod n) or a<sup>d</sup> !&equiv; -1 (mod n) for some 0 &#8804; r &#8804; s-1, then n is not prime. Thus, if <em>a</em> is chosen and the test passes, we are sure of <em>n</em>&rsquo;s compositeness. We can call <em>a</em> a witness for the compositeness of <em>n</em>. Otherwise, <em>a</em> can  be called a strong liar, and we can call <em>n</em> a strong probable prime.
+      We can generate our <em>a</em> randomly in order to probabilistically determine <em>n</em>&rsquo;s primality.<a name="_GoBack" id="_GoBack"></a></p>
+<a name="rsabg"></a><h4>Background Math of RSA Encryption</h4>
+<p>We select two primes <em>p</em> and <em>q</em> and compute <em>n = pq</em>.<em> n </em>is referred to as the modulus.</p>
+		<p>Next, we choose an integer <em>e</em> that is relatively prime to (p-1)(q-1). <em>e</em> is referred to as the encryption exponent. The public encryption key consists of <em>e</em> and <em>n</em>. A message <em>M</em> is encrypted by the modular exponentiation operation <em>C = M<sup>e</sup> </em>mod<em> n</em>, producing the encrypted message <em>C</em>.</p>
+		<p>To perform decryption, we need to find the decryption exponent <em>d</em> that is a multiplicative inverse of <em>e</em> mod <em>(p-1)(q-1)</em>. The private decryption key consists of <em>d</em> and <em>n</em>. The encrypted message C is decrypted by the modular exponentiation operation <em>M = C<sup>d </sup></em>mod<em> n</em>, producing the original message <em>M</em>.</p>
+	  <p>The <a href="../../../../../../../../en.wikipedia.org/wiki/Extended_Euclidean_algorithm">extended Euclidean algorithm</a> is used to find <em>d</em>. In our implementation, we iterate through values of <em>e</em>, starting from <em>e</em> = 3, until the extended Euclidean algorithm indicates that the greatest common divisor of <em>e</em> and <em>(p-1)(q-1)</em> is 1, indicating that they are relatively prime, and computes a positive value for <em>d</em>.		</p>
+		<a name="logical"></a><h4>Logical Structure		</h4>
+		<p>
+		The Miller-Rabin primality test, extended Euclidean algorithm, and 
+		encryption/decryption function are implemented as separate hardware 
+		modules. A NiosII/s processor is used to control the modules.</p>
+	  <p>
+		The Miller-Rabin module outputs the generated primes to the NiosII, 
+		which prints them to the console and the VGA monitor. The user 
+		selects two prime numbers by pressing KEY3 as the numbers are generated. 
+		The NiosII then sends the two numbers to the Extended Euclidean 
+		algorithm module, which computes the encryption and decryption exponents. These values are reported to the user via the console and VGA 
+		monitor.</p>
+		<p>
+		The SD card is inserted into the card reader on the DE2 board. The SD 
+		card interface module in the SOPC is used to interface between the 
+		NiosII and the card. A text file is read from the SD card. The NiosII 
+		converts each block of 2 characters in the text to a 16 bit number. For 
+		each number, it sends the number together with the encryption key to the encrypt/decrypt module, which encrypts the number 
+		using modular exponentiation. The encrypted number is then written back 
+		to the file by the NiosII. Decryption is done the same way except that the decryption key is sent to the encrypt/decrypt module.		</p>
+<a name="tradeoffs"></a><h4>Hardware/Software Tradeoffs</h4>
+		<p>
+		For the primality test algorithm, we considered the the 		<a href="../../../../../../../../en.wikipedia.org/wiki/Sieve_of_Eratosthenes">Sieve of 
+		Eratosthenes</a>, the Miller-Rabin test and the
+		<a href="../../../../../../../../en.wikipedia.org/wiki/Lucas_2525E2_252580_252593Lehmer_primality_test">
+		Lucas-Lehmer</a> test. The O(n) memory requirement of the Sieve is a 
+		large drawback given the limited memory on the FPGA. While the 
+		Lucas-Lehmer test is fast and simple to implement, it can only be used 
+		on <a href="../../../../../../../../mathworld.wolfram.com/MersenneNumber.html">Mersenne 
+		numbers</a> (numbers of the form 2<sup>n</sup>-1). Thus, we decided to use the 
+		Miller-Rabin test as it is fast and uses has a O(1) memory requirement.</p>
+		<p>
+		We chose to implement the primality test, extended Euclidean algorithm, 
+		and the encryption/decryption functions in hardware as they are 
+		computationally intensive. While developing the lab, we first coded the 
+		algorithms in software and ran them on the NiosII to help us understand 
+		how to integrate them into the project. We found that the hardware 
+		implementations of the algorithms performed significantly faster than 
+		the software implementations.
+		</p>
+		<a name="relationship"></a><h4>Relationship of Design to Standards and Patents</h4>
+		<p>
+		The patent for the RSA algorithm expired in 2000.
+		Our project adheres to the standards set by the SD Association for using 
+		the SD card through an SPI interface.</p>
+	  <a name="hardware_design"></a>
+	  <h3>Hardware Design</h3>
+		<a name="niosii"></a><h4>NiosII processor</h4>
+	  <p>
+		A NiosII/s processor is used to control all the modules in the project. 
+		SDRAM is used as memory for the NiosII. A JTAG UART interface was also 
+		connected to the NiosII for serial communication with a computer so that 
+		a user can manually enter in encryption or decryption keys.&nbsp;Since SOPCbuilder is unable to instantiate PIO ports of size greater than 32 bits, each 64 bit port had to be instantiated as two separate 32 bit ports. When reading from the ports, the two 32 bit inputs from the ports are concatenated in software to get the 64 bit data. When writing to the ports, the upper 32 bits are written to one port and the lower 32 bits to another.</p>
+		<a name="millertest"></a><h4>Miller-Rabin Primality Test</h4>
+		<p>When reset by the NiosII, this module reads the start value  n supplied and a desired accuracy for the test (ie. the number of independent  tests to do). The tester then rewrites n-1 as 2s * d, generates  constrained random numbers <em>a</em>, and  tests for primality as described in the background math section.</p>
+	    <p>The pseudocode we implement is as follows:</p>
+		<p><a href="images/photos/pseudocode.JPG"><img src="images/photos/pseudocode.jpg" width="512" height="270" /></a></p>
+      <p>We feed in odd numbers and a desired accuracy and wait for a  finish signal from the module. When the finish signal is detected, we check the <em>prime</em> wire to see whether our number is maybe  prime or definitely composite.<br />
+        If the number is prime, we save it and if the user presses  the correct key, this number is used in the RSA encryption algorithm. The  number is sent to the VGA module to be viewed by the user.</p>
+      <p>If the number is not prime, we simply feed in the next odd  number.</p>
+<p>
+		The random numbers were generated using a random number generator from
+		<a href="../../../../Chemical_Simulation/index.html">
+		Stochastic Chemical Reaction Simulation</a> by Bruce Land.</p>
+    <p>The Miller Rabin module uses the encrypt/decrypt module to perform modular exponentiation because we didn't have enough logic elements left to instantiate modular exponentiation logic in the Miller Rabin module. Multiplexers are used to select whether the encrypt/decrypt module receives data from the NiosII or the Miller Rabin module.</p>
+		<a name="extended"></a><h4>Extended Euclidean Algorithm</h4>
+		<p>Below is the pseudocode for our implementation. Unlike the standard algorithm, we do not compute <em>x</em> and <em>x_prev</em> as their values are not needed for our project.</p>
+		<p><img src="images/photos/euclideanpseudocode.jpg" width="512" height="333" /></p>
+		<p>
+		When reset by the NiosII, the algorithm module reads the values of the 
+		two primes <i>p</i> and <i>q</i> from the PIO ports of the SOPC and 
+		computes <i>(p-1)(q-1)</i>. </p>
+		<p>
+		The module then performs the <a href="../../../../../../../../en.wikipedia.org/wiki/Extended_Euclidean_algorithm">extended Euclidean algorithm</a> to find the greatest common divisor of <i>
+		e</i> and <i>(p-1)(q-1)</i> as well as the modular inverse of <i>e mod 
+		(p-1)(q-1)</i>.		
+		If the greatest common divisor is 1 (indicating that e and (p-1)(q-1) 
+		are relatively prime to each other) and the modular multiplicative 
+		inverse is positive, the module returns the values of <i>e</i> and the 
+		modular multiplicative inverse <i>d</i> to the NiosII. Otherwise, <i>e</i> 
+		is incremented by 2 and the algorithm executed again, this is repeated 
+		until a value of <i>e</i> which results in a greatest common divisor of 
+		1 and a positive inverse is found.<i> e</i> will be used as the 
+		encryption exponent and <i>d</i> as the decryption exponent.</p>
+		<p>For the divide and modulo operation, we use the 64 bit divider generated by Altera Megafunction wizard. Due to the long critical path of the divider, we pipelined it into a 20 cycle divider using options in the wizard to avoid violating the timing constraints. The state machine waits in the <i>DIVIDE</i> state until the divider is done. The state machine was implemented to be compatible with dividers that take any constant number of cycle, the parameter <i>DIVIDE_LATENCY</i> just needs to be changed to make the state machine wait for the correct number of cycles.</p>
+	  <a name="encrypter"></a><h4>Encrypter/Decrypter</h4>
+		<p>
+		When reset by the NiosII, the encrypter/decrypter reads a <i>base</i>, a
+		<i>modulo</i> and an <i>exponent </i>value from the PIO ports of the 
+		SOPC. The module performs a modular exponentiation computation that 
+		calculates the value of <i>base<sup>exponent</sup></i> mod <i>modulo</i>. 
+		The algorithm we use for performing the modular exponentiation is the <a href="../../../../../../../../en.wikipedia.org/wiki/Modular_exponentiation#Right-to-left_binary_method">right-to-left binary method</a>. For encryption, we set the message as <i>base</i>, <i>e</i> as exponent 
+		and <em>n</em> as <i>modulo</i> to produce the encrypted 
+		message as the result of the <i>computation</i>. For decryption, we set 
+		the encrypted message as <i>base</i>, <i>d</i> as exponent and <em>n</em> as <i>modulo to produce the decrypted message.</i> The modulo operations are implemented in the same way as in the Euclidean module.</p>
+		<a name="SDinterface"></a><h4>SD card interface</h4>
+		<p>
+		The interface between the NiosII and the SD card is handled by the
+		<a href="../../../../../../../../ftp@ftp.altera.com/up/pub/University_Program_IP_Cores/90/SD_Card_Interface_for_SoPC_Builder.pdf">
+		Altera University Program SD Card IP Core</a> module in SOPCbuilder. An 
+		advantage of this module is that it includes a software drivers that can manipulate the FAT16 file system on the SD card. This 
+		allows the user to user to search for files by name and traverse through 
+		directories. As a result, it provides more functionality than methods 
+		that access data by manually specifying the byte address of the data on 
+		the SD card.&nbsp; </p>
+		<p class="MsoNormal">The process of getting the SD card module working 
+		turned out to be more complicated than expected, as the drivers could not detect the FAT16 file system 
+		on the SD card initially. Stepping through the execution of the code, we 
+		discovered that the software was mistakenly deciding that the card had a 
+		FAT12 file system, which the module did not support, even though the 
+		card actually had a FAT16 file system. We changed the drivers to force 
+		it to correctly treat the card as having a FAT16 file system, which got 
+		the module working. This was done by changing 
+		boot_sector_data.bits_for_cluster_index = 12 on line 471 of 
+		altera_up_sd_card_avalon_interface.c to 
+		boot_sector_data.bits_for_cluster_index = 16. </p>
+		<p class="MsoNormal">Our modified drivers also contain changes to enable reading of the encrypted files, since some parts of the encrypted files could appear as the end of the text string to the default drivers, causing the default drivers to stop reading. However, the changes mean that the program has to be coded to specify amount of characters to read. For anyone who is interesting in using the SD card module, the default drivers are generated in /BSP/drivers/src and inc by Altera Monitor, making the changes in the previous paragraph should get it to work. Also note that the driver files get replaced every time Altera Monitor regenerates the BSP.</p>
+		<p class="MsoNormal">Also, we discovered that the SD module does not 
+		work well with the NiosII/f because it reads data from the SD card by 
+		directly referencing addresses of volatile pointers to perform IO loads 
+		and store. The data cache on the NiosII/f causes these memory operations 
+		to give the wrong data because it reads from the cache instead.</p>
+		<a name="vgacontroller"></a><h4>VGA Controller and Character Buffer</h4>
+		<p>
+		In order to display a text output from the NiosII onto a VGA monitor, we 
+		instantiated the <a href="../../../../../../../../ftp@ftp.altera.com/up/pub/University_Program_IP_Cores/90/Video_Out.pdf">VGA controller</a> in SOPCbuilder. The VGA controller receives pixel data through an Altera Avalon interface and outputs a VGA signal to the VGA connector on the DE2 board.</p>
+		<p><img src="images/photos/vga.jpg" width="372" height="336" /></p>
+		<p>The <a href="../../../../../../../../ftp@ftp.altera.com/up/pub/University_Program_IP_Cores/90/Video_Out.pdf">character buffer</a> converts characters into pixels. The NiosII writes characters into the buffer by directly writing to a memory location in the buffer determined by the base address of the buffer and an offset calculated from the X and Y coordinate of the character.</p>
+		<p>Since the VGA controller is clocked using the VGA clock of 25.2 MHz, a Dual Clock FIFO buffer is instantiated in SOPCbuilder to mediate the transfer of pixel data from the character buffer, which is clocked at 50 MHz, to the VGA controller. </p>
+        <a name="software_design"></a>
+	  <h3>Software Design</h3>
+		<p>The NiosII runs a C program that controls the hardware modules, interfaces with the SD card and writes characters to the character buffer.</p>
+		<p>The program implements a user interface where the user selects which functions to perform by pressing KEY3 to KEY1 on the DE2 board.</p>
+	  <p>At the top menu shown below, the user is given the option to generate primes, open a file for encryption/decryption or input encryption and decryption keys through the console. The currently used primes and the RSA parameters generated from the primes are also displayed.</p>
+		<p><a href="images/photos/topmenu.jpg"><img src="images/photos/topmenu.jpg" width="491" height="129" /></a></p>
+		<p>If KEY1 is pressed, the program starts generating prime numbers by sending odd numbers to the primality tester module. If the primality tester reports that the number is prime, the program prints the number onto the screen. The user can select the prime to be used for encryption by pressing KEY2. KEY3 exits prime generation and returns the program to the top menu.</p>
+		<p><a href="images/photos/generateprimes.jpg"><img src="images/photos/generateprimes.jpg" width="512" height="384" /></a></p>
+		<p>If KEY2 is pressed, the program reads a text file from the SD card and displays it on the screen as shown below (click to zoom). </p>
+		<p><a href="images/photos/openfile.JPG"><img src="images/thumbnails/openfilesmall.JPG" width="512" height="384" /></a></p>
+		<p>The user can encrypt the file by pressing KEY2. The program breaks up the text into blocks of 2 characters (the blocks can be scaled to a larger number of characters when larger encryption keys are used). Each block is converted into a 16 bit number by concatenating the integer representation of the characters. Each number is then dispatched to the encrypt/decrypt module together with the encryption key to be encrypted. The encrypted message is displayed on screen as shown below, as well as written back to the file on the SD card.</p>
+		<p><a href="images/photos/encrypttext.JPG"><img src="images/thumbnails/encrypttextsmall.JPG" width="512" height="384" /></a></p>
+		<p>Viewing the file in the SD card on a laptop, we can see that what was once an enlightening article on RSA has been encrypted into gibberish.</p>
+		<p><a href="images/photos/wordpadview.JPG"><img src="images/thumbnails/wordpadviewsmall.JPG" width="512" height="384" /></a></p>
+		<p>Putting the SD card back into the DE2, the user can open the file again and press KEY1 to decrypt the file. Again, blocks of the text is converted into numbers and sent to the encrypt/decrypt module, this time with the decryption key. The decrypted file is displayed and written to the SD card. The decrypted output is shown in the image below. By comparing the decrypted file to the original text file, we checked that the decryption functioned correctly. </p>
+		<p><a href="images/photos/decrypttext.JPG"><img src="images/thumbnails/decrypttextsmall.jpg" width="512" height="384" /></a></p>
+		<p>From the top menu, the user can also press KEY3 to input values of the encryption key, decryption key, and accuracy of the Miller-Rabin test (number of random numbers to check the prime candidate with) from the console of a computer connected to the DE2.</p>
+        <a name="results"></a>
+	  <h3>Results</h3>
+		<p>The project is able to find prime numbers using the Miller-Rabin primality test and encrypt/decrypt text files on an SD card using RSA encryption. Due to the limited number of logic elements on the DE2 board, our hardware can generate prime numbers up to 32 bits in size, resulting in 64 bit encryption keys. The extended Euclidean algorithm module can find the greatest common divisor of two 64 bit numbers. It also computes a 64 bit multiplicative modular inverse, which is used as the decryption key. However, we were only left with enough logic elements to instantiate a encrypt/decrypt module that supports a 32 bit encryption key. The project used about 93% of the logic elements on the DE2 board. By parameterizing the width of the wires and registers in the Verilog code, the modules can be extended to support larger numbers when instantiated on a larger FPGA.</p>
+		<p>Our implementations in hardware of the  generation of the prime numbers and the encryption/decryption were relatively fast. The hardware implementations were many times faster than software implementations running on the NiosII. The speed and accuracy of the Miller-Rabin test varied based on what the user selected for the number of random integers to test the potentially prime number on.</p>
+		<a name="safetyusability"></a><h4>Safety and Usability</h4>
+	  <p>There are no forseeable safety issues with using this project. Interactions between the user and the project involve only pressing buttons on the DE2 board and entering values in the console.</p>
+      <a name="conclusions"></a>
+	  <h3>Conclusions</h3>
+		<p>The project was able to demonstrate the implementation of the Miller-Rabin primality test, extended Euclidean algorithm and RSA encryption/decryption in hardware. We also learnt about interfacing with an SD card and how to display text to a VGA output. Although the  encryption keys generated by our project are too small in magnitude to provide any real security (commerically used RSA encryption keys are usually 1024 bits in size), the implementation approach we learnt can be scaled up for implementation on hardware that we design in the future. Overall, the project was very interesting and met our expectations. Next time, we would use the DE2-115 instead to enable support for larger numbers.</p>
+		<p>The primality test modules were designed to be easily parallelizable. With a larger FPGA such as the DE2-115, the project could be improved but having multiple primality test modules run in parallel (each module testing a different number) to increase the speed at which primes are generated. Similarly, the encrpyt/decrypt modules can also be parallelized to improve performance. It would also be interesting to implement AES encryption on the FPGA.</p>
+		<a name="intellectual"></a><h4>Intellectual Property Considerations</h4>
+		<p>The project uses Altera IP generated from SOPCbuilder and Megafunction wizard, including the NiosII, SDRAM controller, SD card interface, PLLs, VGA controller, 64 bit divider, SOPC PIO ports, character buffer and dual clock FIFO buffer. All other code was written by us based on algorithms that in the public domain. The text shown in the photos demonstrating encryption and decryption are excerpts from the Wikipedia article on RSA, which is under the GNU free documentation license.</p>
+        <a name="appendix"></a>
+	  <h3>Appendix A: Code</h3>
+		<h4>Verilog code</h4>
+		<p><a href="5760finalproject.zip">Zipped project file</a></p>
+		<p><a href="DE2_TOP.sof">SOF</a></p>
+		<h4>C code</h4>
+		<p><a href="5760finalprojectsoftware.zip">Zipped software</a></p>
+	  <h3>Appendix B: Task Breakdown</h3>
+	  <table cellspacing="2" cellpadding="2" border="1">
+			<thead>
+				<tr>
+					<th>Task</th>
+					<th>Contributor</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr class="row1">
+					<td>High level design</td>
+					<td>Both</td>
+				</tr><tr class="row2">
+					<td>Prime number generation</td>
+					<td>Chris</td>
+				</tr><tr class="row1">
+					<td>Extended Euclidean</td>
+					<td>Yi Heng</td>
+				</tr><tr class="row2">
+					<td>RSA Encryption/Decryption</td>
+					<td>Yi Heng</td>
+				</tr><tr class="row1">
+					<td>SOPC hardware/software</td>
+					<td>Yi Heng</td>
+                </tr><tr class="row2">
+					<td>Testing</td>
+					<td>Both</td>
+				</tr><tr class="row1">
+					<td>Weekly reports to TA</td>
+					<td>Both</td>
+				</tr><tr class="row2">
+					<td>Webpage</td>
+					<td>Both</td>
+				</tr>
+                
+			</tbody>
+	  </table>
+	  <h3>Appendix C: References</h3>
+		<ul>
+		  <li>		    <a href="../../../../../../../../en.wikipedia.org/wiki/Miller_25E2_2580_2593Rabin_primality_test">Wikipedia:Miller-Rabin primality test</a>		  </li>
+		  <li><a href="../../../../../../../../mathworld.wolfram.com/Rabin-MillerStrongPseudoprimeTest.html">Rabin-Miller  Strong Pseudoprime Test</a></li>
+		  <li>        Monier, L. "Evaluation and Comparison of Two Efficient Probabilistic Primality Testing Algorithms." Theor. Comput. Sci. 12, 97-108, 1980.</li>
+		  <li>        Rabin, M. O. "Probabilistic Algorithm for Testing Primality." J. Number Th. 12, 128-138, 1980.</li>
+      <li><a href="../../../../../../../../mathworld.wolfram.com/FermatsLittleTheorem.html">Fermat's Little Theorem</a></li>
+		  <li>		    Rosen, Kenneth H. 2007. Discrete Mathematics and its Applications 6th Edition. Boston: McGraw-Hill</li>
+		  <li>		    <a href="../../../../../../../../en.wikipedia.org/wiki/RSA_(algorithm)">Wikipedia:RSA</a>		  </li>
+		  <li>		    <a href="../../../../../../../../en.wikipedia.org/wiki/Extended_Euclidean_algorithm">Wikipedia:Extended_Euclidean_algorithm</a>		  </li>
+		  <li>		    <a href="../../../../../../../../en.wikipedia.org/wiki/Modular_exponentiation">Wikipedia:Modular_exponentiation</a>		  </li>
+		  <li>		    <a href="../../../../Chemical_Simulation/index.html">
+          Stochastic Chemical Reaction Simulation</a>		  </li>
+		  <li>		    <a href="../../../../../../../../ftp@ftp.altera.com/up/pub/University_Program_IP_Cores/90/Video_Out.pdf">
+          Video out IP cores for Altera DE boards</a>		  </li>
+		  <li>		    <a href="../../../../../../../../ftp@ftp.altera.com/up/pub/Altera_Material/11.0/University_Program_IP_Cores/Memory/SD_Card_Interface_for_SoPC_Builder.pdf">Altera University Program Secure Data Card IP Core</a>		  </li>
+      </ul>
+</div>
+	
+	<hr />
+	
+	<!--
+		The contents of the secondary div are displayed in the left column sidebar
+		below the secondary navigation. Each group of secondary content should be 
+		organized in a secondary-section div, which will pad the content from the 
+		edges of the sidebar and separate it from other content.
+	-->
+	<div id="secondary">
+		<div class="secondary-section">
+			<h2>&nbsp;</h2>
+</div>
+		
+		<div class="secondary-section">
+			<h2>&nbsp;</h2>
+		</div>
+		<div class="secondary-photo"> </div>
+	</div>
+</div>
+</div>
+
+<hr />
+
+<div id="footer">
+<!-- The footer-content div contains the Cornell University copyright -->
+<div id="footer-content">
+	&copy;2005 <a href="../../../../../../../../www.cornell.edu/default.htm">Cornell University</a>
+</div>
+</div>
+
+</body>
+</html>

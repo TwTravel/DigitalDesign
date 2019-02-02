@@ -1,0 +1,26 @@
+clear all;
+
+img_24 = imread('C:\Documents and Settings\yc292\Desktop\Lost.bmp');
+
+figure(1);
+imshow(img_24);
+
+img_8_R_double = double(img_24(:,:,1));
+img_8_G_double = double(img_24(:,:,2));
+img_8_B_double = double(img_24(:,:,3));
+
+img_8_R = fix(img_8_R_double(:,:)/(255/7)+0.5);
+img_8_G = fix(img_8_G_double(:,:)/(255/7)+0.5);
+img_8_B = fix(img_8_B_double(:,:)/(255/3)+0.5);
+
+img_8(:,:,1) = uint8(fix(img_8_R*(2^5)+img_8_R*(2^2) + img_8_R*(2^-1)));
+img_8(:,:,2) = uint8(fix(img_8_G*(2^5)+img_8_G*(2^2) + img_8_G*(2^-1)));
+img_8(:,:,3) = uint8(fix(img_8_B*(2^6)+img_8_B*(2^4) + img_8_B*(2^2)+img_8_B));
+
+figure(2);
+imshow(img_8);
+
+img_8_mod = uint8(fix(img_8_R*(2^5) + img_8_G*(2^2)+ img_8_B));
+
+figure(3);
+imshow(img_8_mod);

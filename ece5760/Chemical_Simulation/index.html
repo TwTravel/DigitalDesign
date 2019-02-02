@@ -1,0 +1,242 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Chem_Sim</title>
+<style type="text/css">
+<!--
+.red {
+	color: #F00;
+}
+-->
+</style>
+</head>
+
+<body>
+<h2 align="center">Stochastic Chemical Reaction Simulation <br />
+  ECE 5760, Cornell University </h2>
+<p>Chemical reactions are often modeled as continuous differential equations
+  with reaction rates related to chemical concentrations (<a href="../../../../../en.wikipedia.org/wiki/Law_of_mass_action">law
+  of mass action</a>). As many have pointed out (e.g., Gillespie, Lok,  Salwinski
+  and Eisenberg, or Keane, et.al.) reactions actually occur as discrete events
+  involving molecules. The reaction has some probability of occuring, but either
+  occurs, or does not. Thus we replace concentrations
+  with counting individual molecules and differential equations with rolling
+  the dice to see if a reaction occurs.</p>
+<p>For a bimolecular reaction
+  involving two molecules A and B, with concentrations [A] and [B] and a rate
+  constant K, the probability of the reaction occuring (from mass action) will
+  be  <code>K[A][B]</code> . Assuming a time step which is short enough to make
+  the probability of reaction small during the step, the mass action probability
+  is equal to the probability <code>([A]&gt;randA &amp;&amp; [B]&gt;randB &amp;&amp; K&gt;randK). </code>Where <code>&amp;&amp;</code> is
+  the logical <em>and</em> operation, and <code>randA, randB</code> and <code>randK</code> are
+  uniform-distribution random numbers (Salwinski and Eisenberg and Keane, et.al.).
+  We can therefore replace the expensive multiplies with inexpensive logical
+  operations and random number generation. Random numbers were generated using
+  a <a href="../../../../../en.wikipedia.org/wiki/Linear_feedback_shift_register">linear
+  feedback shift register</a> technique. The shift register length was chosen
+  so that only one xor operation was needed.</p>
+<p>The first reaction scheme I implemented is a slightly expanded version
+  of the system presented in Salwinski and Eisenberg. Expansions were the ability
+  of several update events to occur for a given molecular species (as in Keane,
+  et.al.). Examples are below. Each chemical concentration is represented
+  by a 16-bit integer. Each reaction path can increment (+1), decrement (-1),
+  or not change the integer concentration of a chemical at each time step. The
+  restriction of only simple increment/decreement means that reaction probabilities
+  must be adjusted so that the likelyhood of changing the chemical concentration
+  by two or more is negligible. In practice the probability of reaction is set
+  to less than 0.01, so that the probability of two events occuring is less than
+  0.0001. Salwinski and Eisenberg limited the update so that only one reaction
+  could update any chemical at any time step. I added a queue so that several
+  reactions can update a chemical at each time step. The advantage of my scheme
+  is simpler reaction control, the disadvantage is a longer state machine on
+  each time step. Each time step is seven clock cycles, allowing six inc/dec
+  inputs per chemical per time step.</p>
+<p><img src="Events_vs_mean.png" width="560" height="420" alt="events versus mean" align="left"/>More generally, what we are doing here is approximating a truncated Poisson distribution of reaction events. We can make a better approximation by allowing concentrations to change by more than +1/-1. Let's say that we make the criterion that our approximation of the Poisson distribution has to cover 99.99% of the full distribution. Or, put differently, the cumulative sum of the discrete distribution has to be 0.9999 up to the point we truncate. I wrote a <a href="PoissonTest2.m">matlab program</a> to plot the event number at which the cumulative probability reached 0.999 and 0.9999. The figure (left) shows the results. Keeping only one event per reaction time step limits us to a mean rate of 0.01 at 99.99% capture and about 0.03 at 99.9% event capture. For a mean reaction rate up to about 0.085/time step, keeping up to two events per reaction captures 99.99% of the events. Keeping three events allows reaction rates up to about 0.2/time step (at 99.99% capture). So using the 99.99% criterion, keeping two events instead of one event gives us about an 8-fold speed up, while keeping three events only gives us another factor of two  above the two-event rate.  </p>
+<p>So what do we need to do to  implement a maximum of two events? If we model
+    the two reactions as separated in space, and therefore independent, we need
+    to compute the probability of two completely independent reactions separately,
+    then decide if 0, 1 or 2 events occured. If either reaction occurs set the
+    inc/dec outputs to +1/-1. If both occur set the inc/dec outputs to +2/-2.
+    If neither occurs, inc/dec are zero. This seems to be a workable system and
+  was implemented below. A manuscript version of  this description is <a href="chemical_kinetics_FPGA.pdf">here</a>.</p><br clear=left />
+<hr size="5" noshade="noshade" />
+<p><strong>Reaction examples (maintaining two events: inc/dec by +2/+1/0/-1/-2).</strong></p>
+<hr />
+<p><strong>Calibrate</strong></p>
+<p>The <a href="Two_reaction_per_step/VGA_320x240_chem_sim_2_calibrate_rand127bit.v">Calibrate</a> code simulates a first order and second order reaction to give some feel for how many time steps are required for an e-folding decrease (for the first order system) or a equvalent decrease (non exponential) for the second order system. </p>
+<ul>
+  <li>For a rate constant of 16'hffff (maximum value),    which is fractional value 0.99998 = xffff/x10000,    the measured time constant of the first order reaction is   32800+/-300 reaction-steps measured from the VGA display. <br />
+    <code>32800 ~= 128 VGA dots (horizontal) &#8226;            2^11 reaction-clocks/dot /  8 reaction-clocks/reaction-step </code><br />
+    At lower rate constants, the e-folding time scales as it should.    Also, the e-folding time is independent of the initial concentration, as it should be for a first-order reaction. The e-folding time of 32800 reaction steps can be rationalized in the following way: On average two reaction events happen with probability (molecule count)/<code>2^16,</code> or the expected change in molecule number per time step is (molecule count)/<code>2^15. </code>Writing the difference equation (letting x be the molecule count) gives<code> <br />
+    x(t+1) = x(t) - &Delta;t*x(t)</code>/<code>2^15</code><br />
+    This equation can be rearranged to a first order differential equation, from which it clear that the 
+    time constant is <code>2^15</code>=<code>32,768</code>.<br />
+    <br />
+  </li>
+  <li>The second
+    order system used was <code>A+A-&gt;S</code>.  A second order reaction solution
+    is <br />
+    <code>a(t)=a(0)/(k&#8226;t&#8226;a(0)+1)</code><br />
+    where k is the rate constant (units of <code>1/(#&#8226;timestep)</code>)
+    and a(0) is the initial fractional concentration. For a rate constant of
+    16'hffff (maximum value), which is fractional value 0.99998 = xffff/x10000,
+    and for an initial concentration of 4000, the 1/2 time (time at which <code>t=1/(k&#8226;a(0))</code>)
+    of the second order reaction is about 192,000 reaction steps. Halfing the
+    initial concentration doubles the 1/2 time.</li>
+</ul>
+<p><strong>Oregonator</strong></p>
+<p>The <a href="../../../../../www.scholarpedia.org/article/Oregonator">Oregonator</a> system
+  is a chemical oscillator. This system was devised by Field and Noyes at the
+  University of Oregon (1974) and used by Gillespie (1977) as a test case for
+  an exact stochastic simulator method. The reaction scheme is:<br />
+  <code>X1 + Y2 &rarr; Y1 (rate c1)<br />
+Y1 + Y2 &rarr; Z1 (rate c2)<br />
+X2 + Y1 &rarr; 2Y1 + Y3 (rate c3)<br />
+Y1 + Y1 &rarr; Z2 (rate c4)<br />
+X3 + Y1 &rarr; Y2 (rate c5)</code><br />
+The X's represent large pools of chemical and do not change concentration during
+simulation, so they are just constants. The Z's are reaction
+products which are not reused and
+therefore
+do not need to be modeled.</p>
+<p>The <a href="Two_reaction_per_step/VGA_320x240_chem_sim_2_oregonator.v">Oregonator</a> code
+  (<a href="Two_reaction_per_step/DE2_TOP_oregonator.qar">project archive</a>)
+  takes about 16 million reaction steps to complete one reaction cycle measured
+  as the peak-to-peak cycle time (at max reaction rate). At 14.8 million reaction-steps/sec
+  on the FPGA, the real time is about 1.1 seconds per cycle. These timings are
+  with the rate constants turned up about as fast as possible using 16-bit rate
+  constants. The Oregonator system is <em>stiff</em> in
+  the sense that the rates of the reactions vary over a wide range. For instance,
+  over most of the cycle, the number of Y1 molecules is around 100. This means
+  that the probability of a reaction, <code>Y1
+  + Y1 &rarr; Z2
+  (rate c4)</code>, occuring on each time step is only <code>(100/65536)<sup>2</sup>*(10496/65536)=3.7*10<sup>-7</sup></code>.
+  At the peak concentrations of reactant Y3 the rate of reaction of <code>X3
+  + Y1 &rarr; Y2  (rate c5)</code> is <code>15000/655535*4000/655535*8192/655535
+  = 0.002</code>, almost ten thousand times faster than the slower reaction above.
+  This means that you have to take small steps to capture the fast dynamics,
+  and take a lot of steps to get to one complete cycle. A <a href="Two_reaction_per_step/Oregonator4.m">matlab
+  version</a> of the stochastic code takes about 1000 seconds (3.8 GHz P4 processor)
+  to compute one reaction cycle. The code does not vectorize well. The first
+  two cycles of the output is shown below<a href="Two_reaction_per_step/oregonator_matlab.png"></a>.
+  On the left is the matlab result (<code>xbar1=xbar2=xbar3=15000, y1(t=0)=500,
+  y2(t=0)=1000, y3(t=0)=2000</code>, <code>rates  = [656 52224 32768 10496
+  8192]</code> ) and on the right is a photo of the VGA display overlayed on
+  the matlab result. Amplitudes and times quantitatively match, but the two images
+  had to be scaled to account for the uncalibrated photograph of the VGA screen.<br />
+  <br />
+<a href="Two_reaction_per_step/oregonator_matlab_15000_xbar.png"><img src="Two_reaction_per_step/oregonator_matlab_15000_xbar_small.png" width="400" height="284" alt="oregonator matlab" /></a><a href="Two_reaction_per_step/oregonator_matlab_overlay_15000_xbar.png"><img src="Two_reaction_per_step/oregonator_matlab_overlay_15000_xbar_small.png" width="366" height="284" alt="oreg overlay" /></a></p>
+<p><strong>Michaelis–Menten kinetics</strong></p>
+<p>Michaelis–Menten kinetics where A + E &harr; AE &rarr; S + E was simulated
+  as a stochastic system on the FPGA and compared with an ODE solution in matlab. The
+  <a href="Two_reaction_per_step/VGA_320x240_chem_sim_2_MM.v">top-level module</a> and
+  the <a href="Two_reaction_per_step/MM.m">matlab program</a> (and <a href="Two_reaction_per_step/mmfunc.m">function</a>)
+  were set to <code>k1=1,
+  k_1=k1/4096, k2=k1/256, E0=0.25/16, A0=1/16</code>. The matlab program was
+  from a <a href="../../../../../web.mit.edu/biophysics/sbio/PDFs/L2_notes.pdf">pdf</a> by
+  A. van Oudenaarden at
+  MIT.  On the left is the matlab result 
+  and on the right is a photo of the VGA display overlayed on the matlab result.
+  Amplitudes and times quantitatively match, but the two images had to be scaled
+  to account for the uncalibrated photograph of the VGA screen. Note that in
+  the Verilog stochastic simulation the molecular amounts are given in number
+  of molecules, but should be interpreted as a <em>fractional</em> concentration,
+  where <code>0xffff</code> represents a concentration of just below unity. Therefore
+  the initial condition of <code>A=0x1000</code> in the Verilog code represents
+  a concentration of <code>0x1000/0xffff=1/16</code>, and the same concentration
+  is used in the matlab code. Likewise, the values of the rate constants in the
+  Verilog code should be treated a fractions. The forward reaction rate <code>k1</code> is
+  set to <code>0xffff </code>or essentially unity fraction, whereas the reverse
+  rate constant is set to <code>0x0010</code>, or fractionally <code>0x0010/0xffff=1/4096</code>.<br />
+<a href="Two_reaction_per_step/MM_matlab.png"><img src="Two_reaction_per_step/MM_matlab_5F4096_small.png" width="368" height="250" alt="MM sim matlab" /></a><a href="Two_reaction_per_step/MM_matlab_overlay_5F4096_substrate.png"><img src="Two_reaction_per_step/MM_matlab_overlay_5F4096_substrate_small.png" width="344" height="250" alt="MM overlay" /></a></p>
+<p>Keeping Michaelis–Menten kinetics, but dropping the matlab initial conditions
+  to <code>E0=0.25*240/2<sup>16</sup>,
+    A0=240/2<sup>16</sup> </code>emphisizes
+  the difference between the ODE and stochastic solutions because there are only
+  about 30 enzyme molecules bound at peak (yellow curve). Fluctuations on the
+  order sqrt(30)=5.5
+  are expected,
+  or about 20% of the peak. Later in the simulation relative fluctuations become
+  bigger. The fractional concentrations in the matlab program correspond to integer
+  counts of 60 and 240 molecules in the stochastic Verilog hardware.<br />
+<a href="Two_reaction_per_step/MM_matlab_240.png"><img src="Two_reaction_per_step/MM_matlab_240_small.png" width="368" height="250" alt="MM 240" /></a><a href="Two_reaction_per_step/MM_matlab_240_overlay.png"><img src="Two_reaction_per_step/MM_matlab_240_overlay_small.png" width="399" height="250" alt="MM 240 overlay" /></a></p>
+<p><strong>Improved Random number generators and serial data output</strong></p>
+<p>The 32-bit serial shift register used above has significant serial correlation because the 16-bit output is taken after only 8 shifts, leaving 8 bits the same. It is possible to parallelize the shift register to get more effective shits per clock cycle. Hoogland, et.al. describe a high quality random number generator designed for Ising model simulation. Using this 127-bit shift register with parallel 16-bit output triples the size of the reaction module. The following figure is taken from the paper and shows the parallelized feedback paths of the shift register. The inputs to to each 8-bit subsection are the xor of the two bits noted at the top of the column. I have not yet carried out statistical tests to see if the higher quality random numbers matter for the simulation. The 16-bit output is taken as bits 97 to 112 from fifteen 8-bit (and one 7-bit) shift registers. The improved Michaelis–Menten top-level module is <a href="Two_reaction_per_step/VGA_320x240_chem_sim_2_MM_rand127bit.v">here</a>.<br />
+<img src="Two_reaction_per_step/rand_num_gen.png" width="427" height="238" alt="rand number shift reg" align='left'/> The 127-bit generator is overkill for a 16-bit random number (but works well for 32-bit computed in 2 cycles), so I scaled down the generator to a 63-bit version with feedback from bits 62 and 63 (one's based). The parallelized bit layout is the same as in the figure to the left, but truncated at 4 bits per register.The parallelized version has sixteen 4-bit shift registers loaded in parallel.  For instance, on the same clock cycle,<br />
+<code>bit62 xor bit63</code> is shifted into shift register 16,  <br />
+<code>bit61 xor bit62</code> is shifted into shift register 15, <br />
+<code>bit48 xor bit49</code> is shifted into shift register 2,  and <br />
+  <code>bit47 xor bit48</code> is shifted into shift register 1. <br />
+The Michaelis–Menten top-level module with 63-bit shift register is <a href="Two_reaction_per_step/VGA_320x240_chem_sim_2_MM_rand63bit.v">here</a>. The Oregonator is <a href="Two_reaction_per_step/VGA_320x240_chem_sim_2_oregonator_rand63bit.v">here</a>. The Oregonator example uses about 9% of the Altera DE2 board FPGA logic element resources.</p>
+<p><br clear='left'  />
+  The design was extended to include serial output of a waveform so that a better comparision could be made with the Matlab differential equation versions. The serial module takes a 16 bit number and converts it to 4-digit hexadecimal terminated with  <code>&lt;crlf&gt;</code> characters so that a call to  Matlab <code>fscan(s, '%x')</code> can read it, where <code>s</code> is a serial object. The Michaelis–Menten top-level module with 127-bit shift register and serial is <a href="Two_reaction_per_step/Serial_record/VGA_320x240_chem_2_MM_rand117_readout.v">here</a> (<a href="Two_reaction_per_step/Serial_record/MM_5F4096_serial.qar">project archive</a>). The Matlab code to read the hex is <a href="Two_reaction_per_step/Serial_record/serial_hex_1.m">here</a> as is the ODE <a href="Two_reaction_per_step/Serial_record/MM.m">analysis program</a> (and <a href="Two_reaction_per_step/Serial_record/mmfunc.m">function</a>).
+  Results for substrate concentrations of <code>240/2^16</code> and<code> 4096/2^16</code> are shown below. Notice the fluctuations are greater for the smaller number of molecules on the left. The linked Verilog and Matlab programs are coded for the higher concentration. Black lines are the Matlab differential equation code, color lines are the FPGA output.<br />
+  <a href="Two_reaction_per_step/Serial_record/MM_240_0.png"><img src="Two_reaction_per_step/Serial_record/MM_240_0_small.png" width="487" height="400" alt="MM_240" /></a>
+  <a href="Two_reaction_per_step/Serial_record/MM_5F4096_1.png"><img src="Two_reaction_per_step/Serial_record/MM_5F4096_1_small.png" width="555" height="400" alt="MM-4096" /></a>
+</p>
+<p>Repeating the stochastic simulations with different random number seeds yields the following results for the two cases shown above.<br />
+<a href="Two_reaction_per_step/Serial_record/MM_240_5_traces.png"><img src="Two_reaction_per_step/Serial_record/MM_240_5_traces_small.png" width="488" height="400" alt="MM repeat traces" /></a><a href="Two_reaction_per_step/Serial_record/MM_5F4096_4_traces.png"><img src="Two_reaction_per_step/Serial_record/MM_5F4096_4_traces_small.png" width="469" height="400" alt="MM 4096 substrate repeat" /></a></p>
+<p>The Oregonator with 63-bit random number generator was also <a href="Two_reaction_per_step/Serial_record/VGA_320x240_chem_sim_2_oregonator_rand63bit_readout.v">modified</a> for serial output (<a href="Two_reaction_per_step/Serial_record/Oregonator_serial_63bit.qar">archive</a>). The output was compared to a <a href="Two_reaction_per_step/Serial_record/Oregonator4.m">Matlab simulation</a> of the same stochastic algorithm. The matlab version took 870 seconds to run on my desk machine (3.2 GHz Core Duo with 8 Gbyte memory) and 8 seconds to run on the FPGA. Note that there are some significant differences between the two simulation outputs. These diffferences seem to depend on the random number seed used and so are probably related to random fluctuations in chemical concentration.  Black lines are the Matlab stochastic code, color lines are the FPGA stochastic output. The image to the right is the FPGA <a href="Two_reaction_per_step/Serial_record/VGA_320x240_chem_sim_2_oregonator_rand127bit_readout.v">stochastic simulation</a> compared to an <a href="Two_reaction_per_step/Serial_record/Oreg_ODE.m">ODE code</a> (and <a href="Two_reaction_per_step/Serial_record/oregfunc.m">function</a>) in Matlab. In this case the amplitudes seem correct, but the period of the oscillation seems to drift. <br />
+<a href="Two_reaction_per_step/Serial_record/Org_15000_1.png"><img src="Two_reaction_per_step/Serial_record/Org_15000_1_small.png" width="574" height="400" alt="oregonator comparison" /></a><a href="Two_reaction_per_step/Serial_record/Org_15000_1_ode.png"><img src="Two_reaction_per_step/Serial_record/Org_15000_1_ode_small.png" width="438" height="400" alt="org_ode" /></a>\</p>
+<p>To get more feeling for the variability of the stochastic solution, I compared seven runs with different random number seeds against the ODE Matlab model. The following images show the first three peaks and a zoom on the right-most peak. The black dots are the Matlab ODE solution. The colored lines are the seven FPGA stochastic solutions. There are a few communications glitches on the FPGA solutions.<br />
+<a href="Two_reaction_per_step/Serial_record/Org_15000_seven_ode.png"><img src="Two_reaction_per_step/Serial_record/Org_15000_seven_ode_small.png" width="490" height="400" alt="seven runs" /></a><a href="Two_reaction_per_step/Serial_record/Org_15000_seven_ode_zoomed.png"><img src="Two_reaction_per_step/Serial_record/Org_15000_seven_ode_zoomed_small.png" width="490" height="400" alt="zoomed seven runs" /></a></p>
+<hr size="5" noshade="noshade" />
+<p><span class="red"><strong>Older, simpler, version</strong></span><strong> --<br />
+Reaction examples (maintaining just one event: inc/dec by +1/0/-1).</strong></p>
+<hr />
+<p>A <a href="oregonator/VGA_320x240_chem_sim.v">video version</a> of the Oregonator (described below) was written. The zipped version is <a href="oregonator/Chemical_simulator.zip">here</a> with all the supporting VGA hardware. In the VGA image below, Y1 is in red, Y2 is green and Y3 is yellow. The image compares  well with the Gillespie (1977) results. The video horizontal scale is scaled to 2<sup>24</sup> reaction cycles per video time step for the first image and 2<sup>23</sup> for the second image. The video vertical scale is such that each vertical dot is 16 molecules. This project used a <a href="oregonator/VGA_m4k/VGA_Audio_PLL.v">modified VGA PLL</a> to run the reaction clock at 108 MHz. The timing analyser says that the design should not work, but it seems quite stable. About 1060 logic elements were used on the FPGA (3%) and about half of the on-chip m4k memory blocks. The m4k blocks hold the video buffer, with 4-bits/pixel.</p>
+<p><a href="oregonator/Oregonator_2cycles.jpg"><img src="oregonator/Oregonator_2cycles.jpg" width="394" height="300" alt="Oregonator 3 cycles" /></a><a href="oregonator/Oregonator_1cycle.jpg"><img src="oregonator/Oregonator_1cycle.jpg" width="401" height="300" alt="oregonator 1 cycle" /></a></p>
+<p>&nbsp;</p>
+<hr />
+<p>The <a href="../../../../../www.scholarpedia.org/article/Oregonator">Oregonator</a> example used by Gillespie (1977) as a test case was used to test a more general chemical model.<br />
+  <a href="oregonator/Chem_sim_Oregonator_4.v">top-level module</a> and <a href="oregonator/simPLL.v">PLL</a>. The PLL was used to speed up the execution to 130 MHz. About 756 logic elements were used on the FPGA (2%).<br />
+This system is a chemical oscillator. The reaction scheme is:<br />
+<code>X1 + Y2 &rarr; Y1 (rate c1)<br />
+Y1 + Y2 &rarr; Z1 (rate c2)<br />
+X2 + Y1 &rarr; 2Y1 + Y3 (rate c3)<br />
+Y1 + Y1 &rarr; Z2 (rate c4)<br />
+X3 + Y1 &rarr; Y2  (rate c5)</code><br />
+The X's represent large pools of chemical and do not change concentration during simulation. The Z's are reaction products which are not reused. The system was validated by scaling the rate constants to the values given in Gillespie (1977) and then checking the ratios of the peak values of Y1, Y2, and Y3 as they all cycle. The reaction clock was set to 130 MHz using the PLL, which gave a few tenths of a nanosecond of timing slack for this model. SW[0] controls Y1 vs Y3 display. SW[0] down displays Y1.  This model with 3 chemicals and 5 reactions uses about 1.5% of the FPGA on the DE2 board. </p>
+<hr />
+<p>The following examples run fairly slowly so that you can watch the reactions run on the LED displays on the DE2 board. They were used to debug the modules and explore limitations of the modeling.</p>
+<p>A &harr; S with rates K<sub>f</sub> and K<sub>b</sub> (forward and backward rates).<br />
+<a href="Chem_sim_AtoS.v">top-level module</a><br />
+The basic check on this design is to make sure that the steady-state concentrations are K<sub>f</sub> [A] = 
+K<sub>b</sub>[S] where concentrations are in fractions of 2<sup>16</sup>. </p>
+<p>A + A &harr; S<br />
+  <a href="Chem_sim_AplusAtoS.v">top-level module</a><br />
+  The basic check on this design is to make sure that the steady-state concentrations are K<sub>f</sub> [A]<sup>2</sup> = 
+K<sub>b</sub>[S]  where concentrations are in fractions of 2<sup>16</sup>. So if K<sub>f</sub>=K<sub>b</sub><code><br />
+S=(A/2<sup>16</sup>)<sup>2</sup> * 2<sup>16</sup></code> or <code>S=
+A*A/65536</code>. <br />
+</p>
+<p>Michaelis–Menten kinetics: A + E &harr; AE &rarr; S + E<br />
+<a href="Chem_sim_MM.v">top-level module<br />
+</a>A video version (below) shows the substrate (A) in red, the AE intermediate in green and the product (S) in yellow. See the Oregonator example above for PLL and video support code. The example started with about 240 A and 200 E molecules. The stocastic nature of the reactions is clearly visible. There are 2<sup>18</sup> time steps between each point on the screen. Vertical scale is 240 molecules full screen.<br />
+  <img src="MM.jpg" width="398" height="292" alt="Michaelis-Menton kinetics" /><br />
+</p>
+<hr size="5" noshade="noshade" />
+<p><strong>References</strong>.</p>
+<p>John F. Keane,  Christopher Bradley, Carl Ebeling, <em>A Compiled Accelerator
+for Biological Cell Signaling Simulations Cell Systems</em>, International Symposium
+on Field Programmable Gate Arrays archive Proceedings of the 2004 ACM/SIGDA 12th
+international symposium on Field programmable gate arrays table of contents Monterey,
+California, USA SESSION:  Pages: 233 - 241, 2004 </p>
+<p>Salwinski L, Eisenberg D., <em>In silico simulation of biological network dynamics</em>. Nat Biotechnol. 2004 Aug;22(8):1017-9. Epub 2004 Jul 4. </p>
+<p>Larry Lok, <em>The need for speed in stochastic simulation</em> , Nature Biotechnology  22, 964 - 965 (2004) doi:10.1038/nbt0804-964 </p>
+<p>Lok L, Brent R., <em>Automatic generation
+of cellular reaction networks with Moleculizer 1.0.</em> , Nat Biotechnol. 2005
+Jan;23(1):131-6. </p>
+<p>D. Gillespie, <em>Exact Stochastic Simulation of Coupled Chemical Reactions</em>,
+  Journal of Physical Chemistry, No. 81, pp. 2340-2361, 1977.</p>
+<p>Daniel T. Gillespie, <em>Stochastic Simulation of Chemical Kinetics</em>, Annu. Rev. Phys. Chem. 2007.58:35-55</p>
+<p>Hong Li,Yang Cao,Linda R. Petzold, and Daniel T. Gillespie, <em>Algorithms and Software for Stochastic Simulation of Biochemical Reacting Systems,</em> Biotechnol Prog. 2008; 24(1): 56–61. Published online 2007 September 26. doi: 10.1021/bp070255h. </p>
+<p>Jürgen Pahle, <em>Biochemical simulations: stochastic,
+  approximate stochastic and hybrid approaches</em>, Brief Bioinform. 2009 January;
+  10(1): 53–64. Published online 2009 January 16. doi: 10.1093/bib/bbn050. </p>
+<p>R. J. Field, R. M. Noyes, <em>Oscillations in Chemical Systems IV. Limit cycle
+behavior in a model of a real chemical reaction</em>, J. Chem. Phys. 60(1974)1877-84.</p>
+<p>A. Hoogland, J. Spaa, B. Selman and A. Compagner, <em>A special-purpose processor for the Monte Carlo simulation of ising spin systems</em>, Journal of Computational Physics, Volume 51, Issue 2, August 1983, Pages 250-260</p>
+</body>
+</html>

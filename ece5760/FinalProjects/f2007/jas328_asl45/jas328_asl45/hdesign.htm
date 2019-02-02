@@ -1,0 +1,120 @@
+<title>ECE 576 - SimpleGPU</title>
+
+<head><style>
+a:link {color: #6666CC; text-decoration: overline; }     /* unvisited link */
+a:visited {color: #666666; text-decoration: overline; }  /* visited link */
+a:hover {color: #222222; text-decoration: underline; }   /* mouse over link */
+a:active {color: #5555FF; text-decoration: overline; }   /* selected link */ 
+</style></head>
+
+<body bgcolor="#DDDDDD">
+
+<table style="border-width: 15pt; border-collapse: separate; " ><tr><td colspan=2>
+
+<table width=759><tr><td align=center style="border: 1px solid black; padding: 1em; background-color: white;">
+<b><big><big><big>SimpleGPU</big>
+<br>ECE 576 - Fall 2007</big>
+<br>John Sicilia (jas328) & Austin Lu (asl45)
+</td></tr></table>
+
+</td></tr>
+<tr><td width=150 valign=top>
+<table width=150><tr><td valign=top style="border: 1px solid black; padding: 1em; background-color: white; height=700;"> 
+<p><a href="index.htm">Home</a>
+<p><a href="intro.htm">Introduction</a>
+<p><a href="sdesign.htm">Software Design</a>
+<p><a href="hdesign.htm">Hardware Design</a>
+<p><a href="results.htm">Results</a>
+<p><a href="issues.htm">Issues</a>
+<p><a href="conclusion.htm">Conclusion</a>
+<p><a href="pics.htm">More Pictures</a>
+<br><br><br><br><br><br><br>
+</td></tr></table>
+
+</td><td valign=top>
+<table width=600 ><tr><td style="border: 1px solid black; padding: 1em; background-color: white;">
+<b><big><big>Hardware Design</big></big></b><br><br>
+
+<p style="color:#66AA66"><big><a href="code/gpu.v" style="{color: #66AA66; text-decoration: underline; }">Here</a> is our top level Verilog code.</big></p>
+
+<p><b><big>The Pipeline</big></b>
+
+<p>In order to reach an acceptable hardware refresh rate, we decided to pipeline the drawing process within hardware. Because the computation involved so many successive multiplies and divides, it was the only way to achieve a decent rate. The pipeline moves at a clock divider set by the low 8 switches on the DE2 board. Through trial and error, we have learned that a clock divider of 4, and a clock of 12.5MHz seems to give us the best results. By pipelining the process, we were able to use a speed that could theoretically give us a refresh rate of 40Hz.
+
+<p>Because of the high throughput needed, we found that only computing during the syncs was reducing our rate too much. As a result, we came up with an alternative scheme. In our current hardware, we now always are performing calculations so we truly achieve 12.5MHz. However, because we are only allowed to write to SRAM during the syncs, we buffered the process. We keep a buffer of 128 pixels in memory and our pipeline constantly iterates through them, writing and overwriting. Even though this buffer is small, it is sufficient, because now hardware is writing fast enough to make multiple passes if need be. 
+
+<p>During the horizontal and vertical syncs, we write from sramBuffer to the SRAM. We increment an index sramBufferWriteIndex appropriately and set a lock, just in case the sync ends before we can write to SRAM. If the lock happens to fail, the last pixel is rewritten.
+
+<p>In order to do graphics, we decided to go for a medium between our old, simple 320x240 display method and the more complex 640x480 display. There are 640x480=307,200 addresses needed to map 16 bits of SRAM data to each pixel. Unforunately, there are only 2<sup>18</sup>=262,144 addresses. Instead of halving our color range, we decided to get the maximum display screen we could with the addresses we had. 590x440 kept our resolution the same, and used almost every possible address (with 2,544 remaining). As a result, our screen size was centered with a black border of 25 on each side. 
+
+<p>The pipeline works by iterating through each pixel in the 590x440 grid. At each pixel, it sequentially performs operations on each polygon, storing into a buffer the polygon that both encapsulates the pixel and has the lowest Z. It is divided into five stages.
+
+<p><big>Stage 1 – Polygon Fetch</big>
+<p>The Polygon Fetch stage updates the values of the pixel and polygon, and sends a clear flag if appropriate.
+
+<p>The x and y coordinates (xpixs1, ypixs1) are chosen. If we have completed the last polygon, a clear next pixel command is sent down the pipeline (clearflagS1), and the x and y pixels are incremented appropriately. The clear next pixel command resets the Z buffer and polygon placeholder associated with each pixel. 
+
+<p>During normal operation, without clear flags, the polygon number is stored (polygonS1), and then flopped to stage two (polygonS2), where calculations begin. If we are not at the last polygon, the x and y coordinates do not change.
+
+<p>xpixs1, ypixs1, polygonS1 and clearflagS1 are sent to stage 2.
+
+<p><big>Stage 2 – Point Inside Polygon</big>
+<p>The Point Inside Polygon stage checks to see if the current polygon contains the pixel.
+
+<p>The x and y coordinates are flopped into stage two. Additionally, we determine if the pixel is within the current polygon. If the pixel (x,y) is within the polygon, we store its depth into Z_S3 as if it were part of the polygon. The three coordinates, (x, y, z), are flopped into stage 3.
+
+<p>To determine whether a pixel is within a polygon, we turn the following C code into verilog:
+<tt>
+<br><br>int pnpoly(int npol, float *xp, float *yp, float x, float y){<br>
+<blockquote>
+      int i, j, c = 0;<br>
+      for (i = 0, j = npol-1; i < npol; j = i++) {<blockquote>
+        if ((((yp[i]&lt;=y) && (y&lt;yp[j])) ||<br>
+             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;((yp[j]&lt;=y) && (y&lt;yp[i]))) &&<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(x &lt; (xp[j] - xp[i]) * (y - yp[i]) / <br>
+			&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(yp[j] - yp[i]) + xp[i]))<br>
+          { c = !c; }</blockquote>
+      } <br>
+      return c;</blockquote>
+    }
+	
+	</tt>
+<p>This algorithm works by essentially seeing how many edges a ray to the point must pass through. If it is an even number, then it is outside the polygon. If it is an odd number, it's inside the polygon. For convex polygons, the number will always be 0, 1, or 2. If c is one, the point lies within the polygon. 
+
+<p>Stage 2 is also where the plane equation is defined. The plane equation is:
+
+<blockquote>
+A(x-x<sub>0</sub>) + B(y-y<sub>0</sub>) + C(z-z<sub>0</sub>) = 0 
+
+<p><i>where</i>
+
+<p>A = y<sub>1</sub> (z<sub>2</sub> - z<sub>3</sub>) + y<sub>2</sub> (z<sub>3</sub> - z<sub>1</sub>) + y<sub>3</sub> (z<sub>1</sub> - z<sub>2</sub>)<br> 
+B = z<sub>1</sub> (x<sub>2</sub> - x<sub>3</sub>) + z<sub>2</sub> (x<sub>3</sub> - x<sub>1</sub>) + z<sub>3</sub> (x<sub>1</sub> - x<sub>2</sub>) <br>
+C = x<sub>1</sub> (y<sub>2</sub> - y<sub>3</sub>) + x<sub>2</sub> (y<sub>3</sub> - y<sub>1</sub>) + x<sub>3</sub> (y<sub>1</sub> - y<sub>2</sub>)<br>
+</blockquote>
+The xpixs2, ypixs2, polygonS2, A, B, C, and whether the pixel is within the polygon (the XOR of the bus oddNodes) are flopped to stage 3.
+
+<p><big>Stage 3 – Z-Buffer Calculations</big>
+<p>If the x and y coordinate is within the polygon, we need to calculate its corresponding depth. To calculate the depth of the pixel, we take the first three points of the polygon, which form a plane, and use the plane equation to find the depth.
+
+<p><center><img src="images/zform.gif"></center>
+
+<p>The xpixs3, ypixs3, Z, and inPolygonS3 are flopped to stage 4.
+
+<p><big>Stage 4 – Z-Buffer Comparison</big>
+
+<p>If the coordinate is within a polygon, and its calculated Z is closer than the stored Z (zBuffer), the pixel becomes associated with the new polygon (zPolygon). Otherwise, nothing is stored in the buffer.
+
+<p>The xpixs4, ypixs4, zBuffer, polygonS4, and zPolygon are all passed to stage 5.
+
+<p><big>Stage 5 - Writeback</big>
+
+<p>In stage 5, if the polygon passed through is the last polygon, the zBuffer and zPolygon are written to the sramBuffer and the sramBufferReadIndex is incremented. If the sramBufferReadIndex is too large, it is reset.
+
+<p>Additionally, stage 5 is where color is chosen. Although we originally used solid colors, we also created an implementation that uses greyscale to determine depth. The darker the grey, the farther the pixel is away from us.
+
+
+</td></tr></table>
+
+
+</td></tr></table>

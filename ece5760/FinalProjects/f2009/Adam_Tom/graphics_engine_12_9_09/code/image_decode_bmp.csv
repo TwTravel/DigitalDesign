@@ -1,0 +1,125 @@
+#include !"gpu_inst_controller.csv"
+
+/////////////////////////////////////////////
+// Bitmap File Format
+// Note: Only Windows V3 format supported.
+//
+// -------------------------
+//     File Header (14B)
+// -------------------------
+// | Magic Number (2B)     |
+// | File Size (4B)        |
+// | Reserved (4B)         |
+// | Data Offset (4B)      |
+// -------------------------
+//     Info Header (40B)
+// -------------------------
+// | Header Size (4B)      |
+// | Pixel Width (4B)      |
+// | Pixel Height (4B)     |
+// | # Color Planes (2B)   |
+// | Color Depth (2B)      |
+// | Compression (4B)      |
+// | Image Size (4B)       |
+// | Horizontal Res (4B)   |
+// | Vertical Res (4B)     |
+// | Palette Depth (4B)    |
+// | Important Colors (4B) |
+// -------------------------
+//       Color Palette
+// -------------------------
+// | Blue (1B)             |
+// | Green (1B)            |
+// | Red (1B)              |
+// | Unused (1B)           |
+// |   [x Palette Depth]   |
+// -------------------------
+//        Image Data
+// -------------------------
+// | [ Depends on size,  ] |
+// | [ compression, and  ] |
+// | [ color palette.    ] |
+// -------------------------
+//
+// Note: Size values are in byte, unless
+//       otherwise noted.
+//
+// Source: http://en.wikipedia.org/wiki/BMP_file_format
+/////////////////////////////////////////////
+
+//Magic numbers (bitmap format identifiers).
+BMP_MAGIC_BM,16'h4D42,Magic number - Windows 3.1, 95, NT, etc.
+BMP_MAGIC_BA,16'h4142,Magic number - OS/2 bitmap array.
+BMP_MAGIC_CI,16'h4943,Magic number - OS/2 color icon.
+BMP_MAGIC_CP,16'h5043,Magic number - OS/2 color pointer.
+BMP_MAGIC_IC,16'h4349,Magic number - OS/2 icon.
+BMP_MAGIC_PT,16'h5450,Magic number - OS/2 pointer.
+
+//Information header sizes.
+BMP_IH_SIZE_V1,16'd12,OS/2 V1.
+BMP_IH_SIZE_V2,16'd64,OS/2 V2.
+BMP_IH_SIZE_V3,16'd40,Windows V3.
+BMP_IH_SIZE_V4,16'd108,Windows V4.
+BMP_IH_SIZE_V5,16'd124,Windows V5.
+
+//Compression types.
+BMP_COMP_RGB,16'd0,Compression type: none.
+BMP_COMP_RLE8,16'd1,Compression type: RLE, 8 bits/pixel.
+BMP_COMP_RLE4,16'd2,Compression type: RLE, 4 bits/pixel.
+BMP_COMP_BIT_FIELDS,16'd3,Compression type: bit fields.
+
+//Color depth modes.
+BMP_DEPTH_RANGE,2:0,Color depth bit range.
+BMP_DEPTH_1,3'd0,1-bit color depth (monochrome).
+BMP_DEPTH_4,3'd1,4-bit color depth (16 colors).
+BMP_DEPTH_8,3'd2,8-bit color depth (256 colors).
+BMP_DEPTH_24,3'd3,24-bit color depth (millions of colors).
+BMP_DEPTH_32,3'd4,32-bit color depth (millions of colors, alpha).
+
+//Read types.
+BMP_READ_TYPE_RANGE,1:0,Read type bit range.
+BMP_READ_TYPE_BG,2'd0,Blue/green colors.
+BMP_READ_TYPE_RB,2'd1,Red/blue colors.
+BMP_READ_TYPE_GR,2'd2,Green/red colors.
+BMP_READ_TYPE_DISCARD,2'd3,Discard padding.
+
+//Color bit ranges (24-bit mode only).
+BMP_24_R_RANGE,7:(8-INST_COLOR_R_WIDTH),Red color bit selection range (24-bit color).
+BMP_24_G_RANGE,7:(8-INST_COLOR_G_WIDTH),Green color bit selection range (24-bit color).
+BMP_24_B_RANGE,7:(8-INST_COLOR_B_WIDTH),Blue color bit selection range (24-bit color).
+
+//Bitmap decode state machine.
+BMP_STATE_MAX_VAL,30,Maximum state value.
+BMP_STATE_WIDTH,max_width(BMP_STATE_MAX_VAL),Bitmap decode state variable width.
+BMP_STATE_RANGE,range(BMP_STATE_WIDTH),Bitmap decode state variable range.
+BMP_STATE_IDLE,BMP_STATE_WIDTH'd0,Idle state.
+BMP_STATE_MAGIC_NUMBER,BMP_STATE_WIDTH'd1,Read magic number.
+BMP_STATE_FILE_SIZE_0,BMP_STATE_WIDTH'd2,Read file size in bytes.
+BMP_STATE_FILE_SIZE_1,BMP_STATE_WIDTH'd3,Read file size in bytes (second cycle).
+BMP_STATE_RES_0,BMP_STATE_WIDTH'd4,File header, reserved.
+BMP_STATE_RES_1,BMP_STATE_WIDTH'd5,File header, reserved (second cycle).
+BMP_STATE_DATA_OFFSET_0,BMP_STATE_WIDTH'd6,Data offset.
+BMP_STATE_DATA_OFFSET_1,BMP_STATE_WIDTH'd7,Data offset (second cycle).
+BMP_STATE_HEADER_SIZE_0,BMP_STATE_WIDTH'd8,Header size.
+BMP_STATE_HEADER_SIZE_1,BMP_STATE_WIDTH'd9,Header size (second cycle).
+BMP_STATE_PIXEL_WIDTH_0,BMP_STATE_WIDTH'd10,Pixel width.
+BMP_STATE_PIXEL_WIDTH_1,BMP_STATE_WIDTH'd11,Pixel width (second cycle).
+BMP_STATE_PIXEL_HEIGHT_0,BMP_STATE_WIDTH'd12,Pixel height.
+BMP_STATE_PIXEL_HEIGHT_1,BMP_STATE_WIDTH'd13,Pixel height (second cycle).
+BMP_STATE_COLOR_PLANES,BMP_STATE_WIDTH'd14,Number of color planes.
+BMP_STATE_COLOR_DEPTH,BMP_STATE_WIDTH'd15,Color depth.
+BMP_STATE_COMPRESSION_0,BMP_STATE_WIDTH'd16,Compression type.
+BMP_STATE_COMPRESSION_1,BMP_STATE_WIDTH'd17,Compression type (second cycle).
+BMP_STATE_IMAGE_SIZE_0,BMP_STATE_WIDTH'd18,Image size.
+BMP_STATE_IMAGE_SIZE_1,BMP_STATE_WIDTH'd19,Image size (second cycle).
+BMP_STATE_HRES_0,BMP_STATE_WIDTH'd20,Horizontal resolution.
+BMP_STATE_HRES_1,BMP_STATE_WIDTH'd21,Horizontal resolution (second cycle).
+BMP_STATE_VRES_0,BMP_STATE_WIDTH'd22,Vertical resolution.
+BMP_STATE_VRES_1,BMP_STATE_WIDTH'd23,Vertical resolution (second cycle).
+BMP_STATE_PALETTE_SIZE_0,BMP_STATE_WIDTH'd24,Palette size.
+BMP_STATE_PALETTE_SIZE_1,BMP_STATE_WIDTH'd25,Palette size (second cycle).
+BMP_STATE_IMPORTANT_COLORS_0,BMP_STATE_WIDTH'd26,Important colors.
+BMP_STATE_IMPORTANT_COLORS_1,BMP_STATE_WIDTH'd27,Important colors (second cycle).
+BMP_STATE_PALETTE,BMP_STATE_WIDTH'd28,Decode color palette.
+BMP_STATE_IMAGE,BMP_STATE_WIDTH'd29,Decode image data.
+BMP_STATE_DISCARD_END,BMP_STATE_WIDTH'd30,Discard any tail data in the file.

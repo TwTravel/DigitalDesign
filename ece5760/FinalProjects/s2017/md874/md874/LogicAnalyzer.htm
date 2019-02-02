@@ -1,0 +1,445 @@
+	<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+	<!-- saved from url=(0149)http://people.ece.cornell.edu/land/courses/ece4760/FinalProjects/f2015/jc2954_hl955/jc2954_hl955/jc2954_hl955/ECE_4760_GPS_Navigator_for_Runners.html -->
+	<html>
+	<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta http-equiv="Content-Language" content="en-us">
+	<title>ECE 5760 Logic Analyzer debugging FPGA</title>
+	<link rel="stylesheet" type="text/css" media="all" href="LogicAnalyzer/cornell_main.css">
+	<link rel="stylesheet" type="text/css" media="all" href="LogicAnalyzer/cornell_1column.css">
+	<link rel="stylesheet" type="text/css" media="all" href="LogicAnalyzer/main.css">
+	<!--link rel="shortcut icon" href="http://people.ece.cornell.edu/land/courses/ece4760/FinalProjects/f2015/jc2954_hl955/webpage/GPS%20Tracker/favicon.ico" type="image/x-icon"-->
+	<meta name="author" content="   Mohammad Dohadwala">
+	<meta name="copyright" content="Copyright (c) Mohammad Dohadwala">
+	<meta name="description" content="HPS Logic Analyzer debugging FPGA">
+	<meta name="keywords" content="Logic Analyzer, self-debugging FPGA,  SignalTap II Logic Analyzer, HPS logic analyzer running on Cyclone5 FPGA">
+	</head>
+	<body>
+	<div id="header"> 
+	  <!-- The following div contains the Cornell University logo and search link -->
+	  <div id="cu-identity">
+		<div id="cu-logo"> <a><img src="LogicAnalyzer/cu_logo.gif" alt="Cornell University" width="340" height="75" border="0"></a> </div>
+	  </div>
+	  <div class="linklist"> <a name="top"></a> </div>
+	  <!-- The search-form div contains a form that allows the user to search 
+				either pages or people within cornell.edu directly from the banner.	-->
+	  <div id="search-form">
+		<form action="http://www.cornell.edu/search/" method="get" enctype="application/x-www-form-urlencoded">
+		  <div id="search-input">
+			<label for="search-form-query">SEARCH:</label>
+			<input type="text" id="search-form-query" name="q" value="" size="20">
+			<input type="submit" id="search-form-submit" name="submit" value="go">
+		  </div>
+		  <div id="search-filters">
+			<input type="radio" id="search-filters1" name="tab" value="" checked="checked">
+			<label for="search-filters1">Pages</label>
+			<input type="radio" id="search-filters2" name="tab" value="people">
+			<label for="search-filters2">People</label>
+			<a href="../../../../../../../../www.cornell.edu/search/default.htm">more options</a> </div>
+		</form>
+	  </div>
+	</div>
+	<div id="mainnav">
+	  <ul>
+		<li><a href="#design">High&nbsp;Level&nbsp;Design</a></li>
+		<li><a href="#hardware">Hardware</a></li>
+		<li><a href="#software">Software</a></li>
+		<li><a href="#statemachine">State&nbsp;Machine</a></li>
+		<li><a href="#results">Results</a></li>
+		<li><a href="#conclusions">Conclusions</a></li>
+		<li><a href="#appendix">Appendix</a></li>
+	  </ul>
+	</div>
+	<!-- end mainnav --> 
+	<!-- end header -->
+	<div id="sectiontitle">
+	  <h1><a href="../../../../../../../../https@people.ece.cornell.edu/land/courses/ece5760/default.htm">ECE 5760</a>: <a href="../../../default.htm">Final Project</a> <br>
+	  </h1>
+	  <h1 style="text-align:center;color:black;">Logic Analyzer</h1>
+	  <h2 style="text-align:center;">HPS-powered Logic Analyzer debugging FPGA</h2>
+	  <h3> Mohammad Dohadwala (<a href="mailto:md874@cornell.edu">md874<!--REMOVE-->@<!--REMOVE-->cornell.edu</a>)</h3>
+	</div>
+	<div id="wrapper">
+	  <div id="content">
+		<div align="middle"> <img src="LogicAnalyzer/Images/Figure1.JPG" alt="Overall Layout" width="350" height="280" align="center"> <img src="LogicAnalyzer/Demo.JPG" alt="Overall Layout" width="350" height="280" align="center"> </div>
+		<br>
+		<div class="video" style="text-align:center">
+		  <iframe width="560" height="315" src="../../../../../../../../https@www.youtube.com/embed/ouLi8tj1zsg" frameborder="0" allowfullscreen></iframe>
+		  <h6>Video:<strong> Final product demonstration </strong></h6>
+		</div>
+		<div style="color: #73736c" class="linklist"> <a name="abstract"></a>
+		  <h2>Abstract &nbsp;&nbsp;&nbsp;<font size="-1"><strong><a href="#top">top</a></strong></font></h2>
+		</div>
+		<div id="maincontent" class="hub">
+		  <div align="justify" id="introblurb">         
+			<p> With increase in size of FPGA, the complexity of design implemented on FPGA is also increasing. In often cases, the design works fine on simulation but behaves differently on hardware. So, there arises a need to debug/monitor buses/signals on FPGA. This task is primarily accomplished by using state-of-the-art logic analyzer IP provided by FPGA vendor e.g. The SignalTap® II Embedded Logic Analyzer (ELA) from Altera and The Integrated Logic Analyzer (ILA) from Xilinx. Both are system-level debugging tool that captures and displays real-time signals in a FPGA design. By using logic analyzer in systems, designers can observe the behavior of hardware (such as peripheral registers, memory buses, and other on-chip components) in response to software execution. However, these logic analyzers present some major challenges. The two most important drawbacks of using such logic analyzers are – (1) the amount of data that can be captured is limited by the amount of memory blocks available on a FPGA device; (2) with increase in the capture depth, the area occupied by the logic analyzer IP also increases. These drawbacks pose a major obstacle in debugging. This project attempts to address this issue. </p>
+		  </div>
+		  <div style="color: #73736c" class="linklist"> <a name="introduction"></a>
+			<h2>Introduction &nbsp;&nbsp;&nbsp;<font size="-1"><strong><a href="#top">top</a></strong></font></h2>
+		  </div>
+		  <div id="introduction" class="hub">
+			<div align="justify" id="intro1"> 
+
+			  <p> The purpose of this project was to build a system which can be used to debug real-time signals in a FPGA design by capturing and visualizing the signals in real-time on VGA Monitor. The system also has a USB mouse interface which is used to zoom in/out of the display and to scroll through the waveform. The system implemented in this project can capture and display 32 bit signals probed in FPGA on 640x480 VGA Monitor in real-time. Figure 2 shows the setup for this lab. The project demo was performed using Terasic DE1-SoC development kit built around the Altera System-on-Chip (SoC) FPGA combining dual-core Cortex A9 (HPS) with programmable fabric. </p>
+			</div>
+			<div align="center"> <img src="LogicAnalyzer/Images/Figure1.JPG" alt="Figure 1 shows the logic analyzer visualized using VGA monitor" width="640" height="480" border="0" align="center"> 
+			<h6>Figure 1<strong> shows the logic analyzer visualized using VGA monitor </strong></h6>   
+			</div>
+			<div align="justify" id="intro2"> 
+
+			  <p> The system is simple to use and can be easily integrated with any complex FPGA design. The logic analyzer design footprint on FPGA is small and consists of a 32 bit 512 deep FIFO clocked at 100MHz. The system described here has a maximum update rate of less than 20ms, so it is possible debug FPGA design in real-time. </p>
+			</div>
+			<div align="justify" id="intro3"> 
+			  <!--      <div id="pullquote">
+				 <p class="quote">"An inexpensive and reliable autonoumous parallel parking prototype for cars"</p>  
+				</div>-->
+
+			  <p> The entire design is split into two parts - C on the HPS and Verilog on the FPGA. The HPS allows user to interact with the waveform using USB mouse. The HPS also uses a serial console to set resolution, capture depth and trigger conditions. The HPS controls the zoom in/out of the simulation, scrolling and various capture modes. FPGA consists of Video Subsystem, On-Chip memory for pixel buffer, Capture FIFO, Xillybus IP core and Verilog connections generated by Qsys. When the HPS program starts, the serial console requests user to enter resolution and depth. It then captures the specified amount of data from FPGA into local memory buffer and display a portion of the waveform on VGA monitor. The C code running on HPS continuously keeps track of mouse cursor position. On left click zoom out (factor of 2) happens; on right click zoom in (factor of 2) happens. Also, depending on cursor position the user can scroll through the entire waveform. By default, the analyzer runs in single capture digital mode, but user can also switch to various other modes – single capture analog mode (signed/unsigned), continuous capture digital mode, continuous capture analog mode (signed/unsigned) and trigger mode (analog/digital). The HPS erases the VGA screen and starts plotting the waveform on 640x480 VGA. There is no flickering, tearing caused by the code running on the HPS or by FPGA system. </p>
+			</div>
+			<div align="center"> <img src="LogicAnalyzer/Images/Figure2.JPG" alt="Figure 2 shows setup for project" width="640" height="480" border="0" align="center"> 
+			<h6>Figure 2<strong> shows setup for project </strong></h6>   
+			</div>			
+			<div class="linklist"> <a name="design"></a>
+			  <h2>High Level Design &nbsp;&nbsp;&nbsp;<font size="-1"><strong><a href="#top">top</a></strong></font></h2>
+			  <div align="justify" id="system1">       
+			  <p> The main advantage of using SoC FPGA is that the user can take advantage of processor and peripherals on HPS and build custom peripheral (coprocessor, accelerator, etc.) on FPGA fabric to create bigger more robust end solutions. The system for this lab is divided into software component (HPS) and hardware component (FPGA fabric). Figure 3 shows the detailed block diagram of the system. </p>
+			</div>
+			<div align="center"> <img src="LogicAnalyzer/Images/Figure3.JPG" alt="Figure 3 shows detailed block diagram of the system" width="592" height="363" border="0" align="center"> 
+			<h6>Figure 3<strong> shows detailed block diagram of the system </strong></h6>
+			</div>
+			<div class="linklist"> <a name="software"></a>
+			  <h2>Software &nbsp;&nbsp;&nbsp;<font size="-1"><strong><a href="#top">top</a></strong></font></h2>
+			  <div align="justify" id="software1">
+			  <p>The hard processor system (HPS), as shown in Figure 3, includes an ARM Cortex-A9 dual-core processor and peripheral controllers such as USB, Ethernet, SD, UART and others. The DE1-SoC board is designed to boot Linux from an inserted microSD card. The current system runs Ubuntu Linux. A key advantage running Linux on HPS is to leverage Linux’s built-in drivers that support a vast array of devices, including many of the devices found on the DE1-SoC board like the USB and Ethernet. Writing driver code for these devices is difficult, and would significantly increase the development time of an application that requires them. Instead, a developer can use Linux and its driver support for these devices, allowing them to use the high-level abstraction layers provided by the drivers to use the devices with minimal effort. </p>
+			  </div>
+			  <div align="justify" id="software2">
+			  <p>More specifically the OS used is Xillinux: a complete, graphical, Ubuntu 12.04 LTS-based Linux distribution. Like any Linux distribution, Xillinux is a collection of software which supports roughly the same capabilities as a personal desktop computer running Linux. The distribution is organized for a classic keyboard, mouse and monitor setting. It also allows command-line control from the USB UART port, but this feature is made available mostly for solving problems. Xillinux is also a kickstart development platform for integration between the device’s FPGA logic fabric and plain user space applications running on the ARM processors. With its included Xillybus IP core and driver, no more than basic programming skills and logic design capabilities are needed to complete the design of an application where FPGA logic and Linux-based software work together.
+			  </p>
+			  </div>
+			  <div align="center"> <img src="LogicAnalyzer/Images/Figure4.JPG" alt="Figure 4 shows the Ubuntu desktop running on Altera DE1-SoC board" width="567" height="425" border="0" align="center"> 
+			  <h6>Figure 4<strong> shows the Ubuntu desktop running on Altera DE1-SoC board </strong></h6>
+			  </div>
+			  <div align="justify" id="software3">
+			  <p>The main reason behind using this Linux distribution is that it comes with Xillybus drivers installed. More information on hardware implementation/interfacing of Xillybus IP will follow in the hardware section. For now, let’s assume that Xillybus IP provides a mechanism to stream data between FPGA and HPS in a seamless manner. </p>
+			  </div>
+			  <div align="justify" id="software4">
+			  <p>The host driver (for xillybus) generates device files which behave like named pipes: They are opened, read from and written to just like any file, but behave much like pipes between processes or TCP/IP streams. To the program running on the host, the difference is that the other side of the stream is not another process (over the network or on the same computer), but a FIFO in the FPGA. Just like a TCP/IP stream, the Xillybus stream is designed to work well with high-rate data transfers as well single bytes arriving or sent occasionally. </p>
+			  </div>
+			  <div align="justify" id="software5">
+			  <p>One driver binary supports any Xillybus IP core configuration: The streams and their attributes are auto-detected by the driver as it's loaded into the host's operating system, and device files are created accordingly. On Linux, they appear as /dev/xillybus_something. </p>
+			  </div>
+			  <div align="justify" id="software6">
+			  <p>Also at driver load, DMA buffers are allocated in the host's memory space, and the FPGA is informed about their addresses. The number of DMA buffers and their size are separate parameter for each stream. These parameters are hardcoded in the FPGA IP core for a given configuration, and are retrieved by the host during the discovery process. </p>
+			  </div>
+			  <div align="justify" id="software7">
+			  <p>A handshake protocol between the FPGA and host makes an illusion of a continuous data stream. Behind the scenes, DMA buffers are filled, handed over to the other side and acknowledged. Techniques like those used for TCP/IP streaming are used to ensure an efficient utilization of the DMA buffers, while maintaining responsiveness for small pieces of data. </p>
+			  </div>
+			  <div align="justify" id="software8">
+			  <p>The standard API for read() calls states that the function call’s third argument is the (maximal) number of bytes to be read from the file descriptor. Xillybus is designed to return as fast as possible, if the read() call can be completely fulfilled, regardless of if a DMA buffer has been filled. </p>
+			  </div>
+			  <div align="justify" id="software9">
+			  <p>By convention, read() may also return with less bytes than required in the third argument. Its return value contains how many bytes were actually read. So in theory, read() could return immediately, even if there wasn’t enough data to fully complete the request. This behavior would however cause an unnecessary CPU load when a continuous stream of data is transferred: In theory, read() could return on every byte that arrived, even though it’s obviously more efficient to wait a bit for more data. </p>
+			  </div>
+			  <div align="justify" id="software10">
+			  <p>The middle-way solution is that if read() can’t complete all bytes requested, it sleeps for up to 10 ms or until the number of requested bytes has arrived. This makes read()’s call behave in an intuitive manner (a bit like a TCP/IP stream) without degrading CPU performance in data acquisition applications. Therefore, when a 10 ms latency isn’t acceptable, call read() requiring as many bytes as immediately needed, not more. </p>
+			  </div>
+			  <div align="justify" id="software11">
+			  <p>Alternatively, if the stream is flagged non-blocking (opened with the O_NONBLOCK flag), read() always returns immediately with as much data was available, or with an EAGAIN status. This is another way to avoid the possible 10 ms delay, but requires proper non-blocking I/O programming skills. </p>
+			  </div>
+			  <div align="justify" id="software12">
+			  <p>The software code in C that run on HPS provides a way for user to interact via USB mouse. The system is controlled using Switches and USB Mouse. Based on different switch positions, mouse click and mouse position one can zoom in/out, scroll and operate in various modes of logic analyzer. The C code running on HPS performs 5 main tasks: </p>
+			  </div>
+			  <ul type="square">
+			  <li>Read mouse input</li>
+			  </ul>
+			  <div align="justify" id="software13">
+			  <p>The mouse information is in /dev/input/mice . Reading and parsing the three bytes of information is straightforward. “read()” function below returns 3 bytes corresponding to mouse clicks and change of position in X and Y direction. By default, the mouse-read is blocking. Additional code segment is necessary to make the device non-blocking. </p>
+			  </div>
+			  <p><font face="courier new" color="#000000">
+			  // Read Mouse <br />    
+			  bytes = read(fd, data, sizeof(data));<br />
+			  //needed for nonblocking read()<br />
+			  int flags = fcntl(fd, F_GETFL, 0);<br />
+			  fcntl(fd, F_SETFL, flags | O_NONBLOCK);<br />
+			  </font></p>
+			  <ul type="square">
+			  <li>Provide virtual/logical address map of slave peripherals on FPGA to HPS</li>
+			  <li>Write to Pixel Buffer and Character Buffer residing on FPGA fabric</li>
+			  <li>Logic Analyzer State Machine</li>
+			  <li>Read from xillybus pipe and send to Logic Analyzer state machine</li>
+			  <li>Display signal values on VGA (Write to Character buffer on FPGA)</li>
+			  </ul>
+			 <div class="linklist"> <a name="hardware"></a>
+			  <h2>Hardware &nbsp;&nbsp;&nbsp;<font size="-1"><strong><a href="#top">top</a></strong></font></h2>         
+			  <div align="justify" id="hardware1">          
+			  <p>The FPGA fabric design used for this project is adapted from a Better Chopped Down System adapted from DE1-SoC Computer System provided by Bruce Land . Many modifications were required to be made on the FPGA fabric design for this project. The FPGA fabric design, as shown in Figure 3, consists of Xillybus IP core, design under test (DUT), Video Subsystem, On-chip memory and PIO slaves. A VGA monitor is hooked up into the FPGA using a standard VGA cable connected to the VGA port on the DE1-SoC development board. </p>
+			  </div>
+			  <p>The main hardware blocks in this project are: - </p>
+			  <ul type="square">
+			  1.	Xillybus IP core<br />
+			  2.	Design under test (DUT)<br />
+			  3.	PIO input/output slave<br />
+			  </ul>             
+			  <h3>Xillybus IP core </h3>
+			  <div align="justify" id="xillybus1">           
+			  <p>Xillybus is an FPGA IP core for easy DMA over PCIe with Windows and Linux. Xillybus was designed with the understanding that data flow handling is where most FPGA engineers have a hard-time, and is also a common reason for bugs. Fluctuations in application data supply and demand tend to generate rarely reached states in the logic, often revealing hidden bugs which are extremely difficult to tackle. </p>
+			  </div>
+			  <div align="justify" id="xillybus2">          
+			  <p>Accordingly, Xillybus doesn't just supply a wrapper for the underlying transport (e.g. a AXI DMA engine), but offers several end-to-end stream pipes for application data transport. Below is the simplified block diagram, showing the application of one data stream in each direction (many more can be connected). </p>   
+			  </div>     
+			  <div align="center"> <img src="LogicAnalyzer/Images/Figure5.JPG" alt="Figure 5 shows typical connections for xillybus IP core" width="603" height="274" border="0" align="center">
+			  <h6>Figure 5<strong> shows typical connections for xillybus IP core </strong></h6> 
+			  </div>
+			  <div align="justify" id="xillybus3"> 
+			  <p>As shown in the figure above, the Xillybus IP core (the block in the middle) communicates data with the user logic through a standard FIFO ("Application FIFO" above). This gives the FPGA designer the freedom to decide the FIFO's depth and its interface with the application logic. This setting relieves the FPGA designer completely from managing the data traffic with the host. Rather, the Xillybus core checks the FIFOs "empty" and "full" signals in a round-robin manner, and initiates data transfers until the FIFOs becomes empty or full again. On the other edge of the Xillybus IP core is connected to the Altera Qsys bus.  </p>             </div>   
+			  <div align="justify" id="xillybus4"> 
+			  <p>Below is the simplified block diagram of the Logic Analyzer FPGA subsystem. The Xillybus IP core (the block in the middle) communicates the data to be probed through an asynchronous FIFO. The Xillybus IP is connected to the HPS via AXI bus. The connection is handled via Qsys.   </p>             
+			  </div> 
+			  <div align="center"> <img src="LogicAnalyzer/Images/Figure6.JPG" alt="Figure 6 shows xillybus connection for this project" width="650" height="190" border="0" align="center"> 
+			  <h6>Figure 6<strong> shows xillybus connection for this project </strong></h6>
+			  </div>     
+			  <div align="justify" id="xillybus5"> 
+			  <p>Xillybus is used to capture 32-bit wide data from DUT. The method used is that if the FPGA’s FIFO gets full, no data enters it afterwards, and the user application on the host receives an EOF (end of file) after the last safe piece of data has arrived. So, if the captured data is written to a file, its length may vary, but its validity is assured.  </p>  
+			  </div> 
+			  <div align="justify" id="xillybus6"> 
+			  <p>The achieved bandwidth and latency are often a concern when designing a mixed host / FPGA system, and their relationship with the underlying infrastructure is not always obvious. The AMBA bus has separate signals for address and data, so in theory, there is no overhead. The bus clock is driven by application logic, so its frequency is chosen within an allowed range. Taking a relatively high 100 MHz clock and a 64 bits wide data bus, we have 6.4 Gb/s = 0.8 GB/s in each direction. </p>  
+			  </div>
+			  <div align="justify" id="xillybus7"> 
+			  <p>Xillybus actual data rate limit is derived primarily from the clock that governs the IP core (bus_clk) and the width of its data processing path, which is 32 bits (for this project). For example, when the clock is 100 MHz, the theoretical maximum is 4 x 100 = 400 MB/s. </p>  
+			  </div>
+			  <div align="justify" id="xillybus8"> 
+			  <p>Tests on hardware reveal that the typical latency is in the range of 10-50μs from a read() command until the arrival at the FIFO on the FPGA, and vice versa. This is of course hardware-dependent. There are two main sources of excessive latencies, both of which can be eliminated: </p>  
+			  </div>
+			  <ul type="square">
+			  <li>Improper programming practices, causing unwanted delays</li>
+			  <li>CPU starvation by the operating system</li>
+			  </ul>          
+			  <h3>Design under test (DUT)</h3>
+			  <div align="justify" id="dut1"> 
+			  <p>The design under test (DUT) consists of four different modules – 32-bit counter, 4-bit square wave generator, 4-bit sine wave generator and 4-bit triangular waveform generator. Figure 7 shows Verilog snippet of the same. Note that at a time only one of the four signal is connected to the Asynchronous FIFO for probing. The select signal is mapped to slider switch on board. </p>  
+			  </div>
+			  <div align="center"> <img src="LogicAnalyzer/Images/Figure7.JPG" alt="Figure 7 shows the code snippet for DUT" width="617" height="327" border="0" align="center"> 
+			  <h6>Figure 7<strong> shows the code snippet for DUT </strong></h6>
+			  </div> 
+			  <h3>PIO input slave</h3>
+			  <div align="justify" id="pio1"> 
+			  <p>The slider switch is connected to Parallel IO bus slave. The SW9-0 slider switches on the DE1-SoC board are connected to an input parallel port. As illustrated in Figure 8, this port comprises a 10-bit read-only Data register, which is mapped to address 0xFF200040.</p>  
+			  </div>
+			  <div align="center"> <img src="LogicAnalyzer/Images/Figure8.JPG" alt="Figure 8 shows data register for slider switch parallel port" width="429" height="108" border="0" align="center">
+			  <h6>Figure 8<strong> shows data register for slider switch parallel port </strong></h6> 
+			  </div>    
+			  <div align="justify" id="pio2"> 
+			  <p>As discussed in HPS section, the signals are captured on FPGA, sent to HPS and displayed on VGA by HPS (via write to Character buffer). The fabric design also includes a 256-Kbyte memory that is as 64K x 32 bits, and spans addresses in the range 0xC8000000 to 0xC803FFFF. The memory is used as a pixel buffer for the video-out ports. It also includes an 8-Kbyte memory implemented inside the FPGA that is used as a character buffer for the video-out port. The character buffer memory is organized as 8K x 8 bits, and spans the address range 0xC9000000 to 0xC9001FFF.  </p>  
+			  </div>  
+			  <div align="justify" id="pio3"> 
+			  <p>The Qsys tool is used in conjunction with the Quartus Prime CAD software. It allows the user to easily create a system based on the ARM HPS/Nios II processor, by simply selecting the desired functional units and specifying their parameters. Figure 9 shows Qsys layout for the system implemented for this lab. Qsys provides an abstraction to connect external bus master and bus slaves implemented in FPGA with the HPS. Qsys also provides the address mapping that can be used by the HPS to access peripherals on the fabric. </p>  
+			  </div>
+			  <div align="justify" id="pio4"> 
+			  <p>There are two HPS-FPGA bridge and one FPGA-HPS bridge for communication between HPS and FPGA. All slave peripherals like output and input PIO slave on the FPGA are connected to Lightweight HPS-FPGA bridge (0xFF20_0000).  </p>  
+			  </div>
+			  <div align="justify" id="pio5"> 
+			  <p>As shown in figure 9 there are two Xillybus IP core connected to HPS – one provides full 32-bit interface while the lite provides only 8-bit user interface. Currently output of DUT is connected for probe purpose. The 32-bit counter is connected to the ASYNC FIFO that in turn is connected to 32-bit interface of Xillybus IP core.  </p>  
+			  </div>
+			  <div align="center"> <img src="LogicAnalyzer/Images/Figure9.JPG" alt="Figure 9 shows Qsys layout of the system" width="650" height="319" border="0" align="center"> 
+			  <h6>Figure 9<strong> shows Qsys layout of the system </strong></h6>
+			  </div>                                        
+			  <h3>HPS-FPGA Communication </h3>
+			  <div align="justify" id="hps_fpga1"> 
+			  <p>Once the board is powered-on and MSEL[4:0] is set to 5’b01010, HPS boots Linux from the microSD card with default FPGA bitstream (DE1-SoC Computer). After some modifications in “/etc/init.d/programfpga”, the default FPGA bitstream can be changed to configure the system designed for this lab. Now FPGA is programmed with all peripheral components and HPS is running Linux. For HPS to be able to communicate with the bus slave interface, the actual physical address (generated by Qsys) of the bus slave peripheral needs to be memory mapped to assign a virtual or logical address. HPS can then use the virtual address to read/write to slave peripherals residing on the FPGA.</p>
+			  </div>
+			  <p><font face="courier new" color="#000000">      
+			  // get virtual addr that maps to physical<br />
+			  h2p_lw_virtual_base = mmap( NULL, HW_REGS_SPAN, <br />
+			  ( PROT_READ | PROT_WRITE ), MAP_SHARED, fd, HW_REGS_BASE );	<br />
+			  if( h2p_lw_virtual_base == MAP_FAILED ) {<br />
+				printf( "ERROR: mmap1() failed...\n" );<br />
+				close( fd );<br />
+				return(1);<br />
+			  }<br />
+			  </font></p> 
+			 <div align="justify" id="hps_fpga2"> 
+			  <p>The above code maps the physical base-address of the light-weight HPS-FPGA bridge to virtual address. Any of the peripherals connected to this bus can be access by adding corresponding offset to the virtual base address. It is important to use volatile type pointers that point to slave peripherals so that the values don’t get cached! For e.g. pio_ptr is a volatile pointer that points to the virtual base address of PIO input slave. Reading value from that address essentially results in reading slider switch position on board.</p>
+			 </div>
+			 <p><font face="courier new" color="#000000">
+			 // Get the address that maps to the FPGA PIO input slave<br /> 
+			 pio_ptr =(unsigned int *)(h2p_lw_virtual_base);<br />
+			 </font></p> 
+
+			 <div class="linklist"> <a name="statemachine"></a>
+			 <h2>State&nbsp;Machine &nbsp;&nbsp;&nbsp;<font size="-1"><strong><a href="#top">top</a></strong></font></h2>
+			 <div align="justify" id="statemachine1"> 
+			  <p>The logic analyzer state machine is the central unit that takes input from user, configures LA in a particular mode and displays waveform on VGA monitor. The state machine takes input from on board switches that are connected as PIO input slave to HPS as well as USB mouse. The VGA monitor is 640x480 resolution. Out of which only 512x452 is used to display actual waveform. Rest of the space is used to display signal values, resolution and depth.</p>
+			 </div>
+			 <div align="justify" id="statemachine2"> 
+			  <p>Below are some of the salient features of the logic analyzer implemented in this project:</p>
+			 </div>
+			  <ul type="square">
+			  1.	Change Resolution<br />
+			  2.	Change Depth<br />
+			  3.	Continuous Mode<br />
+			  4.	Single Capture Mode<br />
+			  5.    Digital Mode <br />
+			  6.    Analog Mode<br />
+			  <ul type="square">
+			  	a.	Unsigned<br />
+			  	b.	Signed<br />
+			  </ul> 
+			  7.	Zoom in/out from origin <br />
+			  8.	Scroll through the screen <br />
+			  9.	Trigger Mode <br />
+			  <ul type="square">
+				a.	Set Trigger position <br />
+			  </ul> 
+			  </ul>  			 
+ 			  <div align="justify" id="statemachine3"> 
+			  <p>Figure 10 and 11 shows the state machine running on HPS. The state transition depends on the switch position and the mouse events that controls the flow for the logic analyzer. When application starts, it requests user to enter resolution and capture depth values. If SW0 is 0 then the analyzer enters single capture mode; captures depth amount of data from FPGA to HPS and displays it on VGA monitor. The display format depends on position of SW1. If SW1 is 0 then the display is in digital mode else it is in analog mode. Analog mode also supports signed and unsigned representation of signal values. If however SW0 is 1, then continuous capture mode is set wherein the application continuously streams data from FPGA to HPS, updates local buffer and displays the waveform on VGA monitor. All capture mode supports digital, signed analog and unsigned analog mode.</p>
+			 </div>
+			  <div align="justify" id="statemachine4"> 
+			  <p>In order to facilitate debugging, mouse interface is supported. This allows user to scroll through the entire waveform as well as zoom in/out of the waveform. The application also displays a marker based on the cursor position, shows individual signal values on the left side and also shows bus value on top right corner of the screen.</p>
+			 </div>
+			  <div align="justify" id="statemachine5"> 
+			  <p>The analyzer also supports basic trigger mode that asks user to enter trigger value. The application then continuously captures data from FPGA unless the trigger value is captured. When trigger is hit, the waveform pauses allowing user to further analyze the behavior at trigger point.</p>
+			 </div>
+			  <div align="center"> <img src="LogicAnalyzer/Images/Figure10.JPG" alt="Figure 10 shows state machine controlling various modes" width="650" height="372" border="0" align="center"> 
+			  <h6>Figure 10<strong> shows state machine controlling various modes </strong></h6>
+			  </div>  
+		  	  <div align="center"> <img src="LogicAnalyzer/Images/Figure11.JPG" alt="Figure 11 shows dependency of mouse events on state machine" width="650" height="379" border="0" align="center"> 
+			  <h6>Figure 11<strong> shows dependency of mouse events on state machine </strong></h6>
+			  </div>  	
+			  		
+				  <div class="linklist"> <a name="results"></a>
+					<h2>Results &nbsp;&nbsp;&nbsp;<font size="-1"><strong><a href="#top">top</a></strong></font></h2>
+					<div align="justify" id="result1"> 
+			  		<p>For results, view the linked video on this page. In terms of the ability of the system to debug the design, the system can debug 32 bit signal clocked at 100MHz on FPGA with capture depth as high as few hundred million samples. This is very high as compared to 128K samples provided by Signal Tap II ELA and Xilinx ILA. Also, the footprint of the design is negligible since all the data is being buffered on the HPS side. The system has various modes of operation like the standard LA as well as an analog mode for visualizing/debugging DSP signals. The DUT used in this project consisted of square, sinusoidal, triangular and sawtooth signals. The system is able to capture and analyze different signals using digital, signed analog and unsigned analog mode. There was no flickering or visual artifact due to HPS or FPGA design. The project is fairly usable by anyone, and just requires someone to plug in this hardware to any FPGA design and then run the HPS application to debug the design. The data throughput and latency is very good – the AXI bus is clocked at 100MHz and 32 bit wide providing a maximum transfer rate of 400MB/s.</p>
+					</div>
+					<div align="justify" id="result2"> 
+			  		<p>Here are few images that show various DUT signal in analog and digital mode.</p>
+			 		</div>
+			  		<div align="center"> <img src="LogicAnalyzer/Images/Figure12.JPG" alt="Figure 12 " width="416" height="312" border="0" align="center">
+			  		<h6>Figure 12<strong> shows full zoom out of 32-bit counter in digital mode with a resolution of 2 pixel/sample </strong></h6> 
+			  		</div>		
+			  		<div align="center"> <img src="LogicAnalyzer/Images/Figure13.JPG" alt="Figure 13 " width="416" height="312" border="0" align="center">
+			  		<h6>Figure 13<strong> shows full zoom out of 32-bit counter in unsigned analog mode with a resolution of 2 pixel/sample </strong></h6> 
+			  		</div>		
+			  		<div align="center"> <img src="LogicAnalyzer/Images/Figure14.JPG" alt="Figure 14 " width="416" height="312" border="0" align="center">
+			  		<h6>Figure 14<strong> shows full zoom out of 32-bit counter in signed analog mode with a resolution of 2 pixel/sample </strong></h6> 
+			  		</div>		
+			  		<div align="center"> <img src="LogicAnalyzer/Images/Figure15.JPG" alt="Figure 15 " width="416" height="312" border="0" align="center">
+			  		<h6>Figure 15<strong> shows full zoom out of 4-bit triangular waveform in unsigned analog mode with a resolution of 2 pixel/sample </strong></h6> 
+			  		</div>		
+			  		<div align="center"> <img src="LogicAnalyzer/Images/Figure16.JPG" alt="Figure 16 " width="416" height="312" border="0" align="center">
+			  		<h6>Figure 16<strong> shows full zoom out of 4-bit square waveform in unsigned analog mode with a resolution of 2 pixel/sample </strong></h6> 
+			  		</div>		
+			  		<div align="center"> <img src="LogicAnalyzer/Images/Figure17.JPG" alt="Figure 17 " width="416" height="312" border="0" align="center">
+			  		<h6>Figure 17<strong> shows full zoom out of 4-bit sinusoidal waveform in signed analog mode with a resolution of 2 pixel/sample </strong></h6> 
+			  		</div>				  				  			  			  				  			 		
+					<h3>Issues Faced and Future Work</h3>
+					<div align="justify" id="result3"> 
+			  		<p>I hit many roadblocks throughout the project. I spent considerable amount of time trying to port Xillybus on Debian OS (used for this course). There were various problems that I encountered. One of the major problem was that since Xillybus is a soft IP on FPGA, the kernel doesn’t know if it is present or not or which address it is mapped to. All this information goes into device tree file (.dtb). The procedure to generate .dtb from source is complicated and not documented very well. I also tried manually installing driver for xillybus but didn’t work.</p>
+			 		</div>
+					<div align="justify" id="result4"> 
+			  		<p>Another issue was with Ubuntu OS used for this project. Xillybus has no issues with this OS. However, I was not able to figure out how to fix ethernet issue. DNS mapping failed. Able to ping to the local router but couldn’t ping outside this network.</p>
+			 		</div>
+					<div align="justify" id="result5"> 
+			  		<p>One of the possible extension of this project would be to add more advanced trigger options such as GTE, LTE, AND, OR, etc. as well as bit rising, bit falling, bit toggling. Another good feature would be to add more probe signals and have a way to add/delete signals on the monitor display.</p>
+			 		</div>
+					<div align="justify" id="result6"> 
+			  		<p>A more sophisticated and perhaps more useful extension of this project would be to convert the data captured on HPS into .vcd format, send it across ethernet interface and write it on remote server/storage. That way very long and detailed trace of FPGA design can be captured and stored in .vcd format. Since .vcd format is standard, the stored waveform dump can then be opened at a later point of time and analyzed using standard waveform viewer.</p>
+			 		</div>
+					
+					<div class="linklist"> <a name="conclusions"></a>
+					  <h2>Conclusions &nbsp;&nbsp;&nbsp;<font size="-1"><strong><a href="#top">top</a></strong></font></h2>
+					  <div align="justify" id="conclusion1"> 
+			  		  <p>The design and implementation of <strong>Logic Analyzer: FPGA debugging itself</strong> was a success. Overall, I am happy with the outcome of the project. In addition to learning even more about Verilog, I also learned a lot of about hardware more specifically the new hardware-software co-design paradigm. Although there is still room for improvement in this project, I think this project can be directly used for debugging purpose. I also think that the Xillybus infrastructure I used in this project would be helpful for students in ECE5760 for fast and robust HPS-FPGA communication. While it was a challenging project, I am glad that I decided to do it.</p>
+			  		  </div>  
+					  <h3> Intellectual Property Considerations </h3>
+					  <p> The project is based on <a href="../../../../../../../../https@people.ece.cornell.edu/land/courses/ece5760/DE1_SOC/HPS_peripherials/univ_pgm_computer.index.html">Better chopped down version of DE1 SoC Computer System</a> by Prof. Bruce Land. The project also used Xillybus IP core from <a href="../../../../../../../../xillybus.com/default.htm">xillybus</a> under the no-fee Educational license. </p>
+					  <h3>Legal Considerations</h3>
+					  <p>As far as I am aware, there are no legal implications of this project. </p>
+					  
+					  <div class="linklist"> <a name="appendix"></a>
+						<h2>Appendix &nbsp;&nbsp;&nbsp;<font size="-1"><strong><a href="#top">top</a></strong></font></h2>
+						<h3>A. Program Listing</h3>
+						<p>The source file for the project can be <a href="LogicAnalyzer/final_project_5760_C.zip">downloaded here </a>. This file is not meant to be distributed and must be referenced when using all or portions of it. </p>
+						<h3>B. Quartus Design Project</h3>
+						<p>The source file for the project can be <a href="LogicAnalyzer/final_project_5760_hw.zip">downloaded here </a>. This file is not meant to be distributed and must be referenced when using all or portions of it. </p>	
+						<h3>C. Project Inclusion</h3>		
+						<p>I approve this report for inclusion on the course website.
+						I approve the video for inclusion on the course youtube channel.	 </p>
+						<div class="linklist"> <a name="references"></a>
+						  <h2>References &nbsp;&nbsp;&nbsp;<font size="-1"><strong><a href="#top">top</a></strong></font></h2>
+						  <p style="margin: 0 0 0.5em">This section provides links to external reference documents, code, and websites used throughout the project.</p>
+						  <div class="group1">
+							<h3>References</h3>
+							<ul>
+							  <li><a href="../../../../../../../../https@www.ece.cornell.edu/default.htm">Cornell Electrical an Computer Engineering</a></li>
+							  <li><a href="../../../../../../default.htm">Bruce Land</a></li>
+							  <li><a href="../../../../default.htm">ECE 5760:Advanced Microcontroller Design and system-on-chip </a></li>
+							  <li><a href="../../../../../../../../www.terasic.com.tw/cgi-bin/page/archive.pl@Language=English&No=836">DE1-SoC board</a></li>
+							  <li><a href="../../../../../../../../https@people.ece.cornell.edu/land/courses/ece5760/DE1_SOC/HPS_peripherials/univ_pgm_computer.index.html">DE1-SoC Better Chopped Down Computer System by Bruce Land </a></li>
+							  <li><a href="../../../../../../../../stackoverflow.com/questions/11451618/how-do-you-read-the-mouse-button-state-from-dev-input-mice">Interfacing with USB mouse </a></li>
+							</ul>
+						  </div>
+						  <div class="group2">
+							<h3>Vendors</h3>
+							<ul>
+							  <li><a href="../../../../../../../../www.terasic.com.tw/en/default.htm">Terasic</a></li>
+							  <li><a href="../../../../../../../../xillybus.com/default.htm">Xillybus</a></li>
+							</ul>
+							<h3>Background Info</h3>
+							<ul>
+							  <li><a href="../../../../../../../../www.ieee.org/about/corporate/governance/p7-8.html">IEEE Code of Ethics</a></li>
+							</ul>
+						  </div>
+						</div>
+					  </div>
+					  <div class="linklist"> <a name="ack"></a>
+						<h2>Acknowledgements &nbsp;&nbsp;&nbsp;<font size="-1"><strong><a href="#top">top</a></strong></font></h2>
+						<div align="justify" id="ack">  
+						<p>I would like to thank Professor Bruce Land for all the recommendations, support and guidance that he provided to me throughout my work on this project. I would also like to thank him for building an amazingly rewarding class from which I learned tremendously. Also, we would like to thank Tahmid and Manish for their continous support and guidance throughout the semester. </p>
+						</div>
+					  </div>
+					</div>
+					<!-- end maincontent --> 
+				  </div>
+				  <!-- end content --> 
+				  <script type="text/javascript" async="" src="LogicAnalyzer/ga.js"></script><script type="text/javascript" async="" src="LogicAnalyzer/ga(1).js"></script><!--ipt type="text/javascript">
+
+		  var _gaq = _gaq || [];
+		  _gaq.push(['_setAccount', 'UA-22818013-1']);
+		  _gaq.push(['_trackPageview']);
+
+		  (function() {
+			var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+			ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+			var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		  })();
+
+		</scri--> 
+				  <!-- content out -->
+				  <hr>
+				  <!-- footer in -->
+				  <div id="footerwrap">
+					<div id="footer">
+					  <div id="copyright">
+						<div class="copyright">©2017 Mohammad Dohadwala</div>
+						<div class="copyright">Layout ©2017 Cornell University</div>
+					  </div>
+					</div>
+					<!-- end footer --> 
+				  </div>
+				  <!-- end footerwrap --> 
+				  <!-- footer out --> 
+				</div>
+				<!-- end wrapper -->
+
+				<embed type="application/x-shockwave-flash" width="0" height="0"> 
+			  </div>
+			</div>
+		  </div>
+		</div>
+	   </div>
+	  </div>
+	 </div> 
+	</body>
+	</html>

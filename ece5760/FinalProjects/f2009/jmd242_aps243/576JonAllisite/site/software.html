@@ -1,0 +1,266 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<!--
+    How to use the toggle script:
+
+    1. Put a link that users will click to show/hide the material.
+        <a href="#" onclick="toggledisplay('box_id'); return false;">Click here to read the spoiler</a>
+
+    2. Somewhere else, give something the id box_id. 
+        <div id="box_id" class="toggle-off">Snape kills Dumbledore!</div>
+
+    3. Profit.
+
+
+    Note, no two things can have the same box_id, or bad things will happen.
+
+-->
+
+
+
+
+<!--
+	This document provides the basis of a semantically structured web page 
+	authored in XHTML 1.0 Transitional using established Cornell University
+	naming conventions.
+-->
+
+<head>
+	<title>ECE5760 Robot Navigation Using Sound Localization</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+	<meta http-equiv="Content-Language" content="en-us" />
+
+	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+	
+<!--
+	All layout and formatting should be controlled through Cascading Stylesheets (CSS).
+	The following link tag should appear in the head of every page in the website. see
+	styles/screen.css.
+-->
+	<link rel="stylesheet" type="text/css" media="screen" href="styles/screen.css" />
+	
+	<style type="text/css">
+	<!--
+	div.main-photo-large {
+		width: 100%;
+	}
+	div.main-photo-large ul.photo-caption-float li 
+	{
+		padding-left: 0;
+		margin-right: 20px;
+		background: none; /* list-style-type replacement */
+		float: left;
+	}
+	div.clear {
+		clear: both;
+	}
+	.photo-caption-float .caption {
+		background: none;
+		padding: 0;
+	}
+	img.img-float-text {
+		float: right;
+		margin: 0 0 2em 2em;
+	}
+	.toggle-on {
+		display: ;
+	}
+	.toggle-off {
+		display: none;
+	}
+	-->
+	</style>
+
+	<script type="text/javascript">
+	<!--
+	function toggledisplay(id) {
+		if (!document.getElementById) return;
+		var elem = document.getElementById(id);
+		if (elem.className != "toggle-on")
+			elem.className = "toggle-on";
+		else
+			elem.className = "toggle-off";
+		return;
+	}
+	//-->
+	</script>
+
+
+</head>
+
+<body class="onecolumn">
+
+<!--
+	The following link provides a way for people using text-based browsers and
+	screen readers to skip over repetitive navigation elements so that they can 
+	get directly to the content. It is hidden from general users through CSS.
+-->
+<div id="skipnav">
+	<a href="#content">Skip to main content</a>
+</div>
+
+<hr />
+
+<!-- The following div contains the Cornell University logo with unit signature -->
+<div id="cu-identity">
+	<div id="cu-logo">
+		<a id="insignia-link" href="../../../../../../../../../www.cornell.edu/default.htm"><img src="images/unit_signature_unstyled.gif" alt="Cornell University" width="416" height="88" border="0" /></a>
+
+		<div id="unit-signature-links">
+			<a id="cornell-link" href="../../../../../../../../../www.cornell.edu/default.htm">Cornell University</a>
+			<a id="unit-link1" href="../../../../../../../../../instruct1.cit.cornell.edu/Courses/ece576/default.htm">ECE5760</a>
+		</div>
+	</div>
+	
+	<!-- 
+		The search-form div contains a form that allows the user to search 
+		either pages or people within cornell.edu directly from the banner.
+	-->
+	<div id="search-form">
+		<form action="http://www.cornell.edu/search/" method="get" enctype="application/x-www-form-urlencoded">
+
+			<div id="search-input">
+				<label for="search-form-query">SEARCH CORNELL:</label>
+				<input type="text" id="search-form-query" name="q" value="" size="20" />
+				<input type="submit" id="search-form-submit" name="submit" value="go" />
+			</div>
+
+			<div id="search-filters">
+					<input type="radio" id="search-filters1" name="tab" value="" checked="checked" />
+					<label for="search-filters1">Pages</label>
+
+				
+					<input type="radio" id="search-filters2" name="tab" value="people" />
+					<label for="search-filters2">People</label>
+					
+					<a href="../../../../../../../../../www.cornell.edu/search/default.htm">more options</a>
+			</div>	
+		</form>
+	</div>
+	
+	<!-- 
+		The search-form div contains a form that allows the user to search 
+		either the unit website or all of cornell.edu directly from the banner.
+	<div id="search-form">
+		<form action="#" method="post" enctype="application/x-www-form-urlencoded">
+			<div id="search-input">
+				<label for="search-form-query">SEARCH:</label>
+				<input type="text" id="search-form-query" name="query" value="" size="20" />
+				<input type="submit" id="search-form-submit" name="submit" value="go" />
+			</div>
+
+			<div id="search-filters">
+					<input type="radio" id="search-filters1" name="target" value="unit" checked="checked" />
+					<label for="search-filters1">Unit name</label>
+				
+					<input type="radio" id="search-filters2" name="target" value="cornell" />
+					<label for="search-filters2">Cornell</label>
+					
+					<a href="#">more options</a>
+			</div>	
+		</form>
+	</div>
+	-->
+	
+	<!--
+		The search-navigation div contains links that allow the user to search
+		either the unit website or all of cornell.edu.
+		These links will be displayed in the unit signature banner and will
+		be aligned with the right edge of the page.
+	<div id="search-navigation">
+		<ul>
+			<li><a href="#">Search Unit Name</a></li>
+			<li><a href="http://www.cornell.edu/search/">Search Cornell</a></li>
+		</ul>
+	</div>
+	-->
+
+</div>
+
+<!-- The header div contains the main identity and main navigation for the site -->
+<div id="header">	
+	<!--
+		The navigation div contains the site's main navigation. These
+		links will be displayed in a horizontal, gray navigation bar 
+		under the unit signature banner.
+	-->		
+<hr />
+	
+	<!-- 
+		The identity div contains the name of a main site section
+	-->
+	<div style="text-align: center;">
+		<div class="identity">
+				<h1 class="title" style="font-family:helvetica;">ECE5760 Robot Navigation Using Sound Localization</h1>
+				
+				<h2>Developed by and Allison Smyth and Jonathan Diamond</h2>
+
+					
+		</div>
+	</div>		
+<hr />
+
+
+
+<div id="navigation-wrapper">
+	<div id="navigation" >
+		<ul>
+			<a href="index.html">Introduction</a>
+			<a href="highlevel.html">High Level Design</a>
+			<a href="hardware.html">Hardware</a>
+			<a href="software.html">Software</a>	
+			<a href="results.html">Results</a>
+			<a href="appendices.html">Appendices</a>		
+		</ul>
+
+	</div>
+	<div class="clear"></div>
+</div>
+
+<div id="wrap">
+
+<!-- The content div contains the main content of the page -->
+<div id="content">
+	<div id="main">
+  <h1>NIOS II Software</h1>
+  <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The purpose of the Nios II software was  to perform complete robot control.&nbsp; In  other words, it was responsible for reviewing data generated by the hardware as  well as data sent by the robot in order to determine how to move the robot in  order to get to a specified target.&nbsp; On  startup of the program, a target location for the robot to move can be set by  the user.&nbsp; Once the location is set, a  command can be issued that will start the Nios II controlling the robot.&nbsp; The program will end and wait for another  target location after the Nios II has determined that the robot has reached the  target.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; This  section of the project was basically accomplished through trial and error.&nbsp; The key function to this part of the code is  getMedians.&nbsp; After several test runs with  the robot, we realized that the distance values being reported by the hardware  varied, sometimes greatly.&nbsp; This can  possibly be explained by varying room conditions and changes in the speed of  sound.&nbsp; It also could be caused by  variation in the Nios II processing, which seems to happen more frequently than  we would like.&nbsp; To rectify this problem,  the getMedians function is designed to collect a certain number of distance  samples.&nbsp; It orders these samples from  low to high.&nbsp; It then takes the middle  samples and performs an average on them.&nbsp;  The median average values are then returned to the main processing loop  as the actual distance values.&nbsp; In our  current setup, the getMedians function is designed to take 20 samples and take  the average of the 4 middle values.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Another  important function in the Nios II software was the faceNios function.&nbsp; In order to get a good sound reading, it is  necessary for the robot to be facing the FPGA board.&nbsp; Otherwise sound reflections interfere, and  the sound reading is unpredictable (which makes it impossible to get an  accurate distance value and find the robot location). &nbsp;The faceNios function causes the robot to turn  in place by a small amount sending pings back to the FPGA.&nbsp; If the distance value corresponding to a ping  gets larger, it is known that the robot is turning the wrong direction.&nbsp; Its direction is switched, and it continues  searching for the FPGA.&nbsp; After the robot  turns a second time, it is known that it is close to facing the FPGA.&nbsp; It therefore performs the distance  comparisons to find the FPGA one more time.&nbsp;&nbsp;  Once it determines that the distance values are once again getting  larger it stops turning.&nbsp; At this point  it turns back by one turn and returns from the function.&nbsp; The calling function can then assume that the  robot is facing the FPGA board.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The  calTurn function performs similarly to the faceNios function.&nbsp; The purpose of this function is to determine  the amount of time for the robot to turn 360 degrees.&nbsp; All turn amounts are then based off this  value.&nbsp; The robot is told to drive in a  circle.&nbsp; After about &frac34; of the circle, the  robot begins pinging in order to find the FPGA.&nbsp;  Once it is again facing the FPGA, it returns the amount of time that it  calculated to perform the circle.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The  main function of the Nios II software was designed to determine the robot&rsquo;s  location and move the robot toward the specified target.&nbsp; On entering the main loop of the function,  the user is asked to choose a target location for the robot to move towards.  This is done by entering commands into the console.&nbsp; The target location in respect to the FPGA is  shown on the VGA monitor.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; After  a target is selected, the code begins by having the robot face the Nios.&nbsp; On the first time through (or after a certain  number of robot moves), the calTurn function is also called.&nbsp; This gives the robot a time basis for making  turns.&nbsp; Once the robot is facing the  Nios, a distance reading is taken.&nbsp; An  angle and Cartesian coordinates are then calculated by the hardware based on  the conditioned distance values from the Nios II software.&nbsp; The robot&rsquo;s location is drawn on the screen  based on the Cartesian coordinates.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Using  the Cartesian coordinates, the distance to the target value is calculated.&nbsp; If the robot is found to be close to the  target in both the x and y directions, a done signal is set.&nbsp; Once this occurs, the robot stops moving and the  user is allowed to set a new target location.&nbsp;  If the robot is not near the target location, it uses its current angle  in respect to the Nios II in order to decide how to move toward the  target.&nbsp; It is setup to turn the least  amount as possible and to always turn in such a way that it is easy for the  robot to once again find the Nios.&nbsp; The  code is also designed such that the farther away the robot is from the target  the longer it will move.&nbsp;&nbsp; Upon moving  the robot, a variable is set such to tell the system that it has not yet reached  the target.&nbsp; This process continues until  the robot reaches the target.<br />
+The most  difficult function to write was the getAlcohol function.&nbsp; This function gets the alcohol level being  seen from the robot.&nbsp; Although this  function was simple to understand, we ran into complications using the receiver  of the Nios II UART.&nbsp; The Nios II UART  receiver is very unpredictable in that it doesn&rsquo;t always register receiving  values.&nbsp; In order to rectify this  problem, we used a handshaking mechanism between the robot and the Nios II  software.&nbsp; When the Nios II finally  receives an alcohol reading from the robot, it sends a &lsquo;G&rsquo; to tell the robot  that the value was received.&nbsp; The robot  continues to send the alcohol value until the &lsquo;G&rsquo; is received.&nbsp; While this should not be necessary, we found  that it solved the problem that was occurring and allowed us to continue  working on other matters with the system. <br />
+ </p>
+  <p>For  further detail regarding the Nios II software please refer to Appendix H.&nbsp; </p>
+  <h1>Atmega32 Software</h1>
+  <p>The code on the AVR is responsible for 4 tasks:</p>
+  
+  
+  
+	<ul>
+	  <li>Sensor Collection</li>
+	  <li>Motor Control</li>
+	  <li>Producing Pings</li>
+	  <li>Communicating with NIOS II</li>
+	  </ul>
+	<p>Producing the Pings, Motor Control, and Sensor Collection is  all handled by the microcontroller peripherals. The only time they are changed  is when a command to do so is received from the NIOS. The firmware spends most  of its time blocking, waiting to receive a packet from the NIOS. Once it gets  one, it runs through a switch statement to perform the necessary actions.<br />
+	  <br />
+	  Due to problems with the NIOS, when reporting the alcohol  level the AVR needs to keep sending the data until it receives a confirmation  packet from the NIOS. </p>
+	</div>
+</div>
+</div>
+
+<hr />
+
+<div id="footer">
+<!-- The footer-content div contains the Cornell University copyright -->
+<div id="footer-content">
+	&copy;2009 <a href="../../../../../../../../../www.cornell.edu/default.htm">Cornell University</a>
+</div>
+</div>
+
+</body>
+</html>

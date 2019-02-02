@@ -1,0 +1,237 @@
+<html xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv="Content-Language" content="en-au">
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<link rel="File-List" href="high_level_design_files/filelist.xml">
+
+<title>High Level Design</title>
+<style>
+<!--
+span.titles
+	{}
+-->
+</style>
+<script language="JavaScript">
+<!--
+function FP_swapImg() {//v1.0
+ var doc=document,args=arguments,elm,n; doc.$imgSwaps=new Array(); for(n=2; n<args.length;
+ n+=2) { elm=FP_getObjectByID(args[n]); if(elm) { doc.$imgSwaps[doc.$imgSwaps.length]=elm;
+ elm.$src=elm.src; elm.src=args[n+1]; } }
+}
+
+function FP_preloadImgs() {//v1.0
+ var d=document,a=arguments; if(!d.FP_imgs) d.FP_imgs=new Array();
+ for(var i=0; i<a.length; i++) { d.FP_imgs[i]=new Image; d.FP_imgs[i].src=a[i]; }
+}
+
+function FP_getObjectByID(id,o) {//v1.0
+ var c,el,els,f,m,n; if(!o)o=document; if(o.getElementById) el=o.getElementById(id);
+ else if(o.layers) c=o.layers; else if(o.all) el=o.all[id]; if(el) return el;
+ if(o.id==id || o.name==id) return o; if(o.childNodes) c=o.childNodes; if(c)
+ for(n=0; n<c.length; n++) { el=FP_getObjectByID(id,c[n]); if(el) return el; }
+ f=o.forms; if(f) for(n=0; n<f.length; n++) { els=f[n].elements;
+ for(m=0; m<els.length; m++){ el=FP_getObjectByID(id,els[n]); if(el) return el; } }
+ return null;
+}
+// -->
+</script>
+<!--[if !mso]>
+<style>
+v\:*         { behavior: url(#default#VML) }
+o\:*         { behavior: url(#default#VML) }
+.shape       { behavior: url(#default#VML) }
+</style>
+<![endif]--><!--[if gte mso 9]>
+<xml><o:shapedefaults v:ext="edit" spidmax="1027"/>
+</xml><![endif]-->
+</head>
+
+<body onload="FP_preloadImgs(/*url*/'button12.jpg',/*url*/'button11.jpg',/*url*/'button14.jpg',/*url*/'button13.jpg',/*url*/'button17.jpg',/*url*/'button16.jpg',/*url*/'button1B.jpg',/*url*/'button1A.jpg',/*url*/'button21.jpg',/*url*/'button20.jpg',/*url*/'button1E.jpg',/*url*/'button1D.jpg')" background="yello002.gif">
+
+<div style="position: absolute; width: 1060px; height: 489px; z-index: 2; left: 103px; top: 188px" id="layer2">
+	<h3><font face="Tahoma" color="#FF3300">High Level Design</font></h3>
+	<hr color="#FF3300">
+	<p class="MsoNormal"><font face="Tahoma">Before discussing the design we 
+	would like to discuss steps that we took before getting to the high level 
+	design. </font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>Backgound</b></font></p>
+	<p class="MsoNormal"><font face="Tahoma">Before starting the project we did 
+	the feasibility study about the project. Our project has two fundamental 
+	parts which includes USB Mouse interface and VGA Controller.&nbsp; We were quite 
+	sure about our understanding of VGA controller because we had worked with it 
+	in our previous labs. We were quite confident that we understand the proper 
+	functionality of the VGA controller and we could adapt it according to our 
+	needs. </font></p>
+	<p class="MsoNormal"><font face="Tahoma">The basic problem was the USB Mouse 
+	Interface. The USB standard is itself very complicated and designing it can 
+	itself be a big project. We had limited amount of time so implementing the 
+	USB Mouse Interface was quite infeasible. Therefore we looked at different 
+	websites and we found one in Altera Paint Brush Example.</font></p>
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">Altera 
+	Paint Brush Example is basically a project using Altera DE2 board. This 
+	project basically involves a USB Mouse interface. The USB mouse is used to 
+	draw different pixels at different points. It also displays a cursor in the 
+	form of a PLUS ( + ) sign. </font></p>
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">The 
+	yellow PLUS sign is drawn with the help of <b>HSync</b> and <b>VSync</b> of 
+	the VGA Controller that uses registers to display on the VGA Monitor. The 
+	background image is initialized into the M4K Block. The VGA controller reads 
+	from the M4K block to display the background image. The VGA controller 
+	multiplexes between the M4K block and the registers to display the PLUS sign 
+	and the back ground Image simultaneously.&nbsp; </font></p>
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">After 
+	completely understanding the working of the Altera Paint Brush Example we 
+	concluded that it was feasible to carry on with this project.</font></p>
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">We aimed 
+	our VGA controller to have resolution of 640x480 pixels in order to get the 
+	best results. We figured out that in order to display an image of 640x480 
+	resolution we could not use the M4K blocks because of the following math:</font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>Calculations of the 640 x 480 
+	Image Display</b></font></p>
+	<p class="MsoNormal"><font face="Tahoma">640 x 480&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	=&nbsp;&nbsp; 307200 pixels</font></p>
+	<p class="MsoNormal"><font face="Tahoma">1 pixel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	&nbsp;=&nbsp;16&nbsp;bits</font></p>
+	<p class="MsoNormal"><font face="Tahoma">640 x 480&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	= 2457600&nbsp;bits</font></p>
+	<p class="MsoNormal"><font face="Tahoma">Total M4K Blocks&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	= 2457600 / 4000 M4K</font></p>
+	<p class="MsoNormal"><font face="Tahoma">Total M4K Block&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	= 614 Approx.</font></p>
+	<p class="MsoNormal"><font face="Tahoma">Total M4K in DE2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	= 105 M4K Blocks</font></p>
+	<p class="MsoNormal"><font face="Tahoma">Therefore the only solution is to 
+	go for SRAM.</font></p>
+	<p class="MsoNormal"><font face="Tahoma">From the above calculation we have
+	</font></p>
+	<p class="MsoNormal"><font face="Tahoma"><span lang="DE">640 x 480&nbsp; 
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;=&nbsp;307200 pixels</span></font></p>
+	<p class="MsoNormal"><font face="Tahoma"><span lang="DE">1 pixel&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= 16 bits</span></font></p>
+	<p class="MsoNormal"><font face="Tahoma"><span lang="DE">SRAM (1 word 
+	)&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= 16 bits</span></font></p>
+	<p class="MsoNormal"><font face="Tahoma">SRAM ( Number of words )&nbsp;= 256 K</font></p>
+	<p class="MsoNormal"><font face="Tahoma">We need&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;= 
+	307200&nbsp; words </font></p>
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">But we 
+	have only 256K words in the SRAM to display this image. The only solution 
+	for this problem is to pack two pixels in one word that is to use 8 bits to 
+	display 1 pixel. We have 255 colors for 1 pixel because of 8 bits. </font>
+	</p>
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">After 
+	doing all maths for the memory sizes we focused on the changes we had to 
+	make in the Altera Paint Brush example and the VGA controller provided by 
+	the Altera. We changed the architecture of SRAM so that it stores two pixels 
+	per word. We also had to change the reading of VGA controller so that it 
+	takes into account the two pixel format. </font></p>
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">The 
+	Altera Paint Brush Example displays the PLUS sign for the cursor. We changed 
+	the PLUS sign to the simple mouse cursor to make it look like a real mouse.</font></p>
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">The 
+	Altera Paint Brush Example uses M4K blocks to display the background image. 
+	According to our calculations M4K blocks are not enough therefore we added 
+	SRAM to the VGA controller in order to display the background image. We 
+	multiplexed the SRAM with registers to display different images along with 
+	the background images.</font></p>
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">We used 
+	ROM and RAM from Altera Mega Function Wizard to display the images on the 
+	VGA controller. The ROM is basically used for storing the different type of 
+	small images (the cute meat balls). RAM is used to store the location of 
+	these images on the screen.</font> </p>
+	<p class="MsoNormal"><font face="Tahoma"><b>VGA Controller </b></font></p>
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">Before 
+	describing the working of the VGA controller we should know how the VGA 
+	works. There are basically two Pulses which are responsible for the display 
+	on the VGA Monitor. One is called the Horizontal Sync (Hsync) and other is 
+	called the Vertical Sync(Vsync) . </font></p>
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">
+	Horizontal Sync is responsible for the horizontal lines on the screen and 
+	vertical sync is responsible for the display for frames. Below is the 
+	description of the Pulses:</font></p>
+	<p class="MsoNormal" style="margin-left:27.0pt">&nbsp;<i><span style="font-size:12.0pt;font-family:&quot;Times New Roman&quot;">Horizontal 
+	Timing</span>&nbsp;&nbsp;&nbsp;&nbsp; </i></p>
+	<pre style="font-size: 10.0pt; font-family: Courier New; margin-left: 0cm; margin-right: 0cm; margin-top: 0cm; margin-bottom: .0001pt">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;______________________&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ________</pre>
+	<pre style="font-size: 10.0pt; font-family: Courier New; margin-left: 36.0pt; margin-right: 0cm; margin-top: 0cm; margin-bottom: .0001pt">________|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIDEO&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |________| VIDEO (next line)</pre>
+	<pre style="font-size: 10.0pt; font-family: Courier New; margin-left: 36.0pt; margin-right: 0cm; margin-top: 0cm; margin-bottom: .0001pt">&nbsp;&nbsp;&nbsp; |-C-|----------D-----------|-E-|</pre>
+	<pre style="font-size: 10.0pt; font-family: Courier New; margin-left: 36.0pt; margin-right: 0cm; margin-top: 0cm; margin-bottom: .0001pt">__&nbsp;&nbsp; ______________________________&nbsp;&nbsp; ___________</pre>
+	<pre style="font-size: 10.0pt; font-family: Courier New; margin-left: 36.0pt; margin-right: 0cm; margin-top: 0cm; margin-bottom: .0001pt">&nbsp; |_|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |_|</pre>
+	<pre style="font-size: 10.0pt; font-family: Courier New; margin-left: 36.0pt; margin-right: 0cm; margin-top: 0cm; margin-bottom: .0001pt">&nbsp; |B|</pre>
+	<pre style="font-size: 10.0pt; font-family: Courier New; margin-left: 36.0pt; margin-right: 0cm; margin-top: 0cm; margin-bottom: .0001pt">&nbsp; |---------------A----------------|</pre>
+	<p class="MsoNormal" style="margin-left:36.0pt">&nbsp;</p>
+	<pre style="font-size: 10.0pt; font-family: Courier New; margin-left: 27.0pt; margin-right: 0cm; margin-top: 0cm; margin-bottom: .0001pt"><i><span style="font-size:12.0pt;font-family:&quot;Times New Roman&quot;">Vertical Timing</span></i></pre>
+	<pre style="font-size: 10.0pt; font-family: Courier New; margin-left: 36.0pt; margin-right: 0cm; margin-top: 0cm; margin-bottom: .0001pt">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ______________________&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ________</pre>
+	<pre style="font-size: 10.0pt; font-family: Courier New; margin-left: 36.0pt; margin-right: 0cm; margin-top: 0cm; margin-bottom: .0001pt">________|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VIDEO&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |________|&nbsp; VIDEO (next frame)</pre>
+	<pre style="font-size: 10.0pt; font-family: Courier New; margin-left: 36.0pt; margin-right: 0cm; margin-top: 0cm; margin-bottom: .0001pt">&nbsp;&nbsp;&nbsp; |-Q-|----------R-----------|-S-|</pre>
+	<pre style="font-size: 10.0pt; font-family: Courier New; margin-left: 36.0pt; margin-right: 0cm; margin-top: 0cm; margin-bottom: .0001pt">__&nbsp;&nbsp; ______________________________&nbsp;&nbsp; ___________</pre>
+	<pre style="font-size: 10.0pt; font-family: Courier New; margin-left: 36.0pt; margin-right: 0cm; margin-top: 0cm; margin-bottom: .0001pt">&nbsp; |_|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |_|</pre>
+	<pre style="font-size: 10.0pt; font-family: Courier New; margin-left: 36.0pt; margin-right: 0cm; margin-top: 0cm; margin-bottom: .0001pt">&nbsp; |P|</pre>
+	<pre style="font-size: 10.0pt; font-family: Courier New; margin-left: 36.0pt; margin-right: 0cm; margin-top: 0cm; margin-bottom: .0001pt">&nbsp; |---------------O----------------|</pre>
+	<pre style="font-size: 10.0pt; font-family: Courier New; margin-left: 36.0pt; margin-right: 0cm; margin-top: 0cm; margin-bottom: .0001pt"><span style="font-family:&quot;Times New Roman&quot;">&nbsp;</span></pre>
+	<pre style="text-align: justify; font-size: 10.0pt; font-family: Courier New; margin-left: 0cm; margin-right: 0cm; margin-top: 0cm; margin-bottom: .0001pt"><span style="font-family: Tahoma">&nbsp;</span></pre>
+	<pre style="text-align: justify; font-size: 10.0pt; font-family: Courier New; margin-left: 0cm; margin-right: 0cm; margin-top: 0cm; margin-bottom: .0001pt"><span style="font-size: 12.0pt; font-family: Tahoma">The letters indicated in the above diagrams are the time for the particular event which is different for the different resolution. During the time B and P the VGA is in sync state and during the interval D and R VGA is in active state that is updating the screen. The interval Q and C are called back porch and interval E and C are called front porch.</span></pre>
+	<pre style="text-align: justify; font-size: 10.0pt; font-family: Courier New; margin-left: 27.0pt; margin-right: 0cm; margin-top: 0cm; margin-bottom: .0001pt"><span style="font-size: 12.0pt; font-family: Tahoma">&nbsp;</span></pre>
+	<pre style="text-align: justify; font-size: 10.0pt; font-family: Courier New; margin-left: 0cm; margin-right: 0cm; margin-top: 0cm; margin-bottom: .0001pt"><span style="font-size: 12.0pt; font-family: Tahoma">The details information of the VGA timings is described on this webpage: </span></pre>
+	<pre style="text-align: justify; font-size: 10.0pt; font-family: Courier New; margin-left: 0cm; margin-right: 0cm; margin-top: 0cm; margin-bottom: .0001pt"><span style="font-size: 12.0pt; font-family: Tahoma; color: #333399"><a href="../../../../../../../../www.epanorama.net/documents/pc/vga_timing.html">http://www.epanorama.net/documents/pc/vga_timing.html</a></span></pre>
+	<p class="MsoNormal" style="text-align:justify">&nbsp;</p>
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma"><b>Top 
+	level</b></font></p>
+	<p align="center">
+	<span style="font-size: 12.0pt; font-family: Times New Roman"><!--[if gte vml 1]><v:shapetype id="_x0000_t75"
+ coordsize="21600,21600" o:spt="75" o:preferrelative="t" path="m@4@5l@4@11@9@11@9@5xe"
+ filled="f" stroked="f">
+ <v:stroke joinstyle="miter"/>
+ <v:formulas>
+  <v:f eqn="if lineDrawn pixelLineWidth 0"/>
+  <v:f eqn="sum @0 1 0"/>
+  <v:f eqn="sum 0 0 @1"/>
+  <v:f eqn="prod @2 1 2"/>
+  <v:f eqn="prod @3 21600 pixelWidth"/>
+  <v:f eqn="prod @3 21600 pixelHeight"/>
+  <v:f eqn="sum @0 0 1"/>
+  <v:f eqn="prod @6 1 2"/>
+  <v:f eqn="prod @7 21600 pixelWidth"/>
+  <v:f eqn="sum @8 21600 0"/>
+  <v:f eqn="prod @7 21600 pixelHeight"/>
+  <v:f eqn="sum @10 21600 0"/>
+ </v:formulas>
+ <v:path o:extrusionok="f" gradientshapeok="t" o:connecttype="rect"/>
+ <o:lock v:ext="edit" aspectratio="t"/>
+</v:shapetype><v:shape id="_x0000_s1026" type="#_x0000_t75" style='width:6in;
+ height:487.5pt'>
+ <v:imagedata src="high_level_design_files/image001.emz" o:title=""/>
+</v:shape><![endif]--><![if !vml]><img border=0 width=576 height=650
+src="high_level_design_files/image002.gif" v:shapes="_x0000_s1026"><![endif]><!--[if gte mso 9]><![endif]--></span></p>
+	<p align="center">
+	<!--[if gte mso 9]><![endif]--></p>
+	<p class="MsoNormal" align="center"><span class="titles">
+	<font face="Tahoma">Architectural Block Diagram of FPGA BBQ Stick</font></span></p>
+	<p class="MsoNormal"><font face="Tahoma"><span class="titles"><b>
+	Software/Hardware Trade-off </b></span></font></p>
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">In our 
+	design the USB Mouse interface is controlled by the software. The rest of 
+	the game is developed in the hardware. We choose hardware because our game 
+	involves a lot of dynamics such as moving stick and movement of images. 
+	Using hardware allows the images to be displayed accurately in real time 
+	with no flicker. Developing the game in the software is comparatively easier 
+	but the game may not run as smoothly as it is now. But we take a lot of 
+	advantage through software. We use software to transfer an image into the 
+	SRAM, otherwise with the hardware only it would become really difficult for 
+	us to write such a colorful image into the SRAM. In short the hardware 
+	software combination proves to be a great help to us in our project.</font></p>
+	<p class="MsoNormal">&nbsp;</p>
+	<p class="MsoNormal" style="text-align:justify">&nbsp;</div>
+
+<div style="position: absolute; width: 1055px; height: 186px; z-index: 1; left: 104px; top: 1px; background-image: url('orange-block.jpg'); background-position:   center; " id="layer1">
+	<h1 align="center"><font face="Tahoma" size="5" color="#FF3300">FPGA BBQ Stick</font></h1>
+	<h1 align="center"><font face="Tahoma" size="4" color="#FF3300">Muhammad Bilal Shahid &amp; 
+	Yang-Ching Cheng</font></h1>
+	<hr color="#FF3300">
+	<h2 align="center"><a href="index.htm">
+	<img border="0" id="img7" src="button10.jpg" height="25" width="160" alt="Introduction" onmouseover="FP_swapImg(1,0,/*id*/'img7',/*url*/'button11.jpg')" onmouseout="FP_swapImg(0,0,/*id*/'img7',/*url*/'button10.jpg')" onmousedown="FP_swapImg(1,0,/*id*/'img7',/*url*/'button12.jpg')" onmouseup="FP_swapImg(0,0,/*id*/'img7',/*url*/'button11.jpg')" fp-style="fp-btn: Soft Rectangle 3; fp-proportional: 0; fp-orig: 0" fp-title="Introduction"></a><a href="high_level_design.htm"><img border="0" id="img13" src="button15.jpg" height="25" width="160" alt="High Level  Design" onmouseover="FP_swapImg(1,0,/*id*/'img13',/*url*/'button13.jpg')" onmouseout="FP_swapImg(0,0,/*id*/'img13',/*url*/'button15.jpg')" onmousedown="FP_swapImg(1,0,/*id*/'img13',/*url*/'button14.jpg')" onmouseup="FP_swapImg(0,0,/*id*/'img13',/*url*/'button13.jpg')" fp-style="fp-btn: Soft Rectangle 3; fp-proportional: 0; fp-orig: 0" fp-title="High Level  Design"></a><a href="program_hardware_design.htm"><img border="0" id="img14" src="button18.jpg" height="25" width="160" alt="Program/Hardware Design" fp-style="fp-btn: Soft Rectangle 3; fp-proportional: 0; fp-orig: 0" fp-title="Program/Hardware Design" onmouseover="FP_swapImg(1,0,/*id*/'img14',/*url*/'button16.jpg')" onmouseout="FP_swapImg(0,0,/*id*/'img14',/*url*/'button18.jpg')" onmousedown="FP_swapImg(1,0,/*id*/'img14',/*url*/'button17.jpg')" onmouseup="FP_swapImg(0,0,/*id*/'img14',/*url*/'button16.jpg')"></a><a href="results_and_conclusion.htm"><img border="0" id="img15" src="button19.jpg" height="25" width="160" alt="Results &amp; Conclusion" fp-style="fp-btn: Soft Rectangle 3; fp-proportional: 0; fp-orig: 0" fp-title="Results &amp; Conclusion" onmouseover="FP_swapImg(1,0,/*id*/'img15',/*url*/'button1A.jpg')" onmouseout="FP_swapImg(0,0,/*id*/'img15',/*url*/'button19.jpg')" onmousedown="FP_swapImg(1,0,/*id*/'img15',/*url*/'button1B.jpg')" onmouseup="FP_swapImg(0,0,/*id*/'img15',/*url*/'button1A.jpg')"></a><a href="ticks_and_inventions.htm"><img border="0" id="img17" src="button1F.jpg" height="25" width="160" alt="Tricks &amp; Inventions" fp-style="fp-btn: Soft Rectangle 3; fp-proportional: 0; fp-orig: 0" fp-title="Tricks &amp; Inventions" onmouseover="FP_swapImg(1,0,/*id*/'img17',/*url*/'button20.jpg')" onmouseout="FP_swapImg(0,0,/*id*/'img17',/*url*/'button1F.jpg')" onmousedown="FP_swapImg(1,0,/*id*/'img17',/*url*/'button21.jpg')" onmouseup="FP_swapImg(0,0,/*id*/'img17',/*url*/'button20.jpg')"></a><a href="appendix.htm"><img border="0" id="img16" src="button1C.jpg" height="25" width="160" alt="Appendix" fp-style="fp-btn: Soft Rectangle 3; fp-proportional: 0; fp-orig: 0" fp-title="Appendix" onmouseover="FP_swapImg(1,0,/*id*/'img16',/*url*/'button1D.jpg')" onmouseout="FP_swapImg(0,0,/*id*/'img16',/*url*/'button1C.jpg')" onmousedown="FP_swapImg(1,0,/*id*/'img16',/*url*/'button1E.jpg')" onmouseup="FP_swapImg(0,0,/*id*/'img16',/*url*/'button1D.jpg')"></a></h2>
+	<hr color="#FF3300">
+	</div>
+
+</body>
+
+</html>

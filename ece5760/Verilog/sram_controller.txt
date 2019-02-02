@@ -1,0 +1,39 @@
+//=======================================================
+// SRAM controller state machine
+// Assumes a SRAM M10k block attached to Qbus with exported signals
+// full code:
+// http://people.ece.cornell.edu/land/courses/ece5760/DE1_SOC/Memory/sram_mlab_example/DE1_SoC_Computer.v
+//=======================================================
+wire [31:0] sram_readdata ;
+reg [31:0] data_buffer, sram_writedata ;
+reg [7:0] sram_address; 
+reg sram_write ;
+wire sram_clken = 1'b1;
+wire sram_chipselect = 1'b1;
+reg [3:0] sram_state ;
+
+always @(posedge CLOCK_50) begin
+	//set up read
+	if (sram_state == 4'd0) begin
+		sram_address <= 8'd0 ;
+		sram_write <= 1'b0 ;
+		sram_state <= 4'd1 ;
+	end
+	// wait 1 cycle
+	if (sram_state == 4'd1) begin
+		sram_state <= 4'd2 ;
+	end
+	// do read
+	if (sram_state == 4'd2) begin
+		data_buffer <= sram_readdata ;
+		sram_write <= 1'b0 ;
+		sram_state <= 4'd3 ;
+	end 
+	// set up write
+	if (sram_state == 4'd3) begin
+		sram_address <= 8'd1 ;
+		sram_writedata <= data_buffer ;
+		sram_write <= 1'b1 ;
+		sram_state <= 4'd0 ;
+	end 
+end

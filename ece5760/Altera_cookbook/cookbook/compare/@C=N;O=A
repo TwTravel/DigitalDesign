@@ -1,0 +1,35 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+ <head>
+  <title>Index of /land/courses/ece5760/Altera_cookbook/cookbook/compare</title>
+ </head>
+ <body>
+<h1>Index of /land/courses/ece5760/Altera_cookbook/cookbook/compare</h1>
+  <table>
+   <tr><th valign="top"><img src="../../../../../../icons/blank.gif" alt="[ICO]"></th><th><a href="@C=N;O=D">Name</a></th><th><a href="@C=M;O=A">Last modified</a></th><th><a href="@C=S;O=A">Size</a></th><th><a href="@C=D;O=A">Description</a></th></tr>
+   <tr><th colspan="5"><hr></th></tr>
+<tr><td valign="top"><img src="../../../../../../icons/back.gif" alt="[PARENTDIR]"></td><td><a href="../default.htm">Parent Directory</a>       </td><td>&nbsp;</td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="carry_and.v">carry_and.v</a>            </td><td align="right">2015-03-26 09:43  </td><td align="right">4.1K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="carry_and_speed_test.v">carry_and_speed_test.v</a> </td><td align="right">2015-03-26 09:43  </td><td align="right">1.8K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="carry_and_tb.v">carry_and_tb.v</a>         </td><td align="right">2015-03-26 09:43  </td><td align="right">2.2K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="compare_masks.inc">compare_masks.inc</a>      </td><td align="right">2015-03-26 09:43  </td><td align="right">2.9K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="compare_tb.v">compare_tb.v</a>           </td><td align="right">2015-03-26 09:43  </td><td align="right">5.3K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/script.gif" alt="[   ]"></td><td><a href="cook.sh">cook.sh</a>                </td><td align="right">2015-03-26 09:43  </td><td align="right">233 </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="equal_const.v">equal_const.v</a>          </td><td align="right">2015-03-26 09:43  </td><td align="right">2.0K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="equal_const_tb.v">equal_const_tb.v</a>       </td><td align="right">2015-03-26 09:43  </td><td align="right">2.0K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="highest_10.inc">highest_10.inc</a>         </td><td align="right">2015-03-26 09:43  </td><td align="right">1.8K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="in_range.v">in_range.v</a>             </td><td align="right">2015-03-26 09:43  </td><td align="right">3.4K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="in_range_tb.v">in_range_tb.v</a>          </td><td align="right">2015-03-26 09:43  </td><td align="right">2.4K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="less_than_const.v">less_than_const.v</a>      </td><td align="right">2015-03-26 09:43  </td><td align="right">5.8K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="log2.inc">log2.inc</a>               </td><td align="right">2015-03-26 09:43  </td><td align="right">1.9K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="match_or_inv.v">match_or_inv.v</a>         </td><td align="right">2015-03-26 09:43  </td><td align="right">3.3K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="match_or_inv_tb.v">match_or_inv_tb.v</a>      </td><td align="right">2015-03-26 09:43  </td><td align="right">2.0K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="min_max.v">min_max.v</a>              </td><td align="right">2015-03-26 09:43  </td><td align="right">5.3K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="min_max_tb.v">min_max_tb.v</a>           </td><td align="right">2015-03-26 09:43  </td><td align="right">2.6K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="over_under.v">over_under.v</a>           </td><td align="right">2015-03-26 09:43  </td><td align="right">6.2K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="pipe_equal.v">pipe_equal.v</a>           </td><td align="right">2015-03-26 09:43  </td><td align="right">2.8K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="pipe_equal_tb.v">pipe_equal_tb.v</a>        </td><td align="right">2015-03-26 09:43  </td><td align="right">2.3K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="tester.cpp">tester.cpp</a>             </td><td align="right">2015-03-26 09:43  </td><td align="right">5.7K</td><td>&nbsp;</td></tr>
+   <tr><th colspan="5"><hr></th></tr>
+</table>
+</body></html>

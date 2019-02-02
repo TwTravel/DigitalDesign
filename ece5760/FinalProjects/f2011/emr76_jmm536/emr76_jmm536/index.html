@@ -1,0 +1,403 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+	<!--
+	This document provides the basis of a semantically structured web page 
+	authored in XHTML 1.0 Transitional using established Cornell University
+	naming conventions.
+	-->
+
+<head>
+	<title>ECE 5760 - Additively Synthesized Ocarina</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+	<meta http-equiv="Content-Language" content="en-us" />
+	<link rel="shortcut icon" href="favicon.bmp" type="image/x-icon" />
+	
+	<!--
+	All layout and formatting should be controlled through Cascading Stylesheets (CSS).
+	The following link tag should appear in the head of every page in the website. see
+	styles/screen.css.
+	-->
+	<link rel="stylesheet" type="text/css" media="screen" href="styles/screen.css" />
+</head>
+
+<body class="onecolumn">
+
+	<!--
+	The following link provides a way for people using text-based browsers and
+	screen readers to skip over repetitive navigation elements so that they can 
+	get directly to the content. It is hidden from general users through CSS.
+	-->
+	<div id="skipnav">
+		<a href="#content">Skip to main content</a>
+	</div>
+
+	<hr />
+
+	<!-- The following div contains the Cornell University logo with unit signature -->
+	<div id="cu-identity">
+
+		<div id="cu-logo">
+			<a id="insignia-link" href="../../../../../../../../www.cornell.edu/default.htm"><img src="images/unit_signature_unstyled.html" alt="Cornell University" width="283" height="75" border="0" /></a>
+			<div id="unit-signature-links"></div>
+		</div>
+		
+		<!-- 
+			The search-form div contains a form that allows the user to search 
+			either pages or people within cornell.edu directly from the banner.
+		-->
+
+		<div id="search-form">
+			<form action="http://www.cornell.edu/search/" method="get" enctype="application/x-www-form-urlencoded">
+				<div id="search-input">
+					<label for="search-form-query">SEARCH CORNELL:</label>
+					<input type="text" id="search-form-query" name="q" value="" size="20" />
+					<input type="submit" id="search-form-submit" name="submit" value="go" />
+				</div>
+
+				<div id="search-filters">
+
+						<input type="radio" id="search-filters1" name="tab" value="" checked="checked" />
+						<label for="search-filters1">Pages</label>
+					
+						<input type="radio" id="search-filters2" name="tab" value="people" />
+						<label for="search-filters2">People</label>
+						
+						<a href="../../../../../../../../www.cornell.edu/search/default.htm">more options</a>
+				</div>	
+			</form>
+		</div>
+
+		
+		<!-- 
+			The search-form div contains a form that allows the user to search 
+			either the unit website or all of cornell.edu directly from the banner.
+		<div id="search-form">
+			<form action="#" method="post" enctype="application/x-www-form-urlencoded">
+				<div id="search-input">
+					<label for="search-form-query">SEARCH:</label>
+					<input type="text" id="search-form-query" name="query" value="" size="20" />
+					<input type="submit" id="search-form-submit" name="submit" value="go" />
+				</div>
+
+				<div id="search-filters">
+						<input type="radio" id="search-filters1" name="target" value="unit" checked="checked" />
+						<label for="search-filters1">Unit name</label>
+					
+						<input type="radio" id="search-filters2" name="target" value="cornell" />
+						<label for="search-filters2">Cornell</label>
+						
+						<a href="#">more options</a>
+				</div>	
+			</form>
+		</div>
+		-->
+		
+		<!--
+			The search-navigation div contains links that allow the user to search
+			either the unit website or all of cornell.edu.
+			These links will be displayed in the unit signature banner and will
+			be aligned with the right edge of the page.
+		<div id="search-navigation">
+			<ul>
+				<li><a href="#">Search Unit Name</a></li>
+				<li><a href="http://www.cornell.edu/search/">Search Cornell</a></li>
+			</ul>
+		</div>
+		-->
+	</div>
+
+	<!-- The header div contains the main identity and main navigation for the site -->
+	<div id="header">	
+		<!--
+			The navigation div contains the site's main navigation. These
+			links will be displayed in a horizontal, gray navigation bar 
+			under the unit signature banner.
+		-->	
+		<div id="navigation">
+			<ul>
+				<li><a href="#introduction">Introduction</a></li>
+				<li><a href="#highleveldesign">High Level Design</a></li>
+				<li><a href="#progharddes">Program Design</a></li>
+				<li><a href="#results">Results</a></li>
+				<li><a href="#appendices">Appendices</a></li>
+			</ul>
+		</div>
+		
+		<hr />
+		
+		<!-- 
+			The identity div contains the name of a main site section
+		-->
+		<div id="identity">
+		  <h1>Additively Synthesized Ocarina</h1>
+            
+		</div>
+</div>
+
+	<hr />
+
+	<div id="wrap">
+
+	<!-- The content div contains the main content of the page -->
+	<div id="content">
+		<div id="main">
+
+	<!-------------------------------------------------------------------------------------------------><img src="images/setup_all.JPG" width="740" height="491" />
+	<div class="bridge-section">
+		<h2><a name="introduction"></a>Introduction</h2>
+	</div>
+	
+	<h3>Project Summary</h3>
+    <p><span id="internal-source-marker_0.632795429429627">This   project used an FPGA to emulate ocarina sounds using an additive,   direct digital synthesis algorithm. &nbsp;In order to produce an accurate   ocarina sound, the spectrum of a real ocarina was analyzed to see the   relative amplitudes of each harmonic. &nbsp;Using this information, we could   then create state machines to output sinusoids at each harmonic. The   sinusoids were then scaled appropriately and summed together to produce   the ocarina sound.</span><br />
+      <br />
+      A   physical ocarina equipped with six push buttons and an active   microphone was built for this lab. &nbsp;The push buttons were used to   configure which note (pitch) should be played. The microphone measured   the intensity of air blown across it to control the volume of the sound.<br />
+      <br />
+      This   project was very interesting to us because it involved several stages   of audio processing to achieve a good sound. &nbsp;It was a good application   of digital signal processing and embedded system design.</p>
+    <h3><br>
+      
+      <!-------------------------------------------------------------------------------------------------></h3>
+	<div class="bridge-section">
+		<h2><a name="highleveldesign"></a>High Level Design</h2>
+	</div>
+	
+	<h3>Rationale and sources of your project idea</h3>
+    <p dir="ltr" id="internal-source-marker_0.">We   decided that we wanted to work on a project that involved sound   synthesis of some sort or another. &nbsp;We decided upon additive synthesis   because it seemed interesting and relatively powerful. &nbsp;The reason an   ocarina was chosen for the primary sound synthesis instrument mostly   stemmed from the video game, The Legend of Zelda: Ocarina of Time, and   the prominence an ocarina plays in the game. &nbsp;We thought it would be   cool to duplicate this instrument in an electronic form. </p>
+    <p>&nbsp;</p>
+    <h3>Background math and principles of additive synthesis</h3>
+    <p dir="ltr" id="internal-source-marker_0.2">A   discrete Fourier transform (DFT) in Matlab was used to analyze the   spectrum of an ocarina (as well as a flute, and voiced &ldquo;AH&rdquo; recorded by   one of the group members). &nbsp;We employed the concept of spectral matching   to perform the synthesis. &nbsp;This involved determining the frequency and   relative power levels of each harmonic in the sample sounds. &nbsp;These   harmonics were duplicated digitally using state machines capable of   producing sinusoids at varying frequencies. &nbsp;Once the harmonics were   generated, we used additive synthesis (the process of adding multiple   sine waves together) to create a musical instrument sound. &nbsp;Since all   sounds can be duplicated by this process (the principles behind a   Fourier transform) this is a very effective process of creating sound. &nbsp;</p>
+    <br />
+    <p dir="ltr">Below   is the plot of the power spectrum of the real flute with the additively   synthesized flute overlaid. &nbsp;Note that the real flute has many more   harmonics that were not duplicated in the synthesized version (all the   way up to 12kHz or so). &nbsp;We opted to only duplicate three of these   harmonics since the sound actually sounded better without all of the   harmonics. &nbsp;The general rule of thumb in sound synthesis is if it sounds   right, then it&rsquo;s right. &nbsp;</p>
+
+    <center>
+    <p>&nbsp;</p>
+      <p>        <img src="images/flute_spectrum.png" width="560" height="420" /></p>
+      <p>&nbsp;</p>
+    </center>
+
+	
+
+	<!------------------------------------------------------------------------------------------------->
+	<span id="internal-source-marker_0.3"> </span><br />
+	<p dir="ltr">Below   is the power spectral graph of the original and synthesized ocarina   sounds. &nbsp;Note that the ocarina skips every other harmonic.</p>
+	<p dir="ltr"></p>
+	<center>
+	  <p><img src="images/ocarina_spectrum.png" width="560" height="420" /></p>
+	  <p>&nbsp;</p>
+	  </center>
+    <!------------------------------------------------------------------------------------------------->
+    <span id="internal-source-marker_0.4"> </span>
+    <p dir="ltr" id="internal-source-marker_0.6">The   graph shown below is the power spectral graph of the sung voiced vowel   &ldquo;AH&rdquo; and its synthesized counterpart. &nbsp;For this sound, a lot more   harmonics were used to get a much more accurate sound. &nbsp;</p>
+<center>
+  <p><img src="images/AAAA_spectrum.png" width="560" height="420" /></p>
+  </center>
+    <!------------------------------------------------------------------------------------------------->
+    <span id="internal-source-marker_0.5"> </span><br />
+    <p dir="ltr">&nbsp;</p>
+    <h3>Logical Structure</h3>
+    <p dir="ltr" id="internal-source-marker_0.7"><center>
+      <p><img src="images/block_diagram.png" width="560" height="420" /></p>
+      <p>&nbsp;</p>
+    </center></p>
+    <h3>Hardware/software trade-offs</h3>
+    <p dir="ltr" id="internal-source-marker_0.11">Originally,   it was thought that a Nios II was going to be used to keep track of the   notes being played and integrate with the user. &nbsp;However, after getting   additive synthesis to work with the Nios, we realized that the CPU was   doing very little work, and we decided to put all of the logic in   hardware. &nbsp;&nbsp;</p>
+    <br />
+    <p dir="ltr">At   one point, it was thought that a Pancake Stack CPU would be used to   implement a digital low pass filter for the microphone filtering.   &nbsp;However, it was determined that the CPU was overkill and some simple   hardware could be used instead.</p>
+    <br />
+    <p dir="ltr">The   main system is comprised of several finite state machines that interact   with one another on the FPGA. &nbsp;The microphone has a simple driver   circuit with an input through the line in on the FPGA. &nbsp;Finally, the   push buttons are wired up to the GPIO ports on the board. </p>
+    <p dir="ltr">&nbsp;</p>
+    <h3>Standards &amp; Copyrights</h3>
+    <p dir="ltr" id="internal-source-marker_0.12">3.5mm   audio jacks are used to input the microphone to the FPGA as well output   the ocarina sound to the speakers. &nbsp;We believe that our project is not   eligible for a copyright because there is an <a href="../../../../../../../../itunes.apple.com/us/app/ocarina/id293053479@mt=8">iPhone app</a> that is very   similar to our project.</p>
+    <p dir="ltr" id="internal-source-marker_0.10"></p>
+    <div class="bridge-section">
+		<h2><a name="progharddes"></a>Program/Hardware Design</h2>
+	</div>
+
+
+	<!------------------------------------------------------------------------------------------------->
+	<h3>Module Outline</h3>
+    <p dir="ltr" id="internal-source-marker_0.8">The table below describes each Verilog module.</p>
+    <table border="1" cellpadding="5" cellspacing="0">
+      <thead>
+        <tr>
+          <th>Module Name</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="row1">
+          <td><span id="internal-source-marker_0.13">DE2_TOP</span></td>
+          <td>The   top level module for our project. &nbsp;Included in this   module are instantiations of the modules listed below.</td>
+        </tr>
+        <tr class="row2">
+          <td>Reset_Delay</td>
+          <td><span id="internal-source-marker_0.14">Needed to run the phase lock loop.</span></td>
+        </tr>
+        <tr class="row1">
+          <td>VGA_Audio_PLL</td>
+          <td><span id="internal-source-marker_0.21">Used for generating the clocks used to run all of the modules, specifically AUD_CTRL_CLK.</span></td>
+        </tr>
+        <tr class="row2">
+          <td>I2C_AV_Config</td>
+          <td><span id="internal-source-marker_0.20">Needed to use the Audio Codec.</span></td>
+        </tr>
+        <tr class="row1">
+          <td>AUDIO_DAC_ADC</td>
+          <td><span id="internal-source-marker_0.15">Module to run the inputs and outputs to the Audio Codec.</span></td>
+        </tr>
+        <tr class="row2">
+          <td><span id="internal-source-marker_0.16">sync_rom</span></td>
+          <td><span id="internal-source-marker_0.17">Look-up   table for the synthesized sinusoids. &nbsp;The module takes accumulators   (which are increased at varying frequencies) as inputs and it outputs   the corresponding sine values.</span></td>
+        </tr>
+        </tbody>
+    </table>
+    <h3>&nbsp;</h3>
+    <h3>In Depth Program Description</h3>
+    <p dir="ltr" id="internal-source-marker_0.18">The following steps are performed by the top level module to create the synthesized sound:</p>
+    <p dir="ltr" id="internal-source-marker_0.19">1. Determine the desired pitch from the push buttons: </p>
+    <p dir="ltr">This   is done by reading in the six push buttons from the physical ocarina.   &nbsp;The button combinations are then mapped to a pitch using the fingering   chart that can be found in the appendix.</p>
+    <br />
+    <p dir="ltr">2. Load the increment register with appropriate value:</p>
+    <p dir="ltr">When   the desired pitch is determined, the DDS_incr register is set to the   corresponding increment value. &nbsp;This is the value that will be   periodically added to the fundamental frequency accumulator to create a   pure sine wave as this frequency.</p>
+    <br />
+    <p dir="ltr">3. Increment the accumulators: </p>
+    <p dir="ltr">At   this stage, the accumulators for each harmonic are incremented. For the   fundamental, the increment is added once. &nbsp;For the first harmonic, the   increment is added twice (shifted up by one and added). &nbsp;For the second   harmonic, the increment is added three times (shifted up by one and   added, and added again). &nbsp;This goes on for all of the harmonics.   &nbsp;Additionally, the vibrato accumulator is also incremented here. &nbsp;Its   increment value does not depend on DDS_incr; instead it is a constant   which corresponds to 5 Hz.</p>
+    <br />
+    <p dir="ltr">Since   we do not want the vibrato to occur throughout the entire note, we have   a state machine wait for three tenths of a second before the vibrato   effect is added in. &nbsp;After three tenths of a second, the vibrato envelop   is slowly ramped up to full intensity. &nbsp;It remains at full intensity   for the remainder of the held note. &nbsp;This ramping is done using the   registers count_ramp and ramp. &nbsp;Count_ramp is used to keep track of how   much time has passed so ramp is incremented at the correct time. &nbsp;Ramp   is the amplitude of the vibrato effect which is incremented from 0 to   256 and then keeps its value until the next note starts. &nbsp;The ramping   effect is illustrated in the image below. </p>
+    <br />
+    <p dir="ltr">&nbsp;</p>
+    <center><img src="images/vibrato.png" width="560" height="420" /></center> <br />
+    <br />
+    <p dir="ltr">&nbsp;</p>
+    <p dir="ltr">4. Read in the microphone to determine the volume:</p>
+    <p dir="ltr">First,   the audio_inR from the audio codac is read in and stored in the 16-bit   mic_abs register. &nbsp;If the input is negative, its value is negated (so   that it becomes a positive number). &nbsp;Now mic_abs has the absolute value   of the audio_inR. &nbsp;Several latches are used to determine the volume   level of the input. &nbsp;Each bit corresponds to a different volume level.   &nbsp;Bits 6 down to 0 are always high (even when one is not blowing into the   mic) so these bits are ignored. &nbsp;Bits 15 down to 7, however, get ORed   with themselves every sample and stored in a corresponding latch. &nbsp;After   every 1200 samples, the latches are conditioned upon to determine what   the volume should be for the next 1200 samples. &nbsp;For example, if bit 15   was ever on in the previous 1200 samples, the volume will be a maximum   in the next for the next 1200 samples. &nbsp;If none of bits 15 down to 7   are every set to the value one, then the volume will be set to zero. &nbsp;Since our sample   rate is 48 kHz, 1200 samples correspond to 25 milliseconds, so this   delay is not perceivable.</p>
+    <br />
+    <p dir="ltr">5. Superimpose the harmonics to produce instrument sounds: </p>
+    <p dir="ltr">The   top level module is capable of producing three different types of   instrument sounds: ocarina, flute, and voiced &ldquo;AH&rdquo;. &nbsp;These sounds are   toggled using the switched on the DE2 board. &nbsp;A state machine is used to   determine which instrument should be synthesized. &nbsp;Then the pure   harmonics are scaled using shifts and added together to produce the   sounds. &nbsp;These sounds are stored in the register synth_signal. &nbsp;This   register is then fixed-point multiplied (using a 1:9 fixed-point format)   by the vibrato ramp envelope to produce a signal with vibrato. &nbsp;Next   the signal is multiplied by the volume register to produce a scaled   signal with vibrato. &nbsp;This signal is then output to the audio codec.</p>
+    <p dir="ltr">&nbsp;</p>
+<h3>Hardware - Building/Assembling the Ocarina:</h3>
+    <p dir="ltr" id="internal-source-marker_0.25">The   ocarina was assembled from two thick rectangular pieces of plastic that   are separated by &frac34; inch spacers. &nbsp;In the top piece of plastic, six   large buttons were placed, three for each hand. &nbsp;Additionally, toward   the front of the top piece, a microphone was placed. &nbsp;Between the two   pieces of plastic, the buttons are connected to a ribbon cable that goes   to of the GPIO connection ports. &nbsp;</p>
+    <br />
+    <p dir="ltr">One   side of each button is connected to the GND of the  DE2 development   board, and the other side is connected to a 10k ohm pull up resistor and   one of the GPIO pins for reading the value of the switch. &nbsp;The pull up   resistor is necessary so that when the switch is closed, it doesn&rsquo;t   short the board&rsquo;s 3.3V to GND. A schematic of the button configuration   is included below:</p>
+    <p dir="ltr" id="internal-source-marker_0.24"><center>
+      <p><img src="images/button.png" width="265" height="356" /></p>
+      <p>&nbsp;</p>
+    </center>
+    </p>
+    <p dir="ltr">The   microphone is also connected to GND and 3.3V (through a 1k ohm   resistor) and the output of the microphone is measured after a 10 uF   capacitor. &nbsp;The capacitor acts as a high pass filter to cut out the 3.3V   DC voltage bias. &nbsp;A schematic of the microphone configuration is   included below:</p>
+    <p dir="ltr">
+      <p>
+        <p><center><img src="images/microphone.png" width="418" height="284" /></center> </p>
+        <p>&nbsp;</p>
+        <p>Below are images of the final ocarina:        </p>
+        <p><img src="images/ocarina_top.JPG" width="740" height="491" /></p>
+        <p>&nbsp;</p>
+        <p><img src="images/ocarina_sideways.JPG" width="740" height="491" /></p>
+        <p>&nbsp;</p>
+      </p>
+      <h3>Borrowed Code</h3>
+      <p dir="ltr" id="internal-source-marker_0.26">In   the early stages of the project, Matlab was used extensively to try out   various ideas before putting them onto the FPGA. &nbsp;Before designing our   own code, we found a very useful website that provides code that plots   the waveform and power spectrum of a sample audio file and will create   synthetic sounds using additive synthesis. &nbsp;That site is listed here: <a href="../../../../../../../../amath.colorado.edu/pub/matlab/music/default.htm">Musical Analysis and Synthesis in Matlab</a> </p>
+      <p>&nbsp;</p>
+      <h3>Things we tried which did not work</h3>
+      <p dir="ltr" id="internal-source-marker_0.27">We   initially tried implementing a running window averager in Verilog to   low pass filter the microphone input. &nbsp;This was done so that it could be   multiplied by the output signal in order to dynamically control the   output sound&rsquo;s volume. &nbsp;In the end, the windowing function did not work   very well since our window size was not large enough. &nbsp;Instead of   dealing with making the window bigger, we decided to simply implement   the volume control in a different manner (see above for details). &nbsp;</p>
+      <p dir="ltr">&nbsp;</p>
+      <h3>Safety considerations</h3>
+      <p dir="ltr" id="internal-source-marker_0.28">We   only worked with 3.3V signals during the course of this project and as a   result, there weren't many safety concerns. &nbsp;Building the ocarina   required the use of a band saw (outsourced to Bruce Land). &nbsp;When the   drill and Dremel tools were used, proper protective eyewear was worn.   &nbsp;Other than the occasional noise from testing our sounds, our project   did not interfere with other groups&rsquo; projects.</p>
+      <p dir="ltr">
+  </p>
+      </p>
+      <div class="bridge-section">
+		<h2><a name="results"></a>Results of the Design</h2>
+	</div>
+    
+
+      <h3>Overall Conclusions</h3>
+      <p dir="ltr" id="internal-source-marker_0.29"><span id="internal-source-marker_0.4369930138050825">The   ocarina sounds quite good, especially with the vibrato that slowly   ramps up for longer notes. &nbsp;There is a tiny bit of a static noise in the   sound output, which is a result of the microphone volume determination   code that picks up some static once in a while. &nbsp;However, there is no   noticeable hesitation in the sound output, as the sound is generated in   under 30ms, which is unperceivable to the user. </span><br />
+      <br />
+      The   buttons on the physical ocarina are have a great size and feel, however   they are  not as responsive as they could be; they sometimes don&rsquo;t   register if they are not pressed quite right. &nbsp;This is likely a result   of the buttons being overused and abused before they were added to our   project. &nbsp;<br />
+      <br />
+      The   microphone works well, and the volume control feature is very   intuitive. &nbsp;It does require the player to blow directly into it, which   takes getting used to. </p>
+      <p dir="ltr">&nbsp;</p>
+      <p dir="ltr">Below is a video of a scale being played on the ocarina:</p> 
+      <center>
+<OBJECT width="560" height="315" ><PARAM name="movie" value="MPFLVPlayer.swf" /><PARAM name="allowFullScreen" value="true" /><PARAM name="FlashVars" value="fn=../../../../../../../../www.youtube.com/watch@v=dBLMK4ax-HM&flvskin=MPFLVSkin.swf" /><EMBED src="MPFLVPlayer.swf"  width="560" height="315" type="application/x-shockwave-flash" allowFullScreen="true" FlashVars="fn=../../../../../../../../www.youtube.com/watch@v=dBLMK4ax-HM&flvskin=MPFLVSkin.swf"></EMBED></OBJECT>   <p dir="ltr">
+
+ <br />
+      </p>
+      <h3>Reflection Upon Original Expectations</h3>
+      <p dir="ltr" id="internal-source-marker_0.9">At   the beginning of the project, we expected a digital ocarina with a   physical interface that sounds decent and is easy to play. &nbsp;The project   that we built met these expectations. &nbsp;It would have been nice to have   more responsive push buttons on the ocarina as well as more instruments   besides an ocarina, flute, and voiced &ldquo;AH&rdquo;. &nbsp;Also a smarter microphone   volume controller that doesn't introduce static would have been nice.</p>
+      <p dir="ltr">&nbsp;</p>
+      <h3>Intellectual Property Considerations</h3>
+      <p dir="ltr" id="internal-source-marker_0.31">There   are very few intellectual property considerations  since the   code we wrote and hardware we designed was fully from scratch. Note   that Bruce Land supplied much of the template code (as well as lab   facilities and help of every sort). &nbsp;Additionally, Mark R. Petersen&rsquo;s   gave us some ideas and an initial starting point with the Matlab scripts   he wrote. That site is listed here: <a href="../../../../../../../../amath.colorado.edu/pub/matlab/music/default.htm">Musical Analysis and Synthesis in Matlab</a></p>
+      <p dir="ltr">&nbsp;</p>
+					
+	<!------------------------------------------------------------------------------------------------->
+	<div class="bridge-section">
+		<h2><a name="appendices"></a>Appendices</h2>
+	</div>
+
+	<h3><span class="main-photo-large">Fingering Chart</span></h3>
+	<h3><span class="main-photo-large"><img src="images/6-hole-ocarina-fingering-chart-mini.gif" width="400" height="532"/></span></h3>
+	<p>&nbsp;</p>
+	<h3>Program Listings</h3>
+	<p>
+	<a href="files/DE2_TOP.v">DE2_TOP.v</a> (Main Verilog Hardware Design File) <br />
+    <a href="files/AUDIO_DAC_ADC.v">AUDIO_DAC_ADC.v</a> (Supporting File - Audio input/output)<br>   
+    <a href="files/I2C_Controller.v">I2C_Controller.v</a> (Supporting File - I2C Controller)<br>
+    <a href="files/VGA_Audio_PLL.v">VGA_Audio_PLL.v</a> (Supporting File - Creates PLL's for Audio)<br>	  </p>
+	<br>
+	
+	<br>
+	
+	<h3>Work Breakdown</h3>
+
+	<table border="1" cellpadding="5" cellspacing="0">
+		<thead>
+			<tr>
+				<th>TASK</th>
+				<th>COMPLETED BY</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr class="row1"><td>Conceptualization</td><td>Both</td></tr>
+			<tr class="row2"><td>Verilog design and coding</td><td>Both</td></tr>
+			<tr class="row1"><td class="row1">Physical ocarina construction</td><td>Joe</td></tr>
+			<tr class="row2"><td>Wiring of ocarina</td><td>Evan</td></tr>
+			<tr class="row1"><td>Report writing</td><td>Both</td></tr>
+			<tr class="row2"><td>Website construction</td><td>Evan</td></tr>
+		</tbody>
+	</table>
+
+	<br>
+
+	<br>
+	<h3>References</h3>
+
+	
+	<p>
+	<a href="../../../../../../../../amath.colorado.edu/pub/matlab/music/default.htm">Musical Analysis and Synthesis in Matlab</a><br>
+	</p>
+
+	<!------------------------------------------------------------------------------------------------->
+
+		</div>
+	</div>
+
+	</div>
+
+	<hr />
+
+	<div id="footer">
+	<!-- The footer-content div contains the Cornell University copyright -->
+
+	<div id="footer-content">
+		&copy;2011 <a href="../../../../../../../../www.cornell.edu/default.htm">Cornell University</a>
+	</div>
+	</div>
+
+</body>
+
+<!-- Mirrored from people.ece.cornell.edu/land/courses/ece5760/FinalProjects/f2009/nic4_sck76/nic4_sck76/index.html by HTTrack Website Copier/3.x [XR&CO'2010], Mon, 05 Dec 2011 19:59:06 GMT -->
+<!-- Added by HTTrack --><meta http-equiv="content-type" content="text/html;charset=UTF-8"><!-- /Added by HTTrack -->
+</html>

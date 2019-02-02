@@ -1,0 +1,165 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>High Speed Hardware Raytracer - High Level Design</title>
+<link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+<div id="maincontainer">
+
+<div id="topsection"><div class="innertube">
+<h1>High Speed Hardware Raytracer</h1>
+<h3>Daniel Beer (dbb28), Kashif Javed (kj49)</h3>
+</div></div>
+<div id="contentwrapper">
+<div id="contentcolumn">
+<div class="innertube">
+<br>
+<h1>High Level Design</h1>
+
+<p>
+Ray tracing is a very useful 3D rendering technique. In real life, we see through rays of light that are emitted from a source, colored by reflecting off of objects, and eventually bounced into our eye. The amount and color of light that hits our retina at a certain point thereby allows us to figure out the objects that exist in front of us. 
+</p>
+
+<p>
+Ray tracing mimics this process, but proceeds in reverse. Rays are shot from our camera, colored when they hit objects, and then bounced toward the light to shade them. Because this method is so similar to the real life process, it can create very realistic images and numerous interesting effects.
+</p>
+
+<br><h2>
+Ray Tracing Algorithm:
+</h2>
+
+<p>
+The ray tracing algorithm is divided into three main components:
+<ol><li>Shooting a ray from a pixel on the image plane into the scene.
+<li>Finding the intersection of ray with a given triangle.
+<li>Shading the pixel. 
+</ol>
+</p>
+
+<p>
+Example pseudocode for this:
+<ul><li>For every pixel
+   <ul><li>For every triangle in the scene
+	<ol><li>Shoot a ray through the pixel
+	<li>Find ray intersection with the triangle
+	<li>Determine if this triangle is nearer then the previous triangle
+	<li>If so, color and update the pixel
+	</ol>
+   </ul>
+</ul>
+</p>
+
+<br><h2>
+Ray Casting:
+</h2>
+
+<p>
+We start by placing a camera in our scene, a pinhole from which we want to see. A plane is placed in front of the camera, which represents the image we are filling in. The image is divided into rows and columns of pixels and then a ray is cast starting at the origin of the camera and passing through the center of a pixel. 
+</p>
+
+<p align=center>
+<img src="pictures/camera.png" width="736" height="491"><br>
+Figure 1: Camera Setup
+</p>
+
+<p>
+A ray is a vector that passes through a given pixel and whose tail is at the origin. The vector that connects the origin and the center of the image plane is called the forward vector. The magnitude of the forward vector is the distance between the image plane and the origin. The up vector is defined as the vector that is orthogonal to the forward vector in the positive z-direction in a left handed co-ordinate system. A ray through PixelX and PixelY is given by:
+</p>
+
+<p align=center>
+<img src="pictures/eq1.png" width="376" height="163"><br>
+<img src="pictures/eq2.png" width="337" height="93">
+</p>
+
+<p align=center>
+<img src="pictures/rays.png" width="473" height="526"><br>
+Figure 2: Ray Casting
+</p>
+
+
+<br><h2>
+Ray Intersection:
+</h2>
+
+
+<p>
+Our ray tracer is designed to trace triangles in three dimensions. The reason for doing so was because it leads to more general meshes i.e. complex scenery can be generated consisting only of triangles. The triangle ray intersection is a two step process. 
+</p>
+
+<p>
+Step 1 is to intersect the ray with the plane of the triangle. This can be done using the following formula:
+</p>
+
+<p align=center>
+<img src="pictures/eq3.png" width="605" height="165">
+</p>
+
+<p>
+Step 2 is to determine whether the intersection point of the ray and the plane is inside the triangle or not. A triangle is made of three lines and as you move along each line, you can divide the plane into two spaces one to the left that is inside the triangle and other to the right. If you test for all three lines for a given point and it happens to be on the left side of all three lines, then the point is inside the triangle. Mathematically, this can be represented by the following equations:
+</p>
+
+<p align=center>
+<img src="pictures/eq4.png" width="173" height="69">
+</p>
+
+<p>
+If the above three equations result in a non-negative number, then we can safely assume that the point x is inside the triangle.
+</p>
+
+<p align=center>
+<img src="pictures/intersection.png" width="603" height="546"><br>
+Figure 3: Ray Triangle Intersection
+</p>
+
+<br><h2>
+Shading:
+</h2>
+
+<p>
+Once a point x is found to be inside our view plane, we have to assign it a color. There are several lighting models that can be used. We use the Lambertian model in which the intensity of the color is independent of the view point. The shaded color is found as follows:
+</p>
+
+<p align=center>
+<img src="pictures/eq5.png" width="276" height="47">
+</p>
+
+<p>
+The light l vector and the normal n have to be normalized before they are multiplied with the color to get the right intensity for the pixel.
+</p>
+
+<br><h2>
+Drawing the image:
+</h2>
+
+<p>
+After the ray from each pixel is intersected with all the triangles in the scene, the closest intersection is found, and the pixel is filled in with the color calculated at that intersection. By repeating this procedure for each pixel in the image, the entire scene is rendered.
+</p>
+
+
+</div>
+</div>
+</div>
+
+<div id="leftcolumn">
+<div class="innertube">
+<br>
+
+<a href="index.html">Main Page</a><br><br>
+High Level Design<br><br>
+<a href="hardware.html">Hardware Design</a><br><br>
+<a href="results.html">Procedure and Results</a><br><br>
+<a href="pictures.html">Pictures</a><br><br>
+<a href="appendix.html">Appendix</a><br><br>
+</div>
+
+</div>
+
+<div id="footer"></div>
+
+</div>
+</body>
+</html>

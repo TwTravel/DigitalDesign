@@ -1,0 +1,65 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>SignalTap</title>
+</head>
+
+<body>
+<h3 align="center">Signal-Tap Logic Analyser <br />
+  in Quartus Prime<br />
+  ece5760 Cornell</h3>
+<p>The Signal-Tap II Embedded Logic Analyzer is a system-level debugging tool that captures and displays signals in circuits designed for implementation in Intel/Altera’s FPGAs. Signal-Tap runs on the chip, with your design, in real hardware (not simulation) to provide waveforms of logic signals within the design. Signal-Tap uses significant hardware resources on the FPGA to allow flexible triggering and to record waveforms of your logic signals for later viewing on the PC running Quartus Prime. All communication is done through the JTAG programming cable that you use to program the FPGA. No extra hardware external to the FPGA is necessary.</p>
+<p>SignalTap references. </p>
+<ul>
+  <li><a href="../DE1_SOC/Power_Estimation/qts-qps-5v3.pdf">Intel® Quartus® Prime StandardEdition Handbook Volume 3</a> <br />
+    Chapter 10<em> System Debugging Tools Overview<br />
+    </em>Chapter 14 <em>Design Debugging with the Signal Tap Logic Analyzer    </em></li>
+  <li><a href="../../../../../https@courses.cs.washington.edu/courses/cse467/08au/labs/Tutorials/tut_signaltapII_verilogDE2.pdf">SignalTap tutorial</a>. </li>
+  <li><a href="../../../../../https@www.intel.com/content/www/us/en/programmable/support/training/course/odsw1164.html">Signal-Tap online course</a></li>
+</ul>
+<p><strong>Using SignalTap</strong> <strong>on-chip logic analyser to verify design</strong></p>
+<p>Using a simple example <a href="../DE1_SOC/Power_Estimation/example_counter_snippet.txt">Verilog counter</a> as the logic to be monitored:</p>
+<ol>
+  <li>Open the SignalTap II window by selecting <em>File&gt;New</em> , then Choose <em>SignalTap II Logic Analyzer File</em> and click OK.</li>
+  <li>In the <a href="SignalTap/SignalTap_setup1.PNG">window whch opens</a>, select <em>File&gt;save</em> as and save as <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">counter.stp</span>, then click yes in the dialog box asking if this is the active signal tap file. <br />
+  -- Note:  If you want to disable this file from the project, or to disable SignalTap from the project, go to <em>Assignments&gt;Settings</em> .  In the category list, select <em>SignalTap II Logic Analyzer</em> , bringing up <a href="SignalTap/SignalTap_UN_setup.PNG">this window</a>.  To turn off the analyzer, uncheck <em>Enable SignalTap II Logic Analyzer</em> .  </li>
+  <li>Now we need to connect SignalTap to the counter and supply trigger condtions so that SignalTap knows which event to detect in order to store waveforms. Double-click in the area labeled <a href="SignalTap/SignalTap_setup2.PNG">Double-click to add nodes</a> , bringing up the <a href="SignalTap/SignalTap_node_finder1.PNG">Node Finder window</a>, and click on the expand button (marked with an arrow) to show search options. In the <em>Filter</em> field, select <em>SignalTap II: pre-synthesis</em> , and for the <em>Look in</em> field select |DE1_SOC_computer| . Click the <em>List button</em> in the upper right corner. This will <a href="SignalTap/SignalTap_node_finder2.PNG">now display all the nodes</a> that can be probed in the project. Choose signals to probe <a href="SignalTap/SignalTap_node_finder3.PNG">in the left panel</a> and use the <em>&gt; button</em> to select them into the right panel. Click the <em>Insert button</em> to insert the selected nodes, then <em>Close button</em> to close the Node Finder window.</li>
+  <li>Now we need to specify what clock is going to run the SignalTap module that will be instantiated within our design. To do this, in the <em>Clock box </em>of the <em>Signal Configuration pane</em> of the <em>SignalTap window</em>, click<em> ...</em> , which will again bring up the Node Finder window. Select <em>List</em> to display all the nodes that can be added as the clock, and then <a href="SignalTap/SignalTap_node_finder_clock.PNG">double-click <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">CLOCK_50</span></a>. Click OK .</li>
+  <li>With the <em>Setup tab</em> (left side, 2/3 way down the window) of the SignalTap window still selected, select the checkbox in the Trigger Conditions column. In the <a href="SignalTap/SignalTap_setup3.PNG">dropdown menu at the top of this column</a>, select Basic AND . Right-click on the <em>Trigger Conditions</em> cell corresponding to the node <em>reset</em> and select <em>falling edge</em>.  Now, the trigger for running the Logic Analyzer will be when  key[0] on the  board is released. Note that you can right-click on the <em>Trigger Conditions</em> cell of any of the nodes being probed and select the trigger condition from a number of choices. The actual trigger condition will be true when the logical AND of all these conditions is satisfied. For now, just keep the trigger condition as falling edge of <em>reset</em> and the others set to their default value, <em>Don’t Care</em> .</li>
+  <li>Make sure the FPGA hardware is communication is correct using the Setup... button (upper right corner). If the USB blaster is not configured you may get an warning like <em>invalid JTAG</em>. Compile the project (including SignalTap) and program the board.</li>
+  <li>Select the Data tab (left side 2/3 down the window), then choose on <em>processing&gt;Run Analysis</em>. <br />
+  The <a href="SignalTap/SignalTap_data3.PNG">interface should wait</a> until you press key[0] (reset), <a href="SignalTap/SignalTap_data1.PNG">then show you waveforms</a>.</li>
+  <li>Modifying the <a href="SignalTap/SignalTap_setup4.PNG">trigger condition</a> to wait for a rising edge on bit 4 of the counter <em>and</em> key[0] low, results in <a href="SignalTap/SignalTap_data2.PNG">this data</a>. <br />
+  The trigger conditions at time zero are marked with arrows.</li>
+  <li>A look at the <a href="SignalTap/SignalTap_memory_use.PNG">synthesis results</a> will show you that some M10k memory is used. In the <em>Signal Configuration</em> pane of the <em>SignalTap II </em>window, in the <em>Sample depth dropdown menu of the Data pane</em>, you can choose the number of samples stored. This option allows you to specify how many samples will be taken around the triggers in your design. If you require many samples to debug your design, select a larger sample depth. Note, however, that if the sample depth selected is too large, there might not be enough room on the board to hold your design and the design will not compile. If this happens, try reducing the sample depth. The <a href="SignalTap/SignalTap_memory_use_planner.PNG">chip planner interface</a> shows that quite a lot of logic was built, including using two M10k blocks, to support SignalTap. The design for the counter is 17 ALMs. With SignalTap the design is 390 ALMs. But as the actual design gets bigger, the SignalTap size will not grow porportionally.</li>
+  <li>Sometimes a design you create will have wires in it that the Quartus compiler will optimize away. You can force Quartus to keep the wires for probing by SignalTap by including the directive<span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace"> /*synthesis keep*/</span> on the line where you declare a signal. For example, <br />
+  <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">wire abc /*synthesis keep*/;</span></li>
+</ol>
+<p><strong>SignalProbe</strong><br />
+  A scheme for bring signals out of the FPGA with very little (or no) recompile.
+    <br />
+<span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">Tools &gt; SignalProbe Pins... <br />
+</span>Chapter 13 of <a href="../../../../../https@www.altera.com/content/dam/altera-www/global/en_US/pdfs/literature/hb/qts/qts-qps-5v3.pdf">Quartus Prime Handbook Vol 3</a></p>
+<p>https://www.altera.com/en_US/pdfs/literature/hb/qts/qts_qii53008.pdf<br />
+  https://www.altera.com/support/support-resources/software/debugging.html<br />
+  https://www.youtube.com/watch?v=20WwtqaA1dY</p>
+<p><strong>Bus Analyser Tool Kit</strong><br />
+Gain visibility into your Qsys interconnect based system.<br />
+<span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">Tools &gt; System Debugging Tools &gt; Bus analyzer</span><br />
+http://www.alterawiki.com/wiki/Bus_Analyzer_Toolkit</p>
+<p><strong>On-chip Debugging Design Examples</strong><br />
+https://www.altera.com/support/support-resources/design-examples/design-software/on-chip-debugging.html</p>
+<hr />
+<p><a href="../../../../../ftp@ftp.altera.com/up/pub/Altera_Material/15.1/Tutorials/Verilog/Timequest.pdf">Using TimeQuest Timing Analyzer</a> (Quartus Prime)</p>
+<p><a href="../../../../../https@www.altera.com/en_US/pdfs/literature/hb/qts/qts-qps-5v3.pdf">Quartus Prime Standard Edition Handbook Volume 3: Verification</a> Chapters 6 and 7</p>
+<p><a href="../../../../../https@www.altera.com/en_US/pdfs/literature/hb/qts/qts-qps-handbook.pdf">Quartus Prime Standard Edition Handbook Volume 1: Design and Synthesis</a></p>
+<p><a href="../../../../../ftp@ftp.altera.com/up/pub/Intel_Material/15.1/Tutorials/Verilog/Quartus_II_Introduction.pdf">Quartus Prime Introduction Using Verilog Designs</a></p>
+<hr />
+<p>
+  Copyright Cornell University, 
+  <!-- #BeginDate format:Am1 -->January 31, 2019<!-- #EndDate -->
+</p>
+<p>&nbsp;</p>
+</body>
+</html>

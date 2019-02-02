@@ -1,0 +1,298 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<title>Graphic card</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+		<link rel="stylesheet" media="screen" type="text/css" title="Design" href="design.css" />
+	</head>
+	<body>
+		<div id="header" style="WIDTH: 700px; HEIGHT: 100px; text-align:center; vertical-align:middle">
+			<br>
+			<strong><font face="Times New Roman" size="20px">Graphic card</font></strong>
+			<br>
+			ECE 5760 Final Project by Noe Girand
+		</div>		
+		<table cellpadding="0" cellspacing="0" style="height: 50px; background-color:#CCCCCC">
+			<tr>
+			<td width="140" align="center" valign="middle"><a href="#intro">Introduction</a></td>
+			<td width="140" align="center" valign="middle"><a href="#hld">High Level Design</a></td>
+			<td width="140" align="center" valign="middle"><a href="#hd">Hardware Design</a></td>
+			<td width="140" align="center" valign="middle"><a href="#results">Results/Conclusion</a></td>
+			<td width="140" align="center" valign="middle"><a href="#ref">References/Appendix</a></td>
+			</tr>
+		</table>
+
+		<h1><a name="intro">Introduction</a></h1>
+		<p>
+			Interested in graphics and in computer vision, I decided to design an elementary graphic card for the ECE5630 final project.
+			The objective was to design a module which could receive geometry data and lightening information as in input and displays them on the VGA. 
+			My component implements several specific topics of graphic cards:
+			<ul>
+				<li>Linear extrapolation between vertices;</li>
+				<li>High-resolution Z buffering;</li>
+				<li>Basic lightening.</li>
+			</ul>
+			This project was the first step in the designing as a more complex graphic card which I will implement as my MEng Project.<br/>
+			<img src="Intro.jpg"/>
+		</p>
+
+
+		<h1><a name="hld">High Level Design</a></h1>
+
+		<h2>Triangle rasterization</h2>
+		<p>
+			The first part of the project was the linear extrapolation between vertices of a triangle.
+			This is performed by drawing two lines from a common vertex to the two others, and extrapolating between points of the lines, as explained in the diagram below:
+		</p>
+		<img src="TriangleRaster.bmp">
+		<p>
+			This is a 2D version of the linear extrapolation we have performed in Lab 4.
+			On the X-axis, we have 2 points at the same abcisse which evoluate as extrapolation of single lines.
+			There is the same extrapolation on these two points.
+		</p>
+		<h2>Others</h2>
+		<p>
+			I implemented Z-buffering in writing the Z of each pixel in memory.
+			When a new pixel is to be drawn, memory is check whether there is a closer point to user's point of view.
+		</p>
+		<p>
+			I have implemented a basic scenario of lightening, only based on directional light, regardless of the distances, like that of the sun.
+			Nevertheless, this project does not manage shadows.
+		</p>
+		<h2>Logical structure</h2>
+		<p>
+			I have splitted the project into different modules which could be used independently.
+			The three modules are:
+			<dl>
+				<dt>Line Triangle Renderer</dt>
+				<dd>This is the main component than in Lab 4, but dedicated to extrapolation on X-axis.</dd>
+				<dt>Triangle Renderer</dt>
+				<dd>This is the equivalent component of the previous one, but in 2D.</dd>
+				<dt>Memory triangle controller</dt>
+				<dd>This is the main component which controls the data to be sent in the memory.</dd>
+			</dl>
+			Each one requires the previous. I have also implemented a top main module to make the demonstrations.
+		</p>
+
+		<h1><a name="pd">Hardware Design</a></h1>
+		<p>
+			Most of these modules have similar architecture based on a state machine and on controlling signals which are explained below:
+			<dl>
+				<dt>n_reset</dt>
+				<dd>If false, then the module should reset: clear all its registers and come back in Idle state</dd>
+				<dt>clock</dt>
+				<dd>For the transition of the state machine</dd>
+				<dt>n_pause</dt>
+				<dd>Should be high to active the transition of the state machine. This permit to “freeze” a module without clearing its registers.</dd>
+			</dl> 
+		</p>
+		
+		<h2>Line triangle renderer</h2>
+		<p>
+			This is the basic component to draw a line. 
+			It implements the algorithm described for Lab4, so it would not be described again. 
+			It permits to extrapolate many values (exhaustively Red, Green, Blue and Z) between that of the two extremities of the line.
+			Because the triangle will be displayed column by column, one important consideration was the output to prevent that the module was reaching a new x in its extrapolation. 
+			This is the list of communicating signals, in addition to these mentioned above (for readability, size of signals is omitted):
+			<dl>
+				<dt>input start</dt>
+				<dd>the user module asks Line Triangle Renderer to start rendering</dd>
+				<dt>output completed</dt>
+				<dd>Line Triangle Renderer warns user module that it has completed its rendering</dd>
+			</dl> 
+			<dl>
+				<dt>input p1_x, p1_y, p1_z, p1_r, p1_g,  p1_b</dt>
+				<dd>Input data for Point 1</dd>
+				<dt>input p2_x, p2_y, p2_z, p2_r, p2_g,  p2_b</dt>
+				<dd>Input data for Point 2</dd>
+			</dl> 
+			<dl>
+				<dt>output x, y, z, r, g, b</dt>
+				<dd>Data for current point</dd>
+				<dt>newX</dt>
+				<dd>Warns user module that new point has a new x</dd>
+			</dl> 
+		</p>
+		<p>
+			The main state machine was composed of four different states:
+			<dl>
+				<dt>stIdle</dt>
+				<dd>The module has nothing to do and has completed its previous rendering.</dd>
+				<dt>setNewX</dt>
+				<dd>Empty state to prevent the user module that the line is currently reaching a new point. 
+				Line Triangle Renderer remains idle this state in the probable case user module will likely freeze it to deal with the new point.</dd>
+				<dt>stDrawing</dt>
+				<dd>One iteration in the algorithm  to reach a new point. </dd>
+				<dt>stCompleted</dt>
+				<dd>The module has completed its rendering and wait for the start signal to be low. 
+				If user module keeps sending start signal until it has completed, Line Triangle Renderer is not confused and do not try to render the same line.</dd>
+			</dl>
+		</p>
+		<p>			
+			Transitions:<br/>				
+			<img src="LineTriangleRendererStateMachine.jpg">
+		</p>
+		
+		<h2>Triangle renderer</h2>
+		<p>
+			This module is the core of triangle rasterization. 
+			Its objective is to receive the data of three points and to extrapolate data (r, g, b, z) of the points inside the delimited triangle. 
+			One redundancy about this module was to deal with the similar but different cases (order of the points, clock-wise versus counter-clock-wise). 
+			This is the list of specific signals:
+			<dl>
+				<dt>start, completed</dt>
+				<dd>as in Line Triandle Renderer</dd>
+				<dt>input p1_x,…, p1_b, p2_x, …, p3_b</dt>
+				<dd>input data for the three points</dd>
+				<dt>output x, y, z, r, g, b</dt>
+				<dd>data for curent point</dd>
+				<dt>output newPoint</dt>
+				<dd>to warn the user module that data for new point is being provided</dd>
+			</dl>
+		</p>
+		<p>
+			This modules instanciates two Line Triangle Renderer to move the top and bottom lines.
+			It garantuees that when the first line reaches its final point, this line will switch to the third point.
+			One critical point of this module was the synchronisation of the lines.
+			The main state machine reflects these considerations.				
+			<dl>
+				<dt>stIdle</dt>
+				<dd>Similar to that of Line Triangle Renderer</dd>
+				<dt>stRbothNewX</dt>
+				<dd>Triangle Renderer is expecting both lines to switch to the next point with a different X</dd>
+				<dt>stRtNewX</dt>
+				<dd>Triangle Renderer is expecting only top line to switch to the next point with a different X</dd>
+				<dt>stRbNewX</dt>
+				<dd>Triangle Renderer is expecting only bottom line to switch to the next point with a different X</dd>
+				<dt>stRecNewX</dt>
+				<dd>Initializes extrapolation with new X.</dd>
+				<dt>Drawing</dt>
+				<dd>When both lines are on a point with same X, this is the state where Triangle Renderer extrapolates between these points on a y-axis
+				</dd>
+				<dt>stCompleted</dt>
+				<dd>Similar to that of Line Triangle Renderer</dd>
+			</dl>
+		</p>
+		<p>
+			One critical consideration in this module is performance. 
+			It is important that in most cases (on Drawing state) on each cycle, a new point is being calculated and provided to user module.
+			Two other registers, corner and second, were used to permit the switching of the top/bottom line when the second point is reached.
+			This switching was another difficulty.
+			Transitions:<br/>				
+			<img src="TriangleRendererStateMachine.jpg">
+		</p>		
+		<h2>Memory triangle controler</h2>
+		<p>
+			This component's objective is to fill the data in memory with the output of a Triangle Renderer.
+			This is where the Z-buffering and lightnening are implemented.
+			This is the list of the signals users see:
+			Memory access
+			<dl>
+				<dt>output write</dt>
+				<dd>write enable for memory</dd>
+				<dt>output addr_reg</dt>
+				<dd>address</dd>
+				<dt>output data_reg</dt>
+				<dd>data</dd>
+			</dl>
+			Data
+			<dl>
+				<dt>input p1_x .. p3_b</dt>
+				<dd>Data for extremity</dd>
+			</dl>
+			Z-buffering
+			<dl>
+				<dt>input z_enable</dt>
+				<dd>z-buffering enable</dd>
+				<dt>input z_existence</dt>
+				<dd>Tells Memory triangle controler that a points has already been placed in memory at the current location</dd>
+				<dt>input z_data</dt>
+				<dd>Tells Memory triangle controler the z about the point currently in buffer, should it exists.</dd>
+			</dl>
+			Lightnening
+			<dl>
+				<dt>input light_enable</dt>
+				<dd>light enable</dd>
+				<dt>input light_r, light_g, light_b</dt>
+				<dd>Light's colors.</dd>
+				<dt>input material_r, material_g, material_b</dt>
+				<dd>Material colors</dd>
+				<dt>input light_n_x, light_n_y, light_n_z</dt>
+				<dd>Light normal</dd>
+				<dt>input n_x, n_y, n_z</dt>
+				<dd>Normal of triangle</dd>
+			</dl>
+		</p>
+		<p>			
+			In order to implement Z-buffering with a sizeable resolution, and to keep 5 bits per color channel, I have lowered my screen resolution to 512*256.
+			This permited me to have 2 memory slots per pixel on screen, one exlusively dedicated to Z-buffering.
+			The main state machine was composed of these different states:
+			<dl>
+				<dt>stIdle</dt>
+				<dd>Same as usual.</dd>
+				<dt>stInitializeDrawing</dt>
+				<dd>Initializing state.</dd>
+				<dt>stDrawing</dt>
+				<dd>Common state of rendering.</dd>
+				<dt>stGetZWriteRGB</dt>
+				<dd>Module is getting Z information from memory at the position of the current pixel and decides to write something in it.</dd>
+				<dt>stWriteZ</dt>
+				<dd>From previous state, updating the Z-buffer with new pixel.</dd>
+			</dl>
+			Transitions:<br/>				
+			<img src="MemoryTriangleControlerStateMachine.jpg">
+		</p>
+		The module is implemented in a DE2_TOP module as an example of the use of the module.
+		
+		<h1><a name="results">Results &amp; Conclusions</a></h1>
+		
+		<table cellpadding="0" cellspacing="0"  style="text-align:center; vertical-align:middle">
+			<tr>
+				<td></td><td>Without Z Buffer</td><td>With Z Buffer</td>
+			</tr><tr>
+				<td>Without lighting</td><td><img src="NoLightNoZBuffer.jpg"/></td><td><img src="NoLightWithZBuffer.jpg"/></td>
+			</tr><tr>
+				<td>With lighting</td><td><img src="WithLightNoZBuffer.jpg"/></td><td><img src="WithLightWithZBuffer.jpg"/></td>
+			</tr>
+		</table>
+		<p>
+			I did not have precise limits about what I wanted to implement, but I consider that I have succeeded in implementing the real basic-end of the graphic pipeline.
+			The project lets some very interesting pathes for progress :
+			<ul>
+				<li>The lightening computation should have been done in a dedicated module, and maybe so should be the Z-buffering.</li>
+				<li>The usage of light is limited to one. 
+					It should not be difficult to permit user to specify several lights. 
+					It would require a communication process so that a top-level user can specify sequentially a list of lights to the computing module.</li>
+				<li>Memory was an important issue I did not manage good enough.
+					I should use the other memories on the FPGA.</li>
+			</ul>
+		</p>
+		<p>
+			In addition to these technical issues, I stayed too much in the very last part in the pipeline.
+			As an example, I did not reach the 3D floating computation for example, as many things which are closer to the end-user.			
+		</p>
+		<p>
+			I will keep working on this project as my MEng project.
+		</p>
+
+		<h2>Acknowledgments</h2>
+		<p>
+			I would like to thank both professor Land and TA Adam Shapiro for their disponibility, all the help they provided me and to have animated one of the most teachable and interesting course of this semester.
+		</p>
+		
+		<h1><a name="ref">References/Appendix</a></h1>
+
+		<h2>References</h2>
+		<a href="../../../../../../../../altera.com/default.htm">Altera Website</a><br>
+		<a href="../../../../../../../../instruct1.cit.cornell.edu/Courses/ece576/default.htm">ECE 5760 Website</a><br>
+
+		<h2>Code</h2>
+		<b>The harware files</b>
+		<br>
+		<a href="DE2_TOP.v">DE2_TOP</a><br>
+		<a href="MemoryTriangleControler.v">MemoryTriangleControler</a><br>
+		<a href="TriangleRenderer.v">TriangleRenderer</a><br>
+		<a href="LineTriangleRenderer.v">LineTriangleRenderer</a><br><br>
+		<a href="totalZipped.zip">Total project</a><br><br>
+	</body>
+</html>

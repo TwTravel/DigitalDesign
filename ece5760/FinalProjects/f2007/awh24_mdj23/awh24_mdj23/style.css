@@ -1,0 +1,44 @@
+body {
+  background: #FFF5D5;
+  color: #000000;
+}
+
+a {
+  color: #B10808;
+}
+
+img.picture {
+  border: 1px solid #000000;
+}
+
+table {
+  border-collapse: collapse;
+  border: 2px solid #000000;
+}
+
+th,td {
+  border: 1px solid #000000;
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+th {
+  border-bottom: 2px solid #000000;
+}
+
+tr.total {
+  border-top: 2px solid #000000;
+}
+
+.center {
+  text-align: center;
+}
+
+table.center {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.caption {
+  font-size: smaller;
+}

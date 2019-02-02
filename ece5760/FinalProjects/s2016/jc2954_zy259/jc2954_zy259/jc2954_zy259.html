@@ -1,0 +1,663 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta http-equiv="Content-Language" content="en-us">
+<title>ECE 5760: Final Project</title>
+<link rel="stylesheet" type="text/css" media="all" href="format/cornell.css">
+<link rel="stylesheet" type="text/css" media="all" href="format/cornell2.css">
+<link rel="stylesheet" type="text/css" media="all" href="format/main.css">
+<meta name="author" content="Junyin Chen, Ziqi Yang">
+<meta name="copyright" content="Copyright (c) 2016 Junyin Chen, Ziqi Yang">
+<meta name="description" content="Pseudo Touch Screen Game : Five in a Row">
+<meta name="keywords" content="microcontroller, ECE, 5760, Cornell"></head>
+<body>
+
+<div id="header">
+  <!-- The following div contains the Cornell University logo and search link -->
+  <div id="cu-identity"> 
+		<div id="cu-logo"> 
+			<a href="../../../../../../../../www.ece.cornell.edu/default.htm"><img src="pics/cu_logo.gif" alt="Cornell University" width="340" height="75" border="0"></a> 
+		</div> 
+  </div>
+  
+  <div class="linklist"> <a name="top"></a> </div>
+  <!-- The search-form div contains a form that allows the user to search 
+		either pages or people within cornell.edu directly from the banner.	-->
+  <div id="search-form">
+    <form action="http://www.cornell.edu/search/" method="get" enctype="application/x-www-form-urlencoded">
+      <div id="search-input">
+        <label for="search-form-query">SEARCH:</label>
+        <input type="text" id="search-form-query" name="q" value="" size="20">
+        <input type="submit" id="search-form-submit" name="submit" value="go">
+      </div>
+      <div id="search-filters">
+        <input type="radio" id="search-filters1" name="tab" value="" checked="checked">
+        <label for="search-filters1">Pages</label>
+        <input type="radio" id="search-filters2" name="tab" value="people">
+        <label for="search-filters2">People</label>
+        <a href="../../../../../../../../www.cornell.edu/search/default.htm">more options</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div id="mainnav">
+  <ul>
+    <li><a href="#overview">Overview</a></li>
+    <li><a href="#design">Design</a></li>
+    <li><a href="#results">Results</a></li>
+    <li><a href="#conclusions">Conclusions</a></li>
+    <li><a href="#appendices">Appendices</a></li>
+  </ul>
+</div>
+
+<div id="sectiontitle">
+  <h4><a href="../../../../default.htm">ECE 5760</a>: <a href="../../../default.htm">Final Project</a></h4>
+  <h1>Pseudo Touch Screen Game</h1>
+  <h2>Camera Based Finger Detection</h2>
+  <h3>Junyin Chen (<a href="mailto:jc2954@cornell.edu">jc2954@cornell.edu</a>)</h3>
+  <h3>Ziqi Yang (<a href="mailto:zy259@cornell.edu<">zy259@cornell.edu</a>)</h3>
+</div>
+
+<div id="wrapper">
+<div id="content">
+<div id="maincontent" class="hub">
+
+  <br><br>
+  <div id="intro">
+    <h2>Introduction &nbsp;&nbsp;&nbsp;<font size="-1"><strong><a href="#top">top</a></strong></font></h2>
+      <p align="center">
+          <iframe width="560" height="315" src="../../../../../../../../https@www.youtube.com/embed/2rWrv-5ZufY" frameborder="0" allowfullscreen></iframe>
+      </p>
+    <p>
+    This is a finger detection based project using a camera to detect the user finger's location 
+    relative to the vga screen and display a cursor on the screen to reach the effect of a pseudo 
+    touch screen. A chess board is displayed on the VGA screen and by touching the chessboard, the user
+    could place a piece on the chessboard to play the game 'five in a row', by connecting any five piece
+    in a row, the user could win the game.
+    </p>
+    <p>
+    The idea is to have a NTSC camera pointing right toward the screen, capture the video when and using
+    morphological filtering to get rid of the errors, and get the location of the finger tips. If the 
+    cursor stay still at the same location for a certain period of time, a piece will be displayed on the 
+    nearest chess board intersection. All the chess position is sent to the NIOS system to decide which 
+    side had win the game.
+    </p>
+  </div>
+
+  <div class="linklist"> <a name="overview"></a>
+    <h2>Highlevel Design &nbsp;&nbsp;&nbsp;<font size="-1"><strong><a href="#top">top</a></strong></font></h2>
+    <h3>Rationale and Inspiration:</h3>
+    <p>
+    Inspired by the famous Xbox body sensor game and some previous ece 5760 final projects of tracking 
+    the body movement to control the game, we decided to make a video game controlled by the finger 
+    location detected by the camera to simulate the effect of a touch screen. Most of the relavent 
+    previous course project use only the color to find and identify the desired object, we take the 
+    advantage of that and try to find the fingertip location.
+    </p>
+    <p>
+    In this game the player will be pointing on the VGA screen and there will be a green cursor showed up on 
+    the nearest intersection point of the chessboard shown on the screen. When the player deciede to place a
+    piece on this location, they just need to stay at the same location for 2 sec. If either side of the player
+    had an unbroken row of five pieces horizontally, vertically, or diagonally, this player win the game.  
+    The game will reset after pressing Key0.
+    </p>
+        
+    <div class="image" title="">
+      <a href="pics/Block_Diagram.png" title=""><img src="pics/Block_Diagram.png" width="600"  title="" style=""></a>
+    </div>
+    <p class="caption">Figure 2-1: Highlevel Design Diagram</p>
+    <h3>Background Math</h3>
+    <h5>Skin Detection</h5>
+    <p>
+    As mentioned in "Face segmentation using skin-color map in videophone applications" by Chai and Ngan,
+    A skin color map Y_Cb_Cr is derived and used to detect pixels that appear to be skin. The renge of Y 
+    Cb and Cr that are most relavent to skin are: 
+    </p>
+    <p align="center">  mY > 80   </p> 
+    <p align="center"> 85 < Cb < 135       </p>
+    <p align="center"> 135 < Cr < 180    </p>
+   
+    <div class="image" title="">
+      <a href="pics/skin_detection.jpg" title=""><img src="pics/skin_detection.jpg" width="450"></a>
+    </div>
+     <p class="caption">Figure 2-2: Picture After Thresholding</p>
+    <p>
+    Overall, this skin detection thresholding method elimate most of the background information and leave a 
+    recognizable binary image with hands and some noise. In order to run the fingertip recgonization algorithm,
+    we need to first separate the hand with noise and other small irrelevant parts. 
+    </p>
+
+    <h5>Morphological Filtering</h5>
+    <p>
+    As we could see from the detected images, the irrelevant part and noises are much smaller than the hand
+    detected, and the hand detected may not be fully detected as a whold piece, several black holes may show 
+    up because of the shadow. As a result using morphological filtering will help us get rid of the noise and full 
+    the missing part of the hand relatively well.
+    </p>
+
+    <h4>Dilation and Erosion</h4>
+    <p>
+    Erosion and dilation are two basic operators in morphological filtering. Erosion and Dilation of a binary image A 
+    by the structuring element (kernel) B are defined as: 
+    </p>
+    <div class="image" title="">
+      <a href="pics/erosion_equation.png" title=""><img src="pics/erosion_equation.png" height="20"></a>
+    </div>
+    <p class="caption">Figure 2-3: Erosion</p>
+    <div class="image" title="">
+      <a href="pics/dilation_equation.png" title=""><img src="pics/dilation_equation.png" height="37"></a>
+    </div>
+    <p class="caption">Figure 2-4: Dilation</p>
+    <p>
+    Erosion helps to get erode away the pixels around the boundary of the image pixels in A which fit the shape of 
+    the kernel B. Dilation will enlarge the image in A by a scale of kernel B. These two operators are used to generate
+    a more complex morphological operator called Opening and Closing.
+    </p>
+
+    <h4>Opening and Closing</h4>
+    <p>
+    Opening is the dilation of the erosion of the binary image A by a kurnel B, which means that A is first eroded by B,
+    and then dilate the result by B again. Closing is an completely opposite operator which is the erosion of the dilation,
+    meaning A is first dilated by B and then go through a erosion by B. Both of the equation could be shown as below:
+    </p>
+    <div class="image" title="">
+      <a href="pics/openoing_equation.png" title=""><img src="pics/opening_equation.png" height="20"></a>
+    </div>
+    <p class="caption">Figure 2-5: Opening</p>
+    <div class="image" title="">
+      <a href="pics/closing_equation.png" title=""><img src="pics/closing_equation.png" height="20"></a>
+    </div>
+    <p class="caption">Figure 2-6: Closing</p>
+    <p>
+    The effect of opening and closing are shown below. Opening is to get rid of the pixels which does not fit the shape of 
+    the kurnal, for our perticular case since the niose  are much smaller than the hand detected, so if we 
+    use a kurnal which is slightly bigger than the biggest noise, most the distractions on the screen will be elimiated, while 
+    the shape of the hand will be remained. However, since the irrelevent part is larger than the niose, if we try to use a kurnal
+    bigger than these parts, the shape of the hand will be deformed and it will be hard for the further analysis to find the finger
+    tip location. After the opening part is done, the closing part will be used to fill the unconnected piece inside the detected 
+    hand skin pixels.
+    </p>
+    <div class="image" title="">
+    <a href="pics/_hist.jpg" title=""><img src="pics/opening_effect.png" height="200"></a>
+    <a href="pics/closing_effect.png" title=""><img src="pics/closing_effect.png" height="200"></a>
+    </div>
+    <p class="caption">Figure 2-7: &nbsp; Opening Effect&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Closing Effect&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+    <p>
+    In our design, we use a kurnal of a 5*5 square for both opening and closing with its origin at the bottom right corner. 
+    The 5*5 kurnel will get rid of all the noise while have the hand part remain a similar shape. Althrough there are 
+    still some irrelevent pixels remained, these parts are all formed in several compelete pieces , and are much smaller
+    than the hand part which could be ignored in the finger tip detection method we used later. 
+    </p>
+
+
+    <h5>Finger Tip Location</h5>
+    <p>
+    After the filtering, the finger detected is shown below, we figure out that the span of the skins in X axis is longer than 
+    the span in Y axis. So by comparing the span in both axis we can figure out if the hand is pointing horizontally, vertically,
+    or diagonally. After that, we project all the skin pixels on the X and Y axis respectively, and try to find the feature to 
+    locate the finger tip.
+    </p>
+    <div class="image" title="">
+      <a href="pics/finger_after_filtering.jpg" title=""><img src="pics/finger_after_filtering.jpg" width="400"></a>
+    </div>
+    <p class="caption">Figure 2-8: Hand Picture after filtering</p>
+    <div class="image" title="">
+    <a href="pics/x_hist.jpg" title=""><img src="pics/x_hist.jpg" height="200"></a>
+    <a href="pics/y_hist.jpg" title=""><img src="pics/y_hist.jpg" height="200"></a>
+    </div>
+    <p class="caption">Figure 2-9: &nbsp; Projection On X Axis&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Projection On Y Axis&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</p>
+
+    <p>
+    As depicted in Figure 2-9, we can see that on the axis where the hand is pointing to (X at this case), there are two location
+    where the skin pixels disappears, which happens to be the finger tip location and the wrist location but it is hard to figure 
+    out which is which. It is easy to see that the place had the maximum plxel projection is the knuckle and the finger tip is the
+    place which had the longest distance to the knuckle. So the X coordinate of the finger tip could be located
+    </p>
+    <p>
+    After locat the X coordinate we cound project the pixels, whose X coordinates are around the finger tip x coordinate, on Y axis again
+    and there will only be the projection of the finger instead of the whole palm. This projection result is shown below, we can see that 
+    the maximum place appears to be the finger tip location on Y axis.
+    </p>
+    <div class="image" title="">
+      <a href="pics/finger_hist.jpg" title=""><img src="pics/finger_hist.jpg" width="400"></a>
+    </div>
+    <p class="caption">Figure 2-10: Finger T projection on Y Axis</p>
+    <p>
+      The result of the finger tip detection is first tested in MATLAB (<a href="code/Finger_Tip_Detection.m">code</a>), the result is shown
+      below:
+    </p>
+    <div class="image" title="">
+      <a href="pics/finger_tip_found.jpg" title=""><img src="pics/finger_tip_found.jpg" width="400"></a>
+    </div>
+    <p class="caption">Figure 2-11: Finger Tip Location Result</p>    
+  </div>
+        
+  <div class="linklist" title=""> <a name="design"></a>
+    <h2>Design &nbsp;&nbsp;&nbsp;<font size="-1"><strong><a href="#top">top</a></strong></font></h2>
+    <!-- PUT THINGS TRIED BUT DID NOT WORK -->
+    <h5>Hardware Design</h5>
+<h4>NTSC Video Convertor</h4>
+    <p>
+    NTSC Camera signal is decoded through the DE2-115 TV Decoder based on Altera University Program Example, and the reference is shown in "Intellectual property consideration' part. The FPGA took in the video signal ---> decode into YUV signal ---> store the data in SDRAM and also transfer into YCbCr space for furthur processing. The Diagram for TV Decoder is shown below:
+    </p>
+    <div class="image" title="">
+      <a href="pics/TV_Decoder_Block_Diagram.png" title=""><img src="pics/TV_Decoder_Block_Diagram.png" width="500"></a>
+    </div>
+    <p class="caption">Figure 3-1: DE2-115 TV Decoder Diagram</p> 
+    <p class="caption">Cited from: <a href="../../../../../../../../https@people.ece.cornell.edu/land/courses/ece5760/FinalProjects/s2015/qw77_ht425/qw77_ht425/qw77_ht425/Hand_Tracking_Mandelbrot_Set%20_ECE_5760.html">Previous ECE 5760 Final Project: Hand Tracking Mandelbrot Set</a> </p>
+    <h4>Video Data Storage</h4>
+    <p>
+    After decoded and tranformed into YCbCr format, the skin detection threshold is used to transform the image into binary format. In order to store this binary image and the images, we used the 2-port RAM generated by M9k blocks, one port for read only and one port for write only. Both the reading and writing address of these 2-port RAM use the combination of VGA_Camera Address signal which will swap through the whole screen row by row.
+    </p>
+    <div class="image" title="">
+      <a href="pics/RAM_addr.png" title=""><img src="pics/RAM_addr.png" width="300"></a>
+    </div>
+    <p class="caption">Figure 3-2: RAM Address</p> 
+    <p>
+      In order to do the morphological filtering several times, we need to store the intern image data complete by the previous filter.
+      However, as we need to do the filtering 4 times, there will be totally 5 pictures at each process cycle, and FPGA does not have enough M9K blocks to store 5 640 x 480 binary images at the same time. As a result, we only use two RAM to reach the same effect use the data inside one of them as input image and the other one to store the output data. Two RAM will take turns acting as input and output buffer, The block diagram of this part is shown below:
+    </p>
+    <div class="image" title="">
+      <a href="pics/5760_overall_diagram.png" title=""><img src="pics/5760_overall_diagram.png" width="500"></a>
+    </div>
+    <p class="caption">Figure 3-3: RAM Data Transfer Diagram</p> 
+    <p>
+      After the Video is modified by the filter, the output of the last RAM will be used to build the histogram in both X and Y axis, which are also stored in RAMs. This time the read address will use the X coordinate and Y coordinate of the pixel respectively and the write will be the X & Y coordinate two time cycles before, because it will take two cycle to get the previous histogram data from the RAM.
+    </p>
+    <p>
+      When the histogram of the whole picture is built, we scan through the whole histogram to find the place where the skin pixels appear and disappear, as well as the place where it had the most skin pixels detected. Then the span of skin on each axis will be compared. On the larger axis, the appear or disappear place which had larger distance to the max skin detected place will be treated as one of the finger tip coordination. After knowing this location, the image pixels around this first found location will be projected on smaller axis, and the location where most skins are detected will be treaded as the other coordinate for the finger tip.
+    </p>
+    <div class="image" title="">
+      <a href="pics/Finger_found.png" title=""><img src="pics/Finger_found.png" width="400"></a>
+    </div>
+    <p class="caption">Figure 3-4: Finger Tip Detection Diagram</p> 
+    <h4>Morphological Filtering</h4>
+    <p>
+      The Morphological Filgering need to store the exact size of the image around the center point to compared with the kurnal. So, as we have a 5 x 5 Kurnel, a shift register of size 5 is used to swap throughon all lines, which updates every time period. Another buffer, column Buffer is combined by 4 same column which updats every time 640 cycles (exact time period to swap through the line), then these buffers will store the top right 25 pixel information in a 5 x 5 pixel renge. The data in these  buffer will be compared with the kurnel to do the morphologicla filtering. The diagram of this part is shown below:
+    </p>
+    <div class="image" title="">
+      <a href="pics/Morph_Filter.png" title=""><img src="pics/Morph_Filter.png" width="500"></a>
+    </div>
+    <p class="caption">Figure 3-5: Morphological Filtering Diagram</p> 
+    <h5>game side</h5>
+    <h4>Position Rounding</h4>
+    <p>
+      The chess grid we have is a 16 by 16 board. The x coordinate in chessboard is 0 ~ 15, which maps the coordinate in VGA 80 ~ 560. The y coordinate in chessboard is 0 ~ 15, which maps the coordinate in VGA 0 ~ 480. However, human player could never hold its finger very stably at the accurate position, hence we need to do the rounding. After rounding, mapping of fingertip position on VGA display and chessboard goes as following table:
+
+    </p>
+    <table width="100%" border="1">
+      <thead>
+        <tr>
+          <th>Board X coordinate</th>
+          <th>VGA X coordinate - 80</th>
+          <th>Board Y coordinate</th>
+          <th>VGA Y coordinate</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>0</td>
+          <td>others</td>
+          <td>0</td>
+          <td>others</td>
+        </tr>
+        <tr>
+          <td>1</td>
+          <td>16~48</td>
+          <td>1</td>
+          <td>16~48</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>80 ~ 112</td>
+          <td>3</td>
+          <td>80 ~ 112</td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>112 ~ 144</td>
+          <td>4</td>
+          <td>112 ~ 144</td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>144 ~ 176</td>
+          <td>5</td>
+          <td>144 ~ 176</td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>176 ~ 208</td>
+          <td>6</td>
+          <td>176 ~ 208</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>208 ~ 240</td>
+          <td>7</td>
+          <td>208 ~ 240</td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td>240 ~ 272</td>
+          <td>8</td>
+          <td>240 ~ 272</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td>272 ~ 304</td>
+          <td>9</td>
+          <td>272 ~ 304</td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td>304 ~ 336</td>
+          <td>10</td>
+          <td>304 ~ 336</td>
+        </tr>
+        <tr>
+          <td>11</td>
+          <td>336 ~ 368</td>
+          <td>11</td>
+          <td>336 ~ 368</td>
+        </tr>
+        <tr>
+          <td>12</td>
+          <td>368 ~ 400</td>
+          <td>12</td>
+          <td>368 ~ 400</td>
+        </tr>
+        <tr>
+          <td>13</td>
+          <td>400 ~ 432</td>
+          <td>13</td>
+          <td>400 ~ 432</td>
+        </tr>
+        <tr>
+          <td>14</td>
+          <td>432 ~ 464</td>
+          <td>14</td>
+          <td>432 ~ 464</td>
+        </tr>
+        <tr>
+          <td>15</td>
+          <td>464 ~ 496</td>
+          <td>15</td>
+          <td>464 above</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p>
+   To interpret this, the pattern here is, if (VGA_coordinate - 16) / 32 == (VGA_coordinate) / 32, it should be rounded up, otherwise, it should be rounded down. Finding this pattern is easier to write the code, but it takes longer for the compiler to synthesize, and it’s less stable according to our experiment. The easiest way to interpret this is to have this look up table hard-coded in verilog, and that’s exactly our way of implementation. It’s harder to write the code, but it’s more straight-forward, it takes shorter time to compile and it’s more stable. 
+    </p>
+    
+    <h4>Position sampler:</h4>
+    <p>
+      The objective of position sampler is to decide when the human player has confirmed to place a piece at certain position of the chessboard. To accomplish this, we built a sampler running at a clock of 500 milliseconds. It samples the position of rounded-fingertip every 500ms, if the position appears to be the same for 4 times in a row, plus the raw fingertip position is actually inside the chessboard range, it decides human player has confirmed a move at that position. The sampling time and period is carefully chosen. Running sampler slower, or having more samples makes sampler more stable, but if one sample is off, it needs to restart sampling and it’s harder for user to actually place the piece. Running sampler faster, or having less samples, in contrast, makes sampler less stable, and unwanted false move would happen.
+    </p>
+    <p>
+      After the sampler finds a firm press, it generates a pulse for one cycle to simulate a key-press, which drives the state machine to go next state.
+    </p>
+
+    <h4>State Machine in game side:</h4>
+    <p>
+      The following is the state diagram of state machine.
+    </p>
+    <div class="image" title="">
+      <a href="pics/Flow_chart_of_state_machine_2.png" title=""><img src="pics/Flow_chart_of_state_machine_2.png" width="550"></a>
+    </div>
+    <p class="caption">Figure 3-6: state machine</p>
+    <p>
+      <strong>The first state, or the state after resetting</strong>, is used to initialize the grid. It essentially clears all counters and registers for moves, then load the piece type for the first turn, and draws the grid to VGA buffer. Then it jumps to next state to first circle initialization.
+    </p>
+    <p>
+      <strong>First circle initialization state</strong> sets the position to draw the piece (circle). It waits until a key has been pressed, and no piece has been placed in the position it wants to draw. The action to jump to the next state happens at the falling edge of key press. Before jumping to the next state, it registers the move of human player, and flips the turn (White or Black). The next state is to draw the first circle.
+    </p>
+    <p>
+      <strong>First circle state</strong> draws the first circle and acknowledges to Nios processor indicating the state machine has confirmed the move of Nios, and performed all necessary steps to process that (Register the move, draw the piece nios played, etc). The background math is straightforward, it simply uses the equation of (x-a)^2 + (y-b)^2 <= r^2. For white pieces, light all pixels inside the circle, for black pieces, light boundary pixels only. Before the circle has been completely drawn, it stays at this state. Otherwise, if one side has already won the game, it jumps to the state of one side winning, if no one wins, it jumps to the state to wait for the move from Nios. If currently it’s in human vs human mode, this state skips to play with Nios and directly goes back to first circle initialization state.
+    </p>
+ 
+    <p>
+     <strong>Wait for Nios response state</strong> simply waits for the response from Nios processor, it hangs over until Nios processor has performed a move. It jumps to confirm the move of nios state after Nios has responded.
+    </p>
+    <p>
+     <strong>Confirm the move of Nios state</strong> processes the move from Nios. It registers the move of Nios, then sets the position of piece to be drawn on the screen. The it jumps to second circle state.</p>
+    <p>
+     <strong>Second circle state</strong> does basically the same thing as first circle state. It simply draws a circle, after the circle has been completely drawn, it jumps back to first initialization state.
+    </p>
+<h4>Nios System:</h4>
+    <p>
+      The nios system was built on Qsys. It uses Nios II processor, running at 50MHz. Instruction and data is stored in a piece of M9K block memory. Besides that, there are several Parallel I/O ports for communicating with state machine. The qsys file could be downloaded  <a href="code/nios_system.qsys">here</a>. The following chart explains the connection of Nios system with state machine.
+    </p>
+<table width="100%" border="1">
+      <thead>
+        <tr>
+          <th>State Machine Side</th>
+          <th>Nios System Side</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>CLOCK_50</td>
+          <td>clk</td>
+        </tr>
+        <tr>
+          <td>KEY[0]</td>
+          <td>reset_n</td>
+        </tr>
+        <tr>
+          <td>{x_sw,y_sw} (x,y coordinates on chessboard)</td>
+          <td>xy_sw_from_fpga (input)</td>
+        </tr>
+        <tr>
+          <td>piece_type (white piece or black piece)</td>
+          <td>piece_type_from_fpga (input)</td>
+        </tr>
+        <tr>
+          <td>key1_pressed (pseudo key press by sampler)</td>
+          <td>key1_pressed (input)</td>
+        </tr>
+        <tr>
+          <td>white_win_bit_from_nios</td>
+          <td>white_win_bit_to_fpga (output)</td>
+        </tr>
+        <tr>
+          <td>black_win_bit_from_nios</td>
+          <td>black_win_bit_to_fpga (output)</td>
+        </tr>
+        <tr>
+          <td>nios_responded</td>
+          <td>nios_responded (output)</td>
+        </tr>
+        <tr>
+          <td>nios_move_x</td>
+          <td>nios_move_x (output)</td>
+        </tr>
+        <tr>
+          <td>nios_move_y</td>
+          <td>nios_move_y (output)</td>
+        </tr>
+         <tr>
+          <td>acknowledge_to_nios</td>
+          <td>ack_to_nios (input)</td>
+        </tr>
+        <tr>
+          <td>human_human_mode</td>
+          <td>human_human (input)</td>
+        </tr>
+      </tbody>
+    </table>
+    <p>
+      Nios system essentially behaves as a judge and a machine player (it’s just a player performs random legal move, not an artificial intelligence). In human vs machine mode, it records the move of human player, judges the board, then perform a random move, and tells state machine it has responded. Then it waits until human player performs next move. In human vs human mode, it skips perform a random move part, only behaves as a referee. When the game comes to an end, it tells the state machine the end condition has been triggered, and it hangs over. More details about how Nios systems could be found at software implementation part.
+
+    </p>
+    <h4>One side win image:</h4>
+    <p>
+      The leftmost 80 pixels (x 0~80, y 0~480) are left blank for showing “white wins”, while rightmost 80 pixels are for black. The image showing the text information is pre-stored in a ROM initialized by a mif file. The ROM is a M9K Block generated by Mega-wizard. When one side triggers winning condition, VGA controller reads the data from ROM, otherwise, it reads data from VGA buffer, which leftmost 80 pixels and rightmost pixels are left blank. To generate the mif file, we used paint to write the text first, then reverse the color, then uses a MATLAB script to convert that. Before converting the image to mif file, we need to threshold the image first. The MATLAB script could be downloaded <a href="code/create_mif.m">here</a>.
+    </p>
+    <h5>Software Design</h5>
+    <p>
+      The software for game side is mainly the c code for Nios processor. It is acting as a referee as well as a machine player who plays random legal move. Though there is no concurrency problem in this specific project, and the program is single threaded as well, we have ported protothreads to the nios system, so changing the parameter in real time becomes possible. Also it prints out some information, not only for debugging purpose, but also makes it possible for player to go through moving history to review the game. The flowchart of Nios software program is shown below.
+    </p>
+    <div class="image" title="">
+      <a href="pics/Nios_Flowchart.png" title=""><img src="pics/Nios_Flowchart.png" width="450"></a>
+    </div>
+    <p class="caption">Figure 3-7: Nios Flowchart</p>
+    <p>
+      For more details, please refer to the appendix of our source code.
+    </p>
+  <div class="linklist"> <a name="results"></a>
+    <h2>Results &nbsp;&nbsp;&nbsp;<font size="-1"><strong><a href="#top">top</a></strong></font></h2>
+  </div>
+  
+  <h5>Performance:</h5>
+  <p>
+    The system we built is reliable and stable. It is able to be accurate to fingertip level to place a piece on the board. Below are several examples of finding the fingertip on the screen. 
+  </p>
+    <div class="image" title="">
+      <a href="pics/IMG_0912.JPG" title=""><img src="pics/IMG_0912.JPG" width="250"></a>
+      <a href="pics/IMG_0913.JPG" title=""><img src="pics/IMG_0913.JPG" width="250"></a>
+    </div>
+    <p class="caption"> Before and After Filtering</p>
+  <p>
+    Below is the result of our erosion module. The left is the raw image with noise, right is after erosion perform. It efficiently suppressed the noise.
+  </p>
+      <div class="image" title="">
+      <a href="pics/fpga_finger_found.JPG" title=""><img src="pics/fpga_finger_found.JPG" width="350"></a>
+    </div>
+    <p class="caption"> Finger Tip Found</p>
+    <p>
+      After performing a series of morphological operation, or to be more specific, erosion + dilation (opening), dilation + erosion (closing), noise has been properly removed and hand shape has been well maintained. Example pictures are shown below. The sequence of image is, from left to right, raw image -> erosion -> dilation (opening) -> dilation -> erosion (closing).
+    </p>
+      <div class="image" title="">
+      <a href="pics/IMG_0914.JPG" title=""><img src="pics/IMG_0914.JPG" width="140"></a>
+      <a href="pics/IMG_0915.JPG" title=""><img src="pics/IMG_0915.JPG" width="140"></a>
+      <a href="pics/IMG_0916.JPG" title=""><img src="pics/IMG_0916.JPG" width="140"></a>
+      <a href="pics/IMG_0917.JPG" title=""><img src="pics/IMG_0917.JPG" width="140"></a>
+      <a href="pics/IMG_0918.JPG" title=""><img src="pics/IMG_0918.JPG" width="140"></a>                  
+    </div>
+    <p class="caption"> Raw Image&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Erosion &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dilation &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dilation &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Erosion</p>
+    <p>
+      Also, the machine player Nios is playing is able to perform legal move and judge the game even on a complicated base. Below are two example pictures for white wins or black wins.
+    </p>
+    <div class="image" title="">
+      <a href="pics/Black_win.JPG" title=""><img src="pics/Black_win.JPG" width="250"></a>
+      <a href="pics/White_win.JPG" title=""><img src="pics/White_win.JPG" width="250"></a>
+    </div>
+    <p class="caption"> Black and White Wins</p>
+    <p>
+      However, flaws of system include:
+    </p>
+    <p>
+      1. boundary location is very hard to place a piece.
+    </p>    
+    <p>
+      2. Noise might cause a false move, but the chance is extremely small.
+    </p>    
+    <p>
+      3. Users must wear long sleeve to play the game. Skin of other parts of body, including elbow, face, etc, could not be in the camera.
+    </p>
+    <h5>Savety</h5>
+    <p>
+      Our project only consists of a camera, a DE2-115 FPGA board, a monitor. The system does not have any safety issue.
+    </p>
+    <h5>Usability</h5>
+    <p>
+      The rule of five in a row game is very straightforward, and the idea of placing a piece simply by pressing the finger on the screen is very easy to understand. So generally the project is very user-friendly. But the user must obey the following two rules:
+    </p>
+    <p>
+      1. The user could not block the camera, or have big skin-colored objects being shot by the camera. Because the system is based on the camera and skin-detection.
+    </p>
+    <p>
+      2. The user must hold its finger for certain amount of time to place a piece.
+    </p>
+  <div class="linklist" title=""> <a name="conclusions"></a>
+    <h2>Conclusions &nbsp;&nbsp;&nbsp;<font size="-1"><strong><a href="#top">top</a></strong></font></h2>
+    <p>
+    We have met all requirements as we proposed the project. Also, our fingertip detection is reliable because the noise is maximally suppressed and the shape of hand is maximally guaranteed by a series of morphological operation. The tip of finger only has 100 pixels or so, but the VGA screen has 640 by 480, more than 300,000 pixels. Being accurate to fingertip-level means the result is accurate to 0.1% of the screen.
+
+    </p>
+    <p>
+      Improvements we could do is:
+    </p>
+    <p>
+    The machine player only performs random move. Since the communication of Nios and state machine has been fully built, if more time has been given, building an Artificial Intelligent machine player is absolutely possible, which will make the game more interesting.
+    </p>
+    
+    <h4>Intellectual property consideration:</h4>
+    <p>
+    We used Skyler Schneider’s VGA controller and Shiva Rajagopal’s DE2-115 empty project top module in this project. Camera TV decoder, DRAM controller, YUV RGB transformer are based on Altera University Program Example.We ported protothreads written by Adam Dunkel to Nios system.  Also, we get the idea of how to do skin detection by the Paper, Rock, Scissor project by Roshun Alur and Baturay Turkmen, the idea of how to create a mif file by looking at Bruce-in-a-box project by Julie Wang, the idea of how to perform morphological operation in real time by referring the real-time ‘photoshop’ project by Xiaofan Bao and Jiayuan Wang. Additionally, we used some altera IP cores, including M9K blocks, big shift registers, PLLs, etc. We acknowledge previous projects we mentioned above as very good examples, we are not seeking any commercial use for this project.
+
+    </p>
+    
+    
+    
+    <h4>Ethical Considerations</h4>
+    <p>
+    The <a href="../../../../../../../../www.ieee.org/about/corporate/governance/p7-8.html"> IEEE Code of Ethics</a> were
+    constantly considered throught the design and implementation of this project. For our current design,
+    we were careful that the game would take into considereation the safety, health, and welfare
+    of the public. For the final prototype of the project, the Project did not have any exposed
+    wires that could harm the user. From all of our testing, the results stated above are honest and
+    represent actual data recorded for this project. All of our claims and estimates are based on the
+    available data gathered when developing or debugging. In addition, we hope that this project improves
+    the understanding for future groups to utilize NTSC camera. While the NTSC camera was difficult to
+    setup on DE2-115, the task is not impossible. We have not accepted any types of bribes and will continue to uphold this standard.
+    While we had the technical understanding to undertake this project, we had not done a project similar
+    to the touch screen simulation, so this project will maintain and improve our technical competence. We sought
+    and accept criticism of our work from the TA's as well as from Professor Bruce Land to constantly
+    improve our project design. We also did not injure others, their property, reputation, or employment
+    by false or malicious actions.
+    </p>
+    
+    <h4>Legal Considerations</h4>
+    <p>
+    Our project is not related to any legal restrictions that we know of besides copyright and intellectual
+    property, which are discussed in "Intellectual Property Considerations".
+    </p>
+    
+  </div> <!-- conclusion -->
+
+  <div class="linklist" title=""> <a name="appendices"></a>
+    <h2>Appendices &nbsp;&nbsp;&nbsp;<font size="-1"><strong><a href="#top">top</a></strong></font></h2>
+    <h3>A. Code Listing</h3>
+    
+    <li><a href="code/ECE5760_Final.qar">Archived Project</a></li>
+    <li><a href="code/software.zip">Software for Nios system</a></li>
+    <li><a href="code/Finger_Tip_Detection.m">Finger Tip Detection MATLAB program</a></li>
+     
+    <h3>B. Distribution of work:</h3>
+      <p>
+        Junyin is more for the chessboard side, while Ziqi is working on image processing part. Junyin implemented the chessboard game state machine, Nios system, while Ziqi built morphological processors and image processing state machine.
+      </p>
+      
+      
+    <div class="linklist"> <a name="references"></a>
+      <h2>References &nbsp;&nbsp;&nbsp;<font size="-1"><strong><a href="#top">top</a></strong></font></h2>
+      <li><a href="../../../../../../../../https@people.ece.cornell.edu/land/courses/ece5760/FinalProjects/s2015/ra469_bt268/ra469_bt268/ra469_bt268/webpage_files.html">Paper, Rock, Scissor project</a></li>
+      <li><a href="../../../../../../../../https@people.ece.cornell.edu/land/courses/ece5760/FinalProjects/s2014/jsw267/html/html/index.html">Bruce-in-a-box project </a></li>
+      <li><a href="../../../../../../../../https@people.ece.cornell.edu/land/courses/ece5760/FinalProjects/s2013/xb46_jw937/xb46_jw937/default.htm">real-time ‘photoshop’ project</a></li>
+      <li><a href="../../../../../../../../www.cnblogs.com/pc-wanli/archive/2012/08/31/de2_115_tv_specification.html">Camera to VGA example project with sobel filtering</a></li>
+      <li><a href="../../../../../../../../dunkels.com/adam/pt/default.htm">Protothreads</a></li>
+    </div>
+             
+    <div class="linklist"> <a name="ack"></a>
+      <h2>Acknowledgements &nbsp;&nbsp;&nbsp;<font size="-1"><strong><a href="#top">top</a></strong></font></h2>
+      <p>
+     We sincerely appreciate Professor Bruce Land for offering this great course as well as carefully documenting the course, so we can find very useful examples. We acknowledge the effort of previous projects and open-source projects online we have specified in the reference part. We would also like to thank the TA, Shiva, for building the template for DE2_115 empty project, and his useful information for helping us debug.</p>
+    </div>
+  </div> <!-- appendix -->
+    
+  <hr>
+  <div id="footerwrap">
+    <div id="footer">
+      <div id="copyright">
+        <div class="copyright">©2016 Junyin Chen, Ziqi Yang</div>
+        <div class="copyright">Layout ©2010 Cornell University</div>
+      </div>
+    </div>
+  </div>
+</div>

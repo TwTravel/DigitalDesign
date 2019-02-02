@@ -1,0 +1,103 @@
+<html>
+<head>
+<title>STB25 YDZ2 Ray Tracer</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<style type="text/css">
+<!--
+
+a:link {  color: #000000; text-decoration: none}
+
+a:visited {  text-decoration: none; color: #FFCC66}
+
+a:hover {  color: #99CCFF; text-decoration: underline}
+body {  font-family: "Arial", "Helvetica", "sans-serif"}
+.titles {  font-family: "Geneva", "Arial", "Helvetica", "san-serif"; font-size: 16px; font-weight: bold; color: #000000; text-decoration: underline}
+.text {  font-family: "Arial", "Helvetica", "sans-serif"; font-size: 14px}
+.code {  font-family: "Courier New", Courier, mono; font-size: 14px}
+-->
+</style>
+</head>
+
+<body bgcolor="#FFFFFF" link="#FFFFFF">
+<table background="image/top.gif" width="700" border="0" cellspacing="0" cellpadding="0" height="75" align="center" >
+<tr background="image/top.gif"> <td colspan="2">
+      <p><FONT FACE="Tahoma" SIZE="6"> FPGA Ray Tracer</FONT><br>
+      <font face="Tahoma" size="3">Scott Bingham / Donald Zhang</font></p>
+</td></tr>
+</table><table width="700" border="0" cellspacing="0" cellpadding="0" height="20" align="center">
+<tr bgcolor="#000000"> <td BGCOLOR="#336666"> <div align="center">
+  <font color="#FFFFFF" face="Tahoma">|</font><font face="Tahoma">
+  <a href="index.html">Introduction</a> <font color="#FFFFFF">|</font>
+<a href="high.html">High Level Design</a> <font color="#FFFFFF">|</font>
+ <a href="pd_design.html">Program/Hardware Design</a>  <font color="#FFFFFF">|</font>
+<a href="results.html">Results</a> <font color="#FFFFFF">|
+<a href="conclusion.html">Conclusion</a> <font color="#FFFFFF">|
+<a href="appendix.html">Appendix</a> |</font></font></font></div></td></tr> </table>
+<table width="700" border="0" cellspacing="0" cellpadding="0" height="13" background="image/top1.gif" align="center">
+
+<tr> <td><FONT FACE="Tahoma"><img src="image/pixel.gif" width="1" height="1"></FONT></td></tr>
+</table><FONT FACE="Tahoma"><br> </FONT>
+<table width="700" border="0" cellspacing="0" cellpadding="0" align="center">
+<tr> 
+    
+    <td width="677" valign="top"> 
+      <table width="456" border="0" cellspacing="0" cellpadding="0" background="image/longmenu.gif" height="34">
+        <tr> 
+          <td><b><font face="Tahoma">Appendix</font></b></td>
+        </tr> </table>
+      
+		 
+      <p class="text"> <u>Work-breakdown:</u><br>
+        <u>Scott:</u> Ray Tracing Hardware (Spheres/Shadows/Reflections/Planes/Anti-aliasing), 
+        Sphere/Plane Tables, Square Root Hardware, Write Buffer Hardware, Relevant 
+        Report Sections, Webpage Report Version<br>
+        <u>Donald:</u> NIOSII/SOPC Design, Hardware/Software Interface, Software 
+        to Bounce/Move/Rotate Spheres, Hardware Performance Analysis, Software 
+        to Write Spheres to Hardware, Relevant Report Sections, Webpage Template</p>
+     
+      <p class=MsoNormal><b style='mso-bidi-font-weight:normal'><span class="titles">Source 
+        Code<o:p></o:p></span></b></p>
+      <p class=MsoNormal><i style='mso-bidi-font-style:normal'><span class="text">Verilog 
+        Code<o:p></o:p></span></i></p>
+      <span class="text"><a href="source_code/DE2_TOP.v">DE2_TOP.v</a><br>
+      <a href="source_code/Div24.v">Div24.v</a><br>
+      <a href="source_code/VGA_Controller.v">VGA_Controller.v</a><br>
+      <a href="source_code/sqrt_fixedpoint.v">Sqrt_fixedpoint.v</a><br>
+      <a href="source_code/VGA_Audio_PLL.v">VGA_Audio_PLL.v</a><br>
+      </span>
+      <p class=MsoNormal><span class="text"><i style='mso-bidi-font-style:normal'>Header 
+        Files<o:p></o:p></i></span></p>
+      <span class="text"><a href="source_code/RayTrace.h">RayTrace.h</a><br>
+      <a href="source_code/VGA_Param.h">VGA_Param.h</a><o:p></o:p><br>
+      </span>
+      <p class=MsoNormal><span class="text"><i style='mso-bidi-font-style:normal'>NIOSII 
+        C Files<o:p></o:p></i></span></p>
+      <p class=MsoNormal><span class="text"><a href="source_code/memory.c">Memory.c</a><o:p></o:p></span></p>
+<br>
+
+      <p class=MsoNormal><b style='mso-bidi-font-weight:normal'><span class="titles">Pictures<o:p></o:p></span><o:p></o:p></b></p>
+      <p class=MsoNormal><o:p class="text">Click for 500x500 image.</o:p></p>
+
+      <p class=MsoNormal><b style='mso-bidi-font-weight:normal'><o:p><a href="image/ray/big1.jpg"><img border=0 src="image/ray/big1tb.jpg" width="100" height="100"></a><a href="image/ray/big2.jpg"><img border=0 src="image/ray/big2tb.jpg" width="100" height="100"></a><a href="image/ray/big3.jpg"><img border=0 src="image/ray/big3tb.jpg" width="100" height="100"></a><a href="image/ray/big4.jpg"><img border=0 src="image/ray/big4tb.jpg" width="100" height="100"></a><a href="image/ray/big5.jpg"><img border=0 src="image/ray/big5tb.jpg" width="100" height="100"></a></o:p></b><br>
+        <o:p><a href="image/ray/big6.jpg"><img border=0  src="image/ray/big6tb.jpg" width="100" height="100"></a><a href="image/ray/big7.jpg"><img border=0 src="image/ray/big7tb.jpg" width="100" height="100"></a><a href="image/ray/big8.jpg"><img border=0 src="image/ray/big8tb.jpg" width="100" height="100"></a><a href="image/ray/big9.jpg"><img border=0 src="image/ray/big9tb.jpg" width="100" height="100"></a><a href="image/ray/big10.jpg"><img border=0 src="image/ray/big10tb.jpg" width="100" height="100"></a></o:p></p>
+
+<p class=MsoNormal><b style='mso-bidi-font-weight:normal'><u><span class="titles">Reference<o:p></o:p></span></u></b></p>
+      <p class=MsoNormal><span class="text">[1] Glassner, Andrew ¡°An Introduction 
+        to Ray Tracing,¡± Academic Press, Harcourt Brace Jovanovich Publishers.<o:p></o:p></span></p>
+      <p class=MsoNormal><span class="text">[2] Turkowski, Ken ¡°Fixed Point Square 
+        Root¡± Apple Technical Report No. 96, Oct 1994. <a
+href="../../../../../../../../www.worldserver.com/turk/computergraphics/FixedSqrt.pdf">http://www.worldserver.com/turk/computergraphics/FixedSqrt.pdf</a></span></p>
+      <p class=MsoNormal><span class="text">[3] Land, Bruce, ¡°Ball Bouncing Physics¡± 
+        ECE 476 Lab 4.</span></p>
+
+
+    </td></tr>
+  </TABLE>
+
+
+
+<FONT FACE="Tahoma"></FONT>
+<center>&nbsp;</center><br><br></body>
+</html>
+
+                        

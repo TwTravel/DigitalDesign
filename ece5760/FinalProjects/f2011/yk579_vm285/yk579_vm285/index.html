@@ -1,0 +1,742 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2//EN">
+<html>
+<head>
+<title>ECE 5760 Final Project Air String</title>
+</head>
+
+<img src="unit_signature_unstyled.gif">
+<h2>ECE 5760 Final Project</h2>
+
+<hr width=100% size=8 noshade>
+
+<h1><center><B>Air String</B></center></h1>
+
+<basefont size=4>
+
+<p style="text-align: right;">
+<B>Young Hwa (Terry) Kim (yk579)<br>
+Varsha Madhuranath (vm285)</B>
+</p>
+
+<ul>
+<li><a href="#intro">Introduction</a>
+<li><a href="#high level">High Level Design</a>
+<li><a href="#hardware">Hardware Design</a>
+<li><a href="#result">Results of the Design</a>
+<li><a href="#conclusion">Conclusions</a>
+<li><a href="#appendix">Appendix</a>
+</ul>
+
+<hr width=90% size=1 noshade>
+
+<h2><a name="intro">Introduction</a></h2>
+
+<body background="music_17.gif">
+
+<basefont size=4>
+ 
+<body bgcolor=#FFCCCC>
+Our project is Air String, a synthesized string instrument that can be played in real time by waving fingers with bright green color tips in motion of stroking a string in front of a camcorder. Our implementation is based on Karplus Strong algorithm.
+</body>
+<p>
+
+<body>
+We got the idea for the project from Professor Land. The original idea was to implement a synthesized string instrument that can be played in the air similar to Air Guitar, which was one of final projects of previous students of the ECE 5760 class. The concept of the project is to provide a user interface similar to that of playing the harp except for the fact that there is no physical instrument in front of the user. Instead, the user’s finger motion in the air is recorded in real time to play virtual strings of different notes. We liked the idea of combining the visual component (VGA) and the audio component (audio codec) together so that we could utilize our knowledge in both areas that we obtained from previous lab assignments.
+</body>
+<p>
+
+<body>
+For the project, we used an Altera DE2 Development and Education board with Cyclone II EP2C35F672C6 FPGA, a Sony camcorder (connected to the DE2 board via Video In), a Dell VGA compatible monitor at a 640x480 resolution (connected to the DE2 board via XSGA Video Port) and a stereo speaker (connected to the DE2 board via Line In). We keep track of the movement of a player’s fingers to decide whether to play a string, which musical note of a string to play and whether to play the same note for the second time. We can detect the movements of fingers by detecting the changes in RGB values of pixels on the screen. For that, a player should put bright green color marker caps on her/his finger tips (or wrap the fingers with color tapes). The monitor and the camcorder face the player while the camcorder shoots a video of the player’s finger movements. The monitor screen shows where the fingers are without a mirror effect along with white lines and letters in the background. The lines indicate the each section for different notes and the letters tell the player which note the section is allocated to.
+</body>
+<p>
+
+<body>
+For prospective players of our virtual instrument, now we explain how to interact with our program and play a song. Our program is set to look for a bright green color as a virtual stroker (plucker) of a string. Wear a green marker cap or tape on your finger. Face the monitor and the camcorder, so you can see where your fingers are and which sections on the screen to aim to play a note of your choice. For example, to play middle C, aim for and cover the section labeled “middle C” on the screen with the green marker cap or tape. If you want to play the same note for the second time consecutively, you need to uncover the section by moving the finger away from it and place the finger in the section again covering it with green. Up to three notes can be played at the same time to make a chord. By using two of the dip switches on the board (SW[0] and SW[17]), you can choose to play notes on higher frequencies, which gives you different timber of sound. To play a note, you can waive your fingers back and forth or move them horizontally to cover and uncover the sections on the screen.
+</body>
+<p>
+
+<p>
+<a href = "#top">Go to top</a>
+<p>
+
+<hr width=100% size=1 noshade>
+
+<h2><a name="high level">High Level Design</h2>
+<h3>Karplus Strong Algorithm</h3>
+
+<body>
+We employed Karplus Strong algorithm to implement a string. This algorithm is surprisingly simple yet works very well. For a piano, two or three strings are used per note. Since our user interface (plucking or stroking rather horizontally) is quite different from that for a piano (striking down vertically), we construct one string per note and the sound we synthesizes is closer to that of a guitar than to that of a piano.
+</body>
+<p>
+
+<body>
+Wikipedia definition of Karplus Strong string synthesis is “a method of physical modeling synthesis that loops a short waveform through a filtered delay line to simulate the sound of a hammered or plucked string or some types of percussion.”
+</body>
+<p>
+
+<body>
+The actual implementation of the algorithm for our project is depicted in the diagram below:
+</body>
+<p align=center>
+
+<img src="karplus_strong.jpg">
+<p>
+
+<body>
+The hardware components to implement a string consist of a shift register, a phase shifter and a low pass filter. The basic concept here is that an input pulse goes through a certain length of shift register for a coarse tuning and it goes through a phase shifter for a fine tuning. Then the output from the phase shifter goes through a simple low pass filter which adds a delayed version (previous output) to the output and divides the total by 2. The simple low pass filter basically averages two values before the result is fed back into the shift register. For an input pulse, we took Professor Land’s advice and chose a saw tooth wave with a sharp raise at the beginning. This works very well for a nice string sound and it works much better than some white noise. The amplitude of the pulse is 1, and the step values of the pulse to be fed into the shift register are converted to a 3.17 number format that is used in our hardware design. For example, 0.5 in 3.17 format is represented as 0.5*2^17 = 20’d65536. For your reference, mathematical representation of the phase shifter is y(n) = {x(n) - y(n-1)} * &#951; + x(n-1).
+</body>
+<p align=center>
+
+<img src="MidC.jpg" width=800 height=350>
+<p>
+
+<body>
+Frequencies of musical notes that we implemented are tabulated below:
+</body>
+<p align=center>
+
+<table border=1>
+  <tr>
+  <td align=center>Note</td>
+  <td align=center>Frequency (Hz)</td>
+  </tr>
+
+  <tr>
+  <td align=center>Low A#/Bb</td>
+  <td align=center>233.082</td>
+  </tr>
+  
+  <tr>
+  <td align=center>Low B</td>
+  <td align=center>246.942</td>
+  </tr>
+
+  <tr>
+  <td align=center>Middle C</td>
+  <td align=center>261.626</td>
+  </tr>
+  
+  <tr>
+  <td align=center>C#/ Db</td>
+  <td align=center>277.183</td>
+  </tr>
+  
+  <tr>
+  <td align=center>D</td>
+  <td align=center>293.665</td>
+  </tr>
+  
+  <tr>
+  <td align=center>D#/Eb</td>
+  <td align=center>311.127</td>
+  </tr>
+  
+  <tr>
+  <td align=center>E</td>
+  <td align=center>329.628</td>
+  </tr>
+  
+  <tr>
+  <td align=center>F</td>
+  <td align=center>349.228</td>
+  </tr>
+  
+  <tr>
+  <td align=center>F#/Gb</td>
+  <td align=center>369.994</td>
+  </tr>
+  
+  <tr>
+  <td align=center>G</td>
+  <td align=center>391.995</td>
+  </tr>
+  
+  <tr>
+  <td align=center>G#/Ab</td>
+  <td align=center>415.305</td>
+  </tr>
+  
+  <tr>
+  <td align=center>A</td>
+  <td align=center >440</td>
+  </tr>
+  
+  <tr>
+  <td align=center>A#/Bb</td>
+  <td align=center>466.164</td>
+  </tr>
+  
+  <tr>
+  <td align=center>B</td>
+  <td align=center>493.883</td>
+  </tr>
+  
+  <tr>
+  <td align=center>C</td>
+  <td align=center>523.251</td>
+  </tr>
+  
+  <tr>
+  <td align=center>High C#/Db</td>
+  <td align=center>554.365</td>
+  </tr>
+  
+</table>
+<p>
+
+<body>
+The length of the shift register and the value of &#951; are related to the pitch (frequency) of a note.
+Our default sampling rate, f<sub>s</sub>, is 8,000Hz. The length of a shift register, N, for a note of frequency, f<sub>o</sub>, can be obtained from the equation
+<math><box>f<sub>s</sub>/f<sub>o</sub></box> = N </math>.
+For middle C, the length of shift register that we need is then 8000/261.626 = 30.58. We set N equal to 30. The sample delay, &#916;, for middle C is then 0.58 and is defined in terms of &#951; as &#916;=(1-&#951;)/(1+&#951). 
+Conversely, &#951;=(1-&#916;)/(1+&#916;).
+
+</body>
+<p>
+
+<body>
+The low pass filter uses a sign extended right shift for damping (decay factor). 0.5 is the maximum value for damping. However, we slightly lowered the decay factor to 0.4921875 because this produced much better string sounds than when damping was 0.5.
+</body>
+<p>
+
+<h3>DE2_TV module (Video component)</h3>
+
+<body>
+We decided to use a camcorder instead of a terasIC DE2_CCD camera for a better resolution. Altera provides tutorials in DE2 User Manual and demonstration project files in the CD that comes with the board. We downloaded a project file that has a top module called DE2_TV. It simply plays video and audio input from a DVD player using the VGA output and audio CODEC on the DE2 board. Once we set up a state machine that implemented a Karplus Strong string synthesizer and tested with audio codec, we combined our project files (audio components) with the DE2_TV module (video components). Because our string state machine is clocked at 8,000 Hz, which is the sampling rate, but the VGA controller and other modules in DE2_TV were clocked at much higher clock rate, we had to make some adjustments. Cyclone II does not support chaining of PLLs. Cyclone II Handbook notes that each PLL can be derived only by its dedicated input ports so that there is no way to connect one source with two PLLs. The module for SDRAM, which is used as a frame buffer in DE2_TV, came with a PLL module, so we deleted the VGA_AUDIO_PLL module that was used with the state machine. 
+</body>
+<p>
+
+<body>
+The following block diagram and the description of DE2_TV design are taken from Altera’s <a href="DE2_UserManual.pdf">DE2_UserManual.pdf</a>.
+</body>
+<p align=center>
+
+<img src="DE2_TV.jpg">
+<p>
+
+<body>
+“The figure above shows the block diagram of the design. There are two major blocks in the circuit, called I2C_AV_Config and TV_to_VGA. The TV_to_VGA block consists of the ITU-R 656 Decoder, SDRAM Frame Buffer, YUV422 to YUV444, YCrCb to RGB, and VGA Controller. The figure also shows the TV Decoder (ADV7181) and the VGA DAC (ADV7123) chips used.
+</body>
+<p>
+
+<body>
+As soon as the bit stream is downloaded into the FPGA, the register values of the TV Decoder chip are used to configure the TV decoder via the I2C_AV_Config block, which uses the I2C protocol to communicate with the TV Decoder chip. Following the power-on sequence, the TV Decoder chip will be unstable for a time period; the Lock Detector is responsible for detecting this instability.
+</body>
+<p>
+
+<body>
+The ITU-R 656 Decoder block extracts YCrCb 4:2:2 (YUV 4:2:2) video signals from the ITU-R 656 data stream sent from the TV Decoder. It also generates a data valid control signal indicating the valid period of data output. Because the video signal from the TV Decoder is interlaced, we need to perform de-interlacing on the data source. We used the SDRAM Frame Buffer and a field selection multiplexer (MUX) which is controlled by the VGA controller to perform the de-interlacing operation. Internally, the VGA Controller generates data request and odd/even selected signals to the SDRAM Frame Buffer and filed selection multiplexer (MUX). The YUV422 to YUV444 block converts the selected YCrCb 4:2:2 (YUV 4:2:2) video data to the YCrCb 4:4:4 (YUV 4:4:4) video data format.
+</body>
+<p>
+
+<body>
+Finally, the YCrCb_to_RGB block converts the YCrCb data into RGB output. The VGA Controller block generates standard VGA sync signals VGA_HS and VGA_VS to enable the display on a VGA monitor.”
+</body>
+<p>
+
+<body>
+For more detailed information, please refer to Altera’s DE2 User Manual.
+</body>
+<p>
+
+<h3>Screen Arrangements</h3>
+
+<body>
+For a user-friendly interface, we printed on the monitor screen white lines that outline sections and letters that correspond to notes of the sections. To create this background image that is printed on the monitor all the time while a player is playing, we used Paint program and created a black and white .bmp file as below:
+</body>
+<p align=center>
+
+<img src="our_image_rgb.bmp">
+<p>
+
+<body>
+We found a matlab code that converts an image file to a .txt data file on a website for a final project titled BBQ Stick from a previous ECE 5760 class. Professor Land helped us run the matlab code and change the mode of the .bmp file to RGB mode using Photoshop. Since our image was in black and white, we needed only one bit to represent two colors and using only one bit per pixel could save us much space in memory (640x480 = 307,200 bits in total). We used a ROM from Altera Mega Function Wizard, which was instantiated in M4K blocks (we used about 70% of M4K blocks), to store the background image. The .txt file of the image was converted to a .mif file on Quartus and was used to initialize the memory. We learned about how to generate a .mif file from an image file on the <a href="../../../f2007/ms882_yc292/ms882_yc292/index.htm">BBQ Stick website</a>.
+</body>
+<p>
+
+<body>
+Now the background image is stored in the memory and we have two images to send to the monitor screen: one from the camcorder and one in the memory. We checked the color value in the memory and if it was 0, black, then we chose the RGB value from the camcorder for a pixel, otherwise we chose the one bit value from the memory because the pixel was of white lines and letters. (A simple mux does the trick.)
+</body>
+<p>
+
+<p>
+<a href = "#top">Go to top</a>
+<p>
+
+<hr width=100% size=1 noshade>
+
+<h2><a name="hardware">Hardware Design</h2>
+
+<h3>String Synthesizer state machine (SSSM)</h3>
+
+<body>
+This state machine consists of a shift register, and the phase shifter and the low pass filter are implemented in combinatory logic.
+</body>
+<p>
+
+<body>
+To generate 16 notes of different frequencies, we set the default sampling rate at 8,000 Hz, which is the clock rate for all the state machines. Thus each state machine has a shift register of a different length and a different sample delay value for each phase shifter. A shift register consists of many 20-bit registers. (For better accuracy, we used 3.17 format instead of 3.13 format.) We chose not to use M4K blocks and it worked out well for us because 1) it turned out that we could not afford to add one more clock cycle to access the memory in the string synthesizer state machine because the string trigger state machine (STSM) at a much faster clock (VGA_CLK at 27 MHz, 3375 times faster) has to wait for the SSSM to send a signal before it can move onto the next state (this signaling between two state machines is explained later in details) and 2) we used 70% of M4K blocks to store the background image later. Overall we used about 50% of logic elements and resources available on the board to implement the entire system.
+</body>
+<p>
+
+<body>
+Basically, SSSM works as follows:
+</body>
+<p>
+
+<body>
+if (the string is plucked by STSM)<br>
+{<br>
+&nbsp; &nbsp; &nbsp; &nbsp; initialize the shift register with a saw tooth input pulse;
+<br>&nbsp; &nbsp; &nbsp; &nbsp; send signal to STSM that the string is plucked (set a flag to 1);
+<br>&nbsp; &nbsp; &nbsp; &nbsp; go to state 0;
+<br>}<br>
+else<br>{<br>&nbsp; state 0:
+<br>&nbsp; &nbsp; &nbsp; &nbsp; shift register values in the shift register (one right shift);
+<br>&nbsp; &nbsp; &nbsp; &nbsp; send signal to STSM that the string is being played (set a flag to 0);
+<br>&nbsp; &nbsp; &nbsp; &nbsp; go to state 1;
+<br>&nbsp; state 1: 
+<br>&nbsp; &nbsp; &nbsp; &nbsp; update values for combinatory logic;
+<br>&nbsp; &nbsp; &nbsp; &nbsp; go to state 0;
+<br>}
+<p>
+
+<body>
+State machine diagram is shown below:
+</body>
+<p align=center>
+
+<img src="state_machine1.jpg">
+<p>
+
+<h3>String Trigger state machine (STSM)</h3>
+
+<body>
+This state machine checks for the presence of bright green color in a particular section for a corresponding note by counting a number of pixels, RGB value of which is specified as G > 10'h99 AND R < 10'h80 AND B < 10'h80. Each section for a note has 100x60=6,000 pixels and if there are more than 1,500 pixels whose RGB values meet the above requirement, then the state machine triggers an SSSM that plays a corresponding note.
+</body>
+<p>
+
+<body>
+STSM and SSSM signal each other (handshaking) so that they can coordinate their executions although they work under different clock rates. This way, when a user places a green marker cap in a section for a note on the screen and does not remove it for a while, the string plays only one time and rests until the cap is removed from the section and placed there again for the second consecutive stoke.
+</body>
+<p>
+
+<body>
+Basically, the way STSM works is as follows:
+</body>
+<p>
+
+<body>
+state 0:<br>
+&nbsp; &nbsp; &nbsp; &nbsp; if (VGA x and y coordinates are pointing to pixels in the section for this STSM)<br>
+&nbsp; &nbsp; &nbsp; &nbsp; {<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; count the number of bright green pixels; <br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; go to state 0;<br>
+&nbsp; &nbsp; &nbsp; &nbsp; }<br>
+&nbsp; &nbsp; &nbsp; &nbsp; else if (VGA x and y coordinates reached the end of screen)<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; go to state 1;<br>
+&nbsp; &nbsp; &nbsp; &nbsp; else<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; go to state 0;<br><br>
+
+state 1:<br>
+&nbsp; &nbsp; &nbsp; &nbsp; if (more than 1,500 bright green pixels are present)<br>
+&nbsp; &nbsp; &nbsp; &nbsp; {<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; if (the string has not been plucked)<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; {<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; signal the SSSM to feed in an input pulse to the shift register;<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; set a flag to 1 to remember that the string has been plucked once;<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; go to state 2;<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; }<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; else // there has been no change in the movement of a player since the last pluck<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; {<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; do not signal the SSSM to feed in an input pulse to the shift register;<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; set a flag to 1 to remember that the string has been plucked once;<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; go to state 4;<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; }<br>
+&nbsp; &nbsp; &nbsp; &nbsp; }<br>
+&nbsp; &nbsp; &nbsp; &nbsp; else<br>
+&nbsp; &nbsp; &nbsp; &nbsp; {<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; do not signal the SSSM to feed in an input pulse to the shift register;<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; set a flag to 0 to remember that the string has not been plucked;<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; // the string is ready for the next pluck;<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; go to state 4;<br>
+&nbsp; &nbsp; &nbsp; &nbsp; }<br><br>
+
+state 2:<br>
+&nbsp; &nbsp; &nbsp; &nbsp; if (SSSM signaled that the shift register will be initialized with an input pulse)<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; go to state 3;<br>
+&nbsp; &nbsp; &nbsp; &nbsp; else // wait for SSSM to catch up and signal that the string is read to be played.<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; go to state 2;<br><br>
+
+state 3:<br>
+&nbsp; &nbsp; &nbsp; &nbsp; do not signal the SSSM again to feed in an input pulse to the shift register;<br>
+&nbsp; &nbsp; &nbsp; &nbsp; if (SSSM signals that the shift register is done being initialized)		<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; go to state 4;	<br>
+&nbsp; &nbsp; &nbsp; &nbsp; else // SSSM is not done initializing the shift register<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; go to state 3;<br><br>
+
+state 4:<br>
+&nbsp; &nbsp; &nbsp; &nbsp; // reset registers for the next VGA screen check<br>
+&nbsp; &nbsp; &nbsp; &nbsp; remember whether the string was plucked this time;<br>
+&nbsp; &nbsp; &nbsp; &nbsp; set the green color detection counter to 0;<br>
+&nbsp; &nbsp; &nbsp; &nbsp; go to state 5;<br><br>
+
+state 5:<br>
+&nbsp; &nbsp; &nbsp; &nbsp; if (VGA x and y coordinates reached the end of the screen)<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; go to state 0;<br>
+&nbsp; &nbsp; &nbsp; &nbsp; else // green color detection always starts from the beginning of the screen.<br>
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; go to state 5;<br>
+</body>
+<p>
+
+<body>
+Waiting for the SSSM which operates under a slower clock rate to send signals before it could go to the next state, STSM stays in a few “wait” states for many numbers of VGA screen sweeps (refreshes). It means that we skip many frames without checking for changes in RGB values of a section. However, this does not affect the accuracy of our program because any fast human hand movement is much slower than the VGA refresh rate and the most human eyes cannot discern discontinuity when the frame rate is over 100 FRS (frame rate per second).
+</body>
+<p>
+
+<body>
+State machine diagram is shown below:
+</body>
+<p align=center>
+
+<img src="state_machine2.jpg">
+<p>
+
+<h3>Frequency regulator</h3>
+
+<body>
+We needed to bring down AUD_DACLRCK (48 KHz) to 8,000 Hz sampling rate to clock SSSMs. This frequency regulator simply uses a counter to wait and to generate a lower frequency clock signal than the input clock signal. Using this frequency regulator and muxes, we produced three different sampling frequencies, f<sub>s</sub>, 12 KHz, 8,000 Hz and 4,800 Hz respectively, and a player can choose three different sets of notes using dip switches on the board. When all the SWs are set to 0, f<sub>s</sub> is the default value of 8,000 Hz. If SW[0] = 1, f<sub>s</sub> is 4,800 Hz. If SW[17] = 1, f<sub>s</sub> is 12 KHz. Although they are not separated by one octave exactly, they are all harmonics. This is caused by the fact that we keep the same value for N in the equation, f<sub>s</sub>/f<sub>o</sub> = N, and vary the value of f<sub>s</sub>, so the output frequency, f<sub>o</sub>, is not scalable by a player. However, a player can enjoy different timbers of a string sound. The background image of white lines and letters for notes does not change as a different sampling rate from the default is chosen. Three sets of notes that are synthesized are tabularized below:
+</body>
+<p align=center>
+
+<table border=1>
+  <tr>
+  <td align=center>Set 1 Note (default)</td>
+  <td align=center>Set 1 Frequency (Hz)</td>
+    <td align=center>Set 2 Note (SW[0]=1)</td>
+  <td align=center>Set 2 Frequency (Hz)</td>
+    <td align=center>Set 3 Note (SW[17]=1)</td>
+  <td align=center>Set 3 Frequency (Hz)</td>
+  </tr>
+
+  <tr>
+  <td align=center>Low A#/Bb</td>
+  <td align=center>233.082</td>
+    <td align=center>Low C#/Db</td>
+  <td align=center>139.848</td>
+    <td align=center>F</td>
+  <td align=center>349.620</td>
+  </tr>
+  
+  <tr>
+  <td align=center>Low B</td>
+  <td align=center>246.942</td>
+    <td align=center>Low D</td>
+  <td align=center>148.166</td>
+    <td align=center>F#/Gb</td>
+  <td align=center>370.416</td>
+  </tr>
+
+  <tr>
+  <td align=center>Middle C</td>
+  <td align=center>261.626</td>
+    <td align=center>Low D#/Eb</td>
+  <td align=center>156.976</td>
+    <td align=center>G</td>
+  <td align=center>392.439</td>
+  </tr>
+  
+  <tr>
+  <td align=center>C#/ Db</td>
+  <td align=center>277.183</td>
+    <td align=center>Low E</td>
+  <td align=center>166.309</td>
+    <td align=center>G#/Ab</td>
+  <td align=center>415.772</td>
+  </tr>
+  
+  <tr>
+  <td align=center>D</td>
+  <td align=center>293.665</td>
+    <td align=center>Low F</td>
+  <td align=center>176.199</td>
+    <td align=center>A</td>
+  <td align=center>440.496</td>
+  </tr>
+  
+  <tr>
+  <td align=center>D#/Eb</td>
+  <td align=center>311.127</td>
+    <td align=center>Low F#/Gb</td>
+  <td align=center>186.676</td>
+    <td align=center>A#/Bb</td>
+  <td align=center>466.690</td>
+  </tr>
+  
+  <tr>
+  <td align=center>E</td>
+  <td align=center>329.628</td>
+    <td align=center>Low G</td>
+  <td align=center>197.775</td>
+    <td align=center>B</td>
+  <td align=center>494.438</td>
+  </tr>
+  
+  <tr>
+  <td align=center>F</td>
+  <td align=center>349.228</td>
+    <td align=center>Low G#/Ab</td>
+  <td align=center>209.534</td>
+    <td align=center>High C</td>
+  <td align=center>523.834</td>
+  </tr>
+  
+  <tr>
+  <td align=center>F#/Gb</td>
+  <td align=center>369.994</td>
+    <td align=center>Low A</td>
+  <td align=center>221.996</td>
+    <td align=center>High C#/Db</td>
+  <td align=center>554.990</td>
+  </tr>
+  
+  <tr>
+  <td align=center>G</td>
+  <td align=center>391.995</td>
+    <td align=center>Low A#/Bb</td>
+  <td align=center>235.202</td>
+    <td align=center>High D</td>
+  <td align=center>588.005</td>
+  </tr>
+  
+  <tr>
+  <td align=center>G#/Ab</td>
+  <td align=center>415.305</td>
+    <td align=center>Low B</td>
+  <td align=center>249.182</td>
+    <td align=center>High D#/Eb</td>
+  <td align=center>622.956</td>
+  </tr>
+  
+  <tr>
+  <td align=center>A</td>
+  <td align=center >440</td>
+    <td align=center>Middle C</td>
+  <td align=center>263.997</td>
+    <td align=center>High E</td>
+  <td align=center>659.993</td>
+  </tr>
+  
+  <tr>
+  <td align=center>A#/Bb</td>
+  <td align=center>466.164</td>
+    <td align=center>C#/Db</td>
+  <td align=center>279.704</td>
+    <td align=center>High F</td>
+  <td align=center>699.260</td>
+  </tr>
+  
+  <tr>
+  <td align=center>B</td>
+  <td align=center>493.883</td>
+    <td align=center>D</td>
+  <td align=center>296.333</td>
+    <td align=center>High F#/Gb</td>
+  <td align=center>740.832</td>
+  </tr>
+  
+  <tr>
+  <td align=center>High C</td>
+  <td align=center>523.251</td>
+    <td align=center>D#/Eb</td>
+  <td align=center>313.951</td>
+    <td align=center>High G</td>
+  <td align=center>784.878</td>
+  </tr>
+  
+  <tr>
+  <td align=center>High C#/Db</td>
+  <td align=center>554.365</td>
+    <td align=center>E</td>
+  <td align=center>332.617</td>
+    <td align=center>High G#/Ab</td>
+  <td align=center>831.543</td>
+  </tr>
+</table>
+<p>
+
+<body>
+The figure below shows up to what number the counter should count to generate clock of which frequency.
+</body>
+<p align=center>
+
+<img src="clock.jpg">
+<p>
+
+<h3>Single-port ROM</h3>
+
+<body>
+We used Altera Mega Function Wizard to instantiate a single-port ROM to store the .mif file of the background image. (RAM is not necessary since we do not need to change the image.) This image has 640x480 = 307,200 pixels and each pixel requires 1 bit to store its color value either 0 for black or 1 for white. So, the width of the output bus ‘q’ is 1, and 307,200 1-bit words are used. Address bus is 19-bit wide. 
+</body>
+<p>
+
+<h3>Screen Flipper</h3>
+
+<body>
+When we display a video stream from a camcorder on a monitor, a mirror effect is observed. This confuses a player when s/he faces the camcorder and the monitor to aim for a certain section on the screen to play a note because as s/he moved her/his hand from right to left, s/he sees the hand move from left to right. For a user friendly interface, we corrected the mirror effect by adding Mirror_col module. Like Altera, terasIC provides tutorial documents and demonstration project files. One of the project files with a top module named DE2_CCD.v comes with Mirror_col module that reverses the frame captured from the sensor in TRDB_DC2 camera. We modified the Mirror_col and added to our project to reverse the screen. Because Mirror_col uses two stack RAM as buffers, the left half side of the screen is actually one frame behind the right half side of the screen. However, due to the fast VGA clock, this does not affect the speed of visual (hand movement) that a player sees or audio (string sound) that a player hears.
+</body>
+<p>
+
+<p>
+<a href = "#top">Go to top</a>
+<p>
+
+<hr width=100% size=1 noshade>
+
+<h2><a name="result">Results of the Design</h2>
+
+<body>
+The Air String has a user friendly interface, and it makes it easy for anyone to play a song. The way it’s played is quite intuitive to most people without any skills in musical instruments. Although the letters for notes are printed on the screen for a quick reference, if a player memorizes the sequence of notes of a song and practices, which most musicians do, s/he can play the song much smoothly, fast and easily.
+</body>
+<p>
+
+<body>
+Unfortunately we did not have more time to add more features to Air String. A user can choose from three different timbers of a string sound, but the notes in each set are not exactly distanced by an octave. Also, the notes with a sampling rate different from the default do not match the corresponding letter on the screen because we have only one background image stored in memory. Using additional memory such as SRAM and re-designing the frequency generator could improve Air String.
+</body>
+<p>
+
+<body>
+A tip for a player: Having a bright yellow light shining over the camcorder from the behind helps the color of the marker cap to be detected as a bright green color easily. It helps the player play better.
+</body>
+<p>
+
+<body>
+To detect the change in the finger movements of a player, we count the number of pixels of a specific color (in our case, a bright green color whose RGB value in hex is 24’h009900). To look for this color, we check if an RGB value from the camcorder satisfies the condition (VGA_G > 10'h99 && VGA_R < 10'h80 && VGA_B < 10'h80). We picked a green color of 24’h009900 because we usually do not see this color around us so that it could be easily distinguished from any background. Instead of using absolute values for RGB for a color check, when we tried the relevant condition (mGreen > mRed && mGreen > mBlue), the color detection did not work very well thus making it harder for a player to play.
+</body>
+<p>
+
+<h3>Trade-off</h3>
+
+<body>
+The way we designed the Air String is that any notes should not keep playing once it was played while a green marker cap stayed in the same section for long. We consider a player meant to play a string when ¼ of a section corresponding to a note is filled with bright green color pixels (1,500 pixels out of 6,000 pixels for a section). The number 1,500 seems to work the best for us when there is yellow light over the camcorder. If we lower the number, then a player does not need to place the entire marker cap in a section and it could help increase the speed of finger movement from a note to another. However, this also more easily triggers a string, so sometimes a note plays more than once when a player did not mean to play the note twice consecutively. If we increase the number, then it takes a player a little more time to move from one note to anther away from it although this decrease the chance of a note being played more than once when a player did not mean to.
+</body>
+<p>
+
+<h3>Accuracy in terms of timing issues</h3>
+
+<body>
+Reversing the screen to remove the mirror effect for a player’s convenience was tricky because we already had some issue with time, which was cause by signaling (handshaking) between two state machines of two different clock rates as one state machine with a faster clock has to wait for the other for many clock cycles while VGA does not stop refreshing the screen. Air String needs to be played in real time and there should not be any delay between a player’s finger movement and the video stream on the monitor screen. Using stack RAMs as buffers to reverse the screen causes VGA to display the left half side of the screen one frame late. If you have a really good eye, then you might be able to detect it. However, it did not affect any of our test players’ performance.
+</body>
+<p>
+
+<p>
+<a href = "#top">Go to top</a>
+<p>
+
+<hr width=100% size=1 noshade>
+
+<h2><a name="conclusion">Conclusions</h2>
+
+<body>
+Overall, the project was a success. We produced a working model with a user friendly interface. We believe Air String is easy for anyone to learn to play and quite entertaining and educational for children to stimulate their interest in musical instruments.  Throughout the project, we had an opportunity to demonstrate our skills that we obtained from previous lab assignments and also had an opportunity to learn much more about FPGA and new things such as TV decoder and Karplus Strong algorithm.
+</body>
+<p>
+
+<body>
+We leave you with some suggestions on how you can improve Air String if you are interested in creating a project that combines audio and video.
+</body>
+<p>
+
+<h3>Future Propositions</h3>
+
+  <ul>
+  <li>Add a hardware distance sensor that detects the distance between the camcorder and fingers, and make the distance affect the volume level of a synthesized string sound.</a>
+  <li>Detect skin colors and keep track of the movements of fingers, so that a player does not have to wear a marker cap or tape on her/his fingers to play.
+  <li>Expand the range of notes, rearrange notes and add chords so that multiple notes can be played simultaneously.
+  </ul>
+  
+<p>
+<a href = "#top">Go to top</a>
+<p>
+  
+<hr width=100% size=1 noshade>
+
+<h2><a name="appendix">Appendix</h2>
+<h3>Acknowledgement</h3>
+  
+<body>
+We’d like to thank Professor Land for his help and advice throughout the entire project progress.
+<br>We thank Altera and terasIC for providing useful demonstration project files.
+</body>
+<p>
+
+<body>
+The zipped project file can be downloaded from <a href="Air_String_DE2_TV.zip">here</a>.
+</body>
+<p>
+
+<h3>Pictures of project demonstration</h3>
+
+<p align=center>
+
+<img src="P1010403.jpg" width=800 height=500>
+<p align=center>
+
+<img src="P1010405.jpg" width=800 height=500>
+<p align=center>
+
+<img src="P1010406.jpg" width=800 height=500>
+<p align=center>
+
+<img src="P1010410.jpg" width=800 height=500>
+<p align=center>
+
+<img src="P1010407.jpg" width=800 height=500>
+<p align=center>
+
+<img src="P1010418.jpg" width=800 height=500>
+<p align=center>
+
+<img src="IMG_0104.jpg" width=800 height=500>
+<p align=center>
+
+<img src="IMG159.jpg" width=800 height=500>
+<p align=center>
+
+<body>
+A video of demonstration of our project is posted on YouTube:<br>
+<a href="../../../../../../../../www.youtube.com/watch@v=gpek7RI7Si8&feature=email&noredirect=1">ECE 5760 Final Project Air String</a>
+</body>
+<p>
+
+<h3>Specific tasks</h3>
+
+<ul>
+<li>Karplus Strong string synthesizer state machine: Young (Terry) and Varsha
+<li>Combining audio and video components: Young (Terry) and Varsha
+<li>VGA string trigger state machine: Young (Terry) and Varsha
+<li>Background image generation: Young (Terry) and Varsha
+<li>Screen flipper: Young (Terry)
+<li>Frequency generator: Young (Terry)
+</ul>
+
+<h3>References</h3>
+
+<ul>
+<li><a href="DE2_UserManual.pdf">Altera DE2 User Manual</a>
+<li>Altera DE2_TV project file (We used the entire project and modified it after adding our files to it.)
+<li>terasIC DE2_DCC project file (We used Mirror_col module.)
+<li>Professor Land’s C code for Karplus Strong implementation
+<li>ECE 5760 webpages for previous labs and previous final projects
+<li>ECE 4760 webpages for previous final projects
+<li>Files from previous final projects for ECE 5760: <a href="../../../f2007/ms882_yc292/ms882_yc292/index.htm">BBQ Stick</a>, <a href="../../../f2009/jsd46_pag42/jsd46_pag42/index.html">Video Production</a>, <a href="../../../f2010/dj238_ssb224_aa764/MyWebSites/index.htm">Virtual Paint</a>, and <a href="../../../f2010/kaf42_jay29_teg25/teg25_jay29_kaf42/index.html">Video Real Time Cartoonifier</a>
+<li>Internet sources: various websites on <a href="../../../../../../../../https@ccrma.stanford.edu/~jos/pasp/Karplus_Strong_Algorithm.html">Karplus Strong algorithm</a>, <a href="../../../../../../../../www.phy.mtu.edu/~suits/notefreqs.html">musical note frequency</a>, <a href="../../../../../../../../www.jakesan.com/page2/page8/page8.html">RGB color chart</a> and more
+</ul>
+
+<p>
+<a href = "#top">Go to top</a>
+<p>
+
+<!--<a href="http://www.bigoo.ws/dmca.aspx">background image</a>-->
+
+</html>

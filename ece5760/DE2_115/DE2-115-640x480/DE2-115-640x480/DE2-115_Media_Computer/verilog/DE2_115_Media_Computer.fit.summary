@@ -1,0 +1,16 @@
+Fitter Status : Successful - Fri Feb 12 14:22:52 2016
+Quartus Prime Version : 15.1.0 Build 185 10/21/2015 SJ Lite Edition
+Revision Name : DE2_115_Media_Computer
+Top-level Entity Name : DE2_115_Media_Computer
+Family : Cyclone IV E
+Device : EP4CE115F29C8
+Timing Models : Final
+Total logic elements : 17,301 / 114,480 ( 15 % )
+    Total combinational functions : 15,440 / 114,480 ( 13 % )
+    Dedicated logic registers : 11,031 / 114,480 ( 10 % )
+Total registers : 11498
+Total pins : 374 / 529 ( 71 % )
+Total virtual pins : 0
+Total memory bits : 153,017 / 3,981,312 ( 4 % )
+Embedded Multiplier 9-bit elements : 27 / 532 ( 5 % )
+Total PLLs : 2 / 4 ( 50 % )

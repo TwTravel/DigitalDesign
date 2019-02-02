@@ -1,0 +1,276 @@
+DEPTH = 4096;
+WIDTH = 18;
+  
+ADDRESS_RADIX = HEX;
+DATA_RADIX = HEX;
+   
+CONTENT
+BEGIN
+[000..FFF]	:	0000;
+000	:	1FF1;	%  pushi 4081 % 
+001	:	1FFF;	%  pushi 4095 % 
+002	:	8000;	%  st  % 
+003	:	4004;	%  jmp main % 
+004	:	1000;	% main: pushi 0 % 
+005	:	31DE;	%  pop count % 
+006	:	0000;	% L1: nop  % 
+007	:	21DE;	%  push count % 
+008	:	1708;	%  pushi N % 
+009	:	f00f;	%  lt  % 
+00a	:	5023;	%  jz L2 % 
+00b	:	10F0;	%  pushi 240 % 
+00c	:	1008;	%  pushi 8 % 
+00d	:	f003;	%  shl  % 
+00e	:	11DF;	%  pushi y % 
+00f	:	21DE;	%  push count % 
+010	:	f000;	%  add  % 
+011	:	f01f;	%  over  % 
+012	:	8000;	%  st  % 
+013	:	f017;	%  drop  % 
+014	:	1190;	%  pushi 400 % 
+015	:	1008;	%  pushi 8 % 
+016	:	f003;	%  shl  % 
+017	:	18E7;	%  pushi x % 
+018	:	21DE;	%  push count % 
+019	:	f000;	%  add  % 
+01a	:	f01f;	%  over  % 
+01b	:	8000;	%  st  % 
+01c	:	f017;	%  drop  % 
+01d	:	21DE;	%  push count % 
+01e	:	1001;	%  pushi 1 % 
+01f	:	f000;	%  add  % 
+020	:	31DE;	%  pop count % 
+021	:	4007;	%  jmp L1 % 
+022	:	0000;	% L2: nop  % 
+023	:	1000;	%  pushi 0 % 
+024	:	e002;	%  out vga_we % 
+025	:	d000;	%  in switches % 
+026	:	f013;	%  dup  % 
+027	:	31DD;	%  pop rand % 
+028	:	e003;	%  out redLEDs % 
+029	:	0000;	% L3: nop  % 
+02a	:	1001;	%  pushi forever % 
+02b	:	50E4;	%  jz L10 % 
+02c	:	21DB;	%  push frame_toggle % 
+02d	:	f011;	%  bnot  % 
+02e	:	f013;	%  dup  % 
+02f	:	31DB;	%  pop frame_toggle % 
+030	:	e003;	%  out gpio % 
+031	:	1000;	%  pushi 0 % 
+032	:	31DE;	%  pop count % 
+033	:	0000;	% L4: nop  % 
+034	:	21DE;	%  push count % 
+035	:	1708;	%  pushi N % 
+036	:	f00f;	%  lt  % 
+037	:	50E2;	%  jz L9 % 
+038	:	11DF;	%  pushi y % 
+039	:	21DE;	%  push count % 
+03a	:	f000;	%  add  % 
+03b	:	7000;	%  ld  % 
+03c	:	18E7;	%  pushi x % 
+03d	:	21DE;	%  push count % 
+03e	:	f000;	%  add  % 
+03f	:	7000;	%  ld  % 
+040	:	1008;	%  pushi 8 % 
+041	:	f004;	%  shr  % 
+042	:	1009;	%  pushi 9 % 
+043	:	f003;	%  shl  % 
+044	:	3FEF;	%  pop temp % 
+045	:	1008;	%  pushi 8 % 
+046	:	f004;	%  shr  % 
+047	:	2FEF;	%  push temp % 
+048	:	f000;	%  add  % 
+049	:	e000;	%  out vga_addr % 
+04a	:	1000;	%  pushi 0 % 
+04b	:	e001;	%  out vga_data % 
+04c	:	1001;	%  pushi 1 % 
+04d	:	e002;	%  out vga_we % 
+04e	:	1000;	%  pushi 0 % 
+04f	:	e002;	%  out vga_we % 
+050	:	2FF1;	%  push 4081 % 
+051	:	1001;	%  pushi 1 % 
+052	:	f001;	%  sub  % 
+053	:	f013;	%  dup  % 
+054	:	3FF1;	%  pop 4081 % 
+055	:	9000;	%  pushpc  % 
+056	:	8000;	%  st  % 
+057	:	40E4;	%  jmp rand_bit % 
+058	:	1007;	%  pushi scale % 
+059	:	f003;	%  shl  % 
+05a	:	18E7;	%  pushi x % 
+05b	:	21DE;	%  push count % 
+05c	:	f000;	%  add  % 
+05d	:	7000;	%  ld  % 
+05e	:	f000;	%  add  % 
+05f	:	18E7;	%  pushi x % 
+060	:	21DE;	%  push count % 
+061	:	f000;	%  add  % 
+062	:	f01f;	%  over  % 
+063	:	8000;	%  st  % 
+064	:	f017;	%  drop  % 
+065	:	2FF1;	%  push 4081 % 
+066	:	1001;	%  pushi 1 % 
+067	:	f001;	%  sub  % 
+068	:	f013;	%  dup  % 
+069	:	3FF1;	%  pop 4081 % 
+06a	:	9000;	%  pushpc  % 
+06b	:	8000;	%  st  % 
+06c	:	40E4;	%  jmp rand_bit % 
+06d	:	1007;	%  pushi scale % 
+06e	:	f003;	%  shl  % 
+06f	:	11DF;	%  pushi y % 
+070	:	21DE;	%  push count % 
+071	:	f000;	%  add  % 
+072	:	7000;	%  ld  % 
+073	:	f000;	%  add  % 
+074	:	11DF;	%  pushi y % 
+075	:	21DE;	%  push count % 
+076	:	f000;	%  add  % 
+077	:	f01f;	%  over  % 
+078	:	8000;	%  st  % 
+079	:	f017;	%  drop  % 
+07a	:	18E7;	%  pushi x % 
+07b	:	21DE;	%  push count % 
+07c	:	f000;	%  add  % 
+07d	:	7000;	%  ld  % 
+07e	:	11E0;	%  pushi 480 % 
+07f	:	1008;	%  pushi 8 % 
+080	:	f003;	%  shl  % 
+081	:	f00e;	%  gt  % 
+082	:	508D;	%  jz L5 % 
+083	:	11DE;	%  pushi 478 % 
+084	:	1008;	%  pushi 8 % 
+085	:	f003;	%  shl  % 
+086	:	18E7;	%  pushi x % 
+087	:	21DE;	%  push count % 
+088	:	f000;	%  add  % 
+089	:	f01f;	%  over  % 
+08a	:	8000;	%  st  % 
+08b	:	f017;	%  drop  % 
+08c	:	0000;	% L5: nop  % 
+08d	:	18E7;	%  pushi x % 
+08e	:	21DE;	%  push count % 
+08f	:	f000;	%  add  % 
+090	:	7000;	%  ld  % 
+091	:	1005;	%  pushi 5 % 
+092	:	1008;	%  pushi 8 % 
+093	:	f003;	%  shl  % 
+094	:	f00d;	%  le  % 
+095	:	50A0;	%  jz L6 % 
+096	:	1007;	%  pushi 7 % 
+097	:	1008;	%  pushi 8 % 
+098	:	f003;	%  shl  % 
+099	:	18E7;	%  pushi x % 
+09a	:	21DE;	%  push count % 
+09b	:	f000;	%  add  % 
+09c	:	f01f;	%  over  % 
+09d	:	8000;	%  st  % 
+09e	:	f017;	%  drop  % 
+09f	:	0000;	% L6: nop  % 
+0a0	:	11DF;	%  pushi y % 
+0a1	:	21DE;	%  push count % 
+0a2	:	f000;	%  add  % 
+0a3	:	7000;	%  ld  % 
+0a4	:	11E0;	%  pushi 480 % 
+0a5	:	1008;	%  pushi 8 % 
+0a6	:	f003;	%  shl  % 
+0a7	:	f00e;	%  gt  % 
+0a8	:	50B3;	%  jz L7 % 
+0a9	:	11DE;	%  pushi 478 % 
+0aa	:	1008;	%  pushi 8 % 
+0ab	:	f003;	%  shl  % 
+0ac	:	11DF;	%  pushi y % 
+0ad	:	21DE;	%  push count % 
+0ae	:	f000;	%  add  % 
+0af	:	f01f;	%  over  % 
+0b0	:	8000;	%  st  % 
+0b1	:	f017;	%  drop  % 
+0b2	:	0000;	% L7: nop  % 
+0b3	:	11DF;	%  pushi y % 
+0b4	:	21DE;	%  push count % 
+0b5	:	f000;	%  add  % 
+0b6	:	7000;	%  ld  % 
+0b7	:	1005;	%  pushi 5 % 
+0b8	:	1008;	%  pushi 8 % 
+0b9	:	f003;	%  shl  % 
+0ba	:	f00d;	%  le  % 
+0bb	:	50C4;	%  jz L8 % 
+0bc	:	1007;	%  pushi 7 % 
+0bd	:	1008;	%  pushi 8 % 
+0be	:	f003;	%  shl  % 
+0bf	:	11DF;	%  pushi y % 
+0c0	:	21DE;	%  push count % 
+0c1	:	f000;	%  add  % 
+0c2	:	7000;	%  ld  % 
+0c3	:	0000;	% L8: nop  % 
+0c4	:	11DF;	%  pushi y % 
+0c5	:	21DE;	%  push count % 
+0c6	:	f000;	%  add  % 
+0c7	:	7000;	%  ld  % 
+0c8	:	18E7;	%  pushi x % 
+0c9	:	21DE;	%  push count % 
+0ca	:	f000;	%  add  % 
+0cb	:	7000;	%  ld  % 
+0cc	:	1008;	%  pushi 8 % 
+0cd	:	f004;	%  shr  % 
+0ce	:	1009;	%  pushi 9 % 
+0cf	:	f003;	%  shl  % 
+0d0	:	3FEF;	%  pop temp % 
+0d1	:	1008;	%  pushi 8 % 
+0d2	:	f004;	%  shr  % 
+0d3	:	2FEF;	%  push temp % 
+0d4	:	f000;	%  add  % 
+0d5	:	e000;	%  out vga_addr % 
+0d6	:	1001;	%  pushi 1 % 
+0d7	:	e001;	%  out vga_data % 
+0d8	:	1001;	%  pushi 1 % 
+0d9	:	e002;	%  out vga_we % 
+0da	:	1000;	%  pushi 0 % 
+0db	:	e002;	%  out vga_we % 
+0dc	:	21DE;	%  push count % 
+0dd	:	1001;	%  pushi 1 % 
+0de	:	f000;	%  add  % 
+0df	:	31DE;	%  pop count % 
+0e0	:	4034;	%  jmp L4 % 
+0e1	:	0000;	% L9: nop  % 
+0e2	:	402A;	%  jmp L3 % 
+0e3	:	0000;	% L10: nop  % 
+0e4	:	21DC;	% rand_bit: push rand2 % 
+0e5	:	f013;	%  dup  % 
+0e6	:	100B;	%  pushi 11 % 
+0e7	:	f003;	%  shl  % 
+0e8	:	f007;	%  bxor  % 
+0e9	:	1011;	%  pushi 17 % 
+0ea	:	f004;	%  shr  % 
+0eb	:	3FEF;	%  pop temp % 
+0ec	:	21DD;	%  push rand % 
+0ed	:	1011;	%  pushi 17 % 
+0ee	:	f004;	%  shr  % 
+0ef	:	21DC;	%  push rand2 % 
+0f0	:	1001;	%  pushi 1 % 
+0f1	:	f003;	%  shl  % 
+0f2	:	f006;	%  bor  % 
+0f3	:	31DC;	%  pop rand2 % 
+0f4	:	21DD;	%  push rand % 
+0f5	:	1001;	%  pushi 1 % 
+0f6	:	f003;	%  shl  % 
+0f7	:	2FEF;	%  push temp % 
+0f8	:	f006;	%  bor  % 
+0f9	:	f013;	%  dup  % 
+0fa	:	31DD;	%  pop rand % 
+0fb	:	1001;	%  pushi 1 % 
+0fc	:	f005;	%  band  % 
+0fd	:	1001;	%  pushi 1 % 
+0fe	:	f003;	%  shl  % 
+0ff	:	1001;	%  pushi 1 % 
+100	:	f001;	%  sub  % 
+101	:	2FF1;	%  push 4081 % 
+102	:	7000;	%  ld  % 
+103	:	2FF1;	%  push 4081 % 
+104	:	1001;	%  pushi 1 % 
+105	:	f000;	%  add  % 
+106	:	3FF1;	%  pop 4081 % 
+107	:	1002;	%  pushi 2 % 
+108	:	f000;	%  add  % 
+109	:	9001;	%  poppc  % 
+END ;	

@@ -1,0 +1,268 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>Floating Point hardware</title>
+</head>
+
+<body>
+<h2 align="center">Simplified Floating Point for DSP <br>
+  Cyclone2 and Cyclone4 version<br>
+ECE 5760, Cornell University </h2>
+<p>Full IEEE 754 floating point (FP) uses a lot of hardware resource on the FPGA. For parallel DSP it would be nice to have a simpler, narrow word FP. Some papers (Fang, et.al., Tong, et.al., Ehliar, et.al.) suggest that only 9 to 11 bits of mantissa is enough for video or audio encoding, as long as there is sufficient dynamic range supplied by the exponent. This page shows a possible implementation. The obsolete Altera documents fp_mult and fp_add_sub (see references) were useful. </p>
+<p>A student (Skyler Schneider, 2010) built a similar system with 18 bits of mantissa. <br>
+His system is described <a href="#Schneider_fp">below</a>.</p>
+<p>A student (<span tabindex="0" aria-label="Mark Eiding _3Cmje56_40cornell.edu>. Press the Enter key to open the contact card." role="button" autoid="_pe_a">Mark Eiding, 2015) modified the 18 bit system for faster inverse square root (for gravity calculations):</span></p>
+<ul>
+  <li><span tabindex="0" aria-label="Mark Eiding _3Cmje56_40cornell.edu>. Press the Enter key to open the contact card." role="button" autoid="_pe_a"><a href="../StudentWork/mje56/FP_conversions.c">C-to-Reg27 conversion</a>, </span></li>
+  <li><a href="../StudentWork/mje56/FPmath.v">Verilog FP hardware</a></li>
+  <li>Format:<br>
+    <code>bit 26: Sign (0: pos, 1: neg) <br>
+    bits[25:18]: Exponent (unsigned)<br>
+bits[17:0]:  Fraction (unsigned)                                       
+<br>
+(-1)^SIGN * 2^(EXP-127) * (1+.FRAC) </code></li>
+  <li>Example: <code>-25.0<br>
+    ((-1)**1) * (1.100100000000000000) * (2**(131-127))<br>
+    -1     *      1.5625            *      16<br>
+    1 10000011 100100000000000000<br>
+    0x60E4000 </code></li>
+  <li>If the exponent is zero then the value should be treated as zero independent of the mantissa</li>
+</ul>
+<hr>
+<p><strong>Simplified,  8-bit exponent and 9-bit mantissa, Floating point.</strong></p>
+<p>I decided to build a FP  with 8-bit exponent and 9-bit mantissa (and with no NANs, infinities, denorms or rounding).<strong> </strong>The sum of the bit-lengths (plus one sign bit) means that the FP number fits into a 18-bit M4K block word on the CycloneII FPGA. The 9-bit mantissa means that only one hardware multiplier (out of 70) is used for the floating multiplier. The exponent is represented in 8-bit offset binary form. For example <code>2<sup>0</sup>=128</code>, <code>2<sup>2</sup>=130</code>, and <code>2<sup>-2</sup>=126</code>. The mantissa is represented as a 9-bit fraction with a range of <code>[0 to 1.0-2<sup>-9</sup>]</code>. A sign bit of zero implies positive. The Verilog representation is <code>{sign,exp[7:0],mantissa[8:0]}</code>. Denormalized numbers are not permitted, so the high-order bit (binary value 0.5) is always one, unless the value of the FP number underflows, then it is zero. No error detection is performed and there is no rounding. There are no NANs, infinities, denorms, or other special cases (which make little sense in a realtime system anyway).  Some example representations are shown below.<br>
+<img src="FPrpresentation.png" width="287" height="298">  </p>
+<p>Five operations are necessary for floating DSP.  They are add, negate, multiply, integer-to-float, and float-to-integer. Negate is easy, just toggle the sign bit. The integer conversion algorithms are necessary because the audio and video codecs are integer-based. Outlines for the functions are below. Finally, the modules were tested by building IIR filters. The SOS filters shown below validated the performance of the floating point. An <a href="Floating_point_FPGA.pdf">article</a> written for Circuit Cellar Magazine describing this floating point is available.<br>
+  <br>
+  <strong>Multiply algorithm</strong>: <br>
+</p>
+<ol>
+  <li>If either input number has a high-order bit of zero, then that input is zero and the product is zero. </li>
+  <li>The output exponent is <code>exp1+exp2-128</code> or <code>exp1+exp2-129</code>. If the sums of the input exponents is less than 129 then the exponent will underflow and the product is zero. </li>
+  <li>If both inputs are nonzero and the exponents don't underflow:
+      <ol>
+        <li>Then if <code>(mantissa1)x(mantissa2)</code> has the high order-bit set, the top 9-bits of the product are the output mantissa and the output exponent is <code>exp1+exp2-128</code>.</li>
+        <li>Otherwise the second bit of the product will be set, and the output mantissa is the top 9-bits of <code>(product)&lt;&lt;1</code> and the output exponent is <code>exp1+exp2-129</code>.</li>
+        <li>The sign of the product is <code>(sign1)xor(sign2) </code></li>
+      </ol>
+  </li>
+</ol>
+<br>
+<strong>Add algorithm</strong>: <br>
+<ol>
+  <li>If both inputs are zero, the sum is zero.</li>
+  <li> Determine which input is bigger, which smaller (absolute value) by first comparing the exponents, then the mantissas if necessary. </li>
+  <li>Determine the difference in the exponents and shift the smaller input mantissa right by the difference. But if the exponent difference is greater than 8 then just output the bigger input.</li>
+  <li>If the signs of the inputs are the same, add the bigger and (shifted) smaller mantissas. The result must be <code>0.5&lt;sum&lt;2.0</code>. If the result is greater than one, shift the mantissa sum right one bit and increment the exponent. The sign is the sign of either input.</li>
+  <li> If the signs of the inputs are different, subtract the bigger and (shifted) smaller mantissas so that the result is always positive. The result must be <code>0.0&lt;difference&lt;0.5</code>. Shift the mantissa left until the high bit is set, while decrementing the exponent. The sign is the sign of the bigger input.</li>
+</ol>
+<p><br>
+  The multiplier takes about 60 logic elements plus one hardware multiplier on the CycloneII FPGA, while the adder takes about 220 logic elements. The timing analyser suggests that the purely combinatiorial multiplier should be able to run at 50 MHz and the adder at 30 MHz or so.
+</p>
+<p>The integer-to-FP and FP-to-integer conversion routines allow you to specify a signed <em>scale</em>. Going from integer to float, the resulting floating point number is (integer_input)*2<sup>scale_input</sup>. This feature allows you to convert numbers less than one. Going from float back to integer, you choose the scale you want to bring the floating point number back into a small integer range. The signed integer inputs and outputs are 10-bit, 2's complement format. <strong></strong></p>
+<p> <strong>Integer to FP</strong>: </p>
+<p>I assumed 10-bit, 2&rsquo;s complement, integers since the mantissa is only 9 bits, but the process generalizes to more bits. </p>
+  <ol>
+    <li> Save the sign bit of the input and take the absolute value of the input. </li>
+    <li> Shift the input left until the high order bit is set and count the number of shifts required. This forms the floating mantissa. </li>
+    <li> Form the floating exponent by subtracting the number of shifts from step 2 from the constant 137 or (0h89-(#of shifts)). </li>
+    <li> Assemble the float from the sign, mantissa, and exponent.
+  </ol>
+
+<p><strong>FP to integer</strong>: </p>
+<p>Converting back to integer is similarly simple, but no overflow is detected, so scale carefully.</p>
+<ol>
+  <li> If the float exponent is less than 0h81, then the output is zero because the input is less than one. </li>
+  <li> Otherwise shift the floating mantissa to the right by (0h89-(floating exponent)) to form the absolute value of the output integer. </li>
+  <li> Form the 2&rsquo;s complement signed integer. </li>
+</ol>
+<p><strong>Testing the FP routines using IIR filtering by Second-order-sections (SOS)</strong> <br>
+SOS filters have the advantage (over straight multipole filters) of smaller dynamic range on coefficients, so the numerical stability is better. SOS filters are also more straight forward to do with floating point.
+  <!--
+  <li><strong>Small 18-bit CPU for floating point</strong> <br>
+    The small 16-bit CPU described in Hamblen, chapter 9, was converted to 18 bits, and the assembler modified to support 18-bit words. The opcode field is dropped to 6 bits, and the address/immediate/output field increased to 12 bits. The verilog is <a href="../DE2/TinyCPU/18bitCPU/DE2_uP3v3.v">here</a>. The QuartusII project archive is <a href="../DE2/TinyCPU/18bitCPU/DE2_TOP_18bit_archive.qar">here</a>. The assembler is a Matlab <a href="../DE2/TinyCPU/18bitCPU/TinyASM18bit.m">program</a> which takes an <a href="../DE2/TinyCPU/18bitCPU/TestPgm18bit.asm">asm</a> file and produces a <a href="../DE2/TinyCPU/18bitCPU/TestPgm18bit.mif">mif</a> file. The mif file name is referenced in the verilog near the end of the file. In the mif file, the first two digits are the opcode, the last three are the address. This cpu version has no actual FP hardware in it yet, but the modules described above can be added easily. 
+-->
+The downside is a few more state variables and a few more multiplies for each filter. A matlab <a href="SOSfilters/AudioFilterParamsGenFP.m">program</a> and <a href="SOSfilters/FPconvertFun.m">function</a> convert filter specifications to Verilog with 18-bit floating point. The <a href="SOSfilters/AudioFilter5fpSOS.v">top-level module</a> defines filters of order 2, 4 and 6. The project is archived <a href="SOSfilters/DE2_Default.qar">here</a>. </p>
+<p><strong>Testing the FP routines using IIR filtering</strong><br>
+The <code>fpmult, fpadd, int2fp</code> and <code>fp2int</code> routines were incorporated into the state machine filters described on the <a href="../DE2/fpgaDSP.html">FPGA DSP</a> page, example 4. The routines worked, implying that the logic is correct, however a 9-bit manitssa is apparently not accurate enough to implement high-order or narrow bandwidth filters. Second order filters work fine, but 4th and 6th order filters became inaccurate when the filter bandwidth was low. Use the SOS verions above for most actual filters. A <a href="FPfilter1/AudioFilterParamsGenFP.m">matlab program</a> (and associated <a href="FPfilter1/FPconvertFun.m">function</a>) were used to convert matlab-designed filter coefficients to floating point format. The <a href="FPfilter1/AudioFilter3FPstateMachine.v">top-level module</a> defines three filters and connects them to the audio in/out. The entire project is zipped <a href="FPfilter1/AudioFilterFP.zip">here</a>. </p>
+<p><strong>FP reciprocal</strong><br>
+The ability to take a reciprocal allows division to occur. Reciprocal was implemented Newton-Raphson interation on an initial linear estimate of the reciprocal. This <a href="inverse/FPtest.v">design</a> just tests for static correctness of the method by displaying values on the LEDs. The process is to take the input number, strip off the sign and exponent, compute the reciprocal of the remaining number between 0.5 and 1.0, form the new exponent as <code>0x81+(0x81-input_exponent)</code> then merge together the input sign, new exponent and new mantissa from a Newton iteration process.  The module will run at 14 MHz and uses 3 floating point adders and 4 floating point multipliers.<br>
+<br>
+The algorithm (from <a href="../../../../../en.wikipedia.org/wiki/Division_(digital)">http://en.wikipedia.org/wiki/Division_%28digital%29</a>) is as follows, with all operations being floating arithmetic:</p>
+<ol>
+  <li>
+  Form<code> In_reduced={1'b0, 8'h80, m1} </code> where <code>m1</code> is the mantissa of the normalized input float. This operation
+  (with the sign set to + and the exponent set to 0x80),  limits the range to 0.5 to 1.0.</li>
+  <li> <code>x0 = 2.9142 - 2*in_reduced</code> (<code> 0.5<=in_reduced<=1.0</code>) </li>
+  <li><code>x1 = x0*(2-in_reduced*x0)</code></li>
+  <li><code>x2 = x1*(2-in_reduced*x1)</code></li>
+  <li>The reciprocal output mantissa is the mantissa of <code>x2</code>.</li>
+  <li>The reciprocal output exponent  <code>=(in_reduced==9'b100000000)? 9'h102-e1 : 9'h101-e1</code> <br>
+  because an input value of exactly a power of 2 adds one to the exponent. <code><br>
+  e1</code> is the exponent of the normalized input float.</li>
+</ol>
+<p><strong>FP reciprocal Square Root</strong><br>
+  A 
+reciprocal square root function is useful when normalizing vectors (e.g. computer graphics) and con be converted to a square root with just one more multiply.
+This <a href="sqrt/FPtest_sqrt.v">design</a> just tests for static correctness of the method by displaying values on the LEDs. The process is to take the input number, strip off the sign and exponent, compute the reciprocal square root of the remaining number between 0.25 and 1.0, form the new exponent, then merge together the new exponent and new mantissa from a Newton iteration process.
+The module will run at 11 MHz and uses 3 floating point adders and 6 floating point multipliers.
+<p>The algorithm (from <a href="../../../../../en.wikipedia.org/wiki/Methods_of_computing_square_roots">http://en.wikipedia.org/wiki/Methods_of_computing_square_roots</a>) is as follows, with all operations being floating arithmetic. The <code>x0</code> estimate is based on a linear approximation which I thought up.:
+
+<ol>
+  <li> Form<code> input_exp = (e1[0]==1)? 8'h7f : 8'h80 </code>and<code><br>
+  reduced_input = {1'b0, input_exp, m1}  </code> <br>
+  where <code>m1</code> is the mantissa of the normalized input float. This operation,  limits the range to 0.25 to 1.0.</li>
+  <li> <code>x0 = 2.05 - reduced_input  with (input 0.25&lt;=reduced_input&lt;=1.0)</code></li>
+  <li><code>x1 = x0/2 * (3 - reduced_input*x0*x0) 	 </code></li>
+  <li><code>x2 = x1/2 * (3 - reduced_input*x1*x1)</code></li>
+  <li>The reciprocal sqrt output mantissa is the mantissa of <code>x2</code>.</li>
+  <li>The reciprocal sqrt output exponent eout is given by<code><br>
+    ((m1==9'b100000000 &amp;&amp; e1[0]==1) )? eout = 9'h82 + ((9'h80 - e1)&gt;&gt;1) : eout = 9'h81 + ((9'h80 - e1)&gt;&gt;1)    </code><br>
+    because an input value of exactly a power of 2 with odd exponent adds one to the exponent. <code> e1</code> is the exponent of the normalized input float.</li>
+</ol>
+<hr>
+<p><strong> <a name="Schneider_fp"></a>8-bit exponent and 18-bit mantissa, Floating point (</strong>by Skyler Schneider, 2010)
+<pre>Reg27 floating point
+
+Bit #s   Name   Encode
+27       s      1-bit sign (0 positive, 1 negative)
+26:18    e      8-bit exponent (2's bit complement -128 to 127)
+17:0     f      18-bit fraction (unsigned)
+
+Value = ((-1)**s) * (0.f)_bin * (2**e)
+** is exponentiation
+_bin means a binary interpretation
+
+Example: -1.25
+((-1)**1) * (0.101000000000000000) * (2**1)
+So the Reg27 floating point value is
+1 00000001 101000000000000000
+0x4068000
+
+The top bit of f should always be 1 except when
+the register stores the value 0, in which case
+the entire 27-bit register should be 0.
+
+The <a href="../StudentWork/ss868/fp/Reg27FP/FpMul.v">multiplier</a> is single-cycle.
+
+The <a href="../StudentWork/ss868/fp/Reg27FP/FpAdd.v">adder</a> takes two cycles and is buffered midway.
+It can be pipelined (one add in first half of
+adder while another add in second half).
+
+The adder can be used to subtract by flipping the
+sign bit of the inputs.
+
+There is no overflow detection.
+When underflow occurs, the output is 0.
+
+<a href="../StudentWork/ss868/fp/Reg27FP/lab3_params.h">Parameters</a> used in the routines.
+
+C routines for conversion:
+
+#include &#8249;inttypes.h&#8250;
+#include &#8249;math.h&#8250;
+
+// Convert a 27-bit register floating point into a C floating point.
+float reg27ToFloat(uint32_t r) {
+    uint32_t sign = (r & 0x04000000) >> 26;
+    int32_t exp = ((r & 0x03FC0000) << 6) >> 24;
+    if(exp > 127) exp -= 256;
+    uint32_t frac = (r & 0x0003FFFF);
+    float result = pow(2.0, (float) exp);
+    result = (((float)frac) / 262144.0) * result;
+    if(sign) result = result * (-1);
+    return result;
+}
+
+// Convert a C floating point into a 27-bit register floating point.
+uint32_t floatToReg27(float f) {
+    uint32_t f_f = (*(int*)&f);
+    uint32_t f_sign = (f_f >> 31) & 0x1;
+    uint32_t f_exp = (f_f >> 23) & 0xFF;
+    uint32_t f_frac = f_f & 0x007FFFFF;
+    uint32_t r_sign;
+    uint32_t r_exp;
+    uint32_t r_frac;
+    r_sign = f_sign;
+    if((f_exp == 0x00) || (f_exp == 0xFF)) {
+        // 0x00 -> 0 or subnormal
+        // 0xFF -> infinity or NaN
+        r_exp = 0;
+        r_frac = 0;
+    } else {
+        r_exp = (f_exp - 126) & 0xFF;
+        r_frac = ((f_frac >> 6) | 0x00020000) & 0x0003FFFF;
+    }
+    return (r_sign << 26) | (r_exp << 18) | r_frac;
+}
+ </pre>
+<hr>
+</p>
+<p><strong>References </strong></p>
+<p>JO Hamblen, TS Hall and MD Furman, <em>Rapid protoyping of digital systems: SOPC edition </em>, Springer 2008</p>
+<p>Fang Fang, Tsuhan Chen, Rob A. Rutenbar, <em>Lightweight floating-point arithmetic: Case study of inverse discrete cosine transform</em>, EURASIP J. Sig. Proc.; Special Issue on Applied Implementation of DSP and Communication Systems(2002)</p>
+<p>Fang Fang, Tsuhan Chen, and Rob A. Rutenbar, <em>FLOATING-POINT BIT-WIDTH OPTIMIZATION FOR LOW-POWER SIGNAL PROCESSING APPLICATIONS</em>, http://amp.ece.cmu.edu/Publication/Fang/icassp02_Fang.pdf (2002) </p>
+<p>Jonathan Ying Fai Tong, David Nagle, Rob. A. Rutenbar, <em>Reducing power by optimizing the necessary precision/range of floating-point arithmetic</em>, IEEE Transactions on Very Large Scale Integration (VLSI) Systems, Volume 8 , Issue 3 (2000) Special section on low-power electronics and design Pages: 273 - 285 </p>
+<p>Eilert, J. Ehliar, A. Dake Liu, <em>Using low precision floating point numbers to reduce memory cost for MP3 decoding</em>, IEEE 6th Workshop on Multimedia Signal Processing, 2004 : 29 Sept.-1 Oct. 2004 page(s): 119- 122</p>
+<p>Altera Corp,<a href="fsmul_01.pdf"><em> fp_mult: Floating point multiplier</em></a>, http://www.altera.com/literature/fs/fsmul_01.pdf, A-FS-04-01 1996 </p>
+<p>Altera Corp, <a href="fp_add_sub_FS02.pdf"><em>fp_add_sub: Floating point adder/subtractor</em></a> , A_FS-02-01, 1996 </p>
+<hr size="10" noshade>
+<p><strong>History</strong>:</p>
+<ol>
+  <li><strong>Floating point with 8-bit exponent and 9-bit mantissa (no NANs, infinities, denorms or rounding).<br>
+  </strong>The sum of the bit-lengths (with one sign bit) means that the FP number fits into a 18-bit M4K block word on the CycloneII FPGA. The 9-bit mantissa means that only one hardware multiplier  (out of 35) is used for the floating multiplier. The exponent is represented in 8-bit offset binary form. 
+  For example <code>2<sup>0</sup>=128</code>, <code>2<sup>2</sup>=130</code>, and <code>2<sup>-2</sup>=126</code>. The mantissa is represented as a 9-bit fraction with a range of <code>[0 to 1.0-2<sup>-9</sup>]</code>. A sign bit of zero implies positive. The Verilog representation is <code>{sign,exp[7:0],mantissa[8:0]}</code>.<br>
+  <br>
+  Denormalized numbers are not permitted, so the high-order bit (binary value 0.5) is always one, unless the value of the FP number underflows, then it is zero. No error detection is performed and there is no rounding. There are no NANs, infinities, denorms, or other special cases (which  make little sense in a realtime system anyway). <br>
+    <br>
+    Multiply algorithm: <br>
+    <ol>
+      <li>If either input number has a high-order bit of zero, then that input is zero and the product is zero. </li>
+      <li>The output exponent is <code>exp1+exp2-128</code> or <code>exp1+exp2-129</code>. If the sums of the input exponents is less than 129 then the exponent will underflow and the product is zero. </li>
+      <li>If both inputs are nonzero and the exponents don't underflow:
+        <ol>
+          <li>Then if <code>(mantissa1)x(mantissa2)</code> has the high order-bit set,  the top 9-bits of the product are the output mantissa and the output exponent is <code>exp1+exp2-128</code>.</li>
+            <li>Otherwise the second bit of the product will be set, and the output mantissa is the top 9-bits of <code>(product)&lt;&lt;1</code> and the output exponent is <code>exp1+exp2-129</code>.</li>
+            <li>The sign of the product is <code>(sign1)xor(sign2) </code></li>
+        </ol>
+      </li>
+    </ol>
+    <br>
+    Add algorithm: <br>
+    <ol>
+      <li>If both inputs are zero, the sum is zero.</li>
+      <li> Determine which input is bigger, which smaller (absolute value) by first comparing the exponents, then the mantissas if necessary. </li>
+      <li>Determine the difference in the exponents and shift the smaller input mantissa right by the difference. But if the exponent difference is greater than 8 then just output the bigger input.</li>
+      <li>If the signs of the inputs are the same, add the bigger and (shifted) smaller mantissas. The result must be <code>0.5&lt;sum&lt;2.0</code>. If the result is greater than one, shift the mantissa sum right one bit and increment the exponent. The sign is the sign of either input.</li>
+      <li> If the signs of the inputs are different, subtract the bigger and (shifted) smaller mantissas so that the result is always positive. The result must be <code>0.0&lt;difference&lt;0.5</code>. Shift the mantissa left until the high bit is set, while decrementing the exponent. The sign is the sign of the bigger input.</li>
+    </ol>
+    <br>
+  The multiplier takes about 60 logic elements plus one hardware multiplier on the CycloneII FPGA, while the adder takes about 220 logic elements. The timing analyser suggests that the purely combinatiorial multiplier should be able to run at 50 MHz and the adder  at 30 MHz or so. The top level Verilog module is <a href="DE2_TOP_FPtest.v">here</a>. The entire project is zipped <a href="FloatingPoint.zip">here</a>. <em>Please note that the hardware not been extensively tested, but see 4 below for the cleaned up, corrected routines!. The filters work correctly, implying that the floating routines are correct. </em>
+  <p></p>
+  <li><strong>Float-to-Integer and Integer-to-Float</strong> <br>
+    Adding integer conversions makes it easier to test the floating point on the FPGA. The <a href="FPandINT/DE2_TOP_FPtest3.v">Verilog source</a> has int2fp and fp2int modules. The top level module converts switch input integers to floats, multiplies or adds them, converts back to integer and displays on the hex LEDs. The entire project is zipped <a href="FPandINT/FloatingPoint.zip">here</a>. The conversion routines allow you to specify a signed <em>scale</em>. Going from integer to float, the resulting floating point number is (integer_input)*2<sup>scale_input</sup>. This feature allows you to convert numbers less than one. Going from float back to integer, you choose the scale you want to bring the floating point number back into a small integer range. The signed integer inputs and outputs are 10-bit, 2's complement format. <strong>BUT</strong> there is a sign-bit error in <code>fp2int</code> which is corrected in the version below.
+    <p></p>
+  <li><strong>IIR filtering to test float routines</strong><br>
+    The
+      <code>fpmult, fpadd, int2fp</code> and <code>fp2int</code> routines were incorporated into the state machine filters
+ described on the <a href="../DE2/fpgaDSP.html">FPGA DSP</a> page, example 4.
+The routines worked, implying that the logic is correct, however a 9-bit manitssa is apparently not accurate enough to implement high-order or narrow bandwidth filters. 
+Second order filters work fine, 4th and 6th order filters became inaccurate when the filter bandwidth was low.
+A <a href="FPfilter1/AudioFilterParamsGenFP.m">matlab program</a> (and associated <a href="FPfilter1/FPconvertFun.m">function</a>) were used to convert matlab-designed filter coefficients to floating point format. The <a href="FPfilter1/AudioFilter3FPstateMachine.v">top-level module</a> defines three filters and connects them to the audio in/out. The entire project is zipped <a href="FPfilter1/AudioFilterFP.zip">here</a>.
+  <p></p>
+  <li><strong>IIR filtering by Second-order-sections (SOS)</strong> <br>
+    SOS filters have the advantage of smaller dynamic range on coefficients, so the numerical stability is better. SOS filters are also more straight forward to do with floating point.<!--
+  <li><strong>Small 18-bit CPU for floating point</strong> <br>
+    The small 16-bit CPU described in Hamblen, chapter 9, was converted to 18 bits, and the assembler modified to support 18-bit words. The opcode field is dropped to 6 bits, and the address/immediate/output field increased to 12 bits. The verilog is <a href="../DE2/TinyCPU/18bitCPU/DE2_uP3v3.v">here</a>. The QuartusII project archive is <a href="../DE2/TinyCPU/18bitCPU/DE2_TOP_18bit_archive.qar">here</a>. The assembler is a Matlab <a href="../DE2/TinyCPU/18bitCPU/TinyASM18bit.m">program</a> which takes an <a href="../DE2/TinyCPU/18bitCPU/TestPgm18bit.asm">asm</a> file and produces a <a href="../DE2/TinyCPU/18bitCPU/TestPgm18bit.mif">mif</a> file. The mif file name is referenced in the verilog near the end of the file. In the mif file, the first two digits are the opcode, the last three are the address. This cpu version has no actual FP hardware in it yet, but the modules described above can be added easily. 
+--> The downside is a few more state variables and a few more multiplies for each filter. A matlab <a href="SOSfilters/AudioFilterParamsGenFP.m">program</a> and <a href="SOSfilters/FPconvertFun.m">function</a> convert filter specifications to Verilog with 18-bit floating point. The <a href="SOSfilters/AudioFilter5fpSOS.v">top-level module</a> defines filters of order 2, 4 and 6. The project is archived <a href="SOSfilters/DE2_Default.qar">here</a>. 
+</ol>
+<hr>
+<p>Copyright Cornell University, 
+  <!-- #BeginDate format:Am1 -->March 9, 2017<!-- #EndDate -->
+</p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+</body>
+</html>

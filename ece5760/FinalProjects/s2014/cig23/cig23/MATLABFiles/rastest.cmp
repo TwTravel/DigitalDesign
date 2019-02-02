@@ -1,0 +1,71 @@
+;==========
+constant ; named constants
+  LEDS    0;
+  CPUDONE 1;
+  N 1024
+
+;==========
+variable
+
+  count
+  doublecount
+  triplecount
+  quadcount
+
+;==========
+function
+  testFunct1
+  testFunct2
+  testFunct3
+  testFunct4
+  forever
+
+;==========
+program
+
+main:
+ 8 out[LEDS]
+ 0 =count
+ 0 =doublecount
+ 0 =triplecount
+ 0 =quadcount
+ while quadcount N lt
+ do
+     quadcount 1 add =quadcount
+     while triplecount N lt
+     do
+         triplecount 1 add =triplecount
+         while doublecount N lt 
+         do
+             doublecount 1 add =doublecount
+             while count N lt
+             do
+                 count 1 add =count
+                 testFunct1
+             endwhile
+         endwhile
+     endwhile
+ endwhile
+ testFunct4
+ while 1 do endwhile
+
+;testFunct1- Calls testFunct3 and returns
+testFunct1:
+  testFunct2
+  return
+
+;testFunct2- Calls testFunct4 and returns
+testFunct2:
+  testFunct3
+  return
+
+;testFunct3- Just returns
+testFunct3:
+  return
+
+;testFunct4- Ouputs CPUDONE, outputs 5 on Green LEDS, spins forever
+testFunct4:
+  1 out[CPUDONE]
+  5 out[LEDS]
+  forever: jmp.forever
+return

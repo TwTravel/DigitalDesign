@@ -1,0 +1,1327 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title>System On Chip Toolkit</title>
+<meta name="keywords" content="" />
+<meta name="description" content="" />
+<link href="default.css" rel="stylesheet" type="text/css" />
+<link rel="alternate stylesheet" type="text/css" media="screen" title="nocontrast" href="nocontrast.css" />
+
+<!--This script should appear below your LINK stylesheet tags -->
+
+<script src="styleswitch.js" type="text/javascript">
+
+/***********************************************
+* Style Sheet Switcher v1.1- © Dynamic Drive DHTML code library (www.dynamicdrive.com)
+* This notice MUST stay intact for legal use
+* Visit Dynamic Drive at http://www.dynamicdrive.com/ for this script and 100s more
+***********************************************/
+
+</script>
+
+
+</head>
+<body>
+<div id="header">
+	<h1>System On Chip Toolkit</h1>
+	<h2>ECE 576 Final Project, <a href="mailto:idanbeck+ece576proj@gmail.com">Idan Beck</a></h2>
+</div>
+<div id="menu">
+	<ul>
+		<li><a href="#A">Introduction</a></li>
+		<li><a href="#B">High Level Design</a></li>
+		<li><a href="#C">Design</a></li>
+		<li><a href="#D">Results and Analysis</a></li>
+		<li><a href="#E">Conclusion</a></li>
+		<li><a href="#F">Get the Code!</a></li>
+		<li><a href="#H">Acknowledges</a></li>
+		<li><a href="#G">Reference</a></li>
+	</ul>
+</div>
+<div id="content">
+	<div id="left">
+		<p>
+		*Note: This website is an eye-friendly technical website and so is display in high 
+		<a href="javascript:chooseStyle('none', 30)">contrast</a>.  
+		Click here for a more <a href="javascript:chooseStyle('nocontrast', 30)">normal view</a>.
+		</p>
+	    <h2><a name="A">Introduction</a></h2>    
+    		<i>Design of a fully integrated toolkit for system generation</i>
+    	    <p>
+    	    This project was the design of a software and hardware toolkit for the purpose 
+    	    of implementing a fully featured system on chip computer.  This required
+    	    the accurate design of all the different sub systems and architectural systems
+    	    that had to be put together to get a program running on such a system.  Below 
+    	    is a diagram of a demo configuration of the system which supports user input 
+    	    through a PS2 keyboard and output through a VGA monitor.	   
+    	    </p>
+    	    <p>
+    	    <a name="toplevel">
+    	    <div id="contrast">
+    	        <img src="images/topleveldiag_c.gif">
+    	    </div>
+    	    <div id="nocontrast">
+    	        <img src="images/topleveldiag.gif">
+    	    </div>
+    	    </a>
+    	    </p>
+	</div>
+	<div id="right">
+		<h2><a name="B">High Level Design</a></h2>
+            <h3>Rationale</h3>
+        		<p>
+        		The rationale of this project oriented around being able to create a complete
+        		system on chip through the use of a set of modules combined in what I call a
+        		toolkit.  A large motivation was due to Object Oriented Design from computer
+        		science where functional elements are written once and reused.  Once the interfaces 
+        		are established it is easy to swap out different modules and write different
+        		modules for different applications
+        		</p>
+        		<p>
+        		This was done here through an asynchronous handshake interface which allowed
+        		any amount of data to be transferred between two modules that could be on different
+        		clock domains.  This is very prevalent with the demo setup since all the different
+        		hardware modules are running at very different speeds.
+        		</p>
+        		<p>
+        		The best part about this toolkit is that it can be simply "cut and pasted" into 
+        		a design for the purpose of rapid prototyping.  It is extremely useful for debugging
+        		since unlike similar tools like Altera's SOPC builder the code is open and available
+        		to view.  This can be used to debug through hardware logic analyzer tools or with 
+        		simulation tools such as <a href="../../../../../../../../www.icarus.com/eda/verilog/default.htm">Icarus Verilog</a>.
+        		</p>
+    		<h3>Logical Structure</h3>
+        		<p>
+        		The logical structure of this project is shown above in the <a href="#toplevel">overall 
+        		state diagram</a> so it will not be repeated here.  To briefly explain, each of modules
+        		on the FPGA side were written and tested in Verilog while the other systems are written
+        		in C++ on Window's Visual Studio 2005. 
+        		</p>
+        		<p>
+        		The core architecture was a custom RISC architecture called NDMA or Network Driven 
+        		Microprocessor Architecure where the assembler implemented these instructions from 
+        		assembly language. The NDMA compiler used was 
+        		<a href="../../../../../../../../www.cs.princeton.edu/software/lcc/default.htm">LCC</a> which allowed me to plug
+        		in a custom back-end to an already pre-made and tested compiler front end but all the
+        		while having it produce code for my custom architecture.
+        		</p>
+    		<h3>Hardware/Software Tradeoffs</h3>
+        		<p>
+        		In this design a few design decisions were made to simplyfy either the hardware or
+        		the software where the other option represented a large jump in complexity.  For 
+        		example the NDMA Architecture implemented single cycle branches and loads through
+        		the use of overlapped execution and a dedicated data memory.  This was for 
+        		the purpose of decreasing the size of code and ensuring that timing was
+        		exact for network operations.  However, has the downside of having to load program
+        		resources at program runtime. 
+        		</p>
+        		<p>
+        		The Altera M4K blocks which were used for data memory did not support unaligned 
+        		memory access so instructions such as:
+        		</p>
+        		<p>
+        		<center>lb $1, 2($0)</center>
+        		</p>
+        		<p>
+        		Could not be implemented without the implementation of compiler complexity.  So
+        		to counteract this the data memory used was set as a
+        		32 bit wide location and software complexity implemented so that characters are
+        		given a memory location each.  This is an inefficiency of the architecture due 
+        		to the deficiency of the memory blocks.  A future module to implement would be 
+        		a 4 m4k block array of 8 bit words.  However, time is always a factor in a design
+        		and this will be done in the future.
+        		</p>
+    		<h3>Standards</h3>
+        		<p>
+        		The toolkit contains modules which interface with a wide variety of standars.  
+        		<br> - The Bootloader uses the <a href="../../../../../../../../en.wikipedia.org/wiki/RS-232">RS232</a> 
+        		standard which is an asynchronous serial communications protocol.  
+        		<br> - The GPU implements a VGA signal interface, however the standard was implemented 
+        		by a VGA controller module and PLL which were not written by me rather but are modified
+        		versions of default	Altera code.
+        		<br> - The PS2 Input Buffer implements the PS/2 Keyboard interface standard with scan
+        		code set 2. The PS/2 interface is also essentially a serial interface although is not
+        		asynchronous since the keyboard provides a clock.
+        		<br> - The NDMA cpu was originally based on the mips encoding of instructions and 
+        		their op codes however many have changed substantially and it does not conform to the 
+        		MIPS standard in most ways anymore.
+        		<br> - The LCD Module implements the HD44780 LCD Standard for interfacing with the
+        		LCD on the DE2 Board.  Although I never plugged this into an output buffer this 
+        		could be done using my interfacing standard that I implemented.
+        		</p>
+        		<p>
+        		<b>My Interface Standard</b> - I implemented my own standard that allowed different
+        		modules of different clock domains to interface.  Essentially the interface consists
+        		of a two wire handshake.  The owner of the resource will have an output valid signal
+        		and an input complete signal where the resource will take the valid as input and output
+        		the complete.  When the owner would like to "activate" the device it will set the data
+        		and set the valid line high.  When the resource is done it will set the complete line
+        		high which the owner will then use to lower the valid flag thereby resetting the resource.
+        		Similarily if the owner would like to recieve the resource the same thing is done
+        		except the resource would set the data the owner would read it in and only afterwards 
+        		the valid line would go low.
+        		</p>
+        		<p>
+        		<a name="handshake">
+        		<div id="contrast">
+            	        <center><img src="images/handshake_c.gif"></center>
+            	    </div>
+            	    <div id="nocontrast">
+            	        <center><img src="images/handshake.gif"></center>
+            	    </div> 
+        	        </a>
+        	    </p>
+    		<h3>Patent/Trademark Information</h3>
+        		<p>
+        		The DE2_TOP.v file provided by Terasic was used as the base of design for the top 
+        		level module of the design which essentially is the place were all the connections for 
+        		the system were made.  Most of this file is simply declarations for the purpose of 
+        		connecting the Cyclone II FPGA to the DE2 board and is not pertinent to the contents
+        		of my project.  However, this file does demonstrate some of the basic logic required
+        		to ensure correct functionality of the project.
+        		</p>
+        		<p>
+        		Also the GPU contains a VGA controller logic that was not written by me.  These files
+        		consist of the VGA controller logic except for the VGACNT module which was written to
+        		encapsulate their function.  The VGA controller code was bundled with the DE2 default
+        		code put on the CD-rom received with the system.
+        		</p>
+	</div>
+	<div id="left">
+		<h2><a name="C">Design</a></h2>
+    		<h3>Hardware</h2>
+        		<p>
+        		This project involved the design of a variety of different hardware modules
+        		of varying functionlity.  They all follow the appropriate interfacing standards
+        		to interface with peripherals or with other modules. 
+        		</p>	
+    		<h4>Network Driven Microprocessor Architecture CPU</h4>        		
+            		<p>
+            	    The NDMA cpu core is designed based on the instruction encoding scheme of 
+            	    MIPS but this is where most of the similarities lie.  The CPU is an
+            	    overlapped execution CPU where the PC is incremented on the negative
+            	    edge of the clock, which will then make all of the values of the current
+            	    instruction valid by the next negative when the register file is written to.
+            	    The advantage, however, is that on the positive edge the quick compare result
+            	    and ALU results will be valid so that the PC will be incremented to the 
+            	    right spot without need of a branch delay.  Also the load needs no delay
+            	    due to a dedicated data memory which cost is offset in software complexity.
+            	    This allows for a very close to completely RISC architecture ideal for 
+            	    network based multiprocesser mesh networks.   
+                    </p>
+                    <p>
+                    The CPU uses a dedicated in/out register module which is used to interface
+                    the CPU with outside modules.  Also the architecure contains instructions
+                    for the purpose of network driven operation but this has been disabled for
+                    the current project and will be enabled in the near future.
+                    </p>
+                    <p>
+                    Below is a table listing all of the supported instructions for the CPU. 
+                    This demo CPU does not have a multiply enabled however it is written into
+                    the verilog code and could be enabled.  Since the FPGA has dedicated 
+                    multiplys this would meet the timing requirements (however the divide does
+                    not so it is suggested not to enable this unit but rather in the future
+                    add a dedicated mult/div unit which will halt the CPU until done.
+                    </p>
+                    <p>
+                    <center>
+                    <table>
+                        <tr>
+                            <td>Instruction</td>
+                            <td><center>Description</center></td>
+                            <td>Instruction Status</td>
+                       </tr>
+                       <tr>
+                            <td></td>
+                            <td><b>Memory Operations</b></td>
+                            <td></td>
+                       </tr>
+                       <tr>
+                            <td>lw</td>
+                            <td>Load Word</td>
+                            <td>yes</td>
+                       </tr>
+                       <tr>
+                            <td>lh</td>
+                            <td>Load half word</td>
+                            <td>yes</td>
+                       </tr>
+                       <tr>
+                            <td>lhu</td>
+                            <td>Load half word unsigned</td>
+                            <td>yes</td>
+                       </tr>
+                       <tr>
+                            <td>lb</td>
+                            <td>Load byte</td>
+                            <td>yes</td>
+                       </tr>
+                       <tr>
+                            <td>lbu</td>
+                            <td>Load byte unsigned</td>
+                            <td>yes</td>
+                       </tr>
+                       <tr>
+                            <td>sw</td>
+                            <td>Store word</td>
+                            <td>yes</td>
+                       </tr>
+                       <tr>
+                            <td>sh</td>
+                            <td>Store half word</td>
+                            <td>yes</td>
+                       </tr>
+                       <tr>
+                            <td>sb</td>
+                            <td>Store byte</td>
+                            <td>yes</td>
+                       </tr>
+                       <tr>
+                            <td></td>
+                            <td><b>Immediate Ops</b></td>
+                            <td></td>
+                       </tr>
+                       <tr>
+                            <td>addi</td>
+                            <td>Add immediate</td>
+                            <td>yes</td>
+                       </tr>
+                       <tr>
+                            <td>addiu</td>
+                            <td>Add immediate unsigned</td>
+                            <td>yes</td>
+                       </tr>
+                       <tr>
+                            <td>lui</td>
+                            <td>Load upper immediate</td>
+                            <td>yes</td>
+                       </tr>
+                       <tr>
+                            <td>slti</td>
+                            <td>Set less than immediate</td>
+                            <td>yes</td>
+                       </tr>
+                       <tr>
+                            <td>sltiu</td>
+                            <td>Set less than immediate unsigned</td>
+                            <td>yes</td>
+                       </tr>
+                       <tr>
+                            <td>andi</td>
+                            <td>And immediate</td>
+                            <td>yes</td>
+                       </tr>
+                       <tr>
+                            <td>xori</td>
+                            <td>Exclusive OR immediate</td>
+                            <td>yes</td>
+                       </tr>
+                       <tr>
+                            <td>ori</td>
+                            <td>OR immediate</td>
+                            <td>yes</td>
+                       </tr>
+                       <tr>
+                            <td>smsg</td>
+                            <td>Send message to CPU</td>
+                            <td>yes</td>
+                       </tr>
+                       <tr>
+                            <td>rmsg</td>
+                            <td>Receive message from CPU</td>
+                            <td>some</td>
+                       </tr>
+                       <tr>
+                            <td>sid</td>
+                            <td>Set processor ID</td>
+                            <td>yes</td>
+                       </tr>
+                       <tr>
+                            <td></td>
+                            <td><b>Register Instructions</b></td>
+                            <td></td>
+                       </tr>
+                       <tr>
+                            <td>add</td>
+                            <td>Register add</td>
+                            <td>yes</td>
+                       </tr>
+                       <tr>
+                            <td>addu</td>
+                            <td>Unsigned register add</td>
+                            <td>yes</td>
+                       </tr>
+                       <tr>
+                            <td>sub</td>
+                            <td>Register subtract</td>
+                            <td>yes</td>
+                       </tr>
+                       <tr>
+                            <td>subu</td>
+                            <td>Unsigned register substract</td>
+                            <td>yes</td>                            
+                       </tr>
+                       <tr>
+                            <td>and</td>
+                            <td>Register AND</td>
+                            <td>yes</td>
+                       </tr>
+                       <tr>
+                            <td>or</td>
+                            <td>Register OR</td>
+                            <td>yes</td>
+                       </tr>
+                       <tr>
+                            <td>xor</td>
+                            <td>Register XOR</td>
+                            <td>yes</td>
+                       </tr>
+                       <tr>
+                            <td>slt</td>
+                            <td>Register set less than</td>
+                            <td>yes</td>
+                       </tr>
+                       <tr>
+                            <td>sltu</td>
+                            <td>Unsigned register set less than</td>
+                            <td>yes</td>
+                       </tr>
+                       <tr>
+                            <td>sll</td>
+                            <td>Shift left logical</td>
+                            <td>yes</td>
+                       </tr>
+                       <tr>
+                            <td>srl</td>
+                            <td>Shift right logical</td>
+                            <td>yes</td>
+                       </tr>
+                       <tr>
+                            <td>sra</td>
+                            <td>Shift right arithmetic</td>
+                            <td>yes</td>
+                       </tr>
+                       <tr>
+                            <td></td>
+                            <td><b>Branch Instructions<b></td>
+                            <td></td>
+                       </tr>
+                       <tr>
+                            <td>bne</td>
+                            <td>Branch on not equal</td>
+                            <td>yes</td>
+                       </tr>
+                       <tr>
+                            <td>beq</td>
+                            <td>Branch on equal</td>
+                            <td>yes</td>
+                       </tr>
+                       <tr>
+                            <td>bgtz</td>
+                            <td>Branch on greater than zero</td>
+                            <td>yes</td>
+                       </tr>
+                       <tr>
+                            <td>bgez</td>
+                            <td>Branch on greater than or equal to zero</td>
+                            <td>yes</td>
+                       </tr>
+                       <tr>
+                            <td>bltz</td>
+                            <td>Branch on less than zero</td>
+                            <td>yes</td>
+                       </tr>
+                       <tr>
+                            <td>blez</td>
+                            <td>Branch on less than or equal to zero</td>
+                            <td>yes</td>
+                       </tr>
+                       <tr>
+                            <td>j</td>
+                            <td>Jump</td>
+                            <td>yes</td>
+                       </tr>
+                       <tr>
+                            <td>jal</td>
+                            <td>Jump and link</td>
+                            <td>yes</td>
+                       </tr>
+                       <tr>
+                            <td>jr</td>
+                            <td>Jump to register</td>
+                            <td>yes</td>
+                       </tr>
+                       <tr>
+                            <td></td>
+                            <td><b>In / Out Instructions</td>
+                            <td></td>
+                       </tr>
+                       <tr>
+                            <td>in</td>
+                            <td>Read input from port</td>
+                            <td>yes</td>
+                       </tr>
+                       <tr>
+                            <td>outi</td>
+                            <td>Output immedaite to port</td>
+                            <td>yes</td>
+                       </tr>
+                       <tr>
+                            <td>out</td>
+                            <td>Output register to port</td>
+                            <td>yes</td>
+                       </tr>
+                       <tr>
+                            <td></td>
+                            <td><b>Mult/Div/Mod</td>
+                            <td></td>
+                       </tr>
+                       <tr>
+                            <td>mult</td>
+                            <td>Register multiply</td>
+                            <td>yes, but disabled</td>
+                       </tr>
+                       <tr>
+                            <td>multu</td>
+                            <td>Unsigned register multiply</td>
+                            <td>yes, but disabled</td>
+                       </tr>
+                       <tr>
+                            <td>div</td>
+                            <td>Register divide</td>
+                            <td>yes, but disabled</td>
+                       </tr>
+                       <tr>
+                            <td>divu</td>
+                            <td>Unsigned register divide</td>
+                            <td>yes, but disabled</td>
+                       </tr>
+                       <tr>
+                            <td>mod</td>
+                            <td>Register modulus</td>
+                            <td>yes, but disabled</td>
+                       </tr>
+                       <tr>
+                            <td></td>
+                            <td><b>Control Operations</b></td>
+                            <td></td>
+                       </tr>
+                       <tr>
+                            <td>nop</td>
+                            <td>No Operation</td>
+                            <td>yes</td>
+                       </tr>
+                       <tr>
+                            <td>break</td>
+                            <td>Temporary Break</td>
+                            <td>yes</td>
+                       </tr>
+                    </table>
+                    </center>
+                    </p>
+                    <p>
+                    A Note on using the in/out instructions.  The in/out instructions
+                    are used in the following manner:
+                    </p>
+                    <center>
+                    out $destination, $source<br>
+                    outi $destination, immediate<br>
+                    in  $destination, $source<br>
+                    </center>
+                    <p>
+                    The destination register in the OUT commands is the appropriate output
+                    port (where $5 --> portE) and the source is a CPU register.  For the IN
+                    commands the source is from the input port and the destination is a cpu
+                    port.  Notice that IN can be used to read an output port but out can only
+                    be used to write to an output port.<br>
+                    The ports in the current design are PortA-H --> $1-8.  So this means that
+                    OUT can only be applied to output registers $5-8.
+                    </p>
+                
+                <h4>GPU</h4>
+                    <p>
+                    The GPU module is essentially a small processor which takes inputs from the
+                    CPU on a CPU output port.  The GPU is capable of drawing lines, plotting 
+                    pixels, or drawing ASCII text to the screen.
+                    <p>
+                    <div id="contrast">
+            	        <center><img src="images/GPU_c.gif"></center>
+            	    </div>
+            	    <div id="nocontrast">
+            	        <center><img src="images/GPU.gif"></center>
+            	    </div>
+                    </p>
+                    <p>
+                    A sample connection to the CPU is as follows:
+                    </p>
+                    <p>
+                    Input PortA[0] <== GPU Complete Flag<br>                    
+                    Output Port E[15:0] ==> GPU Instruction<br>
+                    Output Port E[16] ==> GPU Valid Flag<br> 
+                    </p>
+                    <p>
+                    The way that the GPU receives instructions is on the GPU instruction
+                    line which is of format:
+                    </p>
+                    <p>
+                    GPUInstruction[15:10] - Operation<br>
+                    GPUInstruction[9:0] - Data<br>
+                    </p>
+                    <p>
+                    The possible operations to the GPU are as follows:
+                    <table>
+                        <tr>
+                            <td>Instruction</td>
+                            <td>Encoding</td>
+                            <td>Description</td>
+                        </tr>
+                        <tr>
+                            <td>setX1</td>
+                            <td>000000</td>
+                            <td>Sets the internal X1 register to data[9:0]</td>
+                        </tr>
+                        <tr>
+                            <td>setY1</td>
+                            <td>000001</td>
+                            <td>Sets the internal Y1 register to data[9:0]</td>
+                        </tr>
+                        <tr>
+                            <td>setX2</td>
+                            <td>000010</td>
+                            <td>Sets the internal X2 register to data[9:0]</td>
+                        </tr>
+                        <tr>
+                            <td>setY2</td>
+                            <td>000011</td>
+                            <td>Sets the internal Y2 register to data[9:0]</td>
+                        </tr>
+                        <tr>
+                            <td>setChar</td>
+                            <td>000100</td>
+                            <td>Sets internal char register to data[7:0]</td>
+                        </tr>
+                        <tr>
+                            <td>drawChar</td>
+                            <td>000101</td>
+                            <td>Dispatches a char to the ASCII module with color data[7:0]</td>
+                        </tr>
+                        <tr>
+                            <td>drawLine</td>
+                            <td>000110</td>
+                            <td>
+                            Dispatches the internal registers to the Bresenham module with 
+                            color data[7:0]
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>drawPixel</td>
+                            <td>000111</td>
+                            <td>Dispatches internal registers to pixel plotter with color data[7:0]</td>
+                        </tr>
+                        <tr>
+                            <td>clear</td>
+                            <td>001000</td>
+                            <td>Resets the SRAM screen buffer to 0</td>
+                        </tr>                        
+                    </table>                    
+                    <br>
+                    </p>
+                    
+                <h4>PS2 Buffer</h4>
+                    <p>
+                    The PS2 input buffer is designed in much the same way as the other modules
+                    implementing the same communication interface.  The module will poll the PS2
+                    port and receive information on it.  When a valid key is pressed it will
+                    write this key into it's buffer and increment a write pointer which will
+                    mismatch with the write pointer and indicate that the buffer is now not
+                    empty.
+                    </p>
+                    <p>
+                    This output is oBufferEmpty and is not quite in line with the protocol but
+                    since this is just an indicator flag it is not a problem. The CPU can then
+                    use this flag to check if there is a character pending and then use the 
+                    interface talked about before to read in the next character one at a time.
+                    Every time a character is read the valid flag must be lowered before the next
+                    character can be read.  This is to ensure that no characters are lost.
+                    </p>
+                    <p>
+                    A sample connection of the PS2 Buffer to the CPU is as follows:
+                    </p>
+                    <p>
+                    Output Port F[0] ==> Valid<br>
+                    Input Port B[9] <== Buffer Empty<br>
+                    Input Port B[8] <== Complete<br>
+                    Input Port B[7:0] <== ASCII<br>
+                    </p>
+                                       
+                <h4>RS232 Buffer</h4>
+                    <p>
+                    The RS232 input buffer is exacltly like the PS2 input buffer except it 
+                    writes into the buffer from input on the RS232 port and also allows to
+                    transmit out on the RS232.  To read it is exactly the same as the PS2
+                    so I will talk about transmitting.  To do this it implements the same
+                    interface as all the other modules.  The CPU can set up a data value
+                    on the ASCII transmit data line and then set the valid high, when the
+                    value has finished transmitting the complete will go high and the module
+                    can be reset.
+                    </p>
+                <h4>Bootloader</h4>
+                    <p>
+                    The bootloader module is a giant state machine which uses the RS232 
+                    input buffer to communicate with a host computer to receive and bootload
+                    a program on the RS232 line.  This is extremely useful to bootload any
+                    kind of memory as long as the memory is written using a standard memory
+                    interface.
+                    </p>
+                    <p>
+                    <div id="contrast">
+            	        <center><img src="images/bootloader_c.jpg"></center>
+            	    </div>
+            	    <div id="nocontrast">
+            	        <center><img src="images/bootloader.jpg"></center>
+            	    </div>                     
+                    </p>
+                    <p>
+                    The bootloader will output a signal oBootload which will say that the 
+                    bootloader is bootloading.  This is useful as a CPU reset or to tell whatever
+                    circuit is using the bootloader that the bootloader is the current owner of the
+                    connected memory.
+                    </p>
+                    <p>
+                    The way that the bootloader knows there is a want to bootload it is by waiting 
+                    for an input on the RS232 and checking to see if it gets the string "boot".  If
+                    this is the case it will transmit back "ready" to signal the caller it is ready 
+                    to receive a program.  At this point the oBootLoad output will go high. The 
+                    bootloader will then proceed to receive a 32 bit address value and return it for
+                    verification and then receive a 32 bit data value and retrun transmit it for
+                    verification.  It will then write the 32 bit data value to the 32 bit address
+                    value.  Once done it will return to the receieve address state and repeat the
+                    process until a 0xFFFFFFFF is received as the next PC.  This is considered
+                    a bootload break message and the bootloader will go back to the initial state.
+                    </p>
+                    <p>
+                    <div id="contrast">
+            	        <center><img src="images/bootloaderstates_c.jpg"></center>
+            	    </div>
+            	    <div id="nocontrast">
+            	        <center><img src="images/bootloaderstates.jpg"></center>
+            	    </div>                    
+                    </p>
+                    <p>
+                    <b>note</b>: The actual states are not as shown above.  The state machine has 2 states
+                    for each receive and each transmit.  That means 8 states for receive "boot", 10 states
+                    for transmit "ready", and another 4 states for each address and data receive/transmit.
+                    Also it requires a few states for the memory operations and some other logic.  The real
+                    state machine contains 30 states.  Many states were preferrable fewer states and counters
+                    since counters are harder to debug and essentially are state machines in their own right.
+                    </p>
+                    
+                <h4>Other Modules</h4>
+                    <p>
+                    This project contains a number of other modules that are used in the above 
+                    modules or have been developed and can be used as a part of this toolkit:
+                    </p>
+                    <p>
+                    <table>
+                        <tr>
+                            <td>APU</td> 
+                            <td>Audio Processor Unit</td>
+                            <td>
+                            This is an audio synthesis module which will allow a program
+                            to generate tones and output it to the AUDIO DAC on the DE2
+                            board. Some of the code in this module is not original and was
+                            taken from the DE2 default code.  The processor unit side of it,
+                            however, was written.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>LCD</td> 
+                            <td>LCD Controller</td>
+                            <td>
+                            This module will take a memory as an input and write this out
+                            to the LCD display on the DE2 board.  This is useful as an output
+                            buffer however an output buffer module has not been written. It 
+                            would be easy to implement the common interface of this project
+                            and design one since it would be wholly a memory oriented module.
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Memory&nbsp&nbsp</td> 
+                            <td>M4K, SRAM</td>
+                            <td>
+                            A few modules were written to abstract the creating on M4K block
+                            based memories of single and dual port.  Also an SRAM memory
+                            module was created and an SRAM Screen Buffer which is used in the
+                            GPU.
+                            </td>
+                        </tr>
+                    </table>
+                    </p>    
+        
+        
+		
+		<h3>Software</h3>
+		    <h4>Compiler</h4>
+		    <p>
+		    The compiler used was <a href="../../../../../../../../www.cs.princeton.edu/software/lcc/default.htm">LCC</a>
+		    which is a retargetable ANSI compatible C compiler.  The back-end was written
+		    such that the assembly language the compiler generated was specific to the NDMA
+		    architecture and would interface cleanly with the assembler.  
+		    </p>
+		    <p>
+		    Since LCC does not support any asm( ) commands the rcc aspect was used which 
+		    spat out the assembly. This was used to generate the assembly code and then
+		    cut and paste into a bigger assembly file which included other functions implemented
+		    in assembly.  This was important since all input and output functions had to be
+		    aritten in assembly for compactness and the ability to access the in/out/outi 
+		    instructions.
+		    </p>
+		    <p>
+		    To write the back end an NDMA lburg file was written which explains to the
+		    compiler how to convert the lexical symbols into interpretted assembly code.  This
+		    file was heavily modified from a pre-existing example provided with LCC since
+		    much of the contents in the file are specific to LCC or general for all architectures
+		    and did not need to be changed. Much of the file was altered, however, 
+		    to work with the NDMA architecture. 
+		    </p>
+		    <p>
+		    A significant point to be made about the lburg file is that the compiler was used
+		    to offset the issue of data words being 32 bits.  When manipulating strings the
+		    compiler was programmed to jump to a snippet of code the compiler generated 
+		    in the assembler through a .byte directive and run that code.  This code would
+		    temporarily store the string into data memory at a known location that was saved.
+		    The snippet would return and the code then packed into a register so that on the 
+		    CPU a character would not waste registers.  Then when saved back into memory the
+		    data was once again unpacked. This incurred a substantial penalty involving 
+		    code length but it was the most eloquent solution.
+		    </p>
+		    <p>
+		    <i>Usage</i><br>
+		    To use the compiler it must be built.  To do so you must run the following
+		    in a Visual Studio 2005 build window or a build enviornment which has nmake
+		    from Visual Studio 6.0 or later:
+		    </p>
+		    <p>
+		    ...ProjectModules\LCC>set BUILDDIR=\lcc_build_directory<br>
+		    ...ProjectModules\LCC>nmake -f makefile.nt all<br>    		 
+		    </p>
+		    <p>
+		    This will build the compiler into your build directory you specified and then
+		    to compile a program you must run:
+		    </p>
+		    <p>...build_dir> rcc -target=ndma/ndmaOS filename.c</p>
+		    <p>
+		    This will spit out the assembly code which can then be "cut and paste" into
+		    the assembler code which should include some of the APIs as explained below.
+		    If wanted it is possible to output the rcc output to a file by doing the 
+		    following:
+		    </p>
+		    <p>...build_dir> rcc -target=ndma/ndmaOS filename.c > outfile</p>
+		    <p>
+		    If desired the build directory can be added to the system path and you
+		    can run this program wherever you code resides.<br>
+		    </p>
+		    <h4>Assembler-Linker</h4>
+		    <p>
+		    The assembler-linker program is an NDMA specific assembler program.  It does 
+		    some basic in file linking.  It does not support multiple files but will link
+		    all locations within itself.  It will also parse through specific directives and
+		    pseudo instructions:
+		    </p>
+		    <p>		    
+		    .SetStack - This will initialize the stack to a specific size (data memory size)
+		    </p>
+		    <p>
+		    .Boot - This will jump to the label defined (usually main)
+		    </p>
+		    <p>
+		    .byte - This will load in a specific byte into data memory
+		    </p>
+		    <p>
+		    la - Load Address, this pseudo instruction has special behavior.  When used in the
+		    context of a memory calculation it will simply load in the number to that specific
+		    register.  However, if it is used with a label it is taken as a memory load and
+		    processed accordingly.  This works in conjunction with the compiler which will
+		    use the la instruction to load memory into the CPU.
+		    </p>
+		    <p>
+		    The structure of the assembler is that it first parses through the file to check 
+		    for labels for linking.  These labels are placed into a map data structure to be
+		    accessed later.  Then the assembler parses through the assembly file as normal and
+		    inteprets the assembly instructions, directives, or pseudo instructions accordingly.
+		    The instructions are checked against a OP map data structure which is initialized
+		    at the begining of run time.  The directives and pseudo instructions are checked
+		    manually since there are not many of them.  However, a similar approach could be 
+		    taken if more are added. The OP map is interpretted with a function that is very
+		    easily adjusted for adding instructions.  If one would want to add instrutions
+		    all that is needed to do is add a OP_ to the OP enum in the BASM.h file. Then
+		    instruction must be added to InitializeOPMap() and OPFunctionSADecode(...) 
+		    according to the instruction.  This is very automatic for most instruction types
+		    where the type is also defined in the OPFunctionSADecode(...) function.
+		    </p>
+		    <p>
+		    With this assembler that can be redefined it is possible to write a wide variety 
+		    of images.  This assembler was somewhat optomized using map data structures
+		    but further optomizations are possible although not important for the size of
+		    programs that would run on the NDMA processor.
+		    </p>
+		    <p>
+		    <i>Usage</i><br>
+		    To use the assembler simply run:
+		    <p>
+		    ...ProjectModules\Software\Assembler\debug>NDMAAssembler filename.asm 		  
+		    </p>
+		    <p>
+		    The file must be an .asm file.  The output will then be put into a file of
+		    the same name such as: filename.mem.  This is an ASCII viewable file which 
+		    would then be the input to the Bootloader.  Look through this file to see 
+		    which machine codes refer to what instructions.  Although during the run of the
+		    assembler an output of debug messages will be displayed which may be useful in
+		    verification and debugging.
+		    </p>
+		    <h4>Bootloader</h4>
+		    <p>
+		    The bootloader will take a file from the assembler in the form of a .mem file
+		    and will bootload the CPU with it.  The program needs no configuration since the
+		    baud rate of the RS232 module on the FPGA design and the program match at 115200.
+		    However, if the computer does not support this baud rate for some reason it is 
+		    easily changed in the program and in the Verilog. 
+		    </p>
+		    <p>
+		    <i>Usage</i><br>To run this program copy it into the directory of the assembler or the .mem file
+		    the assembler is outputting and then run it as such:
+		    </p>
+		    <p>
+		    > NDMABootloader COM# filename.mem
+		    </p>
+		    <p>
+		    COM# would be the com number and used such as COM4 for the COM4 port.  The filename
+		    is the name of the file you would like to bootload.
+		    </p>
+		    <p>
+		    The program simply runs through the file and spits out the location and instruction
+		    on and verifies the receieve from the CPU. In the case that the recieve does not
+		    match the program will return the two mismatches, and quit.  This will leave the
+		    CPU in a state where it must be restarted disallowing for strange behavior. When the 
+		    program reaches the final instruction in the file it will repeat it a few times (which 
+		    may not be wanted but is useful for the usual break or jr $31 instructions) and then
+		    send a 0xFFFFFFFF as the PC and wait for the reply.  The reply will then confirm
+		    that the CPU has finished the bootloading process and received all of the data 
+		    correctly.
+		    </p>
+		    <h4>GPU and PS2 APIs</h4>
+		    <p>
+		    Although I didn't have much time to implement much code other than testing code
+		    a few assembly based API calls:
+		    <p>		  
+		    void plotpixel(int x, int y, char color);<br>
+		    - Plots a pixel to location x and y.
+		    </p>
+		    <p>
+            void drawchar(int x, int y, char c, char color);<br>
+            - Draws a character c to location x and y.
+            </p>
+            <p>
+            char getchar();<br>
+            - Waits for a character to be enterred and returns it (blocking).
+            </p>
+            <p>
+            int waitchar();<br>
+            - Returns 1 if character waiting in buffer, otherwise returns 0.
+            </p>
+            <p>            
+		    Color in form of an 8 bit char: 8'brrggbbxx		    
+		    </p>
+		    <p>
+	        These routines are written in assembly and the function declerations are in
+	        the c code that uses them.  To get them to work the routines need to be placed
+	        into the code between the .Boot main directive and the main: label.  The aseembler
+	        will then link it correctly.    
+		    </p>
+		    <h4>Example Chain</h4>
+		    <p>
+		    <i>C Code</i><br>
+		    // ndmaTest0.c<br>
+		    int add(int in, int mul)<br>
+            {<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;int val = in + mul;<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;return val;<br>
+            }<br><br>                       
+            void main(void)<br>
+            {<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;int i = 0;<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;int j = 1;<br><br>
+            
+            &nbsp;&nbsp;&nbsp;&nbsp;for(i = 0; i < 5; i++)<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;{<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;j = add(j, 3);<br>
+            &nbsp;&nbsp;&nbsp;&nbsp;}<br>
+            }<br>
+		    </p>
+		    <p>
+		    <i>Output from RCC</i><br>
+		    .SetStack 255<br>
+            .Boot main<br>
+            .text<br>
+            .text<br>
+            add:<br>
+            addi $sp,$sp,-4<br>
+            addu $24, $4, $5<br>
+            sw $24,-4+4($sp)<br>
+            lw $2,-4+4($sp)<br>
+            L.1:<br>
+            addi $sp,$sp,4<br>
+            jr $31<br>
+            .end add<br>
+            .text<br>
+            main:<br>
+            addi $sp,$sp,-12<br>
+            sw $23, 8($sp)<br>
+            sw $30, 10($sp)<br>
+            sw $31, 11($sp)<br>
+            or $30, $0, $0<br>
+            la $23, 1<br>
+            or $30, $0, $0<br>
+            L.3:<br>
+            or $4, $23, $0<br>
+            la $5, 3<br>
+            jal add<br>
+            or $23, $2, $0<br>
+            L.4:<br>
+            la $30, 1($30)<br>
+            la $24, 5<br>
+            slt $1, $30, $24<br>
+            bne $1, $0, L.3<br>
+            L.2:<br>
+            lw $23,8($sp)<br>
+            lw $25,9($sp)<br>
+            lw $30,10($sp)<br>
+            lw $31,11($sp)<br>
+            addi $sp,$sp,12<br>
+            jr $31<br>
+            .end main<br>
+		    </p>
+		    <p>
+		    <i>Output from NDMA Assembler</i><br>
+		    00110100000111010000000011111111 // ori $sp, $0, 255 (SetStack)<br>
+            00001000000000000000000000001000 // .Boot main pc:8<br>
+            00100011101111011111111111111100 // addi $sp, $sp, -4<br>
+            00000000100001011100000000100001 // addu $24, $4, $5<br>
+            10101111101110000000000000000000 // sw $24, -4+4($sp)<br>
+            10001111101000100000000000000000 // lw $2, -4+4($sp)<br>
+            00100011101111010000000000000100 // addi $sp, $sp, 4<br>
+            00000011111000000000000000001000 // jr $31<br>
+            00100011101111011111111111110100 // addi $sp, $sp, -12<br>
+            10101111101101110000000000001000 // sw $23, 8($sp)<br>
+            10101111101111100000000000001010 // sw $30, 10($sp)<br>
+            10101111101111110000000000001011 // sw $31, 11($sp)<br>
+            00000000000000001111000000100101 // or $30, $0, $0<br>
+            00100100000101110000000000000001 // la $23, 1<br>
+            00000000000000001111000000100101 // or $30, $0, $0<br>
+            00000010111000000010000000100101 // or $4, $23, $0<br>
+            00100100000001010000000000000011 // la $5, 3<br>
+            00001100000000000000000000000010 // jal add (2)<br>
+            00000000010000001011100000100101 // or $23, $2, $0<br>
+            00100111110111100000000000000001 // la $30, 1($30)<br>
+            00100100000110000000000000000101 // la $24, 5<br>
+            00000011110110000000100000101010 // slt $1, $30, $24<br>
+            00010100000000011111111111111001 // bne $1, $0, L.3<br>
+            10001111101101110000000000001000 // lw $23, 8($sp)<br>
+            10001111101110010000000000001001 // lw $25, 9($sp)<br>
+            10001111101111100000000000001010 // lw $30, 10($sp)<br>
+            10001111101111110000000000001011 // lw $31, 11($sp)<br>
+            00100011101111010000000000001100 // addi $sp, $sp, 12<br>
+            00000011111000000000000000001000 // jr $31<br>
+		    </p>
+		
+	</div>
+	<div id="right">
+		<h2><a name="D">Results and Analysis</a></h2>
+		<p>
+		This lab was overall successful. The system was mostly working but would require
+		a much longer time of testing to get all of the bugs out.  Since there are so
+		many levels at which a bug could reside testing would be required that would
+		automate the process and find build breaks immediately.  This process would be
+		needed for an amount of time and the code meanwhile maintained.  However, such
+		is the nature of these systems and the system design has shown a high degree of
+		success at dealing with random functions and random operation.
+		</p>
+		<p>
+		The CPU is being clocked a bit slower than usual since the design is so complex that
+		the global clock is commonly getting skewed.  Instead it is being fed with it's own
+		clock at a slower rate to combat the skew.  Occasionally a timing issue will show up
+		through the CPU operation however these occurances are rare and the display and 
+		input are considerably flicker and glitch free.  The bootloader will occasionally fail
+		to boot the CPU on start up due but this error is handled and all that is needed is a 
+		restart of the CPU and a restard of the bootloader.
+		</p>
+		<p>
+		This design is considerably safe since it has no moving parts and runs on a very low
+		voltage core.  Other than carpal tunnel syndrom typing into the PS2 interface this
+		project poses no danger to a user.
+		</p>
+		<p>
+		This design incurred a good amount of interference from the different modules and
+		the most that could be was done to try and indentify this interference and try to
+		offset it somehow.  Occasionally this interference caused a large error but most of
+		the time this is not a problem.
+		</p>
+		<p>
+		This project is extremely usable.  Some of the modules are designed in an object 
+		oriented mindset and can be literally cut-and-paste into a new project.  Also the 
+		whole project is intended for future people to build on and was designed in such a
+		way that it is not impossible to understand how to use.  I very much hope that future
+		ECE 576 classes will continue the design where I left off making the design more bug-free
+		and adding new functionalities. For example I designed an overlapped execution CPU but it
+		would be not too hard to move this on to a pipelined CPU or beyond! It was my need to
+        design my design but this design could be pushed into different designs as well and the
+        tool chain used the same.
+		</p>		
+	</div>
+	<div id="left">
+		<h2><a name="E">Conclusion</a></h2>
+		<p>
+		The result of this lab was a success and with good performance as well.  Overall this
+		was an extremely challenging lab which tied in all of my Electrical Computer Engineering
+		as well as Computer Science knowledge to design a complete computer system.  It was
+		very exciting to see the output of this system and see that it was possible to
+		truly design a computer from the ground up.
+		</p>
+		<p>
+		This project used some code for the VGA controller and the Audio DAC.  Other than
+		this no other IP was used other than random tutorials on the internet.  The code
+		mentioned before is likely public domain code but it is very simple code and could
+		be rewritten rather quickly.
+		</p>		
+		<p>
+		The design did reverse engineer the standards at times since the online descriptions
+		of the standards were a bit convoluted and occasionally I would scope the output and
+		simply try to replicate it eventually getting the right result and generalizing it
+		for all possible inputs/outputs.  Also I did a fair amount of reverse engineering of
+		LCC to manage to get it to build and get the correct code out of it without having
+		to rewrite the actual LCC code .
+		</p>
+		<p>
+		There are no likely patent oppertunities with this project although the CPU architecture
+		works nicely and could be implemented into a much more full feature microcontroller
+		given some time.
+		</p>
+	</div>
+	<div id="left">
+		<h2><a name="F">Get the Code!</a></h2>    
+    		<p>
+    	    The project is saved in a file heirarchy that should be helpful and is saved in the 
+    	    following zip file:    	    
+    	    </p>
+    	    <p>
+    	    <a href="SysOnChipToolkit.zip">SysOnChipToolkit.zip</a>
+    	    </p>
+    	    <p>
+    	    Most of the modules have code comments regarding their usage and how to implement
+    	    them.  Below is a table listing of all of the modules, their location in the 
+    	    solution and the top level module of each. The base directory would be 
+    	    ...ProjectModules\ > 	        	   
+    	    </p>
+    	    <p>
+    	    <font size="2">
+    	    <table>
+    	        <tr>
+    	            <td>Description</td>
+    	            <td>Location</td>
+    	            <td>Notes</td>
+    	        </tr>
+    	        <tr>
+    	            <td>APU&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</td>
+    	            <td>\Audio\APU.v&nbsp&nbsp</td>  
+    	            <td>
+    	            This instantiates the same PLL as the GPU.  The GPU has hook ups
+    	            designed so that if both the APU and GPU are required simply comment
+    	            out the APU VGA_Audio_PLL and the Reset_Delay (this is done by default)
+    	            and wire through the lines through the GPU to the APU. 
+    	            </td>
+    	        </tr>
+    	        <tr>
+    	            <td>NDMA CPU</td>
+    	            <td>\CPU\CPU.v</td>
+    	            <td>
+    	            For an example usage see the test bench included in ...\TestBenches\NDMA\
+    	            </td>
+    	        </tr>
+    	        <tr>
+    	            <td>HexDecode</td>
+    	            <td>\IO\HexDecode\HexDecode.v&nbsp</td>
+    	            <td>
+    	            Simple HEX decoder for use with a 7-segment display
+    	            </td>
+    	        </tr>
+    	        <tr>
+    	            <td>PS2InputBuffer</td>
+    	            <td>\IO\PS2\PS2InputBuffer.v</td>
+    	            <td>
+    	            See ...\IO\PS2\PS2.v for a define automatically connecting all the PS2
+    	            lines to the buffer correctly.
+    	            </td>
+    	        </tr>
+    	        <tr>
+    	            <td>RS232InputBuffer</td>
+    	            <td>\IO\RS232\<br>RS232InputBuffer.v</td>
+    	            <td>
+    	            Connects indistinguishably from the PS2 Input Buffer.
+    	            </td>
+    	        </tr>
+    	        <tr>
+    	            <td>RS232Bootloader</td>
+    	            <td>\CPU\RS232BootLoader.v</td>
+    	            <td>
+    	            The RS232 Boot loader module doesn't need to include any modules but will only
+    	            work if hooked up as shown in the NDMA test bench.
+    	            </td>
+    	        </tr>
+    	        <tr>
+    	            <td>LCC NDMA Backend</td>
+    	            <td>\LCC\src\ndma.md</td>
+    	            <td>
+    	            This installation of LCC will automatically link and compile the NDMA
+    	            back end.  If you would like to install the ndma back end to a clean
+    	            LCC install you must add the NDMA backend to: \LCC\makefile.nt, as well
+    	            as \LCC\src\bind.c and make sure that you copy in \LCC\etc\ndmaOS.c as 
+    	            well.
+    	            </td>
+    	        </tr>
+    	        <tr>
+    	            <td>NDMA Assembler/Linker</td>
+    	            <td>\software\Assembler\<br>mipsAssembler3\main.cpp</td>
+    	            <td>
+    	            I originally named the solution mips assembler but the NDMA assembler
+    	            is nothing like a mips assembler. It also behaves as a linker.  The solution
+    	            is contained in the Assembler directory.  See section on the assembler for
+    	            adding custom instructions.
+    	            </td>
+    	        </tr>
+    	        <tr>
+    	            <td>NDMABootloader</td>
+    	            <td>\software\NDMABootloader\<br>NDMABootloader\mainbase.cpp</td>
+    	            <td>
+    	            Usage described above, will only work in windows since this is based on
+    	            MS code.
+    	            </td>
+    	        </tr>
+    	        <tr>
+    	            <td>tex2mif</td>
+    	            <td>\software\Tex2Mif\<br>tex2mif\tex2mif\tex2mif.cpp</td>
+    	            <td>
+    	            Useful little program that will convert a inputs.txt file into an output
+    	            .mif file.  See the program for input/output file specifications but is 
+    	            very usefuly for initializing a memory using a mif file especially when
+    	            said memory needs to be in ASCII format (such as an LCD output stream).
+    	            </td>
+    	        </tr>
+    	        <tr>
+    	            <td>GPUAPI</td>
+    	            <td>\software\GPUAPI\<br>GPUAPI.asm</td>
+    	            <td>
+    	            Some linkable GPU API calls in assembly as well as some of the PS2 calls. 
+    	            Can be useful for writing programs as shown with the sample programs.
+    	            </td>
+    	        </tr>
+    	        <tr>
+    	            <td>LCDCNT</td>
+    	            <td>\LCD\LCDCNT.v</td>
+    	            <td>
+    	            This module will display the contents of a hooked up memory at 
+    	            the location indicated by iSP which is an 8 bit pointer.  It will
+    	            then use oAddr to drive the address of the memory to 16 bytes of 
+    	            memory so the memory must be 8 bits wide.  This memory can be easily
+    	            implemented with the M4KMEM module.    	          
+    	            </td>
+    	        </tr>
+    	        <tr>
+    	            <td>M4KMEM</td>
+    	            <td>\MEM\M4K\M4KMEM.v</td>
+    	            <td>
+    	            This is an M4K block memory with adjustable paramters for
+    	            creating arbitrary memories.    
+    	            </td>
+    	        </tr>
+    	        <tr>
+    	            <td>M4KMEM_DUALPORT</td>
+    	            <td>\MEM\M4K\M4KMEM_DUALPORT.v</td>
+    	            <td>
+    	            Same as above, except has dual ports for simultaneous reads and writes.
+    	            </td>
+    	        </tr>
+    	        <tr>
+    	            <td>SRAM</td>
+    	            <td>\MEM\SRAM\SRAM.v</td>
+    	            <td>
+    	            Simple wrapper module for the SRAM which conforms it to the memory 
+    	            model used by the toolkit.
+    	            </td>
+    	        </tr>
+    	        <tr>
+    	            <td>SRAM_SCREEN_BUFFER</td>
+    	            <td>\MEM\SRAM\<br>SRAM_SCREEN_BUFFER.v</td>
+    	            <td>
+    	            This is a non-trival pipelined screen buffer which allows a 640x480
+    	            resolution with memory access which is based on the X, Y coordinates. 
+    	            This module can also be altered to provide different resolutons but
+    	            then the VGA controller would need to be altered as well.
+    	            </td>
+    	        </tr>
+    	        <tr>
+    	            <td>GPU</td>
+    	            <td>\VGA\GPU\GPU.v</td>
+    	            <td>
+    	            As described above this module can be used but instantiates the same 
+    	            PLL as the audio module.  It has hook ups for wiring through and usually
+    	            it is better to keep the VGA_PLL and wire to the audio rather than vice versa
+    	            since this will better speed up the paths regarding the VGA and those are
+    	            more pertinent to speed up than the audio.
+    	            </td>
+    	        </tr>
+    	    </table>
+    	    </font>
+    	    </p>
+	</div>
+	<div id="left">
+		<h2><a name="H">Acknowledge</a></h2>    
+    		<p>
+    	    I would like to acknowledge a few sources for this project.  First of all I would 
+    	    like to credit Altera and Terasic for producing the Cyclone II FPGA and DE2 board
+    	    respectively.  I would like to thank Cornell University for giving me the facilities
+    	    and the resources to work on this project. I would like to thank Bruce Land for 
+    	    starting this great new course and for his continued support and help. I would also 
+    	    like to acknowledge Chris Fraser and Dave Hanson for providing support regarding 
+    	    general LCC issues. 
+    	    </p>
+	</div>
+	<div id="left">
+		<h2><a name="G">Reference</a></h2>    
+    		<p>
+    		I used these websites a fair amount:<br>
+    		<a href="../../../../../../../../instruct1.cit.cornell.edu/courses/ece576/default.htm">ECE 576 Website</a><br>
+    		<a href="../../../../../../../../www.asic-world.com/default.htm">ASIC-WORLD (Verilog)</a><br>
+    		<a href="../../../../../../../../www.fpga4fun.com/default.htm">FPGA4FUN (FPGAs)</a><br>
+    		<a href="../../../../../../../../www.asciitable.com/default.htm">ASCIITABLE.com (ASCII reference)</a><br>
+    		<a href="../../../../../../../../www.cs.princeton.edu/software/lcc/default.htm">LCC</a><br>
+    		<a href="../../../../../../../../www.altera.com/default.htm">Altera</a><br>
+    		<a href="../../../../../../../../www.quadibloc.com/comp/scan.htm">Scan Code Reference</a><br>
+    		<a href="../../../../../../../../www.laynetworks.com/assembly%20tutorials2.htm">Assembly Code Standards Reference</a><br>    		
+    		</p>
+    		<p>
+    		The following data sheets came in handy:<br>
+    		<a href="LCD.pdf">DE2 LCD</a><br>
+    		<a href="serial.pdf">DE2 RS232 UART</a><br>
+    		</p>
+	</div>
+</div>
+<div id="footer">
+	<p>Copyright &copy; 2007 Idan Beck, idanbeck at gmail dot com. 
+	   Designed by <a href="../../../../../../../../www.freecsstemplates.org/default.htm" class="link1">
+	   Free CSS Templates</a>
+    </p>
+</div>
+</body>
+</html>

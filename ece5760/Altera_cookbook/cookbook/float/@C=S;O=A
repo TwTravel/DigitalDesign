@@ -1,0 +1,29 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+ <head>
+  <title>Index of /land/courses/ece5760/Altera_cookbook/cookbook/float</title>
+ </head>
+ <body>
+<h1>Index of /land/courses/ece5760/Altera_cookbook/cookbook/float</h1>
+  <table>
+   <tr><th valign="top"><img src="../../../../../../icons/blank.gif" alt="[ICO]"></th><th><a href="@C=N;O=A">Name</a></th><th><a href="@C=M;O=A">Last modified</a></th><th><a href="@C=S;O=D">Size</a></th><th><a href="@C=D;O=A">Description</a></th></tr>
+   <tr><th colspan="5"><hr></th></tr>
+<tr><td valign="top"><img src="../../../../../../icons/back.gif" alt="[PARENTDIR]"></td><td><a href="../default.htm">Parent Directory</a>       </td><td>&nbsp;</td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="approx_fp_sqrt.v">approx_fp_sqrt.v</a>       </td><td align="right">2015-03-26 09:43  </td><td align="right">1.6K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="float_to_fixed.v">float_to_fixed.v</a>       </td><td align="right">2015-03-26 09:43  </td><td align="right">2.1K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="fixed_to_float.v">fixed_to_float.v</a>       </td><td align="right">2015-03-26 09:43  </td><td align="right">2.2K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="scale_up.v">scale_up.v</a>             </td><td align="right">2015-03-26 09:43  </td><td align="right">2.5K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="test_stimulus.cpp">test_stimulus.cpp</a>      </td><td align="right">2015-03-26 09:43  </td><td align="right">2.7K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="approx_fp_div_tb.v">approx_fp_div_tb.v</a>     </td><td align="right">2015-03-26 09:43  </td><td align="right">2.8K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="div_tbl_gen.cpp">div_tbl_gen.cpp</a>        </td><td align="right">2015-03-26 09:43  </td><td align="right">3.0K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="approx_fp_div.v">approx_fp_div.v</a>        </td><td align="right">2015-03-26 09:43  </td><td align="right">3.1K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="approx_fp_invsqrt_tb.v">approx_fp_invsqrt_tb.v</a> </td><td align="right">2015-03-26 09:43  </td><td align="right">3.5K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="approx_fp_div_lut.v">approx_fp_div_lut.v</a>    </td><td align="right">2015-03-26 09:43  </td><td align="right">3.6K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="approx_fp_invsqrt.v">approx_fp_invsqrt.v</a>    </td><td align="right">2015-03-26 09:43  </td><td align="right">4.0K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="fixed_to_float_tb.v">fixed_to_float_tb.v</a>    </td><td align="right">2015-03-26 09:43  </td><td align="right">4.2K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="approx_fp_sqrt_tb.v">approx_fp_sqrt_tb.v</a>    </td><td align="right">2015-03-26 09:43  </td><td align="right">8.6K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="mult_3tick.v">mult_3tick.v</a>           </td><td align="right">2015-03-26 09:43  </td><td align="right"> 13K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/unknown.gif" alt="[   ]"></td><td><a href="inv_sqrt.tbl">inv_sqrt.tbl</a>           </td><td align="right">2015-03-26 09:43  </td><td align="right">5.8M</td><td>&nbsp;</td></tr>
+   <tr><th colspan="5"><hr></th></tr>
+</table>
+</body></html>

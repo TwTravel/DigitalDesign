@@ -1,0 +1,7 @@
+STRING_STATE_MAX_STATE,3,String read state maximum value.
+STRING_STATE_WIDTH,max_width(STRING_STATE_MAX_STATE),String read state variable width.
+STRING_STATE_RANGE,STRING_STATE_WIDTH-1:0,String read state variable bit range.
+STRING_STATE_IDLE,STRING_STATE_WIDTH'd0,String read idle.
+STRING_STATE_READ_NEXT,STRING_STATE_WIDTH'd1,Read next character.
+STRING_STATE_PROCESS_CHAR,STRING_STATE_WIDTH'd2,Process next character.
+STRING_STATE_DISP_CHAR,STRING_STATE_WIDTH'd3,Display character.

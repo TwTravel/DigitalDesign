@@ -1,0 +1,393 @@
+<html>
+<head>
+<title>STB25 YDZ2 Ray Tracer</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<style type="text/css">
+<!--
+
+a:link {  color: #FFFFFF; text-decoration: none}
+
+a:visited {  text-decoration: none; color: #FFCC66}
+
+a:hover {  color: #99CCFF; text-decoration: underline}
+body {  font-family: "Arial", "Helvetica", "sans-serif"}
+.titles {  font-family: "Geneva", "Arial", "Helvetica", "san-serif"; font-size: 16px; font-weight: bold; color: #000000; text-decoration: underline}
+.text {  font-family: "Arial", "Helvetica", "sans-serif"; font-size: 14px}
+.code {  font-family: "Courier New", Courier, mono; font-size: 14px}
+-->
+</style>
+</head>
+
+<body bgcolor="#FFFFFF" link="#FFFFFF">
+<table background="image/top.gif" width="700" border="0" cellspacing="0" cellpadding="0" height="75" align="center" >
+<tr background="image/top.gif"> <td colspan="2">
+      <p><FONT FACE="Tahoma" SIZE="6"> FPGA Ray Tracer</FONT><br>
+      <font face="Tahoma" size="3">Scott Bingham / Donald Zhang</font></p>
+</td></tr>
+</table><table width="700" border="0" cellspacing="0" cellpadding="0" height="20" align="center">
+<tr bgcolor="#000000"> <td BGCOLOR="#336666"> <div align="center">
+  <font color="#FFFFFF" face="Tahoma">|</font><font face="Tahoma">
+  <a href="index.html">Introduction</a> <font color="#FFFFFF">|</font>
+<a href="high.html">High Level Design</a> <font color="#FFFFFF">|</font>
+ <a href="pd_design.html">Program/Hardware Design</a>  <font color="#FFFFFF">|</font>
+<a href="results.html">Results</a> <font color="#FFFFFF">|
+<a href="conclusion.html">Conclusion</a> <font color="#FFFFFF">|
+<a href="appendix.html">Appendix</a> |</font></font></font></div></td></tr> </table>
+<table width="700" border="0" cellspacing="0" cellpadding="0" height="13" background="image/top1.gif" align="center">
+
+<tr> <td><FONT FACE="Tahoma"><img src="image/pixel.gif" width="1" height="1"></FONT></td></tr>
+</table><FONT FACE="Tahoma"><br> </FONT>
+<table width="700" border="0" cellspacing="0" cellpadding="0" align="center">
+<tr> 
+    
+    <td width="677" valign="top" colspan=7 class="text"> 
+      <table width="456" border="0" cellspacing="0" cellpadding="0" background="image/longmenu.gif" height="34">
+        <tr> 
+          <td><b><font face="Tahoma" size="4pt">High Level Design</font></b></td>
+        </tr>
+      </table>
+      <p class="text">The idea for our project came from Prof. Land's lectures 
+        on ray tracing. Ray tracing is very well suited for FPGA's where many 
+        calculations can proceed in parallel. Spheres allow quite interesting 
+        scenes to be drawn, especially when reflections are added. We found that 
+        once we had implemented sphere rendering, adding planes was easier because 
+        fewer calculations were needed and we had existing experience and states 
+        in place to do the required calculations, reflections, and shadowing.</p>
+      <p><span class="titles">Ray Tracing</span><br>
+        The basic idea of ray tracing is to trace the path of a photon through 
+        a scene to the eye. Because we are only concerned with the photons that 
+        actually hit the eye, we actually shoot rays out from the eye through 
+        the screen into the scene and seeing what objects it hits. The ray picks 
+        up color based on the reflectivity as it collides with objects in the 
+        scene. Eventually the ray is stopped because it misses objects in the 
+        scene or picks up negligible color in subsequent reflections. Shadows 
+        are determined by shooting rays from intersection points back towards 
+        the light source(s) in the scene and seeing if there is an object in the 
+        way to block the light. Shading is also done by weighting light that hits 
+        a surface perpendicularly greater than light that merely glances off. 
+      </p>
+      <p align="center"><img border=1 alt="Figure1" src="image/ray/figure1.JPG" > 
+      </p>
+      <p align="center"><font size="-1">Figure 1</font></p>
+      <p><b>Figure 1</b> shows an example of a ray tracing through a scene. The 
+        initial ray leaves the eye in a direction such that it passes through 
+        one of the pixels in the screen. It then collides with the red sphere. 
+        A shadow ray is shot towards the light source; since that shadow ray reaches 
+        the light source, the intersection point on the red sphere would be lit, 
+        and is not shadowed. A reflection ray is then shot towards blue sphere, 
+        getting its direction from a specular reflection. Next, a shadow ray is 
+        shot to the light source, which again makes it without obstruction and 
+        so the blue sphere is lit at the intersection point. Then another reflection 
+        ray is shot from the blue sphere intersection point towards the green 
+        plane, which it hits. The shadow ray from this point, however, is blocked 
+        by the red sphere and so that point on the green plane is in shadow. The 
+        reflection ray from the green plane then leaves the scene without hitting 
+        another object so the tracing for that pixel is completed. Its color is 
+        the sum of the lit red sphere color, the product the red sphere reflectivity 
+        and the lit blue sphere color, and the product of red and blue sphere 
+        reflectivity's and the shadowed green plane color. </p>
+      <p>The tracer would then repeat the process for the next pixel in the scene 
+        (or another ray for that pixel if anti-aliasing is used). Since each ray 
+        must check for intersections with every object in the scene, the processing 
+        time increases significantly with a large number of objects. However, 
+        since pixel is independent of each other, they can be processed in parallel 
+        if the hardware is available. </p>
+      <p align="center"><img border=1 alt="Figure2" src="image/ray/figure2.JPG"> 
+        <img border=1 alt="Figure3" src="image/ray/figure3.JPG"></p>
+      <p align="center"><font size="-1">Figure 2 and Figure 3</font><br>
+      </p>
+      <p><b>Figure 2</b> shows the affects of varying the distance from the eye 
+        to the screen on the viewing frustum. While you can see a wider angle 
+        and more of the scene with the screen close, the pixel density goes down, 
+        which can cause pixels to miss objects they would had previously hit. 
+        Also, when the screen is too close to the eye, objects become skewed, 
+        where spheres get stretched into ovals as they are farther from the center 
+        of the screen. The tradeoff is how much of the scene you see with how 
+        much detail you see.</p>
+      <p>Our coordinate system and sample scene setup are shown in <b>figure 3</b>. 
+        Depth is in the Z direction. Because we use 12.12 two's complement fixed 
+        point numbers, each coordinate is limited to between -2048 and +2047 (considering 
+        the 12 integer bits only). For scenes with planes, we use the configuration 
+        shown so that we can get reflections all around the spheres while still 
+        being able to see the scene.</p>
+      <p align="center"><img border=1 alt="Figure4" src="image/ray/figure4.JPG"></p>
+      <p align="center"><font size="-1">Figure 4</font></p>
+      <p>Our ray decision tree is shown in <b>figure 4</b>. Each ray that intersects 
+        with an object shoots a shadow ray and possibly a reflection ray depending 
+        on the switches and weight given to the reflection ray to be launched. 
+        If less than 1% of the light is going to be reflected, we don't launch 
+        a reflection ray. We also impose the restriction of a maximum of three 
+        reflection rays to limit the time spent per pixel.</p>
+      <p align="center"><img alt="Figure5" border=1 src="image/ray/figure5.JPG"></p>
+      <p align="center"><font size="-1">Figure 5</font><br>
+      </p>
+      A high level state diagram for the ray tracer is shown in <b>figure 5</b>. 
+      At reset, the tracer is initialized. It then proceeds to load the sphere 
+      list from the CPU. The transfer is controlled by the CPU once the hardware 
+      signals that a frame has completed. A ray then checks for the closest intersection, 
+      if any, with the spheres in the scene. If it hits one, Lambertian lighting 
+      is applied to give it a color based on the amount of shadow. If the intersection 
+      is completely in shadow, no shadow ray would be needed as it will be blocked 
+      by the sphere the ray intersected with. If the ray did not hit a sphere, 
+      the planes in the scene are checked for the closest intersection. We chose 
+      to give spheres priority and not check planes in the event of a sphere intersection 
+      because of performance considerations and that we added planes as a last 
+      minute extra once we satisfied our initial project specifications. This 
+      imposed the restriction that spheres must be on top of planes and not behind 
+      them, which is a reasonable restriction for the scenes we wanted to render. 
+      <p>A shadow ray was launched towards the light source. Again, the shadow 
+        ray checked the sphere list for an intersection, but only spheres closer 
+        than the light source were counted as actual intersections. Because spheres 
+        must be in front of planes, the plane list was not checked to see if a 
+        plane cast a shadow on a sphere. </p>
+      <p>At this point, the pixel has an initial color, it is either black because 
+        it missed all objects, the color of the intersected object, or the color 
+        of the intersected object with a shadow. For shadows, we halved the color 
+        of the intersection object to allow for some ambient lighting affects. 
+        For the Lambertian/cosine shading, the dot product of the normalized normal 
+        with the normalized vector from the intersection point to the light source 
+        was multiplied by the object's color. Because both vectors were normalized, 
+        the dot product produces a scaling factor between 1 and 0. We offset the 
+        resulting color by the completely shadowed color and made sure the resulting 
+        color did not overflow when the offset was added to the color with a saturating 
+        addition. <br>
+      </p>
+      The next ray could be a reflection ray, in which case the color from that 
+      ray would be scaled by a reflection weight and added to the original color. 
+      If anti-aliasing is used, all the rays for each pixel are combined with 
+      different weights as will be discussed later. Finally, if a pixel is done, 
+      the tracer moves on to the next pixel. When the last pixel of the frame 
+      is drawn, the sphere list is again loaded from the CPU to allow for sphere 
+      motion and rotation. The steps involved in each state are discussed in more 
+      detail later. 
+      <p class="titles">Sphere Background Math <sup>[1]</sup></p>
+      <p class="titles" align="center"><img border=1 alt="Figure6" src="image/ray/figure6.JPG"></p>
+      <p class="text" align="center"><font size="-1">Figure 6</font></p>
+      <span class="code">R<sub>origin </sub>= R<sub>o </sub>= [ X<sub>o</sub> 
+      Y<sub>o</sub> Z<sub>o </sub>]<br >
+      R<sub>direction </sub>= R<sub>d </sub>= [ X<sub>d</sub> Y<sub>d</sub> Z<sub>d 
+      </sub>]<br >
+      R(t) = R<sub>o</sub> + R<sub>d</sub> * t<br >
+      R<sub>intersection </sub>= R<sub>i</sub> = [ X<sub>i</sub> Y<sub>i</sub> 
+      Z<sub>i</sub> ] = [ X<sub>o</sub> + X<sub>d</sub> * t<span style='mso-spacerun:yes'>    
+      </span>Y<sub>o</sub> + Y<sub>d</sub> * t<span
+style='mso-spacerun:yes'>    </span>Z<sub>o</sub> + Z<sub>d</sub> * t ]<br >
+      R<sub>normal</sub> = R<sub>n</sub> = [ X<sub>n</sub> Y<sub>n</sub> Z<sub>n 
+      </sub>] = [ (X<sub>i</sub> – X<sub>c</sub>)/S<sub>r</sub><span
+style='mso-spacerun:yes'>    </span>(Y<sub>i</sub> – Y<sub>c</sub>)/S<sub>r</sub><span style='mso-spacerun:yes'>    
+      </span>(Z<sub>i</sub> – Z<sub>c</sub>)/S<sub>r</sub> ]<br >
+      t = intersection distance<br >
+      D<sup>2</sup> = L<sup>2</sup><sub>oc</sub> – t<sub>ca</sub><sup>2<o:p></o:p></sup><br >
+      t<sup>2</sup><sub>hc </sub>= S<sub>r</sub><sup>2 </sup>– D<sup>2 </sup>= 
+      S<sub>r</sub><sup>2</sup> - L<sup>2</sup><sub>oc</sub> + t<sub>ca</sub><sup>2</sup><o:p></o:p><br >
+      OC = S<sub>c</sub> - R<sub>o</sub><br >
+      L<sup>2</sup><sub>oc</sub> = OC · OC<br >
+      t<sub>ca</sub> = OC · R<sub>d</sub><br >
+      S<sub>center</sub> = S<sub>c</sub> = [ X<sub>c</sub> Y<sub>c</sub> Z<sub>c 
+      </sub>]<br >
+      S<sub>radius</sub> = S<sub>r</sub><br >
+      S<sub>surface</sub> = S<sub>s</sub> = [ X<sub>s</sub> Y<sub>s</sub> Z<sub>s 
+      </sub>]<span style='font-size:13.0pt;mso-bidi-font-size:12.0pt'><o:p></o:p></span><br >
+      S<sub>r</sub><sup>2</sup> = (X<sub>s</sub> – X<sub>c</sub>)<sup>2</sup> 
+      +<span
+style='mso-spacerun:yes'>  </span>(Y<sub>s</sub> – Y<sub>c</sub>)<sup>2</sup> 
+      +<span
+style='mso-spacerun:yes'>  </span>(Z<sub>s</sub> – Z<sub>c</sub>)<sup>2</sup> 
+      </span> 
+      <p>This final equation gives us the implicit equation for a sphere. We can 
+        test points to see if they in fact lie on the sphere's surface. The algebraic 
+        solution is as follows. By substituting X(t), Y(t), and Z(t) in the form 
+        of <br>R(t) into the implicit equation, we get that,<br>
+        <span style="mso-tab-count:1" class="code">     </span><span class="code">S<sub>r</sub><sup>2</sup> 
+        = (X<sub>o</sub> + X<sub>d</sub> * t – X<sub>c</sub>)<sup>2</sup> +<span
+style='mso-spacerun:yes'>  </span>(Y<sub>o</sub> + Y<sub>d</sub> * t – Y<sub>c</sub>)<sup>2</sup> 
+        +<span
+style='mso-spacerun:yes'>  </span>(Z<sub>o</sub> + Z<sub>d</sub> * t – Z<sub>c</sub>)<sup>2</sup>.<o:p></o:p></span><br>
+        In terms of t,<br>
+ 
+      <span style="mso-tab-count:1" class="code">     </span><span class="code">A 
+        * t<sup>2</sup> + B * t + C = 0.</span><br>
+      <span style="mso-tab-count:1" class="code">     A</span><span class="code"> 
+        = X<sub>d</sub><sup>2</sup> + Y<sub>d</sub><sup>2</sup> + Z<sub>d</sub><sup>2</sup><sub> 
+        </sub>= 1</span><br>
+      <span style="mso-tab-count:1" class="code">     </span><span class="code">B 
+        = 2 * (X<sub>d</sub> * (X<sub>o</sub> – X<sub>c</sub>) + Y<sub>d</sub> 
+        * (Y<sub>o</sub> – Y<sub>c</sub>) + Z<sub>d</sub> * (Z<sub>o</sub> – Z<sub>c</sub>))<o:p></o:p></span><br>
+      <span style="mso-tab-count:1" class="code">     </span><span class="code">C 
+        = (X<sub>o</sub> – X<sub>c</sub>)<sup>2 </sup>- (Y<sub>o</sub> – Y<sub>c</sub>)<sup>2 
+        </sup>- (Z<sub>o</sub> – Z<sub>c</sub>)<sup>2 </sup>- S<sub>r</sub><sup>2<o:p></o:p></sup></span><sup><o:p></o:p></sup><br>
+      </p>
+      <p> You can then solve the quadratic equation for t and find the closet 
+        intersection point, if any.</p>
+      <p>However, we chose to use a faster geometric solution to the intersection 
+        problem which delays the square root of the quadratic equation and offers 
+        checks to bail out of the calculations sooner if an intersection is impossible. 
+      </p>
+      <p>First we check if the ray originates inside the sphere by calculating 
+        a vector from the ray origin to the center of the sphere and its magnitude:
+     <br>
+      <span style="mso-tab-count:1" class="code">     </span><span class="code">OC 
+        = S<sub>c</sub> - R<sub>o</sub></span><br>
+     <span style="mso-tab-count:1" class="code">     </span><span class="code">L<sup>2</sup><sub>oc</sub> 
+        = OC · OC</span> </p>
+      <p>
+        If L<sup>2</sup><sub>oc</sub> is less than S<sub>r</sub><sup>2</sup>, then we know the ray originated inside the sphere. 
+        If the ray originates inside any sphere, we chose to color the pixel black 
+        and move on because no light penetrates our spheres. (Note this is not 
+        true of shadow rays because they may originate (R<sub>i</sub>) under the surface 
+        due to the limited precision of our calculations and we ignore the result 
+        of this comparison for shadow rays.) </p>
+      <p>Next we calculate the distance from the origin to the point along the 
+        ray that is closest to the sphere's center.<br>
+        <span style="mso-tab-count:1" class="code">     </span><span class="code">t<sub>ca</sub> 
+        = OC · R<sub>d</sub></span><br>
+        If tca is negative, then the sphere is not in front of the ray origin 
+        (as defined by the ray direction) and so we know that the ray does not 
+        intersect this sphere and can move on to the next one.</p>
+      <p>Following that comparison, we next calculate the half cord distance squared, 
+        where the half chord distance is the distance from the point found by 
+        tca and the surface of the sphere.<br>
+      </p>
+      <span style="mso-tab-count:1" class="code">     </span><span class="code">t<sup>2</sup><sub>hc 
+        </sub>= S<sub>r</sub><sup>2 </sup>– D<sup>2 </sup>= S<sub>r</sub><sup>2</sup> 
+        - L<sup>2</sup><sub>oc</sub> + t<sub>ca</sub><sup>2</sup><o:p></o:p></span><br>
+      <span style="mso-tab-count:1" class="code">     </span><span class="code">D<sup>2</sup><sub> 
+        </sub>= L<sup>2</sup><sub>oc</sub> + t<sub>ca</sub><sup>2</sup></span><br>
+      <p>If t<sup>2</sup><sub>hc</sub> is negative, the ray misses the sphere. 
+        We then calculate the intersection distance.<br>
+        <span style="mso-tab-count:1" class="code">     </span><span class="code">t 
+        = t<sub>ca</sub> - &#8730;(t<sup>2</sup><sub>hc </sub>)</span><br>
+        Once we have the intersection distance, we can calculate the intersection 
+        point and the normal.<br>
+      </p>
+      <span style="mso-tab-count:1" class="code">     </span><span class="code">R<sub>i</sub> 
+        = [ X<sub>o</sub> + X<sub>d</sub> * t<span style='mso-spacerun:yes'>    
+        </span>Y<sub>o</sub> + Y<sub>d</sub> * t<span
+style='mso-spacerun:yes'>    </span>Z<sub>o</sub> + Z<sub>d</sub> * t ]</span><br>
+      <span style="mso-tab-count:1" class="code">     </span><span class="code">R<sub>n</sub> 
+        = [ (X<sub>i</sub> – X<sub>c</sub>)/S<sub>r</sub><span
+style='mso-spacerun:yes'>    </span>(Y<sub>i</sub> – Y<sub>c</sub>)/S<sub>r</sub><span style='mso-spacerun:yes'>    
+        </span>(Z<sub>i</sub> – Z<sub>c</sub>)/S<sub>r</sub> ]</span><br>
+      <p>
+        We check all spheres in the sphere list in order to find the closest intersection 
+        if there is more than one.</p>
+      <p>All direction vectors are normalized in our calculations to simplify 
+        and reduce the number of calculations required. This also helps prevent 
+        overflowing when we determine the magnitude of vectors by limiting the 
+        size of the result. The inverse radius and radius squared are precomputed 
+        and stored in the sphere list to save calculation time at the expense 
+        of memory/register usage.</p>
+      <p><span class="titles">Plane Background Math <sup>[1]</sup></span><br>
+      </p>
+      <span class="code">R<sub>origin </sub>= R<sub>o </sub>= [ X<sub>o</sub> 
+      Y<sub>o</sub> Z<sub>o </sub>]<br>
+      R<sub>direction </sub>= R<sub>d </sub>= [ X<sub>d</sub> Y<sub>d</sub> Z<sub>d 
+      </sub>]<br>
+      R(t) = R<sub>o</sub> + R<sub>d</sub> * t<br>
+      R<sub>intersection </sub>= R<sub>i</sub> = [ X<sub>i</sub> Y<sub>i</sub> 
+      Z<sub>i</sub> ] = [ X<sub>o</sub> + X<sub>d</sub> * t<span style='mso-spacerun:yes'>    
+      </span>Y<sub>o</sub> + Y<sub>d</sub> * t<span
+style='mso-spacerun:yes'>    </span>Z<sub>o</sub> + Z<sub>d</sub> * t ]<br>
+      R<sub>normal</sub> = R<sub>n</sub> = [ X<sub>n</sub> Y<sub>n</sub> Z<sub>n 
+      </sub>] = [ (X<sub>i</sub> – X<sub>c</sub>)/S<sub>r</sub><span
+style='mso-spacerun:yes'>    </span>(Y<sub>i</sub> – Y<sub>c</sub>)/S<sub>r</sub><span style='mso-spacerun:yes'>    
+      </span>(Z<sub>i</sub> – Z<sub>c</sub>)/S<sub>r</sub> ]<br>
+      P = A * x + B * y + C * z + D = 0 <br>
+      A<sup>2</sup> + B<sup>2 </sup>+ C<sup>2</sup> = 1<br>
+      D = - P<sub>n</sub> · point, distance from [0 0 0]<br>
+      P<sub>normal</sub> = P<sub>n</sub> = [A B C]<b style='mso-bidi-font-weight:normal'><o:p></o:p><o:p></o:p></b></span><br>
+      <p>Planes, in comparison, require fewer calculations to determine if there 
+        is a ray intersection. We start with the implicit equation for a plane.<br>
+        <span style="mso-tab-count:1" class="code">     </span><span class="code">P 
+        = A * x + B * y + C * z + D = 0 </span><br>
+        Which can be written as,<br>
+        <span style="mso-tab-count:1" class="code">     </span><span class="code">A 
+        * (X<sub>o</sub> + X<sub>d</sub> * t) + B * (Y<sub>o</sub> + Y<sub>d</sub> 
+        * t) + C * (Z<sub>o</sub> + Z<sub>d</sub> * t) + D = 0</span><br>
+        We can solve this for t, the intersection distance, and get<br>
+      </p>
+      <b style='mso-bidi-font-weight:normal'><span style="mso-tab-count:1" class="code">     </span></b><span class="code">t 
+        = - (A * X<sub>o</sub> + B * Y<sub>o</sub> + C * Z<sub>o</sub> + D) / 
+        (A * X<sub>d</sub> + B * Y<sub>d</sub> + C * Z<sub>d</sub>) </span><br>
+      <span style="mso-tab-count:1" class="code">     </span><span class="code">t 
+        = - (P<sub>n</sub> · R<sub>o</sub> + D) / P<sub>n</sub> · R<sub>d<o:p></o:p></sub></span><br>
+      <span class="code"><sub><span style='mso-tab-count:1'>     </span></sub>t 
+        = v<sub>o</sub> / v<sub>d</sub> , where v<sub>o</sub> = - (P<sub>n</sub> 
+        · R<sub>o</sub> + D) and v<sub>d</sub> = P<sub>n</sub> · R<sub>d</sub><o:p></o:p></span><o:p></o:p><br>
+      <p>
+        We calculate the denominator first. If v<sub>d</sub> equals zero, the ray is parallel 
+        to the plane and we can disregard it. Likewise if v<sub>d</sub> is positive, the 
+        normal is pointing away from the plane, and we disregard it in our rendering. 
+        This is done so that planes cannot block spheres. If we move the origin 
+        behind a plane, it is simply not drawn. This gives the affect of it being 
+        a one way mirror. When behind it, it appears to be not there but when 
+        in front, it acts as a normal surface (mirrored if the reflection is not 
+        zero).</p>
+      <p>Next, we calculate the numerator v<sub>o</sub> and then t.<br>
+        <span style="mso-tab-count:1" class="code">     </span><span class="code">t 
+        = v<sub>o</sub> / v<sub>d<o:p></o:p></sub></span><br>
+        If t is negative, then the intersection is behind the origin and therefore 
+        not a hit. Again the intersection point is calculated.<br>
+        <span style="mso-tab-count:1" class="code">     </span><span class="code">R<sub>i</sub> 
+        = [ X<sub>o</sub> + X<sub>d</sub> * t<span style='mso-spacerun:yes'>    
+        </span>Y<sub>o</sub> + Y<sub>d</sub> * t<span
+style='mso-spacerun:yes'>    </span>Z<sub>o</sub> + Z<sub>d</sub> * t ]</span><br>
+        We do not have to calculate the normal as with spheres because we already 
+        have it in the plane table in <br>P<sub>n</sub> = [A B C] which was used in 
+        the previous calculations. Also, the normal is the same for any point 
+        on the plane (opposite sign on the other side), which is not true of spheres. 
+        This also makes planes much quicker to render than spheres.</p>
+      <p class="titles">Reflections <sup>[1]</sup></p>
+      <p align=center><img alt="Figure7" border=1 src="image/ray/reflection.JPG" width="125" height="79"></p>
+      <p align=center><font size="-1">Figure 7</font><br>
+      </p>
+      <p class=MsoNormal><span class="code">&#952;<sub>incident </sub>= &#952;<sub>i 
+        </sub>= &#952;<sub>reflected </sub>=<sub> </sub>&#952;<sub>r<o:p></o:p></sub></span><br>
+      <span class="code">R = &#945;I + &#946;N</span><br><br>
+      <p>Physics tells us that the above two statements are true; the angle of 
+        incidence equals the angle of reflection, and the reflection vector is 
+        a linear combination of the incident and normal vectors. This can be transformed 
+        into a useable equation by the following:<br>
+      </p>
+      <span style="mso-tab-count:1" class="code">     </span><span class="code">cos(&#952;<sub>i</sub>) 
+      = cos(&#952;<sub>r</sub>)<o:p></o:p></span><br>
+      <span style="mso-tab-count:1" class="code">     </span><span class="code">- 
+      I · N = N · R</span><br>
+      <span style="mso-tab-count:1" class="code">     </span><span class="code">- 
+      I · N = &#945;(N · I) + &#946;</span><br>
+      <p class=text>If we set &#945; = 1, &#946; = - 2*(N · I).<span
+style='mso-spacerun:yes'>  </span>Substituting into our physical law, we get that,</p>
+      <p class=MsoNormal><span style="mso-tab-count:1" class="code">     </span><span class="code">R 
+        = I – 2*(N · I)*N</span></p>
+      <p>
+        The resulting reflection vector R is also normalized when the incident 
+        vector I and the normal vector N are also normalized.<br>
+      </p>
+      <p><span class="titles">Software/Hardware Tradeoff</span><br>
+        Many of the functions in the ray tracer can be performed by either the 
+        hardware or the software. We tried to take advantage of the hardware parallism 
+        as much as possibile by calculating most of the arthtimics using hardware 
+        modules. The software on the other hand can compute more complex calculations 
+        that are not crucial to ray tracing itself. Calculations such as sphere 
+        movement and rotation are performed by the software while the hardware 
+        is drawing the frames. This maximizes the efficiencies of both parts as 
+        hardware statemachine can run as fast as possibile while the software 
+        will not be sitting there idle waiting for the hardware. By using a real 
+        floating point unit the software also has the advantage of having higher 
+        precision than the hardware, which uses fixed point. <br>
+        <br>
+      </p>
+      </td>
+  </tr>
+  </TABLE>
+
+
+
+
+<FONT FACE="Tahoma"></FONT>
+<center>&nbsp;</center><br>
+
+<br></body>
+</html>
+
+                        

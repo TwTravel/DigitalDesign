@@ -1,0 +1,256 @@
+
+<html>
+<head>
+<title>ECE 5760 Lab 4</title>
+<style type="text/css">
+<!--
+.red {
+	color: #F00;
+}
+-->
+</style>
+</head>
+
+<body>
+<h2>
+ECE 5760: Laboratory 4</h2> 
+<h2> Mandelbrot set visualization. </h2>
+<p>
+<b> Introduction. </b>
+
+<p> In this assignment you will implement a system to compute and draw the <a href="../../../../../../mathworld.wolfram.com/MandelbrotSet.html">Mandelbrot
+set</a>, and to zoom in on pieces of the set. A <a href="mandelbrot.m">matlab program</a> shows
+how the computation is done. Note that the numbers are all complex. The image
+below is from the program output. The x,y axis units are pixels, not natural
+units. The x axis range is <code>[-2,1]</code> and the y axis <code>[-1,1]</code>. <br>
+<img src="mandelbrot_640x480.png" width="672" height="504" alt="mandelbrot">
+<p> <b> Procedures:</b>  
+<ul>
+  <li>There will be one serial processor to control computation and serial communication.</li>
+  <li>You can use additional NiosII processors, pancake processors or build custom hardware to compute
+    the image. The computation of a 640x480 image is compute intensive, so you
+    are going to want to implement multiple computational units to speed up the
+    process. You may want to consider load balancing since some regions of the
+    complex plane are much faster to compute than others.</li>
+  <li>If you use custom hardware, I suggest using 3.33 fixed point notation for
+    interating the quadratic
+    complex number calculation. The top bit will be the usual 2's comp sign bit.
+    This format give the numbers a dynamic range of +/-3. A <a href="mandelbrot_limit_bits.m">matlab
+      program</a> to check the effect
+    of limiting the range shows that the computation  works.
+  If you use NiosII cpus to do the calcuations use 3.29 format.</li>
+  <li>If you use a NiosII, I suggest using SDRAM as memory for the NiosII and
+    SRAM as the VGA display memory. Be sure to follow the suggestions in the <a href="../../DE2/tut_DE2_sdram_verilog.pdf">SDRAM
+  tutorial</a> to get the SDRAM timing correct. </li>
+</ul>
+<ol>
+  <li>  You must handle the boards only on on the ESD mat. These boards are expensive and you must be careful of them. 
+  <li>Make sure the Altera DE2 board is connected to power and to the PC as specified 
+    in the evaluation board description. Turn on the power supply with the red switch 
+    on the board. Make sure the toggle switch on the left edge of the board marked (<code>Run/Prog</code>) is in the <code>Run</code> position and <em>leave it there at all times</em>.
+The FPGA will program in the <code>Run</code> position. Putting the switch in the <code>Prog</code> position writes your design to flash memory, which you do not want to do.
+  <li>The <a href="../../DE2/DE2_TOP.v">default top level module</a> for the DE2 defines all of the logical i/o signals. 
+  <li>You can define the mapping from logical signal to FPGA pins (<em>pin assignment</em> in QuartusII) for all the pins at once by importing <a href="../../DE2/DE2_pin_assignments.csv">this file</a> using the menu item <code>Assignments... Import Assignments...</code> and specifying the file name. There is no need to define pins one-by-one.   
+<li>A hardware VGA interface is shown on the <a href="../../../../../../instruct1.cit.cornell.edu/courses/ece576/DE2/index.html">DE2 page</a>. Read VGA example 1 Verilog code.
+</ol>
+<p><strong>--See also:</strong></p>
+<ul>
+  <li><a href="../../../../../../www.altera.com/literature/tt/tt_nios2_multiprocessor_tutorial.pdf">Creating Multiprocessor Nios II Systems Tutorial</a> and <a href="../../../../../../www.altera.com/support/examples/nios2/exm-multi-nios2-hardware.html">example</a></li>
+  <li><a href="../../../../../../iweb.tntech.edu/oelkeelany/6170/lectures/multi.pdf">Implementing a Multiprocessor System on an FPGA using Altera Nios II Processors &amp; SOPC</a> (Tenn Tech Univ)</li>
+  <li><a href="../../NiosII_doc/Quartus11_nios/Introduction_to_the_Altera_SOPC_Builder.pdf">Intro to SOPC builder</a></li>
+  <li><a href="../../NiosII_doc/Quartus11_nios/Using_the_SDRAM.pdf">Using SDRAM</a></li>
+  <li><a href="../../NiosII_doc/Quartus11_nios/Nios2_introduction.pdf">NiosII introduction</a></li>
+  <li><a href="../../NiosII_doc/Quartus11_nios/Altera_Monitor_Program.pdf">Altera Monitor Program</a></li>
+  <li><a href="../../NiosII_doc/Quartus11_nios/HAL_tutorial.pdf">HAL in Altera Monitor</a></li>
+  <li><a href="../../NiosII_doc/NiosIDE_v10_2010.pdf">Getting started with the NiosII EDS</a></li>
+  <li><a href="../../../../../../www.altera.com/literature/lit-nio2.jsp">NiosII Literature</a></li>
+  <li><a href="../../../../../../www.altera.com/literature/tt/tt_nios2_hardware_tutorial.pdf">NiosII hardware tutorial</a></li>
+  <li><a href="../../../../../../www.altera.com/literature/hb/nios2/edh_ed51004.pdf">NiosII 10.0 command shell</a></li>
+  <li><a href="../../NiosII_doc/Nios_SW_handbook.pdf">Nios Software handbook</a>.</li>
+  <li><a href="../../../../../../www.altera.com/literature/ug/ug_embedded_ip.pdf">Embedded Peripheral Users Guide</a></li>
+  <li><a href="../../../../../../www.altera.com/literature/hb/qts/qts_qii51015.pdf">Incremental compilation for QuartusII</a></li>
+  <li>The Nios II IDE is based on the Eclipse IDE project and the Eclipse C/C++ Development Tools&nbsp;(CDT). See Eclipse Project at <a href="../../../../../../www.eclipse.org/default.htm">www.eclipse.org</a>.</li>
+  <li>Once you have initialized and built a BSP project in the Nios IDE, you can find:<br>
+    (1) peripheral macro definitions in your_proj_bsp...drivers...inc<br>
+    (2) header code in your_proj_bsp...alt_sys_init.c then right-click on   specific includes such as "sys/alt_irq.h" and ask to "open declaration"<br>
+    (3) full HAL API in<br>
+  &nbsp;<a href="../../../../../../https@exchange.mail.cornell.edu/owa/redir.aspx@C=68454e0cd3dd439c83bb9f6a5ae4de94&URL=http_253a_252f_252fwww.altera.com_252fliterature_252fhb_252fnios2_252fn2sw_nii5v2_04.pdf" target="_blank">http://www.altera.com/literature/hb/nios2/n2sw_nii5v2_04.pdf</a></li>
+</ul>
+<p><strong>--Setting up Altera Monitor System</strong></p>
+<ol>
+  <li>Download the executable from <a href="../../../../../../www.altera.com/education/univ/software/monitor/unv-monitor.html">http://www.altera.com/education/univ/software/monitor/unv-monitor.html</a>. Make sure that you choose the version that matches the version of QuartusII which is installed.</li>
+  <li>Install the executable. You will not be able to run it unless you ave previously installed QuartusII and the NiosIDE tools.</li>
+  <li>When you run the monitor program in the lab, it may tell you that QuartusII is not installed. If so, open <code>control panel&gt;system&gt;advanced&gt;environment variables</code> and add a variable with name <code>QUARTUS_ROOTDIR</code> and value <code>c:\altera\11.0\quartus</code>.</li>
+  <li>Follow the directions for setting up a new project in <a href="../../NiosII_doc/Quartus11_nios/Altera_Monitor_Program.pdf">Altera Monitor Program</a>. Choose the C option which uses <code>program with device driver support</code>.</li>
+</ol>
+<p><strong>---Setting up a new project in the NiosII IDE:</strong><span class="red"> <strong>USE <a href="../../../../../../www.altera.com/literature/hb/nios2/n2sw_nii52017.pdf">THIS REFERENCE</a> for version 10.0 EDS</strong></span></p>
+<ol>
+  <li>When using the IDE there must be <strong>no space characters in the path</strong> you choose to your workspace! </li>
+  <li>Start the IDE and specify a workspace. When you designed the cpu and top-level module, the design was stored in a folder. In the Workspace selection dialog box, browse for that folder, then add the string <code>\software</code> to the folder path. This new folder will be used to store all of the software projects associated with the specific cpu you built in the SOPC. After you press OK, you may need to click on the <code>workbench</code> icon to do anything useful. </li>
+  <li>Create a new software project. Select <code>File&gt;New&gt;project</code>. A series of dialog boxes will open.
+      <ol>
+        <li>In the <code>Altera NiosII item</code>, choose <code>NiosII C/C++</code> application, then click <code>Next</code>. </li>
+        <li>Give the project a <code>name</code>, specify the <code>ptf</code> file from SOPC builder, use the <code>default location</code>, and specify a <code>blank project</code>. <br>
+        Then click <code>Next</code>.</li>
+        <li>Select <code>creat new system library</code> then click <code>finish</code>. </li>
+      </ol>
+  </li>
+  <li>Back in the main IDE window, right-click on the <code>syslib</code> entry in the <code>C/C++ Projects </code>pane, then select <code>Properties</code>.
+      <ol>
+        <li>In the dialog box, select <code>system library</code> on the left. </li>
+        <li>Associate the desired device with <code>stdout</code>, <code>stdin</code>, and <code>stderr</code>. These will usually default to the JTAG UART. </li>
+        <li>From the pulldown menu, select whether you are going to use <code>single threaded</code> or <code>microC/OS</code>. Note that the web-version of the IDE does not support the operating system. </li>
+        <li>Select the memory location, usually defaults to SDRAM. </li>
+        <li>Click <code>OK</code> to proceed. </li>
+      </ol>
+  </li>
+  <li>Back in the main IDE window, right-click on the <code>syslib</code> entry in the <code>C/C++ Projects </code>pane, then select <code>Build Project</code>. <br>
+    Wait for it to finish. </li>
+  <li>Create header files using <code>File&gt;New&gt;headerfile </code>and C files using<code> File&gt;New&gt;file. </code>The project (not the syslib) <em>should be highlighted before creating</em> the new source file.</li>
+  <li>In <code>Run...</code> menu item be sure that the download option points to the actual project (not the syslib project). In the Run... dialog double-click the NiosII hardware option to find the USB-blaster device and download to the software to the NiosII.</li>
+  <li>If you get the following message when downloading your program to the NiosII (when using SDRAM for the program):<br>
+      <pre>Using cable "USB-Blaster [USB-0]", device 1, instance 0x00
+Pausing target processor: not responding.
+Resetting and trying again: FAILED
+Leaving target processor paused&gt; </pre>
+    Then some suspects come to mind:
+    <ol type="a">
+      <li>You forgot to assign pins to the QuartusII project. </li>
+      <li>There is an incorrect or missing PLL file for SDRAM delay (use the megawizard to rebuild or generate a new PLL module as described in the <a href="../../DE2/tut_DE2_sdram_verilog.pdf">SDRAM tutorial</a>.) <strong>Special Note</strong>: The component <code>altpll</code> has changed between release 7 and 8 of Quartus. When defining a PLL for the phase-shifted SDRAM clock <code>c0</code> (as explained in the <a href="../../DE2/tut_DE2_sdram_verilog.pdf">SDRAM tutorial</a>), you need to add an <code>c1</code> output to the PLL with zero phase-shift and use this signal for the NiosII clock! If you don't do this, the program will load normally, with no error messages, <strong>but the program will not run</strong>! A new, corrected project is zipped <a href="../../NiosII_C/NiosSDRAMv8.zip">here</a>.</li>
+      <li>There is a misspelled control line in the Nios module interface, usually the clock or reset signal. </li>
+      <li>Check the size of the compiled hardware design. If the size is less than about 2000 logic blocks, then the Nios was probably optimized away. Check all the warnings to make sure no NiosII registers were <em>reduced</em>.</li>
+    </ol>
+  </li>
+</ol>
+<p><strong>--Opening a downloaded, zipped project from the course site</strong></p>
+<ol>
+  <li>Unzip the file.</li>
+  <li>Open the QuartusII project then:
+      <ol>
+        <li>Regenerate the NiosII in SPOC builder.</li>
+        <li>Close the SOPC builder.</li>
+        <li> Resynthesize the Verilog design. </li>
+        <li>Download the <code>sof</code> file to the DE2. </li>
+      </ol>
+  </li>
+  <li>Start the Nios II IDE. The path to the IDE is approximately <code>C:\altera\kits\nios2_60\bin\eclipse\nios2-ide.exe</code>.
+      <ol>
+        <li>The folder heirarchy will have a folder with all the SOPC-generated stuff in it. In that folder will be a folder entitled <code>software</code>. In the Nios II IDE menu <code>File</code>, choose <code>Switch Workspace...</code> and point the workspace to the <code>software</code> folder. The Nios IDE will appear to close itself, then reopen in the specified workspace. Some folders should appear in the left panel of the IDE. </li>
+        <li>In the menu <code>Project</code>, choose <code>Clean...,</code> and in the dialog box choose <code>All projects</code>. This action will remove any dependencies on older versions of the Nios IDE or libraries.</li>
+        <li>Rebuild all the project parts by selecting the <code>Run</code> menu, choosing <code>Run as...,</code> and then <code>NiosII hardware</code>. </li>
+      </ol>
+  </li>
+</ol>
+<p>Examples from class:</p>
+<ul>
+  <li>Skyler Schneider <a href="../../StudentWork/ss868/lab3/ss868_lab3_photos/100_4904.JPG">1</a>, <a href="../../StudentWork/ss868/lab3/ss868_lab3_photos/100_4891.JPG">2</a>, <a href="../../StudentWork/ss868/lab3/ss868_lab3_photos/100_4919.JPG">3</a>, <a href="../../StudentWork/ss868/lab3/ss868_lab3_photos/100_4923.JPG">4</a></li>
+  <li>Venkatesh Santhanagopalan and Rick Wong <a href="../../StudentWork/vs327/2010-10-21_22-08-27_804 (Custom).jpg">1</a>, <a href="../../StudentWork/vs327/2010-10-21_22-17-32_749 (Custom).jpg">2</a>, <a href="../../StudentWork/vs327/2010-10-21_22-22-30_621 (Custom).jpg">3</a></li>
+  <li>Jinda Cui and Jiawei Yang, <a href="../../StudentWork/jy554/Mandelbrot Set.JPG">Full set</a>.; <br>
+    <a href="../../StudentWork/jy554/satellite_double_spiral.JPG">Satellite double spiral</a>: x_mid=-0.743 643 900 055; y_mid=0.131 825 890 901; zoom level=3000; <br>
+  <a href="../../StudentWork/jy554/neural_network.JPG">neural network</a>: range mode: x=(-0.37432239 -0.373655726 ); y=(0.65938433 0.66005100); zoom mode: x_mid=-0.37398906; y_mid=0.65971767; zoom level=3000;<br>
+  <a href="../../StudentWork/jy554/devils_eye.JPG">devil's eye</a>: range mode: x=(-1.87 -1.85); y=(-0.01 0.01); zoom mode: x_mid=-1.86; y_mid=0; zoom level=100; <br>
+  <a href="../../StudentWork/jy554/alien_egg.JPG">alien's egg</a>: range mode: x=(-1.863 -1.85); y=(-0.00153846 0.00153846); zoom mode: x_mid=-1.8615; y_mid=0; zoom level=650; <br>
+  <a href="../../StudentWork/jy554/lava.JPG">lava</a>: range mode: x=(-1.38 -1.36);y=(-0.026 -0.006); zoom mode: x_mid=-1.37; y_mid=-0.016; zoom level=100; </li>
+  <li>Sandeep Gangundi and  Sion Wang   <a href="../../StudentWork/sg835/600x_zoom.jpg">600x_zoom</a><br>
+    <table border="0" cellpadding="0" cellspacing="0" width="583">
+      <tbody>
+        <tr>
+          <td nowrap="nowrap" valign="bottom" width="159"><p><strong>image name</strong></p></td>
+          <td nowrap="nowrap" valign="bottom" width="220"><p><strong>x coord</strong></p></td>
+          <td nowrap="nowrap" valign="bottom" width="204"><p><strong>y coord</strong></p></td>
+        </tr>
+        <tr>
+          <td nowrap="nowrap" valign="bottom" width="159"><p><a href="../../StudentWork/sg835/flower.jpg">flower</a></p></td>
+          <td nowrap="nowrap" valign="bottom" width="220"><p>[-0.37465401, -0.37332411]</p></td>
+          <td nowrap="nowrap" valign="bottom" width="204"><p>[0.659227668, 0.66020767]</p></td>
+        </tr>
+        <tr>
+          <td nowrap="nowrap" valign="bottom" width="159"><p><a href="../../StudentWork/sg835/asymmetric_mandelbrot.jpg">asymmetric mandelbrot</a></p></td>
+          <td nowrap="nowrap" valign="bottom" width="220"><p>[0.435396403, 0.451687191]</p></td>
+          <td nowrap="nowrap" valign="bottom" width="204"><p>[0.367981352, 0.380210061]</p></td>
+        </tr>
+        <tr>
+          <td nowrap="nowrap" valign="bottom" width="159"><p><a href="../../StudentWork/sg835/pattern.jpg">pattern</a></p></td>
+          <td nowrap="nowrap" valign="bottom" width="220"><p>[-0.758,-0.75]</p></td>
+          <td nowrap="nowrap" valign="bottom" width="204"><p>[0.05,0.06]</p></td>
+        </tr>
+        <tr>
+          <td nowrap="nowrap" valign="bottom" width="159"><p><a href="../../StudentWork/sg835/spiral.jpg">spiral</a></p></td>
+          <td valign="bottom" width="220"><p>[-0.403, -0.399]</p></td>
+          <td nowrap="nowrap" valign="bottom" width="204"><p>[-0.600, -0.603]</p></td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+</ul>
+<p>Other links</p>
+<ul>
+  <li>A student <a href="../../../../../../web.cecs.pdx.edu/~mperkows/CLASS_574/Oct16-2008/mand.pdf">report</a> on implementing
+a mandelbrot generator on a DE1 board. </li>
+  <li>Mark Bowers <a href="../../../../../../markbowers.org/fpga-mandelbrot">FPGA-based Mandelbrot generator</a></li>
+  <li><a href="../../../../../../locklessinc.com/articles/mandelbrot/default.htm">Mandelbrot set</a></li>
+  <li>MIke Field <a href="../../../../../../ec2-122-248-210-243.ap-southeast-1.compute.amazonaws.com/mediawiki/index.php/Mandelbrot">Mandelbrot on FPGA</a></li>
+  <li>Who needs VRAM anyway? <a href="../../../../../../codelead.se/who-needs-vram-anyway">Or, calculating Mandelbrot on an FPGA</a></li>
+  <li><a href="../../../../../../kluge.in-chemnitz.de/documents/fractal/node9.html">Properties of Mandelbrot set</a></li>
+  <li><a href="../../../../../../en.wikipedia.org/wiki/Mandelbrot_set#Optimizations">Optimizations</a></li>
+</ul>
+<hr>
+<b> Assignment </b> 
+<ul>
+  <li>There will be one serial processor to control computation and serial communication. The lower left and upper right corners of the visible computed
+  region should be displayed in the terminal window, with x in the range <code>[-2 1]</code> and
+  y in the range <code>[-1 1]</code>. You should be able
+  to choose the maximum number of iterations using serial input, or toggle switches,
+  or however you want to do it.</li>
+  <li>Upon pressing KEY3, the system should compute and display the full Mandelbrot
+    set,
+    as shown above. </li>
+  <li>The VGA graphics interface should  run the VGA at 640x480 resolution. 
+    You will need to share one word of SRAM between 2 pixels.
+  This will give you eight bit color for each pixel. Minimally, you will need
+    two colors corresponding to convergence/divergence. More colors may aid in
+    debugging and look cool. You may want to map color to the number of iterations
+    to divergence, or to the log of that number. A reasonable approximation of
+    the log is to just use the position of the largest non-zero bit in the count
+    (in matlab<code> fix(log2(count))</code>.
+  A modified <a href="mandelbrot_log.m">matlab
+  program</a> and <a href="mandelbrot_640x480_log.png">image</a> show the effect
+  of log-compressing the numerical range.
+The <a href="mandelbrot_640x480_zoom_log.png">zoomed image</a> (see below) also
+shows different detail.
+  <li>There will be a zoom interface using serial communication
+    to a terminal or a graphical interface. You
+    will need to enter two x,y pairs to guide the zoom process.
+   When you trigger the zoom calculation, the specified
+  corners should be reassigned to the corners of the display (but you may need
+  to adjust the aspect ratio) and every new pixel coordinate should be iterated
+  again. For example, if you zoomed in to <code></code><code>x=[-0.758,-0.75]
+  and y=[0.05,0.06];</code> you should
+  recalculate the Mandelbrot set for 640x480 new points in those intervals. (<a href="mandelbrot_640x480_zoom.png">image</a>)
+  <li>Part of your grade
+      will depend upon how fast you can render the full 640x480 set and two other regions picked on demo day. The
+      elapsed time in seconds and fractions of a second to draw should be shown <em>in decimal </em>on the 7-segment
+    LEDs. </li>
+  <br>
+  Be prepared to demo your design to your TA in lab.
+  </li>
+</ul>
+<p> Your written lab report should include the sections mentioned in the <a href="../../policy.html">policy page</a>, and :
+<ul>
+  <li>A table of times to compute various regions of the Mandelbrot set close
+    to the areas specified in the list.
+    <ul>
+      <li><code>x=[-2 1],  y=[-1 1] </code></li>
+      <li><code>x=[-0.758,-0.75], y=[0.05,0.06]</code></li>
+      <li><code>x=[-1.45, -1.3], y=[-0.07, 0.07]</code></li>
+  </ul>  
+  <li>A collection of photographs of your favorite regions, and their coordinates.
+    The camera should be good enough to resolve individual pixels.
+  <li>A detailed dsecription of your SOPC design. 
+  <li> A heavily commented listing of your Verilog design and GCC code (if you use NiosII) or Syrup code (if you use Pancake). 
+</ul>
+<hr>
+<small> <font size="-1">Copyright Cornell University </font></small> 
+<!-- #BeginDate format:Am1 -->March 11, 2013<!-- #EndDate -->
+</body> </html>
+

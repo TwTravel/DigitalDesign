@@ -1,0 +1,57 @@
+
+<html>
+<head>
+<title>ee576 Lab 4</title>
+</head>
+
+<body>
+<h2>
+EE 576: Laboratory 4 </h2> 
+<h2> NiosII with microC/OS audio generator. </h2>
+<p>
+<b> Introduction. </b>
+
+<p> In this assignment you will implement a video interface to the NiosII processor, including lines and text, then use it to animate a ball dropping. You will use the <a href="../../../../../../altera.com/education/univ/materials/manual/labs/tut_sopc_introduction_verilog.pdf">SOPC builder</a> to construct a NiosII processor, QuartusII to add an audio interface, and the NiosII IDE to write a GCC/microC/OS program to control an audio generator. 
+<p> <b> Procedures:</b>  
+<ol>
+  <li>  You must handle the boards only on on the ESD mat. These boards are expensive and you must be careful of them. 
+  <li>Make sure the Altera DE2 board is connected to power and to the PC as specified 
+    in the evaluation board description. Turn on the power supply with the red switch 
+    on the board. Make sure the toggle switch on the left edge of the board marked (<code>Run/Prog</code>) is in the <code>Run</code> position and <em>leave it there at all times</em>.
+The FPGA will program in the <code>Run</code> position. Putting the switch in the <code>Prog</code> position writes your design to flash memory, which you do not want to do.
+  <li>The <a href="../../DE2/DE2_TOP.v">default top level module</a> for the DE2 defines all of the logical i/o signals. 
+  <li>You can define the mapping from logical signal to FPGA pins (<em>pin assignment</em> in QuartusII) for all the pins at once by importing <a href="../../DE2/DE2_pin_assignments.csv">this file</a> using the menu item <code>Assignments... Import Assignments...</code> and specifying the file name. There is no need to define pins one-by-one.  
+<li>You will need to read the Audio Codec <a href="../../DE2_Datasheets/Audio%20CODEC/WM8731_WM8731L.pdf">datasheet</a>. See also example 4 on the <a href="../../../../../../instruct1.cit.cornell.edu/courses/ece576/DE2/index.html">DE2 hardware examples</a> page. 
+</ol>
+<hr>
+<b> Assignment </b> 
+<ul>
+  <li> You will design a cpu system, plus timers, UARTs and parallel interfaces in SOPC, then use Verilog to add the audio codec hardware interface. Don't use schematic entry or VHDL.</li>
+  <li>You will use microC/OS to construct three tasks to:
+    <ul>
+      <li>Handle the UART and set parameters from the human using hyperterm.</li>
+      <li>Display the waveform type and frequency on the LCD. </li>
+      <li>
+	  Communicate with the Audio Codec and synthesis hardware to produce the appropriate waveform.
+    </ul>
+  </li>
+  <li>The audio generator should take a serial command to produce sine, square, triangle or white noise. </li>
+  <li>Sine, square, or triangle waveforms should be produced by hardware (not in a cpu) <a href="../../../../../../www.geocities.com/CapeCanaveral/5611/dds.html">Direct Digital Synthesis</a>. </li>
+  <li>The audio generator should take a serial command to set the frequency if the wavefrom is sine, square, or triangle.</li>
+  <li>The audio generator should take a serial command to set the cutoff frequency of the white noise. </li>
+  <li>White noise should be produced by using a hardware (not in a cpu) <a href="../../../../../../en.wikipedia.org/wiki/Linear_feedback_shift_register">xor-feedback shift register</a> or <a href="../../../../../../en.wikipedia.org/wiki/Linear_congruential_generator">Linear Congruential Generator</a> followed by a first order hardware digital low pass filter.</li>
+</ul>
+<p>
+
+Be prepared to demo your design to your TA in lab.
+        
+    
+<p> Your written lab report should include: 
+<ul>
+  <li>A  explaination of the audio codec commands   
+  <li>How you implemented the random number and DDS circuits. <li> A heavily commented listing of your Verilog design and GCC with microC/OS code. 
+</ul>
+<hr>
+<small> <font size="-1">Copyright Cornell University July 2006</font></small> 
+</body> </html>
+

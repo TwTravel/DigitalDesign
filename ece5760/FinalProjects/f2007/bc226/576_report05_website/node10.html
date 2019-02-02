@@ -1,0 +1,113 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Graphics operation word format</TITLE>
+<META NAME="description" CONTENT="Graphics operation word format">
+<META NAME="keywords" CONTENT="576_report05">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="576_report05.css">
+
+<LINK REL="next" HREF="node11.html">
+<LINK REL="previous" HREF="node9.html">
+<LINK REL="up" HREF="node7.html">
+<LINK REL="next" HREF="node11.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation"><!--Navigation Panel-->
+<A NAME="tex2html136"
+  HREF="node11.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="next.png"></A> 
+<A NAME="tex2html134"
+  HREF="node7.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="up.png"></A> 
+<A NAME="tex2html128"
+  HREF="node9.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="prev.png"></A>   
+<BR>
+<B> Next:</B> <A NAME="tex2html137"
+  HREF="node11.html">Testing and Verification</A>
+<B> Up:</B> <A NAME="tex2html135"
+  HREF="node7.html">Implementation Details</A>
+<B> Previous:</B> <A NAME="tex2html129"
+  HREF="node9.html">Function tables</A>
+<BR>
+<BR></DIV>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00043000000000000000">
+Graphics operation word format</A>
+</H2>
+<P>
+<BIG CLASS="LARGE">Currently the graphics operation word is 56 bits long.
+The significance of the bits are described below:
+</BIG>
+<P>
+
+<UL>
+<LI>Bits 55 to 53: The opcode.
+With five different types of operations, we used three bits to represent the desired operation.
+<TT>0b000</TT> is rotation about the x-axis, <TT>0b001</TT> is rotation about the y-axis, <TT>0b010</TT> is rotation about the z-axis, <TT>0b100</TT> is translation, <TT>0b101</TT> is scaling.
+</LI>
+<LI>Bits 52 to 48: An index to a parametrized value.
+Updating parametrized values was not implemented, but 5 bits were reserved to index into a structure or table of values that would be updated upon very frame.
+Specifying <TT>0b00000</TT> would be always return a value of 1 (no parametrization).
+</LI>
+<LI>Bits 47 to 32, 31 to 16, and 15 to 0: The three 16-bit arguments to the transformations.
+For translation and scaling, all three values are used for the x-, y-, and z-transformations.
+For rotation, only the first is used as <SPAN CLASS="MATH"><IMG
+ WIDTH="12" HEIGHT="14" ALIGN="BOTTOM" BORDER="0"
+ SRC="img8.png"
+ ALT="$ \theta$"></SPAN>
+, the degree of rotation, represented as units of <SPAN CLASS="MATH"><IMG
+ WIDTH="53" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img9.png"
+ ALT="$ 2\pi/512$"></SPAN>
+ radians.
+</LI>
+</UL>
+<P>
+
+<DIV CLASS="navigation"><HR>
+<!--Navigation Panel-->
+<A NAME="tex2html136"
+  HREF="node11.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="next.png"></A> 
+<A NAME="tex2html134"
+  HREF="node7.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="up.png"></A> 
+<A NAME="tex2html128"
+  HREF="node9.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="prev.png"></A>   
+<BR>
+<B> Next:</B> <A NAME="tex2html137"
+  HREF="node11.html">Testing and Verification</A>
+<B> Up:</B> <A NAME="tex2html135"
+  HREF="node7.html">Implementation Details</A>
+<B> Previous:</B> <A NAME="tex2html129"
+  HREF="node9.html">Function tables</A></DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+
+2007-12-02
+</ADDRESS>
+</BODY>
+</HTML>

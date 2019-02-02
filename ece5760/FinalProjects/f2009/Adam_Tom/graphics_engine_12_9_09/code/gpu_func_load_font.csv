@@ -1,0 +1,8 @@
+FONT_STATE_MAX_STATE,4,Font read state maximum value.
+FONT_STATE_WIDTH,max_width(FONT_STATE_MAX_STATE),Font read state variable width.
+FONT_STATE_RANGE,FONT_STATE_WIDTH-1:0,Font read state variable bit range.
+FONT_STATE_IDLE,FONT_STATE_WIDTH'd0,Font read idle.
+FONT_STATE_WAIT_FOR_FIRST_WORD,FONT_STATE_WIDTH'd1,Wait for first word read from memory.
+FONT_STATE_READ_FIRST_WORD,FONT_STATE_WIDTH'd2,Read first word read from memory.
+FONT_STATE_READ_WORD,FONT_STATE_WIDTH'd3,Read each pixel value from the current word.
+FONT_STATE_WRITE,FONT_STATE_WIDTH'd4,Write font data to memory.

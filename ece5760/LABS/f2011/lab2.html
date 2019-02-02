@@ -1,0 +1,86 @@
+
+<html>
+<head>
+<title>ece5760 Lab 2</title>
+</head>
+
+<body>
+<h2>
+ECE 5760: Laboratory 2 </h2> 
+<h2> Audio filtering using multiple small cpus.</h2>
+<p>
+<b> Introduction. </b>
+
+<p> In this assignment you will implement  audio filters for both channels of an audio signal. Each channel will be filtered by software running on two separate cpus. The filter center frequency and bandwidth will be settable from switches on the DE2. 
+The filtered audio will be sent 
+  back out throught the audio codec for analysis and listening.<p> <b> Procedures:</b>  
+<ol>
+  <li>  You must handle the boards only on on the ESD mat. These boards are expensive and you must be careful of them. <p></p>
+  <li>Make sure the Altera DE2 board is connected to power and to the PC as specified 
+    in the evaluation board description. Turn on the power supply with the red switch 
+    on the board. Make sure the toggle switch on the left edge of the board marked (<code>Run/Prog</code>) is in the <code>Run</code> position and <em>leave it there at all times</em>.
+The FPGA will program in the <code>Run</code> position. Putting the switch in the <code>Prog</code> position writes your design to flash memory, which you do not want to do.<p></p>
+  <li>The <a href="../../DE2/DE2_TOP.v">default top level module</a> for the DE2 defines all of the logical i/o signals. <p></p>
+  <li>You can define the mapping from logical signal to FPGA pins (<em>pin assignment</em> in QuartusII) for all the pins at once by importing <a href="../../DE2/DE2_pin_assignments.csv">this file</a> using the menu item <code>Assignments... Import Assignments...</code> and specifying the file name. There is no need to define pins one-by-one.   <p></p>
+<li>The hardware audio interface is a <a href="../../../../../../instruct1.cit.cornell.edu/courses/ece576/DE2_Datasheets/Audio CODEC/WM8731_WM8731L.pdf">Wolfson
+WM8731</a> codec which is controlled by an I2C interface. I have simplified the
+drivers somewhat. The cleanest version is in this <a href="../../../../../../instruct1.cit.cornell.edu/courses/ece576/DE2/AudioFilter_oct2009/AudioFilter_oct2009.zip">project
+zip</a>. The context for the drivers is explained in the <a href="../../../../../../instruct1.cit.cornell.edu/courses/ece576/DE2/fpgaDSP.html">DSP
+page</a>, example 1. Note that the DSP page describes <em>hardware</em> filters. In this lab you are going to build <em>software</em> filters.The audio codec produces (and outputs) 16-bit 2's complement numbers. The 16-bit numbers should be considered as fractional values in the range +1 to -1 volt. 
+<p></p>
+<li>The cpu you will use is described on the <a href="../../DE2/Stack_cpu.html">stack cpu page</a>. A compiler is also described there which uses a stack language. The cpu I built has a multiplier designed for 10:8 fixed point. You may want to modify this to 2:16 for better filter accuracy. A matlab code which converts filter specification to 2:16 fixed point is <a href="AudioFilterParamsGen_coeff_only.m">here</a>.
+  There are two basic operations to perform to do the conversion: 
+  <ol>
+    <li>multiply the coefficients by 2<sup>16</sup>, </li>
+    <li>scale all coefficients if any are bigger than 2.0. If you need to do this, you will have to modify the code running on your cpu to divide the sample output by the scale factor.</li>
+  </ol>
+</ol>
+<p><strong>--Using   QuartusII SignalTap tool to verify your design.</strong> </p>
+<p>Here are the steps that seem to be necssary to get SignalTap working. For more information, read the Altera <a href="../../Verilog/tut_signaltapII_verilogDE2.pdf">tutorial</a> on using SignalTap, an on chip logic analyzer. </p>
+<ol>
+  <li>Choose menu <code>Tools&gt;SignalTap</code></li>
+  <li>In the main SignalTap window, click <code>Hardware Setup...</code> (in the upper rigtht corner) <br>
+    and in the dialog box choose the hardware (USB-Blaster)</li>
+  <li>Choose menu <code>Edit&gt;AddNodes... </code>
+      <ol>
+        <li>Choose the appropriate <code>Filter</code> to simplify the list of nodes, the press <code>List</code></li>
+        <li>Highlight nodes and move to right-hand list using <strong><code>&gt;</code></strong> button </li>
+        <li>Click <code>OK</code> to get back to main SignalTap window </li>
+      </ol>
+  </li>
+  <li>In the main SignalTap window, click the <code>Clock ...</code> button and choose the clock signal as in AddNodes</li>
+  <li>In the node panel of the main window, set up trigger conditions.</li>
+  <li>Compile and then load the design onto the FPGA</li>
+  <li> In the main SignalTap window, toggle the <code>Data/Setup</code> button</li>
+  <li> Choose menu <code>Processing &gt;Run Analysis</code> </li>
+</ol>
+<hr>
+<b> Assignment </b> 
+<ul>
+  <li> Build two cpus as described on the <a href="../../DE2/Stack_cpu.html">stack cpu page</a>.</li>
+  <li>Use the audio codec stereo input to drive each of the cpus (one channel to each cpu) and loop the filtered output back to the audio codec so that you can listen to the results.
+  You will need to figure out a way to synchronize the cpus to the codec clock.
+  <li>Implement a 2-pole, butterworth filter on each of the cpus using the same software running on each cpu.
+  <li>Set the filter frequency of each channel independently using the DE2 switches to one of four conditions:
+    <ul>
+      <li>No filtering -- just passes audio through.</li>
+      <li>Low pass  filter with a cutoff of 500 Hz.</li>
+      <li>Band pass filter with a cutoff at 500 Hz and 2 KHz.</li>
+      <li>High pass filter with a cutoff at 500 Hz.</li>
+    </ul>
+  <li>Use the audio codec output to measure each filter amplitude response as a function of frequency.<br>
+  </li>
+</ul>
+<p>Be prepared to separately demo your flter design to your
+  TA in lab. </p>
+<p> Your written lab report should include the sections mentioned in the <a href="../../policy.html">policy page</a>, and :
+<ul>
+  <li>Filter frequencies and plots of filter response.  
+  <li> A heavily commented listing of your Verilog design and stack code. 
+  <li>How does the fixed point arithemetic affect the filter responses?
+</ul>
+<hr>
+<small> <font size="-1">Copyright Cornell University </font></small>
+<!-- #BeginDate format:Am1 -->September 21, 2011<!-- #EndDate -->
+</body> </html>
+

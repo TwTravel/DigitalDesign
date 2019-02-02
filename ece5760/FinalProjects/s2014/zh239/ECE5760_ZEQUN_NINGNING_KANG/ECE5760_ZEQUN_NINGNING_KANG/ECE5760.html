@@ -1,0 +1,629 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <style type="text/css">
+
+p.MsoTitle
+	{margin-bottom:.0001pt;
+	text-align:justify;
+	text-justify:inter-ideograph;
+	font-size:28.0pt;
+	font-family:"Cambria","serif";
+	letter-spacing:-.5pt;
+	        margin-left: 0cm;
+            margin-right: 0cm;
+            margin-top: 0cm;
+        }
+h2
+	{margin-top:2.0pt;
+	margin-right:0cm;
+	margin-bottom:0cm;
+	margin-left:0cm;
+	margin-bottom:.0001pt;
+	text-align:justify;
+	text-justify:inter-ideograph;
+	page-break-after:avoid;
+	font-size:13.0pt;
+	font-family:"Cambria","serif";
+	color:#365F91;
+	font-weight:normal;
+        }
+p.MsoSubtitle
+	{margin-top:0cm;
+	margin-right:0cm;
+	margin-bottom:8.0pt;
+	margin-left:0cm;
+	text-align:justify;
+	text-justify:inter-ideograph;
+	font-size:11.0pt;
+	font-family:"Calibri","sans-serif";
+	color:#5A5A5A;
+	letter-spacing:.75pt;
+	}
+        .auto-style3 {
+            text-indent: -18.0pt;
+            line-height: 150%;
+            font-size: 10.5pt;
+            font-family: Calibri, sans-serif;
+            text-align: justify;
+            margin-left: 36.0pt;
+            margin-right: 0cm;
+            margin-top: 0cm;
+            margin-bottom: .0001pt;
+        }
+        .auto-style4 {
+            margin-left: 40px;
+        }
+        .auto-style5 {
+            font-variant: small-caps;
+            color: #000000;
+        }
+        .auto-style6 {
+            font-size: 14pt;
+        }
+        .auto-style7 {
+            margin-left: 0px;
+        }
+        .auto-style9 {
+            text-align: center;
+            line-height: 150%;
+            font-size: 10.5pt;
+            font-family: Calibri, sans-serif;
+            margin-left: 36.0pt;
+            margin-right: 0cm;
+            margin-top: 0cm;
+            margin-bottom: .0001pt;
+        }
+        .auto-style10 {
+            width: 550px;
+            height: 856px;
+        }
+        .auto-style11 {
+            width: 674px;
+            height: 481px;
+        }
+        .auto-style13 {
+            width: 408px;
+            height: 503px;
+            margin-bottom: 0px;
+        }
+        .auto-style14 {
+            width: 413px;
+            height: 505px;
+            margin-right: 0px;
+            margin-top: 0px;
+        }
+        .auto-style15 {
+            width: 401px;
+            height: 502px;
+        }
+        .auto-style16 {
+            width: 422px;
+            height: 517px;
+        }
+        .auto-style17 {
+            width: 440px;
+            height: 512px;
+            margin-bottom: 0px;
+        }
+        .auto-style18 {
+            width: 384px;
+            height: 512px;
+        }
+        .auto-style19 {
+            text-decoration: underline;
+        }
+        </style>
+</head>
+<body>
+
+    <p class="MsoTitle" style="line-height: 150%; text-align: center;">
+        <span lang="EN-US">ECE5760 <span style="mso-spacerun:yes">&nbsp;</span>Final Project</span></p>
+    <h2 align="center" style="text-align:center;line-height:150%"><em><span lang="EN-US" style="font-size:18.0pt;line-height:150%;font-family:&quot;Cambria&quot;,&quot;serif&quot;;
+mso-ascii-theme-font:major-latin;mso-hansi-theme-font:major-latin;mso-bidi-font-family:
+&quot;Times New Roman&quot;;mso-bidi-theme-font:major-bidi">Video Game: Whac-A-Mole<o:p></o:p></span></em></h2>
+    <p align="center" style="text-align:center;line-height:150%"><strong>Y</strong><o:p><strong>ouTuBe Video Link:</strong></o:p></p>
+    <p align="center" style="text-align:center;line-height:150%">
+        <o:p><a href="../../../../../../../../../https@www.youtube.com/watch@v=L7q5g2qjT5U&list=PL2E0D05BEC0140F13">https://www.youtube.com/watch?v=L7q5g2qjT5U&amp;list=PL2E0D05BEC0140F13</a></o:p></p>
+    <p align="center" style="text-align:center;line-height:150%">
+        <o:p><strong>TEAM MEMBERS</strong></o:p></p>
+    <p align="center" class="MsoSubtitle" style="text-align:center;line-height:150%">
+        <span lang="EN-US" style="color:windowtext">Zequn Huang (zh239)</span><span style="color:windowtext">,</span><span lang="EN-US" style="color:windowtext"> Kang Li (kl694)</span><span style="color:windowtext"><o:p>,</o:p></span><span lang="EN-US" style="color:windowtext">Ningning Ding (nd333) </span></p>
+    <p align="center" class="MsoSubtitle" style="text-align:center;line-height:150%">
+        <o:p></o:p>
+        <img alt="" class="auto-style11" longdesc="http://localhost:51004/ECE5760/1.jpg" src="ECE5760/1.jpg" /></p>
+    <p align="left" class="auto-style5">
+        <span lang="EN-US" style="font-size:16.0pt;line-height:
+150%"><strong>Introduction</strong><o:p></o:p></span></p>
+    <p align="left" class="auto-style4">
+        <span lang="EN-US" style="font-size:12.0pt;line-height:150%">For the final project of ECE 5760, we design a traditional Whac-A-Mole video game using Altera DE2 board. Instead of hitting the keyboard or touching the screen, we play the game by beating the mole toward the screen using a green racquet. We use a camera to detect the green color. And if the center of the racquet hits the mole, the player will gain one point; on the other hand, if the center of the pad hit Bruce (Sorry, Bruce!), the player will lose five points. If the player reaches 15 points, the level will go up and the speed of the appearance of mole and Bruce will both increase. And when we hit the image or go to the next level, there will be different real-time sound based on the action.<o:p></o:p></span></p>
+    <p align="left" class="auto-style5">
+        <span lang="EN-US" style="font-size:16.0pt;line-height:
+150%"><strong>High Level Design</strong><o:p></o:p></span></p>
+    <p align="left" class="auto-style4">
+        <span lang="EN-US" style="font-size:12.0pt;line-height:150%">We only use hardware in our design. So the speed of the game can be really fast and the whole system can be pretty stable. <o:p></o:p></span>
+    </p>
+    <p align="left" class="auto-style4">
+        <span lang="EN-US" style="font-size:12.0pt;line-height:150%">The major module of our design includes Camera detection, VGA display, Audio output, and the Top module.</span></p>
+    <p align="left" class="auto-style4">
+        <span lang="EN-US" style="font-size:12.0pt;line-height:150%">The camera detection module is the input module in our design. It detects the specific green color in the view and use the center as the collision detection. The reason we choose color green is that it is less likely to be affected by the background comparing to other colors. And the VGA control module and the audio output module is the output module in our design. They are both react to the camera detection module. We connect these modules together in the top module. The brief diagram of our design is as follows:<o:p></o:p></span></p>
+    <p align="left" class="auto-style9">
+        <v:group id="Canvas_x0020_1" o:spid="_x0000_s1026" editas="canvas"
+ style='width:415.3pt;height:560.25pt;mso-position-horizontal-relative:char;
+ mso-position-vertical-relative:line' coordsize="52743,71151" o:gfxdata="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
+UEsFBgAAAAAEAAQA8wAAAGoOAAAAAA==
+">
+        <v:shape id="Text_x0020_Box_x0020_53" o:spid="_x0000_s1059" type="#_x0000_t202"
+  style='position:absolute;left:20378;top:60122;width:9233;height:4845;
+  visibility:visible;mso-wrap-style:square;v-text-anchor:top' o:gfxdata="UEsDBBQABgAIAAAAIQDw94q7/QAAAOIBAAATAAAAW0NvbnRlbnRfVHlwZXNdLnhtbJSRzUrEMBDH
+74LvEOYqbaoHEWm6B6tHFV0fYEimbdg2CZlYd9/edD8u4goeZ+b/8SOpV9tpFDNFtt4puC4rEOS0
+N9b1Cj7WT8UdCE7oDI7ekYIdMayay4t6vQvEIrsdKxhSCvdSsh5oQi59IJcvnY8TpjzGXgbUG+xJ
+3lTVrdTeJXKpSEsGNHVLHX6OSTxu8/pAEmlkEA8H4dKlAEMYrcaUSeXszI+W4thQZudew4MNfJUx
+QP7asFzOFxx9L/lpojUkXjGmZ5wyhjSRJQ8YKGvKv1MWzIkL33VWU9lGfl98J6hz4cZ/uUjzf7Pb
+bHuj+ZQu9z/UfAMAAP//AwBQSwMEFAAGAAgAAAAhADHdX2HSAAAAjwEAAAsAAABfcmVscy8ucmVs
+c6SQwWrDMAyG74O9g9G9cdpDGaNOb4VeSwe7CltJTGPLWCZt376mMFhGbzvqF/o+8e/2tzCpmbJ4
+jgbWTQuKomXn42Dg63xYfYCSgtHhxJEM3Elg372/7U40YalHMvokqlKiGBhLSZ9aix0poDScKNZN
+zzlgqWMedEJ7wYH0pm23Ov9mQLdgqqMzkI9uA+p8T9X8hx28zSzcl8Zy0Nz33r6iasfXeKK5UjAP
+VAy4LM8w09zU50C/9q7/6ZURE31X/kL8TKv1x6wXNXYPAAAA//8DAFBLAwQUAAYACAAAACEAMy8F
+nkEAAAA5AAAAEAAAAGRycy9zaGFwZXhtbC54bWyysa/IzVEoSy0qzszPs1Uy1DNQUkjNS85PycxL
+t1UKDXHTtVBSKC5JzEtJzMnPS7VVqkwtVrK34+UCAAAA//8DAFBLAwQUAAYACAAAACEAbsBIIsIA
+AADbAAAADwAAAGRycy9kb3ducmV2LnhtbESPQWuDQBSE74X+h+UFemtWW5BgspEgFXsKNA05v7gv
+Krpvxd2q+ffdQKHHYWa+YXbZYnox0ehaywridQSCuLK65VrB+bt43YBwHlljb5kU3MlBtn9+2mGq
+7cxfNJ18LQKEXYoKGu+HVEpXNWTQre1AHLybHQ36IMda6hHnADe9fIuiRBpsOSw0OFDeUNWdfoyC
+PMoLN5XxNbnbtrtsPvg4VKVSL6vlsAXhafH/4b/2p1bwnsDjS/gBcv8LAAD//wMAUEsBAi0AFAAG
+AAgAAAAhAPD3irv9AAAA4gEAABMAAAAAAAAAAAAAAAAAAAAAAFtDb250ZW50X1R5cGVzXS54bWxQ
+SwECLQAUAAYACAAAACEAMd1fYdIAAACPAQAACwAAAAAAAAAAAAAAAAAuAQAAX3JlbHMvLnJlbHNQ
+SwECLQAUAAYACAAAACEAMy8FnkEAAAA5AAAAEAAAAAAAAAAAAAAAAAApAgAAZHJzL3NoYXBleG1s
+LnhtbFBLAQItABQABgAIAAAAIQBuwEgiwgAAANsAAAAPAAAAAAAAAAAAAAAAAJgCAABkcnMvZG93
+bnJldi54bWxQSwUGAAAAAAQABAD1AAAAhwMAAAAA
+" fillcolor="white [3201]" strokecolor="#4f81bd [3204]" strokeweight="2pt">
+        <v:textbox>
+        </v:textbox>
+ </v:shape>
+</v:group>
+        <img alt="" class="auto-style10" longdesc="http://localhost:51004/ECE5760/123.jpg" src="ECE5760/123.jpg" /></p>
+    <p align="left" class="auto-style9">
+        <span lang="EN-US" style="font-size:12.0pt;line-height:150%;mso-fareast-language:EN-US;mso-no-proof:
+yes">
+        <v:group id="Canvas_x0020_1" o:spid="_x0000_s1026" editas="canvas"
+ style='width:415.3pt;height:560.25pt;mso-position-horizontal-relative:char;
+ mso-position-vertical-relative:line' coordsize="52743,71151" o:gfxdata="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
+UEsFBgAAAAAEAAQA8wAAAGoOAAAAAA==
+">
+        <v:shape id="Text_x0020_Box_x0020_53" o:spid="_x0000_s1059" type="#_x0000_t202"
+  style='position:absolute;left:20378;top:60122;width:9233;height:4845;
+  visibility:visible;mso-wrap-style:square;v-text-anchor:top' o:gfxdata="UEsDBBQABgAIAAAAIQDw94q7/QAAAOIBAAATAAAAW0NvbnRlbnRfVHlwZXNdLnhtbJSRzUrEMBDH
+74LvEOYqbaoHEWm6B6tHFV0fYEimbdg2CZlYd9/edD8u4goeZ+b/8SOpV9tpFDNFtt4puC4rEOS0
+N9b1Cj7WT8UdCE7oDI7ekYIdMayay4t6vQvEIrsdKxhSCvdSsh5oQi59IJcvnY8TpjzGXgbUG+xJ
+3lTVrdTeJXKpSEsGNHVLHX6OSTxu8/pAEmlkEA8H4dKlAEMYrcaUSeXszI+W4thQZudew4MNfJUx
+QP7asFzOFxx9L/lpojUkXjGmZ5wyhjSRJQ8YKGvKv1MWzIkL33VWU9lGfl98J6hz4cZ/uUjzf7Pb
+bHuj+ZQu9z/UfAMAAP//AwBQSwMEFAAGAAgAAAAhADHdX2HSAAAAjwEAAAsAAABfcmVscy8ucmVs
+c6SQwWrDMAyG74O9g9G9cdpDGaNOb4VeSwe7CltJTGPLWCZt376mMFhGbzvqF/o+8e/2tzCpmbJ4
+jgbWTQuKomXn42Dg63xYfYCSgtHhxJEM3Elg372/7U40YalHMvokqlKiGBhLSZ9aix0poDScKNZN
+zzlgqWMedEJ7wYH0pm23Ov9mQLdgqqMzkI9uA+p8T9X8hx28zSzcl8Zy0Nz33r6iasfXeKK5UjAP
+VAy4LM8w09zU50C/9q7/6ZURE31X/kL8TKv1x6wXNXYPAAAA//8DAFBLAwQUAAYACAAAACEAMy8F
+nkEAAAA5AAAAEAAAAGRycy9zaGFwZXhtbC54bWyysa/IzVEoSy0qzszPs1Uy1DNQUkjNS85PycxL
+t1UKDXHTtVBSKC5JzEtJzMnPS7VVqkwtVrK34+UCAAAA//8DAFBLAwQUAAYACAAAACEAbsBIIsIA
+AADbAAAADwAAAGRycy9kb3ducmV2LnhtbESPQWuDQBSE74X+h+UFemtWW5BgspEgFXsKNA05v7gv
+Krpvxd2q+ffdQKHHYWa+YXbZYnox0ehaywridQSCuLK65VrB+bt43YBwHlljb5kU3MlBtn9+2mGq
+7cxfNJ18LQKEXYoKGu+HVEpXNWTQre1AHLybHQ36IMda6hHnADe9fIuiRBpsOSw0OFDeUNWdfoyC
+PMoLN5XxNbnbtrtsPvg4VKVSL6vlsAXhafH/4b/2p1bwnsDjS/gBcv8LAAD//wMAUEsBAi0AFAAG
+AAgAAAAhAPD3irv9AAAA4gEAABMAAAAAAAAAAAAAAAAAAAAAAFtDb250ZW50X1R5cGVzXS54bWxQ
+SwECLQAUAAYACAAAACEAMd1fYdIAAACPAQAACwAAAAAAAAAAAAAAAAAuAQAAX3JlbHMvLnJlbHNQ
+SwECLQAUAAYACAAAACEAMy8FnkEAAAA5AAAAEAAAAAAAAAAAAAAAAAApAgAAZHJzL3NoYXBleG1s
+LnhtbFBLAQItABQABgAIAAAAIQBuwEgiwgAAANsAAAAPAAAAAAAAAAAAAAAAAJgCAABkcnMvZG93
+bnJldi54bWxQSwUGAAAAAAQABAD1AAAAhwMAAAAA
+" fillcolor="white [3201]" strokecolor="#4f81bd [3204]" strokeweight="2pt">
+        <v:textbox>
+   <![endif]></v:textbox>
+ </v:shape>
+        <v:shape id="Text_x0020_Box_x0020_54" o:spid="_x0000_s1060" type="#_x0000_t202"
+  style='position:absolute;left:33907;top:60017;width:9233;height:4845;
+  visibility:visible;mso-wrap-style:square;v-text-anchor:top' o:gfxdata="UEsDBBQABgAIAAAAIQDw94q7/QAAAOIBAAATAAAAW0NvbnRlbnRfVHlwZXNdLnhtbJSRzUrEMBDH
+74LvEOYqbaoHEWm6B6tHFV0fYEimbdg2CZlYd9/edD8u4goeZ+b/8SOpV9tpFDNFtt4puC4rEOS0
+N9b1Cj7WT8UdCE7oDI7ekYIdMayay4t6vQvEIrsdKxhSCvdSsh5oQi59IJcvnY8TpjzGXgbUG+xJ
+3lTVrdTeJXKpSEsGNHVLHX6OSTxu8/pAEmlkEA8H4dKlAEMYrcaUSeXszI+W4thQZudew4MNfJUx
+QP7asFzOFxx9L/lpojUkXjGmZ5wyhjSRJQ8YKGvKv1MWzIkL33VWU9lGfl98J6hz4cZ/uUjzf7Pb
+bHuj+ZQu9z/UfAMAAP//AwBQSwMEFAAGAAgAAAAhADHdX2HSAAAAjwEAAAsAAABfcmVscy8ucmVs
+c6SQwWrDMAyG74O9g9G9cdpDGaNOb4VeSwe7CltJTGPLWCZt376mMFhGbzvqF/o+8e/2tzCpmbJ4
+jgbWTQuKomXn42Dg63xYfYCSgtHhxJEM3Elg372/7U40YalHMvokqlKiGBhLSZ9aix0poDScKNZN
+zzlgqWMedEJ7wYH0pm23Ov9mQLdgqqMzkI9uA+p8T9X8hx28zSzcl8Zy0Nz33r6iasfXeKK5UjAP
+VAy4LM8w09zU50C/9q7/6ZURE31X/kL8TKv1x6wXNXYPAAAA//8DAFBLAwQUAAYACAAAACEAMy8F
+nkEAAAA5AAAAEAAAAGRycy9zaGFwZXhtbC54bWyysa/IzVEoSy0qzszPs1Uy1DNQUkjNS85PycxL
+t1UKDXHTtVBSKC5JzEtJzMnPS7VVqkwtVrK34+UCAAAA//8DAFBLAwQUAAYACAAAACEAAYztucMA
+AADbAAAADwAAAGRycy9kb3ducmV2LnhtbESPQWvCQBSE7wX/w/IK3pqNFWyIWaUERU+CtvT8uvtM
+gtm3IbuN8d+7gtDjMDPfMMV6tK0YqPeNYwWzJAVBrJ1puFLw/bV9y0D4gGywdUwKbuRhvZq8FJgb
+d+UjDadQiQhhn6OCOoQul9Lrmiz6xHXE0Tu73mKIsq+k6fEa4baV72m6kBYbjgs1dlTWpC+nP6ug
+TMutH3az38XNNZefbMOHTu+Umr6On0sQgcbwH36290bB/AMeX+IPkKs7AAAA//8DAFBLAQItABQA
+BgAIAAAAIQDw94q7/QAAAOIBAAATAAAAAAAAAAAAAAAAAAAAAABbQ29udGVudF9UeXBlc10ueG1s
+UEsBAi0AFAAGAAgAAAAhADHdX2HSAAAAjwEAAAsAAAAAAAAAAAAAAAAALgEAAF9yZWxzLy5yZWxz
+UEsBAi0AFAAGAAgAAAAhADMvBZ5BAAAAOQAAABAAAAAAAAAAAAAAAAAAKQIAAGRycy9zaGFwZXht
+bC54bWxQSwECLQAUAAYACAAAACEAAYztucMAAADbAAAADwAAAAAAAAAAAAAAAACYAgAAZHJzL2Rv
+d25yZXYueG1sUEsFBgAAAAAEAAQA9QAAAIgDAAAAAA==
+" fillcolor="white [3201]" strokecolor="#4f81bd [3204]" strokeweight="2pt">
+  <v:textbox>
+   <![if !mso]>
+        </v:textbox>
+ </v:shape>
+        <v:shape id="Text_x0020_Box_x0020_42" o:spid="_x0000_s1064" type="#_x0000_t202"
+  style='position:absolute;left:17907;top:65722;width:13811;height:2572;
+  visibility:visible;mso-wrap-style:square;v-text-anchor:top' o:gfxdata="UEsDBBQABgAIAAAAIQDw94q7/QAAAOIBAAATAAAAW0NvbnRlbnRfVHlwZXNdLnhtbJSRzUrEMBDH
+74LvEOYqbaoHEWm6B6tHFV0fYEimbdg2CZlYd9/edD8u4goeZ+b/8SOpV9tpFDNFtt4puC4rEOS0
+N9b1Cj7WT8UdCE7oDI7ekYIdMayay4t6vQvEIrsdKxhSCvdSsh5oQi59IJcvnY8TpjzGXgbUG+xJ
+3lTVrdTeJXKpSEsGNHVLHX6OSTxu8/pAEmlkEA8H4dKlAEMYrcaUSeXszI+W4thQZudew4MNfJUx
+QP7asFzOFxx9L/lpojUkXjGmZ5wyhjSRJQ8YKGvKv1MWzIkL33VWU9lGfl98J6hz4cZ/uUjzf7Pb
+bHuj+ZQu9z/UfAMAAP//AwBQSwMEFAAGAAgAAAAhADHdX2HSAAAAjwEAAAsAAABfcmVscy8ucmVs
+c6SQwWrDMAyG74O9g9G9cdpDGaNOb4VeSwe7CltJTGPLWCZt376mMFhGbzvqF/o+8e/2tzCpmbJ4
+jgbWTQuKomXn42Dg63xYfYCSgtHhxJEM3Elg372/7U40YalHMvokqlKiGBhLSZ9aix0poDScKNZN
+zzlgqWMedEJ7wYH0pm23Ov9mQLdgqqMzkI9uA+p8T9X8hx28zSzcl8Zy0Nz33r6iasfXeKK5UjAP
+VAy4LM8w09zU50C/9q7/6ZURE31X/kL8TKv1x6wXNXYPAAAA//8DAFBLAwQUAAYACAAAACEAMy8F
+nkEAAAA5AAAAEAAAAGRycy9zaGFwZXhtbC54bWyysa/IzVEoSy0qzszPs1Uy1DNQUkjNS85PycxL
+t1UKDXHTtVBSKC5JzEtJzMnPS7VVqkwtVrK34+UCAAAA//8DAFBLAwQUAAYACAAAACEAgI7ChsMA
+AADbAAAADwAAAGRycy9kb3ducmV2LnhtbESPQWvCQBSE74L/YXlCb7qpDSLRVUJLadGCqL309sg+
+k9Ds25B91fjvXaHgcZiZb5jluneNOlMXas8GnicJKOLC25pLA9/H9/EcVBBki41nMnClAOvVcLDE
+zPoL7+l8kFJFCIcMDVQibaZ1KCpyGCa+JY7eyXcOJcqu1LbDS4S7Rk+TZKYd1hwXKmzptaLi9/Dn
+DGzSH3x7kS1dhftdnn/M2zR8GfM06vMFKKFeHuH/9qc1kE7h/iX+AL26AQAA//8DAFBLAQItABQA
+BgAIAAAAIQDw94q7/QAAAOIBAAATAAAAAAAAAAAAAAAAAAAAAABbQ29udGVudF9UeXBlc10ueG1s
+UEsBAi0AFAAGAAgAAAAhADHdX2HSAAAAjwEAAAsAAAAAAAAAAAAAAAAALgEAAF9yZWxzLy5yZWxz
+UEsBAi0AFAAGAAgAAAAhADMvBZ5BAAAAOQAAABAAAAAAAAAAAAAAAAAAKQIAAGRycy9zaGFwZXht
+bC54bWxQSwECLQAUAAYACAAAACEAgI7ChsMAAADbAAAADwAAAAAAAAAAAAAAAACYAgAAZHJzL2Rv
+d25yZXYueG1sUEsFBgAAAAAEAAQA9QAAAIgDAAAAAA==
+" fillcolor="white [3201]" strokecolor="white [3212]" strokeweight=".5pt">
+        <v:textbox>
+   <![endif]></v:textbox>
+ </v:shape><w:wrap type="none" xmlns:w="urn:schemas-microsoft-com:office:word"/>
+ <w:anchorlock xmlns:w="urn:schemas-microsoft-com:office:word"/>
+</v:group>
+        </span><span lang="EN-US" style="font-size:12.0pt;line-height:150%">Figure 1. High Level Design Diagram<o:p></o:p></span></p>
+    <p align="left" class="auto-style5">
+        <span lang="EN-US" style="font-size:16.0pt;line-height:
+150%"><strong>Hardware Design</strong><o:p></o:p></span></p>
+    <p class="MsoNormal">
+        <b class="auto-style4" style="mso-bidi-font-weight: normal"><span lang="EN-US" style="font-size:14.0pt;line-height:150%;mso-bidi-font-family:
+&quot;Times New Roman&quot;">Camera Detection<o:p></o:p></span></b></p>
+    <p class="auto-style3" style="mso-list: l1 level1 lfo3; text-justify: inter-ideograph;">
+        <span style="mso-list:Ignore"><span style="font-size:12.0pt;line-height:150%;mso-fareast-font-family:Calibri;
+mso-fareast-theme-font:minor-latin;mso-bidi-font-family:Calibri;mso-bidi-theme-font:
+minor-latin">&nbsp;&nbsp;&nbsp; </span><span lang="EN-US" style="font-size:12.0pt;line-height:150%;mso-fareast-font-family:Calibri;
+mso-fareast-theme-font:minor-latin;mso-bidi-font-family:Calibri;mso-bidi-theme-font:
+minor-latin">1.<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><![endif]><span lang="EN-US" style="font-size:12.0pt;
+line-height:150%;mso-bidi-font-family:&quot;Times New Roman&quot;">NTSC input <o:p></o:p></span>
+    </p>
+    <p class="auto-style4">
+        <span lang="EN-US" style="font-size:
+12.0pt;line-height:150%;mso-bidi-font-family:&quot;Times New Roman&quot;">We designed this part by modifying the NTSC decoding from Bruce’s sample. The basic NTSC TV inputs are signal “TD_DATA”, “TD_VS” and “TD_HS” from the top module. First of all, the TV decoder module, TD_Detect, checks the stability base on the TV Decoder H_SYNC and TV Decoder V_SYNC. And the output TD_Stable signal feeds in the Reset_delay module in order to generate all kinds of reset delays for transmission timing purpose. Next, the ITU decoder converts the TD_DATA form the camera to YCbCr format. We also have several more modules, YUV422_to_444, YCbCr2RGB, to convert the camera inputs from YCbCr to YUV444 and RGB. Besides these modules, there is a Mirror_Col module, which will mirror the image left to right. In order to output a mirror effect video from camera input, we connected this module in our design. The last module in this sample is the VGA_Ctrl module, which connected the RGB value from the camera inputs to 
+        the RGB of each pixel in the VGA screen.<o:p></o:p></span></p>
+    <p class="auto-style3" style="mso-list: l1 level1 lfo3; text-justify: inter-ideograph;">
+        <![if !supportLists]><span style="mso-list:Ignore"><span style="font-size:12.0pt;line-height:150%;mso-fareast-font-family:Calibri;
+mso-fareast-theme-font:minor-latin;mso-bidi-font-family:Calibri;mso-bidi-theme-font:
+minor-latin">&nbsp;&nbsp;&nbsp; </span><span lang="EN-US" style="font-size:12.0pt;line-height:150%;mso-fareast-font-family:Calibri;
+mso-fareast-theme-font:minor-latin;mso-bidi-font-family:Calibri;mso-bidi-theme-font:
+minor-latin">2.<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><![endif]><span lang="EN-US" style="font-size:12.0pt;
+line-height:150%;mso-bidi-font-family:&quot;Times New Roman&quot;">Combine camera inputs with the game interface<o:p></o:p></span></p>
+    <p class="auto-style4">
+        <span lang="EN-US" style="font-size:
+12.0pt;line-height:150%;mso-bidi-font-family:&quot;Times New Roman&quot;">In order to combine the camera inputs with the game interface, we modified the connection between Mirror_Col and VGA_Ctrl module from the sample design, and synchronized the clock for NTSC and VGA modules. We took the outputs of the Mirror_Col, Red, Green, Blue. And we checked the value of the RGB component to detect the Green color from the camera since we decided to use a green hammer for our game. The RGB value threshold we set are ((Red&lt;10&#39;d450)&amp;&amp;(Green &gt; 10&#39;d700)&amp;&amp;(Blue &lt; 10&#39;d450)). In this situation, we marked these pixels black by setting all these RBG 10’b0. As the result, we could determine the position of the hammer by looking for black spot. For pixels that have the RGB value out of this range, we just mux the output to the cVGA_RGB, which is the game interface generated from the top module hardware. In this way, we were able to show the position of our green hammer from the camera input to the VGA screen. At 
+        the same time, the VGA also display the game interface at all other pixels that are not marked black. <o:p></o:p></span>
+    </p>
+    <p class="auto-style3" style="mso-list: l1 level1 lfo3; text-justify: inter-ideograph;">
+        <![if !supportLists]><span style="mso-list:Ignore"><span style="font-size:12.0pt;line-height:150%;mso-fareast-font-family:Calibri;
+mso-fareast-theme-font:minor-latin;mso-bidi-font-family:Calibri;mso-bidi-theme-font:
+minor-latin">&nbsp;&nbsp;&nbsp; </span><span lang="EN-US" style="font-size:12.0pt;line-height:150%;mso-fareast-font-family:Calibri;
+mso-fareast-theme-font:minor-latin;mso-bidi-font-family:Calibri;mso-bidi-theme-font:
+minor-latin">3.<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><![endif]><span lang="EN-US" style="font-size:12.0pt;
+line-height:150%;mso-bidi-font-family:&quot;Times New Roman&quot;">Determine the center of the hammer<o:p></o:p></span></p>
+    <p class="auto-style4">
+        <span lang="EN-US" style="font-size:
+12.0pt;line-height:150%;mso-bidi-font-family:&quot;Times New Roman&quot;">Since all VGA points have to go through the VGA_Ctrl module, no matter the camera inputs or the game interface, we chose to modify the VGA_Ctrl module to determine the center of the hammer. In this module, we checked the color of all coming pixels, and if it is black, which means it is part of the hammer, we recorded the maximum and minimum x &amp; y position of all these pixels. And at the end of the screen, we calculated the average x &amp; y value by setting Avg_X &lt;= (Max_X + Min_X)&gt;&gt;1. As the result, we were able to determine the center position of the black spot in the screen. Then we set the center position to white color when we start to draw a new screen. Even though the center position is calculated for the previous screen, it is still ok since the VGA clock ran at 27 MHz. In addition, we got rid of the pixels around the edges because they are problematic with color. Besides those, we kept the original horizontal and 
+        vertical synchronization function in the VGA_Ctrl module. <o:p></o:p></span>
+    </p>
+    <p class="auto-style3" style="mso-list: l1 level1 lfo3; text-justify: inter-ideograph;">
+        <![if !supportLists]><span style="mso-list:Ignore"><span style="font-size:12.0pt;line-height:150%;mso-fareast-font-family:Calibri;
+mso-fareast-theme-font:minor-latin;mso-bidi-font-family:Calibri;mso-bidi-theme-font:
+minor-latin">&nbsp;&nbsp;&nbsp; </span><span lang="EN-US" style="font-size:12.0pt;line-height:150%;mso-fareast-font-family:Calibri;
+mso-fareast-theme-font:minor-latin;mso-bidi-font-family:Calibri;mso-bidi-theme-font:
+minor-latin">4.<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><![endif]><span lang="EN-US" style="font-size:12.0pt;
+line-height:150%;mso-bidi-font-family:&quot;Times New Roman&quot;">Detect a hit<o:p></o:p></span></p>
+    <p class="auto-style4">
+        <span lang="EN-US" style="font-size:
+12.0pt;line-height:150%;mso-bidi-font-family:&quot;Times New Roman&quot;">We generated the flag1img and flag2img when we found the center point of the hammer is in the first or second picture pixels range. These flags are actually the hit flags. However, we could not use it for all these pixels in the VGA screen because we only want to modify the pixels in this range. We generated a new flag, called hit1 or hit2, which is and logic the flag1img with the pixels inside the image x &amp; y range. As the result, we only modified the image pixels when we detected a hit on that image.<o:p></o:p></span></p>
+    <p class="MsoNormal">
+        <b class="auto-style4" style="mso-bidi-font-weight: normal"><span lang="EN-US" style="font-size:14.0pt;line-height:150%;mso-bidi-font-family:
+&quot;Times New Roman&quot;">VGA display<o:p></o:p></span></b></p>
+    <p class="auto-style4">
+        <span lang="EN-US" style="font-size:
+12.0pt;line-height:150%">Since we have two images in our M4K blocks, we can use them to display the mole and Bruce. The amount of possible position of the image is 12 (4 in each row and 3 in each column). And we build a Look-Up-Table to store all the possible position of x and y. We can use the index of the LUT to choose where the image should appear.<o:p></o:p></span></p>
+    <p class="auto-style4">
+        <span lang="EN-US" style="font-size:
+12.0pt;line-height:150%">We want to generate at most 2 images, no matter they are the moles or Bruce, at one play cycle. And the positions of the two images need to be random. So we need random number generator.<o:p></o:p></span></p>
+    <p class="auto-style4">
+        <span lang="EN-US" style="font-size:
+12.0pt;line-height:150%">I generate the random binary vector by four 31-bit binary shift registers. The initial states of the four registers are 31&#39;h55555555, 29&#39;h55555555, 31&#39;h66666666, and 29&#39;h66666666, respectively. And We XOR the bit 30 and bit 27 and put the new bit as the least significant bit of the first and the third shift register at every rising edge of the OSC_27 clock, while XOR the bit 28 and bit 26 and put the new bit as the least significant bit of the second and fourth shift register at every rising edge of the OSC_27 clock. These four shift registers are used for determining the position of the images.<o:p></o:p></span></p>
+    <p class="auto-style4">
+        <span lang="EN-US" style="font-size:
+12.0pt;line-height:150%">The amount of the images is determined by bit x_rand1[30]. If it equals one, there will be two images and if it equals zero, there will be only one image and it has to be the mole. And the indexes of the LUT is calculated by x_rand1%4 and y_rand1%3. If there are two images, the indexes is different by using different shift registers; if there is only one image, the indexes of the two images will be the same by using the same shift register. And in the two images case, if bit x_rand1[4] is one, the second image will be Bruce and if this bit equals zero, the second image will be the mole. And the first image is always the mole. So the possibility of one of the images being Bruce is 50% and if there is only one image, it can only be the mole.<o:p></o:p></span></p>
+    <p class="auto-style4">
+        <span lang="EN-US" style="font-size:
+12.0pt;line-height:150%">So for VGA display, when it needs to display the mole by reading the correspond flags, the VGA controller will read the two port M4K block which stores the image of the mole. And when the VGA controller needs to display Bruce, the VGA controller will read the one port M4K buffer which contains the image of Bruce.<o:p></o:p></span></p>
+    <p class="auto-style4">
+        <span lang="EN-US" style="font-size:
+12.0pt;line-height:150%">We use a count to control the timing of the image display. The initial value of the count is 28&#39;h7FFFFFF and the value of the count will decrease based on the level of the game: the higher the level, the smaller the count will be. After the count reaches the setting value, we clear the count and set the new position of the image.<o:p></o:p></span></p>
+    <p class="auto-style4">
+        <span class="auto-style6" lang="EN-US" style="line-height: 150%"><strong>Score mechanism</strong><o:p></o:p></span></p>
+    <p class="auto-style4">
+        <span lang="EN-US" style="font-size:
+12.0pt;line-height:150%">We determine how to calculate the score in the stage of updating the position. There are several circumstances. <o:p></o:p></span>
+    </p>
+    <p class="auto-style4" style="mso-add-space: auto; mso-list: l2 level1 lfo1; text-justify: inter-ideograph;">
+        <![if !supportLists]><span style="mso-list:Ignore"><span lang="EN-US" style="font-size:12.0pt;line-height:150%;mso-fareast-font-family:
+Calibri;mso-fareast-theme-font:minor-latin;mso-bidi-font-family:Calibri;
+mso-bidi-theme-font:minor-latin">a.<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><![endif]><span lang="EN-US" style="font-size:12.0pt;line-height:150%">There are two images on the screen and both of them are mole. We hit both of them. In this situation, we get 2 points.<o:p></o:p></span></p>
+    <p class="auto-style4" style="mso-add-space: auto; mso-list: l2 level1 lfo1; text-justify: inter-ideograph;">
+        <![if !supportLists]><span style="mso-list:Ignore"><span lang="EN-US" style="font-size:12.0pt;line-height:150%;mso-fareast-font-family:
+Calibri;mso-fareast-theme-font:minor-latin;mso-bidi-font-family:Calibri;
+mso-bidi-theme-font:minor-latin">b.<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><![endif]><span lang="EN-US" style="font-size:12.0pt;line-height:150%">There is only one image and we hit it; or there are two images, we hit the first one; or there are two images and the second image is the mole and we hit the second one. Under these circumstances, we get one point.<o:p></o:p></span></p>
+    <p class="auto-style4" style="mso-add-space: auto; mso-list: l2 level1 lfo1; text-justify: inter-ideograph;">
+        <![if !supportLists]><span style="mso-list:Ignore"><span lang="EN-US" style="font-size:12.0pt;line-height:150%;mso-fareast-font-family:
+Calibri;mso-fareast-theme-font:minor-latin;mso-bidi-font-family:Calibri;
+mso-bidi-theme-font:minor-latin">c.<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><![endif]><span lang="EN-US" style="font-size:12.0pt;line-height:150%">There are two images and the second image is Bruce. We hit both of them. We lose 4 points.<o:p></o:p></span></p>
+    <p class="auto-style4" style="mso-add-space: auto; mso-list: l2 level1 lfo1; text-justify: inter-ideograph;">
+        <![if !supportLists]><span style="mso-list:Ignore"><span lang="EN-US" style="font-size:12.0pt;line-height:150%;mso-fareast-font-family:
+Calibri;mso-fareast-theme-font:minor-latin;mso-bidi-font-family:Calibri;
+mso-bidi-theme-font:minor-latin">d.<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><![endif]><span lang="EN-US" style="font-size:12.0pt;line-height:150%">There are two images and the second image is Bruce and we only hit the second one. So we lose 5 points</span></p>
+    <p class="auto-style7" style="mso-add-space: auto; mso-list: l2 level1 lfo1; text-justify: inter-ideograph;">
+        <span class="auto-style4" lang="EN-US" style="font-size:12.0pt;line-height:150%">All the flags we use in this stage are the same with the flag of last play cycle. Otherwise it will cause synchronization problem.<o:p></o:p></span></p>
+    <p class="MsoNormal">
+        <b class="auto-style4" style="mso-bidi-font-weight: normal"><span lang="EN-US" style="font-size:14.0pt;line-height:150%;mso-bidi-font-family:
+&quot;Times New Roman&quot;">Audio output<o:p></o:p></span></b></p>
+    <p class="auto-style4">
+        <span lang="EN-US" style="font-size:
+12.0pt;line-height:150%;mso-bidi-font-family:&quot;Times New Roman&quot;">Our audio part is mainly from the course website and it is written by our instructor—Bruce Land. In the audio part, what we can simply control is the wave envelope type and we also use some logic to control when to start. Below are the main modules this audio module calls:<o:p></o:p></span></p>
+    <p class="auto-style4">
+        <span lang="EN-US" style="font-size:
+12.0pt;line-height:150%;mso-bidi-font-family:&quot;Times New Roman&quot;"><strong>AUDIO_DAC_ADC:</strong> This module mainly passes the digital signal to analog signal which will be displayed in a real audio. <o:p></o:p></span>
+    </p>
+    <p class="auto-style4">
+        <span lang="EN-US" style="font-size:
+12.0pt;line-height:150%;mso-bidi-font-family:&quot;Times New Roman&quot;"><strong>Sine_attack_decay:</strong> This module is aimed to display the digital synchronize of any given amplitude envelope. Then it will give the sound shape to the AUDIO_DAC_ADC module to generate the sound. In this module what you can change is the amplitude envelope and increment factor which indicates the falling speed of the wave.<o:p></o:p></span></p>
+    <p class="auto-style4">
+        <span lang="EN-US" style="font-size:
+12.0pt;line-height:150%;mso-bidi-font-family:&quot;Times New Roman&quot;"><strong>Sync_rom:</strong> This module mainly generates a look-up table to store the sine wave information so that the sine math can be done just by calling the table.<o:p></o:p></span></p>
+    <p class="auto-style4">
+        <span lang="EN-US" style="font-size:
+12.0pt;line-height:150%;mso-bidi-font-family:&quot;Times New Roman&quot;">Above all, you can choose any sounds you want through this audio module and we did choose some different sounds which can match our purpose quite appropriate. </span><span lang="EN-US" style="font-size: 12.0pt; line-height: 150%; color: black; background: white"><o:p></o:p></span>
+    </p>
+    <p align="left" class="auto-style5">
+        <span lang="EN-US" style="font-size:16.0pt;line-height:
+150%"><strong>Software Design</strong><o:p></o:p></span></p>
+    <p class="auto-style4">
+        <span lang="EN-US" style="font-size:
+12.0pt;line-height:150%;mso-bidi-font-family:&quot;Times New Roman&quot;">In Matlab what we did is to generate two pictures which have the appropriate size so that we can store them in M4K blocks and display them on VGA screen. First picture is the mole, which is used to be attacked. And as described later, this mole will be randomly generated one or two at any position on the screen. The second picture is the fanciest part in our design! We use our instructor—Bruce Land’s head picture (after his permission) as the game Boss that player cannot attack and player will be punished if he/she attacks this picture. <o:p></o:p></span>
+    </p>
+    <p class="auto-style4">
+        <span lang="EN-US" style="font-size:
+12.0pt;line-height:150%;mso-bidi-font-family:&quot;Times New Roman&quot;">Here we just take the mole’s picture as an example:<o:p></o:p></span></p>
+    <p class="auto-style4" style="mso-list: l0 level1 lfo2; text-justify: inter-ideograph;">
+        <![if !supportLists]><span style="mso-list:Ignore"><span lang="EN-US" style="font-size:12.0pt;line-height:150%;mso-fareast-font-family:
+Calibri;mso-fareast-theme-font:minor-latin;mso-bidi-font-family:Calibri;
+mso-bidi-theme-font:minor-latin">1)<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><![endif]><span lang="EN-US" style="font-size:12.0pt;line-height:150%;mso-bidi-font-family:&quot;Times New Roman&quot;">The first step is to use Matlab to resize the mole’s picture which we found on the internet and then store to a “txt” file with all the pixel information and every pixel we use hex type to store.<o:p></o:p></span></p>
+    <p class="auto-style4" style="mso-list: l0 level1 lfo2; text-justify: inter-ideograph;">
+        <![if !supportLists]><span style="mso-list:Ignore"><span lang="EN-US" style="font-size:12.0pt;line-height:150%;mso-fareast-font-family:
+Calibri;mso-fareast-theme-font:minor-latin;mso-bidi-font-family:Calibri;
+mso-bidi-theme-font:minor-latin">2)<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><![endif]><span lang="EN-US" style="font-size:12.0pt;line-height:150%;mso-bidi-font-family:&quot;Times New Roman&quot;">The next step is to generate the “mif” file which can be read in QuatusII and displayed on the VGA screen. We just cited Bruce Land’s code on the course webpage and changed some sentences so that the “mif” file will be generated in the way we want. For example, the memory size we need to choose ourselves.<o:p></o:p></span></p>
+    <p class="auto-style4" style="mso-list: l0 level1 lfo2; text-justify: inter-ideograph;">
+        <![if !supportLists]><span style="mso-list:Ignore"><span lang="EN-US" style="font-size:12.0pt;line-height:150%;mso-fareast-font-family:
+Calibri;mso-fareast-theme-font:minor-latin;mso-bidi-font-family:Calibri;
+mso-bidi-theme-font:minor-latin">3)<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><![endif]><span lang="EN-US" style="font-size:12.0pt;line-height:150%;mso-bidi-font-family:&quot;Times New Roman&quot;">The last step is to set VGA buffer and choose the size of M4K to store the two pictures, which need to be stored in two different buffers. Then we choose two ports buffer for mole and one port for our instructor. When the state machine need to read either of these two pictures, right port among the three is needed. However, the address will be the same value because they are in different blocks.<o:p></o:p></span></p>
+    <p class="auto-style4" style="mso-list: l0 level1 lfo2; text-justify: inter-ideograph;">
+        <![if !supportLists]><span style="mso-list:Ignore"><span lang="EN-US" style="font-size:12.0pt;line-height:150%;mso-fareast-font-family:
+Calibri;mso-fareast-theme-font:minor-latin;mso-bidi-font-family:Calibri;
+mso-bidi-theme-font:minor-latin">4)<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </span></span></span><![endif]><span lang="EN-US" style="font-size:12.0pt;line-height:150%;mso-bidi-font-family:&quot;Times New Roman&quot;">One thing we need to mention here is that in Matlab any photo type will be stored in three dimensions: red, green and blue. However, the color display in VGA screen will be quite different and has ten bits to display every color. So what we did is to pick three red bits, three green bits and two blue bits in Matlab to combine an eight bits pixel which will also be separated to display on VGA screen. It seems much better than any other methods we have tried but we really think they are not as fancy as the original pictures.<o:p></o:p></span></p>
+    <p align="left" class="auto-style5">
+        <strong class="auto-style5"><strong><span style="font-size:16.0pt;line-height:
+150%">Result</span></strong><span style="font-size:16.0pt;line-height:
+150%"><o:p></o:p></span></strong></p>
+    <p align="left" class="auto-style4">
+        Here are some pictures of our Whac-A-Mole video game:</p>
+    <p align="left" class="auto-style4">
+        The three pictures below show that Moles and Bruce come out randomly from 12 possible position.</p>
+    <p align="left" class="auto-style4">
+        <img alt="" class="auto-style13" longdesc="http://localhost:51004/ECE5760/6.jpg" src="ECE5760/6.jpg" /><img alt="" class="auto-style14" longdesc="http://localhost:51004/ECE5760/7.jpg" src="ECE5760/7.jpg" /><img alt="" class="auto-style15" longdesc="http://localhost:51004/ECE5760/5.jpg" src="ECE5760/5.jpg" /></p>
+    <p align="left" class="auto-style4">
+        <span lang="EN-US" style="font-size:
+12.0pt;line-height:150%;mso-bidi-font-family:&quot;Times New Roman&quot;">The first picture below shows that camera captured the hammer and marked a white dot at the center. The second one shows that the hammer hit the mole and we marked the mole with red square. The last picture shows the score we record on the segment LED.</span></p>
+    <p align="left" class="auto-style4">
+        <img alt="" class="auto-style16" longdesc="http://localhost:51004/ECE5760/4.jpg" src="ECE5760/4.jpg" /><img alt="" class="auto-style17" longdesc="http://localhost:51004/ECE5760/3.jpg" src="ECE5760/3.jpg" /><img alt="" class="auto-style18" longdesc="http://localhost:51004/ECE5760/2.jpg" src="ECE5760/2.jpg" /></p>
+    <p align="left" class="auto-style5">
+        <span lang="EN-US" style="font-size:16.0pt;line-height:
+150%"><strong>Conclusion</strong></span></p>
+    <p align="left" class="auto-style4">
+        <span lang="EN-US" style="font-size:12.0pt;line-height:150%"><span lang="EN-US">In the project, we designed a gesture controlled video game &quot;Whac-A-Mole&quot; on altera DE2 board with an NTSC camera. Overall, the results of our project met our expectations at the beginning of the project. By implementing a green color detection algorithm, the game can recognize the green hammer to detect the hit. The player is supposed to hit the moles and avoid the image of Bruce. The goal of this game is to get highest score and enter the higher level.</span> <o:p></o:p>
+        </span>
+    </p>
+    <p align="left" class="auto-style4">
+        <o:p><span lang="EN-US" style="font-size: 12.0pt; line-height: 150%">In this project, we combine many peripherals of FPGA. We used camera, VGA, audio, on-chip SRAM memory and DRAM. It’s a good experience to work together to finish this project.</span></o:p></p>
+    <p align="left" class="auto-style4">
+        <o:p>
+        <o:p><span lang="EN-US" style="font-size:12.0pt;line-height:150%"><span lang="EN-US">There are still some aspects can be improved. Currently, we display our score using the 7-segment LED. It is much reasonable to put the score on the screen. And since we just use the hardware design, the image display is quite stiff. In the further design, maybe we can try to combine software and hardware together, which should give us a better image display or even an animation.</span> <o:p></o:p>
+        </span></o:p>
+        </o:p>
+    </p>
+    <p class="MsoNormal">
+        <span lang="EN-US"><strong>Intellectual Property Consideration</strong></span></p>
+    <p class="auto-style4">
+        <o:p><span lang="EN-US" style="font-size: 12.0pt; line-height: 150%">Our project uses the Cornell Staff Maintained Page: NTSC Video as the original code which is provided by ECE5760 webpage. And we modified this code and all the other work is done by our own.</span></o:p></p>
+    <p class="MsoNormal">
+        <span lang="EN-US"><strong>Ethical Considerations</strong></span></p>
+    <p class="auto-style4">
+        <o:p><span lang="EN-US" style="font-size: 12.0pt; line-height: 150%">The project is based on Altera DE2 FPGA board and it doesn’t include any body contact with high power. The playing environment is always kept safe and controlled.</span></o:p></p>
+    <p class="MsoNormal">
+        <span lang="EN-US"><strong>Legal Considerations</strong></span></p>
+    <p class="auto-style4">
+        <o:p style="margin-left: 40px"><span lang="EN-US" style="font-size: 12.0pt; line-height: 150%">As far as we know, there are no legal considerations involved with this project. Although the idea of the game Whac-A-Mole exists for years, we don’t use our project for any commercial purposes. References to our work are provided below in the appendix.</span></o:p></p>
+
+    <p align="left" class="auto-style5">
+        <strong><span lang="EN-US" style="font-size:16.0pt;line-height:
+150%">C</span><span style="font-size:16.0pt;line-height:
+150%">ode</span></strong></p>
+    <p align="left" class="auto-style4">
+        TOP MODULE: <a href="ECE5760/DE2_TV.v">DE2_TV</a></p>
+    <p align="left" class="auto-style4">
+        MATLAB for generate mif file and resize: <span class="auto-style19"><a href="ECE5760/generate_mif.m">GENERATE</a></span>, <span class="auto-style19"><a href="ECE5760/resize.m">RESIZE</a></span></p>
+    <p align="left" class="auto-style4">
+        Entire project zip: <span class="auto-style19"><a href="ECE5760/cam_to_vga.zip">Whac-A-Mole</a></span></p>
+
+    <p align="left" class="auto-style5">
+        <span lang="EN-US" style="font-size:16.0pt;line-height:
+150%"><strong><span lang="EN-US">References</span></strong></span></p>
+    <p align="left" class="auto-style4">
+        <span lang="EN-US" style="font-size:12.0pt;line-height:150%"><span lang="EN-US">ECE 5760 home page <a href="../../../../../default.htm">http://people.ece.cornell.edu/land/courses/ece5760/</a></span></span></p>
+    <p class="auto-style4">
+        <span lang="EN-US">NTSC video <a href="../../../../../video/index.htm">http://people.ece.cornell.edu/land/courses/ece5760/video/index.htm</a></span></p>
+
+    <p align="left" class="auto-style5">
+        <span lang="EN-US" style="font-size:16.0pt;line-height:
+150%"><strong><span lang="EN-US">Acknowledgements</span></strong></span></p>
+    <p align="left" class="auto-style4">
+        <span lang="EN-US" style="font-size: 12.0pt; line-height: 150%"><span lang="EN-US">We want to thank Bruce Land for leading us to use the NTSC camera and the template, and for also teaching such a great course. We would also like to thank both of the TAs for their advices and endeavor to make the course better.</span></span></p>
+
+</body>
+</html>

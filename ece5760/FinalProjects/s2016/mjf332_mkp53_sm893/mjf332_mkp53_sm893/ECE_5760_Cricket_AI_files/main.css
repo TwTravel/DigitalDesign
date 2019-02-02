@@ -1,0 +1,160 @@
+@charset "utf-8";
+/* CSS Document */
+
+#cu-logo {
+	margin: 0 auto;
+	width: 740px;
+	background: url(../img/cu_logo.gif) no-repeat top left;
+}
+	
+#cu-logo a {
+	border: none;
+	display: block;
+	width: 340px;
+	height: 75px;
+	background: url(../img/cu_logo.gif) no-repeat top left;
+}
+
+#mainnav a {
+	padding: 8px 25px 0 25px;
+}
+
+#sectiontitle, #mainnav {
+	background-image: url(../img/layout/banner.jpg);
+}
+
+#sectiontitle {
+	width: 740px;
+	height: 180px;
+	margin: 0 auto;
+	/* cutout image */
+	background-repeat: no-repeat;
+	background-position: 0 -8px;
+}
+
+/* Human Tetris */
+#sectiontitle h1 {
+	font-family: georgia, "times new roman", times, serif;
+	font-weight: normal;
+	font-size: 2.2em;
+	color: #73736c;
+	margin: 0 auto;
+	padding: 10px 0 0 25px;
+	text-align: left;
+}
+
+/* Video Object Tracking */
+#sectiontitle h2 {
+	font-family: georgia, "times new roman", times, serif;
+	font-weight: normal;
+	font-size: 1.2em;
+	color: #b31b1b;
+	margin: 0 auto;
+	padding: 0 0 10px 30px;
+	text-align: left;
+}
+
+/* Names */
+#sectiontitle h3 {
+	font-family: georgia, "times new roman", times, serif;
+	font-weight: normal;
+	font-size: 0.9em;
+	color: #555;
+	margin: 0 auto;
+	padding: 5px 0 0;
+	text-align: left;
+}
+
+/* ECE 4760: Final Project */
+#sectiontitle h4 {
+	font-family: georgia, "times new roman", times, serif;
+	font-weight: normal;
+	font-size: 1.0em;
+	color: #aaa;
+	margin: 0 auto;
+	padding-top: 1.0em;
+	text-align: left;
+}
+
+#sectiontitle a {
+	color: #73736c;
+	text-decoration: none;
+	/* border: none; */
+}
+
+
+
+/* Main content */
+
+#introblurb {
+	margin: 15px 0;
+}
+
+#maincontent h2 {
+	margin: 0 0 20px;
+}
+
+#maincontent h3 {
+	font-family: georgia, "times new roman", times, serif;
+	font-weight: bold;
+	font-size: 0.9em;
+	line-height: 1.5em;
+	color: #333;
+	margin: 15px 0;
+	/*margin: 20px 0 5px 0;*/
+}
+
+#maincontent h4 {
+	color: #555;
+}
+
+#maincontent p.source {
+	margin: 0.5em 0;
+}
+
+#maincontent p.caption {
+	margin: 2px 0 0;
+	text-align: center;
+}
+
+#maincontent th {
+	font-weight: bold;
+}
+
+#maincontent td {
+	padding: 0 10px;
+}
+
+#copyright {
+	float: right;
+	margin: 0;
+	font-size: 0.65em;
+	text-align: right;
+	width: 300px;
+}
+
+.image {
+	text-align: center;
+}
+
+.floatingimagewrapper, .floatingimagewrapperwide, .floatingimagewrapperxwide {
+	float: right;
+	display: block;
+	background: #fff;
+	margin: 7px 0 20px 20px;
+	padding: 5px;
+	width: 207px;
+}
+
+.floatingimagewrapperwide {
+	width: 278px;
+}
+
+.floatingimagewrapperxwide {
+	width: 370px;
+}
+
+.floatingimagewrapperxwide a {
+	border: none;
+	text-decoration: none;
+}

@@ -1,0 +1,47 @@
+
+<html>
+<head>
+<title>ee576 Lab 4</title>
+</head>
+
+<body>
+<h2> EE 576: Laboratory 4 </h2> 
+<h2> Nios II and DDA. </h2>
+
+<b> Introduction. </b> 
+<p> For this exercise, you will simulate an analog system using a Digital Differential Analyzer (DDA) and measure the function of the circuit with a NiosII cpu. 
+<b><hr>
+Procedure:</b> 
+<p> Read the <a href="../../../../../../instruct1.cit.cornell.edu/courses/ece576/DDA/index.htm">DDA page</a>. The physical system you will simulate is the <a href="../../../../../../www.lon-capa.org/~mmp/applist/coupled/osc2.htm">coupled, spring-mass system</a> shown below. The image is from <a href="../../../../../../online.redwoods.cc.ca.us/instruct/darnold/DEProj/Sp00/SeanAlex/finalpaper.pdf">this paper</a> by Alex Gagen and Sean Larson. <br>
+<img src="springmass.png" width="502" height="224">
+<p>The differential equations for this system are:
+<p>m(d<sup>2</sup>x<sub>1</sub>/dt<sup>2</sup>)  + k(x<sub>1</sub>) &minus; k<sub>c</sub>(x<sub>2</sub> &minus; x<sub>1</sub>) <font color="#FF0000">+ w(dx<sub>1</sub>/dt)</font> = input (sine wave) <br>
+m(d<sup>2</sup>x<sub>2</sub>/dt<sup>2</sup>) + k(x<sub>2</sub>) &minus; k<sub>c</sub>(x<sub>1</sub> &minus; x<sub>2</sub>) <font color="#FF0000">+ w(dx<sub>2</sub>/dt)</font> = 0
+<p> The output is x<sub>2</sub>. 
+<p>The natural frequencies are <br>
+&omega;<sub>a</sub>=sqrt(k/m) and <br>
+&omega;<sub>b</sub>=sqrt((k+2k<sub>c</sub>)/m).
+<p></p>
+<hr>
+<b> Assignment</b>
+<ol>
+  <li>  Build a DDA which simulates a coupled spring-mass system as described above.
+Choose the spring constants and masses so that the natural frequencies of the system are around 500 Hz. Scale the amplitude so that the integrators stay in range. 
+  <li>Monitor the two variables using an oscilloscope attached to the audio codec to check for clipping or distortion. 
+  <li> Build a NioII cpu and program it to sweep an input sine wave signal across a range of a few Hz to a few thousand Hz.  
+  <li>Plot the bode plot for the analog system. The plot can be on the VGA, or in Matlab on the PC.
+</ol>
+    
+<p>Be prepared to demo your design to your TA in lab. </p>
+<p> Your written lab report should include: 
+<ul>
+  <li>Mathematical considerations (type of integrator, error expected/measured, approximations) 
+  <li>The Bode plot (amplitude and phase)   
+  <li>How you implemented the  DDA circuits. 
+  <li> A heavily commented listing of your Verilog design and GCC  code.  
+</ul>
+<hr>
+<br>
+<small> <font size="-1">Copyright Cornell University May 2007</font></small> 
+</body> </html>
+

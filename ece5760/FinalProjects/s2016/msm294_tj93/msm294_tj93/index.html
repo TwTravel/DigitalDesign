@@ -1,0 +1,827 @@
+<html>
+<head>
+<title>D:\uploadedFiles\253fd0cad84828703773e1f1e3d4557-40b72d2f1af144f5\p1aivpqb99n761esku3unis1npp4.doc</title>
+<style type="text/css">
+<!--
+body { font-family: Arial; font-size: 20.4px }
+.pos { position: absolute; z-index: 0; left: 0px; top: 0px }
+-->
+</style>
+</head>
+<body>
+<nobr><nowrap>
+<div class="pos" id="_0:0" style="top:0">
+<img name="_2100:850" src="page_001.jpg" height="2100" width="850" border="0" usemap="#Map"></div>
+<div class="pos" id="_100:-2" style="top:-2;left:100">
+<span id="_13.7" style=" font-family:Times New Roman; font-size:13.7px; color:#000000">
+ECE 5760</span>
+</div>
+<div class="pos" id="_587:-2" style="top:-2;left:587">
+<span id="_13.7" style=" font-family:Times New Roman; font-size:13.7px; color:#000000">
+Marshall Mucasey - msm294</span>
+</div>
+<div class="pos" id="_100:16" style="top:16;left:100">
+<span id="_13.7" style=" font-family:Times New Roman; font-size:13.7px; color:#000000">
+Final Lab Report</span>
+</div>
+<div class="pos" id="_600:16" style="top:16;left:600">
+<span id="_13.7" style=" font-family:Times New Roman; font-size:13.7px; color:#000000">
+Tae Jong (Eric) Jung - tj93</span>
+</div>
+<div class="pos" id="_351:60" style="top:60;left:351">
+<span id="_18.9" style="font-weight:bold; font-family:Arial; font-size:18.9px; color:#000000">
+Evolution Game</span>
+</div>
+<div class="pos" id="_75:106" style="top:106;left:75">
+<span id="_16.3" style="font-weight:bold; font-family:Arial; font-size:16.3px; color:#000000">
+1. Introduction</span>
+</div>
+<div class="pos" id="_150:128" style="top:128;left:150">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+We designed a game where you get to play a god of small and simple world. The player</span>
+</div>
+<div class="pos" id="_100:148" style="top:148;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+gets to adjust environmental parameters in our small 320x240 world, which in turn affects how</span>
+</div>
+<div class="pos" id="_100:168" style="top:168;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+critters in the world evolve and interact with each other. Each location in the grid has it&#8217;s own</span>
+</div>
+<div class="pos" id="_100:189" style="top:189;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+environmental parameters, and based on them, the critters eat, hunt, roam, mate, or die.</span>
+</div>
+<div class="pos" id="_150:209" style="top:209;left:150">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+This game was originally intended to study the effects and progress of evolutionary</span>
+</div>
+<div class="pos" id="_100:229" style="top:229;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+algorithms. Keeping to the spirit of the origin of EAs, we decided to build a nature-resembling</span>
+</div>
+<div class="pos" id="_100:249" style="top:249;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+system where there are preys and predators, with few environmental parameters that can affect</span>
+</div>
+<div class="pos" id="_100:269" style="top:269;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+things such as movement, food scarcity, disease rate, etc. The player, using on-board buttons</span>
+</div>
+<div class="pos" id="_100:290" style="top:290;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+and switches, interacts through a cursor on the screen to change the environmental parameters</span>
+</div>
+<div class="pos" id="_100:310" style="top:310;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+of a specific area. The world steps through and updates the critters on a low frequency clock,</span>
+</div>
+<div class="pos" id="_100:330" style="top:330;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+although the actual calculation runs much faster.</span>
+</div>
+<div class="pos" id="_75:370" style="top:370;left:75">
+<span id="_16.3" style="font-weight:bold; font-family:Arial; font-size:16.3px; color:#000000">
+2. High Level Design</span>
+</div>
+<div class="pos" id="_150:393" style="top:393;left:150">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+One of the collaborator (Eric) has taken some courses in Evolutionary Algorithms and</span>
+</div>
+<div class="pos" id="_100:413" style="top:413;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+thought it would be interesting to study how an algorithm mimicking a natural process behaves.</span>
+</div>
+<div class="pos" id="_150:433" style="top:433;left:150">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+A lot of background math and proofs are required to guarantee that an evolutionary</span>
+</div>
+<div class="pos" id="_100:453" style="top:453;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+algorithm solves a specific problem. However, we&#8217;re not really solving a problem; we&#8217;re merely</span>
+</div>
+<div class="pos" id="_100:473" style="top:473;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+observing what happens to the population when environment changes. We do need to come up</span>
+</div>
+<div class="pos" id="_100:494" style="top:494;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+with a good encoding of genomes and how to relate genetic with environmental factors.</span>
+</div>
+<div class="pos" id="_100:514" style="top:514;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+H owever, there isn&#8217;t any real methods to obtaining this; rather, it is a design choice. We have</span>
+</div>
+<div class="pos" id="_100:534" style="top:534;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+decided to use 4 environmental factors (water, vegetation, temperature, terrain) and 2 10-bit</span>
+</div>
+<div class="pos" id="_100:554" style="top:554;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+genes for each individual</span>
+</div>
+<div class="pos" id="_150:875" style="top:875;left:150">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+.</span>
+</div>
+<div class="pos" id="_335:915" style="top:915;left:335">
+<span id="_13.7" style="font-weight:bold; font-family:Arial; font-size:13.7px; color:#4985e8">
+Figure 1. Systems Diagram</span>
+</div>
+<div class="pos" id="_150:954" style="top:954;left:150">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+Systems diagram is shown in Figure 1. We have 2 memory blocks, one for critter and</span>
+</div>
+<div class="pos" id="_100:974" style="top:974;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+one for environment. Environment memory also includes whether or not a critter is on that spot</span>
+</div>
+<div class="pos" id="_100:994" style="top:994;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+or not, along with the type of the critter. VGA Controller uses the environmental parameters and</span>
+</div>
+<div class="pos" id="_100:1015" style="top:1015;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+existence/type of critter to output correct color to the VGA screen. Environment Controller takes</span>
+</div>
+<div class="pos" id="_100:1035" style="top:1035;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+cursor inputs and adjusts the environment accordingly, while Critter Controller updates each</span>
+</div>
+<div class="pos" id="_100:1055" style="top:1055;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+critter and updates where each critter is to the environment memory.</span>
+</div>
+<div class="pos" id="_150:1075" style="top:1075;left:150">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+Although similar projects can be done entirely on microcontrollers and the like, we chose</span>
+</div>
+<div class="pos" id="_100:1095" style="top:1095;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+to do it almost entirely hardware based. Benefits of this included drastically lower usage of</span>
+</div>
+<div class="pos" id="_100:1116" style="top:1116;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+memory as well as ability to parallelize a lot of computation. Benefits of using software-based</span>
+</div>
+<div class="pos" id="_100:1136" style="top:1136;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+approach would be simpler code structure and versatility.</span>
+</div>
+<div class="pos" id="_75:1196" style="top:1196;left:75">
+<span id="_16.3" style="font-weight:bold; font-family:Arial; font-size:16.3px; color:#000000">
+3. Implementation</span>
+</div>
+<div class="pos" id="_100:1218" style="top:1218;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+a) Random Number Generator</span>
+</div>
+<div class="pos" id="_150:1239" style="top:1239;left:150">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+We implemented a simple random number generator used in Lab 1. Although the intent</span>
+</div>
+<div class="pos" id="_100:1259" style="top:1259;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+was to produce uniformly distributed drawing of 0&#8217;s and 1&#8217;s, but after some testing, it turns out</span>
+</div>
+<div class="pos" id="_100:1279" style="top:1279;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+that we can use a portion of the actual random number and compare it to a threshold to get a</span>
+</div>
+<div class="pos" id="_100:1300" style="top:1300;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+random binary decision weighted by probability.</span>
+</div>
+<div class="pos" id="_150:1320" style="top:1320;left:150">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+After initially seeding, we keep shifting in an XOR of two bits to the random number, and</span>
+</div>
+<div class="pos" id="_100:1340" style="top:1340;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+compare a select portion (16-bit) of the random number with input threshold and output whether</span>
+</div>
+<div class="pos" id="_100:1360" style="top:1360;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+or not the segment has higher value than the threshold. We tested this module by simulating it</span>
+</div>
+<div class="pos" id="_100:1380" style="top:1380;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+with multiple thresholds and confirming that fraction resulting from the simulation matched the</span>
+</div>
+<div class="pos" id="_100:1401" style="top:1401;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+proportion we were inputting.</span>
+</div>
+<div class="pos" id="_100:1441" style="top:1441;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+b) Environment Controller</span>
+</div>
+<div class="pos" id="_150:1461" style="top:1461;left:150">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+We adapted our code from Lab 4 in creating and using a cursor on VGA screen. Once</span>
+</div>
+<div class="pos" id="_100:1481" style="top:1481;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+we had a screen up with adjustable cursor, we moved on to implement an area-wise change to</span>
+</div>
+<div class="pos" id="_100:1502" style="top:1502;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+the VGA memory buffer, which is same as environment memory. We changed our cursor logic</span>
+</div>
+<div class="pos" id="_100:1522" style="top:1522;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+to become a state machine, and added a new state to write new values to a specified area with</span>
+</div>
+<div class="pos" id="_100:1542" style="top:1542;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+location specified by cursor and size by switches.</span>
+</div>
+<div class="pos" id="_150:1562" style="top:1562;left:150">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+Changing the cursor logic to state machine took some time, but it worked easily once it</span>
+</div>
+<div class="pos" id="_100:1582" style="top:1582;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+was done. Testing was easily done through visually confirming that areas that we intended to</span>
+</div>
+<div class="pos" id="_100:1603" style="top:1603;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+change did indeed change with cursor interaction.</span>
+</div>
+<div class="pos" id="_100:1643" style="top:1643;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+c) VGA Controller</span>
+</div>
+<div class="pos" id="_150:1663" style="top:1663;left:150">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+VGA Controller was developed in tandem with Environment Controller. We decided to</span>
+</div>
+<div class="pos" id="_100:1683" style="top:1683;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+use 4 bits for each environmental parameters and 2 bits indicating existence and type of critter</span>
+</div>
+<div class="pos" id="_100:1704" style="top:1704;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+on the spot, giving us total of 18 bits per pixel location. It turns out that 640x480 memory block</span>
+</div>
+<div class="pos" id="_100:1724" style="top:1724;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+with 18 bit word was too much for DE2-115, so we had to downsize our world to 320x240.</span>
+</div>
+<div class="pos" id="_150:1744" style="top:1744;left:150">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+If cursor mode is on, we draw the cursor over anything. If cursor mode is off but a critter</span>
+</div>
+<div class="pos" id="_100:1764" style="top:1764;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+is on, we draw according to the type of the critter, with prey being green and predator blue.</span>
+</div>
+<div class="pos" id="_100:1784" style="top:1784;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+Else, we scale each RGB value with terrain, vegetation, and water respectively, and scale the</span>
+</div>
+<div class="pos" id="_100:1805" style="top:1805;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+intensity of the color with temperature. We used HEX display to show the 4 environmental</span>
+</div>
+<div class="pos" id="_100:1825" style="top:1825;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+parameters getting set, so we can visually confirm that the colors match our expectations from</span>
+</div>
+<div class="pos" id="_100:1845" style="top:1845;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+given environmental factors.</span>
+</div>
+<div class="pos" id="_100:1885" style="top:1885;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+d) Critter Controller</span>
+</div>
+<div class="pos" id="_150:1906" style="top:1906;left:150">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+Critter Controller is the centerpiece for calculation. This module takes 1 individual in a</span>
+</div>
+<div class="pos" id="_100:1926" style="top:1926;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+population and performs all necessary steps for stepping through 1 simulation tick. Figure 2</span>
+</div>
+<div class="pos" id="_100:1946" style="top:1946;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+shows the finite state machine of this module.</span>
+</div>
+<div class="pos" id="_0:0" style="top:2100">
+<img name="_2100:850" src="page_002.jpg" height="2100" width="850" border="0" usemap="#Map"></div>
+<div class="pos" id="_260:2619" style="top:2619;left:260">
+<span id="_13.7" style="font-weight:bold; font-family:Arial; font-size:13.7px; color:#4985e8">
+Figure 2. Finite State Machine of Critter Controller</span>
+</div>
+<div class="pos" id="_150:2658" style="top:2658;left:150">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+This module was the hardest to design and implement, as most of the &#8220;interesting&#8221;</span>
+</div>
+<div class="pos" id="_100:2678" style="top:2678;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+aspects of this project occur in it. We decided to implement this using simple iteration and finite</span>
+</div>
+<div class="pos" id="_100:2698" style="top:2698;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+state machine. First, at reset, we wait for a start signal. Once received, the controller updates</span>
+</div>
+<div class="pos" id="_100:2718" style="top:2718;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+the address of environment and critter to read and start the calculation.</span>
+</div>
+<div class="pos" id="_150:2738" style="top:2738;left:150">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+First, we check for survivability, which is comprised of three aspects: age, food, and</span>
+</div>
+<div class="pos" id="_100:2759" style="top:2759;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+disease. Each critter gains 1 age per simulation cycle, and dies if its over the max age, defined</span>
+</div>
+<div class="pos" id="_100:2779" style="top:2779;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+by gene 2. Each critter loses some amount of food per simulation cycle, defined by gene 1.</span>
+</div>
+<div class="pos" id="_100:2799" style="top:2799;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+Predators lose food at lower rate than preys. However, preys have a certain chance, dependent</span>
+</div>
+<div class="pos" id="_100:2819" style="top:2819;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+on the environment, of gaining a set amount of food, determined by the RNG. Similarly, each</span>
+</div>
+<div class="pos" id="_100:2839" style="top:2839;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+critter has low chance of getting a disease and dying, related to certain environmental factors</span>
+</div>
+<div class="pos" id="_100:2860" style="top:2860;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+(water, vegetation, temperature) and inversely related to gene 2.</span>
+</div>
+<div class="pos" id="_150:2880" style="top:2880;left:150">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+Once the critter survives all the survival checks, we start collision checks. If a critter</span>
+</div>
+<div class="pos" id="_100:2900" style="top:2900;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+within range is found, we enter either mating or pvp state, depending on types of the two</span>
+</div>
+<div class="pos" id="_100:2920" style="top:2920;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+interacting critters. If mating, we check if both critters haven&#8217;t mated recently and is also above</span>
+</div>
+<div class="pos" id="_100:2940" style="top:2940;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+mating ag e (&#8539; of max age), and perform crossovers. If pvp -ing, we compare gene 1,</span>
+</div>
+<div class="pos" id="_100:2961" style="top:2961;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+representing camo for preys and eyesight for predators, of both critters, and whoever has higher</span>
+</div>
+<div class="pos" id="_100:2981" style="top:2981;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+one either succeeds at hunting or evading the other. If no such critter is found or the critter</span>
+</div>
+<div class="pos" id="_100:3001" style="top:3001;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+failed to interact, or after mating/pvp procedure, we move on to mutation. Important to note is</span>
+</div>
+<div class="pos" id="_100:3021" style="top:3021;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+that when mating successfully happens, we leave the original parent alone and create a new</span>
+</div>
+<div class="pos" id="_100:3041" style="top:3041;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+critter.</span>
+</div>
+<div class="pos" id="_150:3062" style="top:3062;left:150">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+Mutation and movement is straight forward, with mutation slighting changing both genes</span>
+</div>
+<div class="pos" id="_100:3082" style="top:3082;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+on a low chance, and chance of movement depending on critter&#8217;s hunger while range of</span>
+</div>
+<div class="pos" id="_100:3102" style="top:3102;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+movement depending on the terrain of the environment. Once the controller is done with one</span>
+</div>
+<div class="pos" id="_100:3122" style="top:3122;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+critter, either by proliferating or dying, it raises the valid flag and resets back to the reset state.</span>
+</div>
+<div class="pos" id="_100:3163" style="top:3163;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+e) Integration</span>
+</div>
+<div class="pos" id="_150:3183" style="top:3183;left:150">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+Once all the components were in, we integrated the entire system. Figure 3 shows the</span>
+</div>
+<div class="pos" id="_100:3203" style="top:3203;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+finite state machine of the overall system. The system largely has two modes: cursor mode and</span>
+</div>
+<div class="pos" id="_100:3223" style="top:3223;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+calculation mode, determined by the halt signal (switch 16).</span>
+</div>
+<div class="pos" id="_150:3244" style="top:3244;left:150">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+If halt is on, we enter the cursor mode, in which we stop the simulation of the world and</span>
+</div>
+<div class="pos" id="_100:3264" style="top:3264;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+updates the environmental parameters. Main state for this mode is pause, in which the FPGA</span>
+</div>
+<div class="pos" id="_100:3284" style="top:3284;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+waits for button inputs to process. Environment controller is used here, as we process the</span>
+</div>
+<div class="pos" id="_100:3304" style="top:3304;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+switch, and we debounce the press after by staying in key_pause state until all buttons are</span>
+</div>
+<div class="pos" id="_100:3324" style="top:3324;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+released.</span>
+</div>
+<div class="pos" id="_150:3345" style="top:3345;left:150">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+When halt is off, we enter calculation mode, in which we step through the simulation</span>
+</div>
+<div class="pos" id="_100:3365" style="top:3365;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+according to run_clk using the critter controller. First, the critter controller is enabled in calc, and</span>
+</div>
+<div class="pos" id="_100:3385" style="top:3385;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+we stay in calc until the critter controller raises valid flag, indicating that current critter is</span>
+</div>
+<div class="pos" id="_100:3405" style="top:3405;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+processed. We then enter the write state, where we move the critter by deleting its former</span>
+</div>
+<div class="pos" id="_100:3426" style="top:3426;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+position from environment memory. If newly updated critter is also alive, we enter write_n state,</span>
+</div>
+<div class="pos" id="_100:3446" style="top:3446;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+where we input the new location. We then move on to done state, where we check if the newly</span>
+</div>
+<div class="pos" id="_100:3466" style="top:3466;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+updated critter is an offspring. If so, we enter offspring state where we scan the critter memory</span>
+</div>
+<div class="pos" id="_100:3486" style="top:3486;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+for an empty spot. From done state or offspring state, if we processed all critters, we return to</span>
+</div>
+<div class="pos" id="_100:3506" style="top:3506;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+rest state, else we return to calc state with new critter address. We synchronized the updates</span>
+</div>
+<div class="pos" id="_100:3527" style="top:3527;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+with slower run_clk by having rest only transition to init while run_clk is low, and init to calc while</span>
+</div>
+<div class="pos" id="_100:3547" style="top:3547;left:100">
+<span id="_15.5" style=" font-family:Arial; font-size:15.5px; color:#000000">
+run_clk is high.</span>
+</div>
+<div class="pos" id="_100:3587" style="top:3587;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+.</span>
+</div>
+<div class="pos" id="_248:3945" style="top:3945;left:248">
+<span id="_13.7" style="font-weight:bold; font-family:Arial; font-size:13.7px; color:#4985e8">
+Figure 3. Finite State Machine of Integrated Controller</span>
+</div>
+<div class="pos" id="_75:4004" style="top:4004;left:75">
+<span id="_16.3" style="font-weight:bold; font-family:Arial; font-size:16.3px; color:#000000">
+4. Results</span>
+</div>
+<div class="pos" id="_150:4026" style="top:4026;left:150">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+For preliminary testing, we isolated individual parts of the evolutionary system. We first</span>
+</div>
+<div class="pos" id="_100:4046" style="top:4046;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+started with the random number generator module and created a ModelSim testbench to</span>
+</div>
+<div class="pos" id="_100:4067" style="top:4067;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+analyze the frequency of high outputs for given threshold values. As shown below, with half of</span>
+</div>
+<div class="pos" id="_100:4087" style="top:4087;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+the threshold maximum value, the RNG_decision module outputs roughly the same highs and</span>
+</div>
+<div class="pos" id="_100:4107" style="top:4107;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+lows.</span>
+</div>
+<div class="pos" id="_0:0" style="top:4200">
+<img name="_2100:850" src="page_003.jpg" height="2100" width="850" border="0" usemap="#Map"></div>
+<div class="pos" id="_290:4305" style="top:4305;left:290">
+<span id="_13.7" style="font-weight:bold; font-family:Arial; font-size:13.7px; color:#4985e8">
+Figure 4. ModelSim RNG Module Results</span>
+</div>
+<div class="pos" id="_150:4344" style="top:4344;left:150">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+We then simulated two modules that utilized the results from the RNG_decision module.</span>
+</div>
+<div class="pos" id="_100:4364" style="top:4364;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+The first was a crossover module that ran with the same threshold as before. As shown below,</span>
+</div>
+<div class="pos" id="_100:4384" style="top:4384;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+entire genes from parent genomes pass to the child genome during mating, and the crossover</span>
+</div>
+<div class="pos" id="_100:4404" style="top:4404;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+module results in an even mix of child genome results with the given RNG threshold.</span>
+</div>
+<div class="pos" id="_271:4529" style="top:4529;left:271">
+<span id="_13.7" style="font-weight:bold; font-family:Arial; font-size:13.7px; color:#4985e8">
+Figure 5. ModelSim Crossover Module Results</span>
+</div>
+<div class="pos" id="_150:4568" style="top:4568;left:150">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+The second of these modules was the mutation module, which altered genes in a given</span>
+</div>
+<div class="pos" id="_100:4588" style="top:4588;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+genome with a low probability. For this simulation, we chose to run the mutation at 1%</span>
+</div>
+<div class="pos" id="_100:4608" style="top:4608;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+probability. In the testbench, we included metrics that counted the number of mutations as well</span>
+</div>
+<div class="pos" id="_100:4629" style="top:4629;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+as the total number of mutation opportunities during the simulation. As shown below, the results</span>
+</div>
+<div class="pos" id="_100:4649" style="top:4649;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+followed closely to the desired 1% probability.</span>
+</div>
+<div class="pos" id="_277:4815" style="top:4815;left:277">
+<span id="_13.7" style="font-weight:bold; font-family:Arial; font-size:13.7px; color:#4985e8">
+Figure 6. ModelSim Mutation Module Results</span>
+</div>
+<div class="pos" id="_150:4854" style="top:4854;left:150">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+Before we included these and other evolutionary functionalities in the top level module,</span>
+</div>
+<div class="pos" id="_100:4874" style="top:4874;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+we tested the user-controlled portion of the design. As mentioned before, the user can pause</span>
+</div>
+<div class="pos" id="_100:4894" style="top:4894;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+the simulation at any time in order to change parameters in selected regions of the environment</span>
+</div>
+<div class="pos" id="_100:4915" style="top:4915;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+using an expandable cursor that can be moved with buttons and switches. Within the selected</span>
+</div>
+<div class="pos" id="_100:4935" style="top:4935;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+region, the user could edit the four environment parameters, which were displayed on hex digits.</span>
+</div>
+<div class="pos" id="_100:4955" style="top:4955;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+As shown below, this user control could be performed with critter simulation in the background.</span>
+</div>
+<div class="pos" id="_100:4975" style="top:4975;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+In this version, critters were simply drawn randomly across the screen, but it shows that both</span>
+</div>
+<div class="pos" id="_100:4995" style="top:4995;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+parts of the system could function simultaneously.</span>
+</div>
+<div class="pos" id="_283:5322" style="top:5322;left:283">
+<span id="_13.7" style="font-weight:bold; font-family:Arial; font-size:13.7px; color:#4985e8">
+Figure 7. Environment with Edited Regions</span>
+</div>
+<div class="pos" id="_150:5361" style="top:5361;left:150">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+Below is the result of critter controller for mating 2 critters. We can see that crossover</span>
+</div>
+<div class="pos" id="_100:5381" style="top:5381;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+does happen in this specific section, as output gene is different and child flag is on. Overall,</span>
+</div>
+<div class="pos" id="_100:5401" style="top:5401;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+we&#8217;ve tested individual critter interactions as well as against a smaller list, and they all simulated</span>
+</div>
+<div class="pos" id="_100:5421" style="top:5421;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+according to expectations.</span>
+</div>
+<div class="pos" id="_250:5578" style="top:5578;left:250">
+<span id="_13.7" style="font-weight:bold; font-family:Arial; font-size:13.7px; color:#4985e8">
+Figure 8. ModelSim Critter Controller Module Results</span>
+</div>
+<div class="pos" id="_150:5617" style="top:5617;left:150">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+Unfortunately, we were unable to get the full evolutionary design to function properly.</span>
+</div>
+<div class="pos" id="_100:5638" style="top:5638;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+Though we were able to show that specific evolutionary modules worked properly, we were</span>
+</div>
+<div class="pos" id="_100:5658" style="top:5658;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+unable to integrate them into a larger module that would iterate over the entire list of critters,</span>
+</div>
+<div class="pos" id="_100:5678" style="top:5678;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+determining changes in each genome and outputting the result to the environment VGA buffer.</span>
+</div>
+<div class="pos" id="_100:5698" style="top:5698;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+There were a number of issues. The biggest problem was that we had two different structure to</span>
+</div>
+<div class="pos" id="_100:5718" style="top:5718;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+use for VGA, one for environment and one for critter. Our effort into integrating the results from</span>
+</div>
+<div class="pos" id="_100:5739" style="top:5739;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+critter controller to environment memory was imperfect, leading to visually noticeable issue of</span>
+</div>
+<div class="pos" id="_100:5759" style="top:5759;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+the system not erasing previous critter locations after a critter has moved. In addition, the critter</span>
+</div>
+<div class="pos" id="_100:5779" style="top:5779;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+movement behaved sporadically, setting multiple locations with a single move. These two errors</span>
+</div>
+<div class="pos" id="_100:5799" style="top:5799;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+can be seen below. The displayed critter colors corresponded correctly with the critter type, but</span>
+</div>
+<div class="pos" id="_100:5819" style="top:5819;left:100">
+<span id="_15.0" style=" font-family:Arial; font-size:15.0px; color:#000000">
+the overall evolution did not work correctly.</span>
+</div>
+<div class="pos" id="_229:6162" style="top:6162;left:229">
+<span id="_13.7" style="font-weight:bold; font-family:Arial; font-size:13.7px; color:#4985e8">
+Figure 9. Sporadic Critter Movement During Full Simulation</span>
+</div>
+<div class="pos" id="_0:0" style="top:6300">
+<img name="_2100:850" src="page_004.jpg" height="2100" width="850" border="0" usemap="#Map"></div>
+<div class="pos" id="_75:6298" style="top:6298;left:75">
+<span id="_16.1" style="font-weight:bold; font-family:Arial; font-size:16.1px; color:#000000">
+5. Conclusion</span>
+</div>
+<div class="pos" id="_150:6320" style="top:6320;left:150">
+<span id="_14.8" style=" font-family:Arial; font-size:14.8px; color:#000000">
+While certain individual modules in the design operated correctly in isolated simulation,</span>
+</div>
+<div class="pos" id="_100:6337" style="top:6337;left:100">
+<span id="_14.8" style=" font-family:Arial; font-size:14.8px; color:#000000">
+the overall integrated design did not execute correctly. The main errors in the functionality were</span>
+</div>
+<div class="pos" id="_100:6355" style="top:6355;left:100">
+<span id="_14.8" style=" font-family:Arial; font-size:14.8px; color:#000000">
+caused in the top-level state machine, where data was being passed between the critter</span>
+</div>
+<div class="pos" id="_100:6372" style="top:6372;left:100">
+<span id="_14.8" style=" font-family:Arial; font-size:14.8px; color:#000000">
+controller, the critter memory, and the environment VGA buffer. Even though the critter control</span>
+</div>
+<div class="pos" id="_100:6390" style="top:6390;left:100">
+<span id="_14.8" style=" font-family:Arial; font-size:14.8px; color:#000000">
+module worked correctly in an isolated testbench, its results were not read back properly into</span>
+</div>
+<div class="pos" id="_100:6408" style="top:6408;left:100">
+<span id="_14.8" style=" font-family:Arial; font-size:14.8px; color:#000000">
+the two memories. In fact, the state machine would only ever perform calculations on the first</span>
+</div>
+<div class="pos" id="_100:6425" style="top:6425;left:100">
+<span id="_14.8" style=" font-family:Arial; font-size:14.8px; color:#000000">
+location in the critter memory. In a redesign, we would reassess how the state machine reads</span>
+</div>
+<div class="pos" id="_100:6443" style="top:6443;left:100">
+<span id="_14.8" style=" font-family:Arial; font-size:14.8px; color:#000000">
+data from each location.</span>
+</div>
+<div class="pos" id="_150:6482" style="top:6482;left:150">
+<span id="_14.8" style=" font-family:Arial; font-size:14.8px; color:#000000">
+Our design was built off a top-level module provided by Bruce Land in one of the labs</span>
+</div>
+<div class="pos" id="_100:6502" style="top:6502;left:100">
+<span id="_14.8" style=" font-family:Arial; font-size:14.8px; color:#000000">
+this semester. We modified the setup to work correctly with a DE2-115 board and then</span>
+</div>
+<div class="pos" id="_100:6523" style="top:6523;left:100">
+<span id="_14.8" style=" font-family:Arial; font-size:14.8px; color:#000000">
+implemented our design. This given top-level module included a VGA buffer module that utilized</span>
+</div>
+<div class="pos" id="_100:6543" style="top:6543;left:100">
+<span id="_14.8" style=" font-family:Arial; font-size:14.8px; color:#000000">
+the Altera altsyncram. We modified this buffer to the correct sizes and word lengths of the</span>
+</div>
+<div class="pos" id="_100:6563" style="top:6563;left:100">
+<span id="_14.8" style=" font-family:Arial; font-size:14.8px; color:#000000">
+environment memory and critter memory using the MegaWizard plug-in within Quartus. For our</span>
+</div>
+<div class="pos" id="_100:6583" style="top:6583;left:100">
+<span id="_14.8" style=" font-family:Arial; font-size:14.8px; color:#000000">
+design, we did not reverse-engineer any existing designs and did not have to sign any non-</span>
+</div>
+<div class="pos" id="_100:6604" style="top:6604;left:100">
+<span id="_14.8" style=" font-family:Arial; font-size:14.8px; color:#000000">
+disclosures to acquire any hardware, so there were no patent or trademark issues that needed</span>
+</div>
+<div class="pos" id="_100:6624" style="top:6624;left:100">
+<span id="_14.8" style=" font-family:Arial; font-size:14.8px; color:#000000">
+to be addressed. There are likely no patent opportunities or FCC regulations that apply to our</span>
+</div>
+<div class="pos" id="_100:6644" style="top:6644;left:100">
+<span id="_14.8" style=" font-family:Arial; font-size:14.8px; color:#000000">
+design. It is merely a simulation tool with little practical use and marketability.</span>
+</div>
+<div class="pos" id="_75:6704" style="top:6704;left:75">
+<span id="_16.1" style="font-weight:bold; font-family:Arial; font-size:16.1px; color:#000000">
+6. Appendix A - Code</span>
+</div>
+<div class="pos" id="_100:6727" style="top:6727;left:100">
+<span id="_14.8" style=" font-family:Arial; font-size:14.8px; color:#000000">
+a) <a href="DE2_TOP.html">DE2_TOP.v</a> </span>
+</div>
+<div class="pos" id="_100:6747" style="top:6747;left:100">
+<span id="_14.8" style=" font-family:Arial; font-size:14.8px; color:#000000">
+b) <a href="critter_controller.html">critter_controller.v</a> </span>
+</div>
+<div class="pos" id="_75:6787" style="top:6787;left:75">
+<span id="_16.1" style="font-weight:bold; font-family:Arial; font-size:16.1px; color:#000000">
+7. Appendix B - Work Distribution</span>
+</div>
+<div class="pos" id="_100:6809" style="top:6809;left:100">
+<span id="_14.8" style=" font-family:Arial; font-size:14.8px; color:#000000">
+a) Marshall Mucasey</span>
+</div>
+<div class="pos" id="_129:6829" style="top:6829;left:129">
+<span id="_14.8" style=" font-family:Arial; font-size:14.8px; color:#000000">
+i)</span>
+</div>
+<div class="pos" id="_162:6829" style="top:6829;left:162">
+<span id="_14.8" style=" font-family:Arial; font-size:14.8px; color:#000000">
+Random Number Generator</span>
+</div>
+<div class="pos" id="_125:6850" style="top:6850;left:125">
+<span id="_14.8" style=" font-family:Arial; font-size:14.8px; color:#000000">
+ii)</span>
+</div>
+<div class="pos" id="_162:6850" style="top:6850;left:162">
+<span id="_14.8" style=" font-family:Arial; font-size:14.8px; color:#000000">
+Environmental Controller</span>
+</div>
+<div class="pos" id="_122:6870" style="top:6870;left:122">
+<span id="_14.8" style=" font-family:Arial; font-size:14.8px; color:#000000">
+iii)</span>
+</div>
+<div class="pos" id="_162:6870" style="top:6870;left:162">
+<span id="_14.8" style=" font-family:Arial; font-size:14.8px; color:#000000">
+VGA Controller</span>
+</div>
+<div class="pos" id="_100:6890" style="top:6890;left:100">
+<span id="_14.8" style=" font-family:Arial; font-size:14.8px; color:#000000">
+b) Eric T. Jung</span>
+</div>
+<div class="pos" id="_129:6910" style="top:6910;left:129">
+<span id="_14.8" style=" font-family:Arial; font-size:14.8px; color:#000000">
+i)</span>
+</div>
+<div class="pos" id="_162:6910" style="top:6910;left:162">
+<span id="_14.8" style=" font-family:Arial; font-size:14.8px; color:#000000">
+Environmental Controller</span>
+</div>
+<div class="pos" id="_125:6930" style="top:6930;left:125">
+<span id="_14.8" style=" font-family:Arial; font-size:14.8px; color:#000000">
+ii)</span>
+</div>
+<div class="pos" id="_162:6930" style="top:6930;left:162">
+<span id="_14.8" style=" font-family:Arial; font-size:14.8px; color:#000000">
+Critter Controller</span>
+</div>
+<div class="pos" id="_122:6951" style="top:6951;left:122">
+<span id="_14.8" style=" font-family:Arial; font-size:14.8px; color:#000000">
+iii)</span>
+</div>
+<div class="pos" id="_162:6951" style="top:6951;left:162">
+<span id="_14.8" style=" font-family:Arial; font-size:14.8px; color:#000000">
+Integration</span>
+</div>
+</nowrap></nobr>
+</body>
+</html>

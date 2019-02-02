@@ -1,0 +1,361 @@
+; Test serial i/o: 
+; getchar and putchar
+; puthex which prints a 5 digit hex number
+; gethex which receives a hex number
+; putstr prints a string from the stack
+;
+; Test LCD interface
+; LCD_putchar, LCD_putstr, LCD_puthex, LCD_init
+; LCD_out: reset, strobe, [8:0] data
+;
+; ==================================
+
+constant 
+	; serial input port
+	serialIn 0 ; port 0
+	serialOut 0 ; port 0
+	; serial control flags
+	dataMask 255 ; bits [7:0]
+	xmitBusyMask 1024 ; bit 10
+	recBusyMask 256 ; bit 8
+	recDoneMask 512 ; bit 9
+	charReadyMask 2048 ; bit 11
+	xmitEnableMask 256 ; bit 8
+	readDoneMask 512 ; bit 9
+	;
+	; LCD stuff
+	LCDin 1 	; port 1
+	LCDout 1 	; port 1
+	writeDoneMask 1 ; bit 0
+	writeStrobeMask 512 ; bit 9
+	position_line1 128 ; 0x80
+	position_line2 192 ; 0xc0
+	LCDreset 1024 ; bit 10
+	printable 256 ; bit 8
+	LCDpower 2048 ; bit 11
+
+	; led port
+	LEDR 2 ; port 2
+	;
+	forever 1 ;1 ; endless loop
+	zero 48 ; ascii zero
+	a 97 ; ascii lower case 'a'
+
+; ==================================
+
+variable
+	char    ; current serial character
+	count
+	
+	; variables for gethex
+ 	in_str 32 ; input serial string
+	n
+	shift_factor
+	result_num
+; ==================================
+ 
+inline inc
+	1 add
+endinline
+
+inline swap
+	pop.4 ; locs 4&5 are hidden temp locations
+	pop.5
+	push.4
+	push.5
+endinline
+
+inline crlf 
+	10 putchar ; linefeed 
+	13 putchar ; carriage return
+endinline
+
+inline space
+	32 putchar ; space
+endinline
+
+; position cursor at beginning
+; of line one
+inline LCD_line_1 
+	position_line1 LCDputchar
+endinline
+
+; position cursor at beginning
+; of line two
+inline LCD_line_2
+	position_line2 LCDputchar
+endinline
+
+inline LCDspace
+	288 LCDputchar
+endinline
+
+; ================================
+
+function
+	; RS232 serial
+	getchar
+	putchar
+	delay_10
+	puthex
+	gethex
+	putstr
+	; LCD
+	LCDinit
+	LCDputchar
+	LCDputhex
+	LCDputstr
+	LCDclear
+	
+; =================================
+program ; this section contains the actual program
+
+main:
+LCDinit 
+LCD_line_1 "Oct_2011 LCDputstr
+100000 delay_10 ; wait a second
+LCDclear
+1 =count
+; loop forever waiting for human input
+while forever ; never exit
+do
+	; serial test
+	"enter> putstr gethex crlf
+	puthex space count puthex crlf
+	count 1 add =count
+	;LCD test
+	LCD_line_1 count LCDputhex
+	LCDspace "testLCD LCDputstr
+	LCD_line_2 count 1 sub LCDputhex
+endwhile ; end of infinite loop
+
+;================================================================
+;=== LCD interface ================
+;==================================
+
+;==================================
+; enters with a 9-bit char (lower 8 is ASCII)
+; exits with nothing on stack
+; LCDout needs: reset, strobe, [8:0] data
+;
+LCDputchar:
+	; wait for LCD done
+	while in[LCDin] bnot writeDoneMask band 
+	do endwhile
+	
+	; output data ORed with enable and power
+	LCDpower writeStrobeMask bor bor out[LCDout] ; send data
+
+	; clear strobe (and data) 	
+	nop. LCDpower out[LCDout] 
+return
+
+;==================================
+; enter/exit with nothing on stack
+LCDinit:
+	; power off and wait 0.5 sec
+	0  out[LCDout] 
+	; reset with power off to speed
+	; power down of display
+	LCDreset out[LCDout] 
+	LCDreset out[LCDout] 
+	50000 delay_10
+	
+	;turn on power and wait 50 mSec
+	LCDpower out[LCDout] 
+	5000 delay_10
+
+	; set reset line, then clear
+	; two cycles later
+	LCDreset LCDpower bor out[LCDout] nop.
+	LCDpower  out[LCDout] 
+	; wait for LCD done
+	while in[LCDin] bnot writeDoneMask band 
+	do endwhile
+return
+
+;==================================
+; enters with count n on the stack top
+; followed by n characters on the stack
+LCDputstr:
+	pop.4
+	while push.4 0 gt
+	do
+	   printable add LCDputchar
+	   push.4 1 sub pop.4
+	endwhile
+return
+
+; =================================
+; enters with an 18-bit value on the stack
+; to print to the LCD
+LCDputhex:
+	pop.6 ; store the input
+	5 pop.4 ; number of digits to print
+	16 pop.5 ; shift factor
+	while push.4 0 gt
+	do
+	   push.6 push.5 shr 15 band
+	   if dup 10 lt
+	   then zero add 
+	   else 10 sub a add
+	   endif
+	   printable add LCDputchar
+	   push.4 1 sub pop.4
+	   push.5 4 sub pop.5
+	endwhile
+return
+
+; =================================
+; enters with nothing on the stack
+LCDclear:
+	LCD_line_1 
+	LCDspace LCDspace LCDspace LCDspace
+	LCDspace LCDspace LCDspace LCDspace
+	LCDspace LCDspace LCDspace LCDspace
+	LCDspace LCDspace LCDspace LCDspace
+	LCD_line_2 
+	LCDspace LCDspace LCDspace LCDspace
+	LCDspace LCDspace LCDspace LCDspace
+	LCDspace LCDspace LCDspace LCDspace
+	LCDspace LCDspace LCDspace LCDspace
+return
+
+;==========================================================
+;=== serial interface =============
+;==================================
+
+;==================================
+; enters with count n on the stack top
+; followed by n characters on the stack
+putstr:
+
+	pop.4
+	while push.4 0 gt
+	do
+	   putchar
+	   push.4 1 sub pop.4
+	endwhile
+
+return
+
+; =================================
+; enters with nothing on the stack
+; exits with 18-bit number on stack
+; OR -1 for an invalid number
+; accepts positive #'s only!
+gethex:
+	0 =n 0 =shift_factor 0 =result_num
+	getchar 
+	; loop until 'enter key'
+	while dup 13 ne ; not enter key
+	do
+	   dup =in_str[n] ; store the char and dup
+	   putchar ; echo dupped char
+	   n 1 add =n ; inc the pointer
+	   getchar
+	endwhile
+
+	; parse input string
+	drop ; the extra input char
+	if n 0 gt ; did the user actually enter anything
+	then
+		while n 0 gt ; for each actual char
+		do
+		   n 1 sub =n ; point to last actual char
+		   if in_str[n] dup 58 lt
+		   then 48 sub ; 0-9
+		   else 97 sub 10 add ; a-f
+		   endif
+		   pop.4 ; save a copy of 0-15
+		   if push.4 0 lt push.4 15 gt or ; 0<=digit<=15
+		   then
+			-1 return ; error code return
+		   endif
+		   ; shift digit and add to result
+		   push.4
+		   shift_factor shl result_num add =result_num
+		   shift_factor 4 add =shift_factor
+		endwhile	   
+	endif
+
+	result_num ; put it back on stack
+return
+
+; =================================
+; enters with an 18-bit value on the stack
+; to print to serial port
+puthex:
+	pop.6 ; store the input
+	5 pop.4 ; number of digits to print
+	16 pop.5 ; shift factor
+	while push.4 0 gt
+	do
+	   push.6 push.5 shr 15 band
+	   if dup 10 lt
+	   then zero add 
+	   else 10 sub a add
+	   endif
+	   putchar
+	   push.4 1 sub pop.4
+	   push.5 4 sub pop.5
+	endwhile
+return
+
+; =================================
+; enters with no input of stack
+; exits with character on the stack
+getchar:
+	; wait for valid character
+	while in[serialIn] charReadyMask band not
+	do endwhile
+	; return with char on stack
+	in[serialIn] dataMask band 
+	; signal hardware that serial input was read
+	readDoneMask out[serialOut] 
+	; toggle read done
+	0 out[serialOut] 
+return
+
+; =================================
+; enters with character on the stack
+; exits with no output on stack
+putchar:
+	; wait for transmitter free
+	while in[serialIn] xmitBusyMask band 
+	do endwhile
+	
+	; output data ORed with enable
+	;dup ; input character
+	xmitEnableMask bor out[serialOut] ; send data
+
+	; clear enable 	;xmitEnableMask not band out[serialOut] 
+	0 out[serialOut] 
+return
+
+;========================================================
+;=== delay utility =================
+;===================================
+; enter with delay count on stack
+; each input count 
+; is about 10 microseconds
+; with a 50 MHz clock
+delay_10:
+	pop.4
+	while push.4 0 gt
+	do 
+	   push.4 1 sub pop.4
+	   55 pop.5 
+	   while push.5 0 gt
+	   do
+		push.5 1 sub pop.5
+	   endwhile
+	endwhile
+return
+
+;===end of code ============================
+
+
+
+
+

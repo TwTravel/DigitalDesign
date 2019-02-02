@@ -1,0 +1,43 @@
+DEPTH = 1024;
+WIDTH = 16;
+  
+ADDRESS_RADIX = HEX;
+DATA_RADIX = HEX;
+   
+CONTENT
+BEGIN
+[000..3FF]	:	0000;
+000	:	1000;	% pushi 0 % 
+001	:	1001;	% pushi 1 % 
+002	:	f000;	% add  % 
+003	:	3080;	% pop temp % 
+004	:	2080;	% push temp % 
+005	:	2080;	% push temp % 
+006	:	e000;	% out  % 
+007	:	1000;	% pushi 0 % 
+008	:	1001;	% pushi 1 % 
+009	:	f000;	% add  % 
+00a	:	3080;	% pop temp % 
+00b	:	2080;	% push temp % 
+00c	:	2080;	% push temp % 
+00d	:	6008;	% jnz loop1 % 
+00e	:	3080;	% pop temp % 
+00f	:	d000;	% in  % 
+010	:	1001;	% pushi sw0 % 
+011	:	f00a;	% eq  % 
+012	:	6019;	% jnz pushtest % 
+013	:	d000;	% in  % 
+014	:	1002;	% pushi sw1 % 
+015	:	f00a;	% eq  % 
+016	:	601B;	% jnz STtest % 
+017	:	1001;	% pushi loop0 % 
+018	:	a000;	% poppc  % 
+019	:	9000;	% pushpc  % 
+01a	:	401A;	% jmp halt % 
+01b	:	1081;	% pushi test % 
+01c	:	1055;	% pushi pattern % 
+01d	:	8000;	% st  % 
+01e	:	1081;	% pushi test % 
+01f	:	7000;	% ld  % 
+020	:	4020;	% jmp halt2 % 
+END ;	

@@ -1,0 +1,139 @@
+
+<html>
+<head>
+<title>ece5760 Lab 1</title>
+<style type="text/css">
+.red {color: #F00;
+}
+</style>
+</head>
+
+<body>
+<h2> ECE 5760: Laboratory 1 </h2> 
+<h2> Hardware ODE solver with HPS control. </h2>
+
+<b> Introduction. </b> 
+<p> For this exercise, you will simulate an <a href="../../../../../../https@en.wikipedia.org/wiki/Lorenz_system">Lorenz ODE system</a> using a Digital Differential Analyzer (DDA) and control the function of the circuit with the HPS. The  individual state variables of the solution will be plotted as a function of time on the VGA display. You can consider the DDA as a special purpose, reconfigurable, coprocessor controlled by the HPS. The DDA you write will be a bus-slave of the HPS.
+<b><hr>
+Procedure:</b> 
+<p> Read the <a href="../../DDA/index.htm">DDA page</a>. After reading the page down through <em>Second order system, stop. </em> The integrator code that you want to use is in the snippet below.   I suggest that with careful scaling you can use a fixed point format of something like 7.20, with a range of +/-63 and a delta of 10<sup>-6</sup>.
+You will need to use a signed, fixed-point multiplier module, and an integrator module  similar to the example in this <a href="lab2_DDA_snippet.txt"><strong>this  code snippet</strong></a>.
+
+  The arithmetic system will use 27-bit multiplies, which <a href="../../DE1_SOC/CycloneV_SE_A5.PNG">on our FPGAs</a> take one hardware multiplier (<a href="../../DE1_SOC/DSP_wp-01159-arriav-cyclonev-dsp.pdf">DSP module</a>). You could use <a href="../../DE1_SOC/HPS_peripherials/Floating_Point_index.html">floating point</a> instead, if you want to be slightly adventurous.<br>
+  <p>The physical system you will simulate is the chaotic Lorenz system shown below. A 3D state variable <a href="../../../../../../https@youtu.be/4DtdreUZrMw">animation of the trajectory</a> shows one view of solution.<br>
+  The differential equations for this system are:
+  <p><code>(dx<sub>1</sub>/dt)  = sigma*(x<sub>2</sub>-x<sub>1</sub>)<br>
+(dx<sub>2</sub>/dt) = </code>
+  <code>x<sub>1</sub></code><code>*(rho-x<sub>3</sub>)</code> -<code> x<sub>2</sub></code>
+  <br>
+  <code>(dx<sub>3</sub>/dt) = </code> <code>x<sub>1</sub></code><code>*x<sub>2</sub> - beta*x<sub>3</sub></code>
+<p> Typical values for for constants might be
+<p><code>sigma = 10.0 <br>
+beta = 8/3 <br>
+rho = 28.0 <br>
+with time step	dt = 0.01  </code>
+<p>And initial conditions
+<p><code>x = -1<br>
+y = .1<br>
+z = 25</code>
+<p> A matlab <a href="lorenz_1.m">code</a> provides a reference solution, to which you may compare your solutions.<br>
+But remember that your solutions will not match exactly because the system is chaotic. <br>
+One of the first steps for this lab is to simulate the solver hardware in ModelSim to produce something like the following. <br>
+The image  is a typical output from the matlab program. <br>
+  <br>
+  <img src="x_vs_t_Lorenz.png" width="754" height="654" alt=""/><p>-- <strong>Development process for this exercise</strong>
+<ol>
+  <li>Start by simulating in Matlab!
+     On the FPGA you are going to be using simple Euler integration the Matlab program above<a href="Osc_Euler_v2.m"></a> is coded to use Euler integration so that you can directly compare the the FPGA solution.  Make sure that for the constants and initial conditions that you choose that NO state variable  (or intermediate result) goes outside the range 
+  <code>(+/-63</code>). <br>
+  </li>
+  <li>Next <a href="../../ModelSim/index.html">simulate your synthesizable verilog in Modelsim</a> until you get the same result as you did in matlab. You will need to write a testbench which sets the same  constants and initial conditions as in the matlab code. You can also estimate how to set up the output from the simulation. For example, how many compute cycles should there be per plotted point. One way to check the solver is to export the solution vectors to matlab and use the function <em>plot3</em> to make a 3D plot similar to the final frame of the <a href="../../../../../../https@youtu.be/4DtdreUZrMw">animation of the trajectory</a>. <br>
+    -- 
+    Example state-space 3D plots from 2018: <a href="../../Student_Work/Lorenz/lorenz_new.png">1</a>, <a href="../../Student_Work/Lorenz/ODE_solver.png">2</a>.<br>
+  </li>
+  <li>When the compute module works, and you know the plot interval, you are ready to read back the solution to the HPS and do the 2D graphics to display the points for the three state variables.  </li>
+  <li>Test 2D drawing on the from the HPS to the VGA by drawing a sine wave data plot. A good place to start for HPS to VGA interface is to search for  <em>Video VGA 640x480 displayed from SDRAM, in 16-bit color</em> on the <a href="../../DE1_SOC/HPS_peripherials/univ_pgm_computer.index.html">DE1-SoC: University Computer</a> page. <br>
+  </li>
+  <li>Connect your solver output to the HPS using <a href="../../DE1_SOC/Parallel_Port.pdf">parallel i/o port</a> bus-slaves. In Qsys, remember to export the connections to the FPGA solver. Also remember that you have to assign unique addresses in Qsys to each PIO port and use those addresses in the C-code running on the HPS. A small example defines two PIO ports in <a href="../../DE1_SOC/HPS_FPGA/pio_test/qsys.PNG">Qsys</a>, Displays counts on LEDs in <a href="../../DE1_SOC/HPS_FPGA/pio_test_2/ghrd_top.v">Verilog</a>, and controls the counts <a href="../../DE1_SOC/HPS_FPGA/pio_test_2/count_5F5feb16.c">in C</a>.</li>
+  <li>When a hard-coded version plots correctly, build the PIO <a href="../../DE1_SOC/HPS_peripherials/Qsys_index.html">bus-slaves</a> necessary to control reset function and set constants from the HPS, then start on the command software for console control. I suggest a simple command interpreter to enter the three  constants, three initial conditions, start/stop,  and reset. Remember that a parallel I/O port (PIO) which provides data <em>from</em> the HPS <em>to</em> the FPGA is an <strong><em>output</em></strong>! To get the PIO datasheet, right-click the module name and in the pop-up menu, select <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">details&gt;datasheet</span>. Some other modules require that you follow the path <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">details&gt;open_component_folder </span>to get the datasheet.</li>
+</ol>
+<p><strong>--FPGA and HPS:</strong></p>
+<ol>
+  <li><a href="../../DE1_SOC/External_Bus_to_Avalon_Bridge.pdf">External Bus to Avalon Bridge</a> (external master)</li>
+  <li><a href="../../DE1_SOC/Parallel_Port.pdf">PIO</a> bus-slave (see also <a href="../../DE1_SOC/HPS_peripherials/Qsys_index.html">Qsys design page</a>)</li>
+  <li><a href="../../DE1_SOC/HPS_peripherials/Bus_master_slave_index.html">Using external buses</a></li>
+  <li>For most exercises there will be 5 or six connections to the board:<br>
+    Serial, ethernet, VGA, audio(for lab 2), USB blaster, power.<br>
+  <a href="lab1_connections.jpg"><img src="lab1_connections_small.jpg" width="400" height="359" alt=""/></a></li>
+</ol>
+<p><strong>Examples from students, 2018</strong></p>
+<ul>
+  <li><a href="../../Student_Work/Lorenz/IMG_20180208_135727.jpg">Drawn on VGA </a>by the HPS using FPGA Verilog hardware solver <br>
+  By: Michael Henning, Max Rademacher and Jonathan Plattner</li>
+  <li>Drawn in matlab from Verilog simulation of hardware <a href="../../Student_Work/Lorenz/lorenz_new.png">1</a>, <a href="../../Student_Work/Lorenz/ODE_solver.png">2</a></li>
+  <li><a href="../../../../../../https@youtu.be/TLdocElDIqs">Video</a> on VGA controlled by HPS using solver running on FPGA hardware. <br>
+    By: Brian Clark, Eldar Slobodyan, Alex Wong    <br>
+    The solution is throttled down for display.
+  </li>
+</ul>
+<hr>
+<p><b> Assignment</b></p>
+<p>-- <strong>Weekly check points</strong></p>
+<ol>
+  <li>Week 1: <br>
+    -- 
+    demonstrate the ODE solver written in synthesizable Verilog running in simulation. <br>
+    The solver modules will be in synthesizable Verilog, but of course the test bench is not synthesizable.<br>
+    -- Compare simulation output to matlab output for the same parameters.<br>
+    -- Export simulation data to Matlab and plot in 3D to show the state-space plot <br>
+    of (x,y,z). Example state-space 3D plots from 2018: <a href="../../Student_Work/Lorenz/lorenz_new.png">1</a>, <a href="../../Student_Work/Lorenz/ODE_solver.png">2</a>.</li>
+  <li>Week 2: <br>
+    -- 
+    demo HPS drawing   plots from the FPGA hardware ODE solver on the VGA.<br>
+    The HPS should draw three graphs of the three variables versus time, as shown<br>
+    in the student examples above.
+    <br>
+  -- demo <a href="../../Quartus/Quartus_compile.html">SignalTap</a> connected to your solver to display the three solution variables<br>
+  directly from the running hardware.
+  </li>
+  <li>Week 3: demo full system below</li>
+</ol>
+<p>-- <strong>Full System</strong> </p>
+<ol>
+  <li>  Build a DDA which simulates Lorenz system as described above.<br>
+    -- The DDA will need to be connected to one or more Avalon Bus-Slaves for control by the HPS (see below)
+      <br>
+      -- The DDA output will be connected to Avalon Bus-Slaves for reading by the HPS.
+    <br>
+  <li>Monitor the the variables using a VGA output of  2D plots of (x<sub>1</sub> , x<sub>2</sub> ,  x<sub>3</sub> ) generated by the HPS. <br>
+    -- Scale the display so that the plots use  the VGA vertical resolution well.<br>
+    -- Scale the drawing rate to show a few thousand  2D points on the VGA display.<br>
+    -- The display should be erased when the simulation is reset. It should freeze
+  when the simulation stops.
+  <li> Use a HPS C program to allow an operator to use a serial console to:<br>
+    -- Set the three initial conditions of the simulation.<br>
+    -- Set the three  constants.<br>
+    -- Set the
+time-step (in steps of 2). <br>
+    -- Start/Stop the simulation.  
+    <br>
+    -- Reset the simulation
+  </ol>
+    
+<p>Be prepared to demo your design to your TA in lab. You will be expected to show:<br>
+-- Set arbitrrary initial conditions and all three  constants<br>
+-- 
+Start/stop/reset solution.<code> </code></p>
+<p> Your written lab report should include: 
+<ul>
+  <li>Mathematical considerations (type of integrator, error expected/measured, approximations) 
+  <li>A 3D plot of the solution vectors exported from the verilog simulator.
+  <li>Video screen shots of the VGA -- video emailed to TAs<li>How you implemented the  DDA circuits. 
+  <li> A heavily commented listing of your Verilog design and GCC  code.  
+</ul>
+<hr>
+<br>
+<small> <font size="-1">Copyright Cornell University </font></small> 
+<!-- #BeginDate format:Am1 -->January 7, 2019<!-- #EndDate -->
+</body> </html>
+

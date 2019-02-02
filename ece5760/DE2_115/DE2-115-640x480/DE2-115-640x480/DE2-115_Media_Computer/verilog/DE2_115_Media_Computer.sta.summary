@@ -1,0 +1,209 @@
+------------------------------------------------------------
+TimeQuest Timing Analyzer Summary
+------------------------------------------------------------
+
+Type  : Slow 1200mV 85C Model Setup 'NiosII|external_clocks|DE_Clock_Generator_System|auto_generated|pll1|clk[0]'
+Slack : 4.300
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Setup 'TD_CLK27'
+Slack : 31.231
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Setup 'NiosII|external_clocks|DE_Clock_Generator_System|auto_generated|pll1|clk[2]'
+Slack : 31.966
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Setup 'altera_reserved_tck'
+Slack : 44.875
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Hold 'TD_CLK27'
+Slack : 0.321
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Hold 'NiosII|external_clocks|DE_Clock_Generator_System|auto_generated|pll1|clk[0]'
+Slack : 0.372
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Hold 'NiosII|external_clocks|DE_Clock_Generator_System|auto_generated|pll1|clk[2]'
+Slack : 0.443
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Hold 'altera_reserved_tck'
+Slack : 0.445
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Recovery 'NiosII|external_clocks|DE_Clock_Generator_System|auto_generated|pll1|clk[0]'
+Slack : 2.060
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Recovery 'altera_reserved_tck'
+Slack : 47.121
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Removal 'altera_reserved_tck'
+Slack : 1.122
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Removal 'NiosII|external_clocks|DE_Clock_Generator_System|auto_generated|pll1|clk[0]'
+Slack : 1.608
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'NiosII|external_clocks|DE_Clock_Generator_System|auto_generated|pll1|clk[0]'
+Slack : 9.572
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'CLOCK_50'
+Slack : 9.891
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'TD_CLK27'
+Slack : 18.163
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'NiosII|external_clocks|DE_Clock_Generator_System|auto_generated|pll1|clk[2]'
+Slack : 19.675
+TNS   : 0.000
+
+Type  : Slow 1200mV 85C Model Minimum Pulse Width 'altera_reserved_tck'
+Slack : 49.507
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Setup 'NiosII|external_clocks|DE_Clock_Generator_System|auto_generated|pll1|clk[0]'
+Slack : 4.562
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Setup 'TD_CLK27'
+Slack : 31.500
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Setup 'NiosII|external_clocks|DE_Clock_Generator_System|auto_generated|pll1|clk[2]'
+Slack : 32.498
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Setup 'altera_reserved_tck'
+Slack : 45.267
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Hold 'TD_CLK27'
+Slack : 0.309
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Hold 'NiosII|external_clocks|DE_Clock_Generator_System|auto_generated|pll1|clk[0]'
+Slack : 0.350
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Hold 'NiosII|external_clocks|DE_Clock_Generator_System|auto_generated|pll1|clk[2]'
+Slack : 0.392
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Hold 'altera_reserved_tck'
+Slack : 0.394
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Recovery 'NiosII|external_clocks|DE_Clock_Generator_System|auto_generated|pll1|clk[0]'
+Slack : 2.533
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Recovery 'altera_reserved_tck'
+Slack : 47.434
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Removal 'altera_reserved_tck'
+Slack : 1.022
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Removal 'NiosII|external_clocks|DE_Clock_Generator_System|auto_generated|pll1|clk[0]'
+Slack : 1.461
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'NiosII|external_clocks|DE_Clock_Generator_System|auto_generated|pll1|clk[0]'
+Slack : 9.585
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'CLOCK_50'
+Slack : 9.882
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'TD_CLK27'
+Slack : 18.162
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'NiosII|external_clocks|DE_Clock_Generator_System|auto_generated|pll1|clk[2]'
+Slack : 19.682
+TNS   : 0.000
+
+Type  : Slow 1200mV 0C Model Minimum Pulse Width 'altera_reserved_tck'
+Slack : 49.382
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Setup 'NiosII|external_clocks|DE_Clock_Generator_System|auto_generated|pll1|clk[0]'
+Slack : 7.503
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Setup 'TD_CLK27'
+Slack : 34.463
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Setup 'NiosII|external_clocks|DE_Clock_Generator_System|auto_generated|pll1|clk[2]'
+Slack : 36.585
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Setup 'altera_reserved_tck'
+Slack : 48.018
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Hold 'TD_CLK27'
+Slack : 0.096
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Hold 'NiosII|external_clocks|DE_Clock_Generator_System|auto_generated|pll1|clk[0]'
+Slack : 0.116
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Hold 'NiosII|external_clocks|DE_Clock_Generator_System|auto_generated|pll1|clk[2]'
+Slack : 0.181
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Hold 'altera_reserved_tck'
+Slack : 0.183
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Recovery 'NiosII|external_clocks|DE_Clock_Generator_System|auto_generated|pll1|clk[0]'
+Slack : 6.217
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Recovery 'altera_reserved_tck'
+Slack : 49.027
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Removal 'altera_reserved_tck'
+Slack : 0.490
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Removal 'NiosII|external_clocks|DE_Clock_Generator_System|auto_generated|pll1|clk[0]'
+Slack : 0.685
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'CLOCK_50'
+Slack : 9.400
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'NiosII|external_clocks|DE_Clock_Generator_System|auto_generated|pll1|clk[0]'
+Slack : 9.750
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'TD_CLK27'
+Slack : 17.726
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'NiosII|external_clocks|DE_Clock_Generator_System|auto_generated|pll1|clk[2]'
+Slack : 19.757
+TNS   : 0.000
+
+Type  : Fast 1200mV 0C Model Minimum Pulse Width 'altera_reserved_tck'
+Slack : 49.302
+TNS   : 0.000
+
+------------------------------------------------------------

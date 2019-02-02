@@ -1,0 +1,2136 @@
+////********************************************************************************************////
+////********************************************************************************************////
+////********************************************************************************************////
+////																							////
+////    				Display for the VGA														////
+////		modified from the DE2 default design example										////
+////																							////
+////********************************************************************************************////
+////********************************************************************************************////
+////********************************************************************************************////
+
+module	VGA_Controller(	//	Host Side
+						iCursor_RGB_EN,
+						iCursor_X,
+						iCursor_Y,
+						iCursor_R,
+						iCursor_G,
+						iCursor_B,
+						iRed,
+						iGreen,
+						iBlue,
+						oAddress,
+						oCoord_X,
+						oCoord_Y,
+						iStick_status,
+						iStick_length,
+						//	VGA Side
+						oVGA_R,
+						oVGA_G,
+						oVGA_B,
+						oVGA_H_SYNC,
+						oVGA_V_SYNC,
+						oVGA_SYNC,
+						oVGA_BLANK,
+						oVGA_CLOCK,
+						//	Control Signal
+						iCLK,
+						iRST_N,	
+						HEX0,
+						HEX1,
+						HEX2,
+						HEX3,
+						HEX4,
+						HEX5,
+						HEX6,
+						HEX7,
+						LEDR,
+						LEDG						
+						
+						);
+
+
+
+//	Host Side
+output	reg	[19:0]	oAddress;
+output	reg	[9:0]	oCoord_X;
+output	reg	[9:0]	oCoord_Y;
+input		[3:0]	iCursor_RGB_EN;
+input		[9:0]	iCursor_X;
+input		[9:0]	iCursor_Y;
+input		[9:0]	iCursor_R;
+input		[9:0]	iCursor_G;
+input		[9:0]	iCursor_B;
+input		[9:0]	iRed;
+input		[9:0]	iGreen;
+input		[9:0]	iBlue;
+input		[7:0]	iStick_status;
+input		[9:0]	iStick_length;
+//	VGA Side
+output		[9:0]	oVGA_R;
+output		[9:0]	oVGA_G;
+output		[9:0]	oVGA_B;
+output	reg			oVGA_H_SYNC;
+output	reg			oVGA_V_SYNC;
+output				oVGA_SYNC;
+output				oVGA_BLANK;
+output				oVGA_CLOCK;
+//	Control Signal
+input				iCLK;
+input				iRST_N;
+
+//	7 Segment
+output	[6:0]	HEX0;					//	Seven Segment Digit 0
+output	[6:0]	HEX1;					//	Seven Segment Digit 1
+output	[6:0]	HEX2;					//	Seven Segment Digit 2
+output	[6:0]	HEX3;					//	Seven Segment Digit 3
+output	[6:0]	HEX4;					//	Seven Segment Digit 4
+output	[6:0]	HEX5;					//	Seven Segment Digit 5
+output	[6:0]	HEX6;					//	Seven Segment Digit 6
+output	[6:0]	HEX7;					//	Seven Segment Digit 7
+//	LED		
+output	[8:0]	LEDG;					//	LED Green[8:0]
+output	[17:0]	LEDR;					//	LED Red[17:0]
+
+/*************** Parameter *********************************************/
+`include "VGA_Param.h"
+
+parameter BBQ_LEFT = X_START[9:0]+ 10'd192, BBQ_RIGHT = X_START[9:0]+10'd478, 
+		  BBQ_TOP = Y_START[9:0] + 10'd10, BBQ_BOT = Y_START[9:0] + 10'd436,
+		  STICK_NTOP = Y_START[9:0] + 10'd302;
+
+parameter LEVEL_LEFT=X_START[9:0]+10'd518,	LEVEL_RIGHT	=X_START[9:0]+10'd610, 
+		  LEVEL_TOP	=Y_START[9:0]+10'd110,	LEVEL_BOT	=Y_START[9:0]+10'd160;
+
+parameter SCORE_LEFT=X_START[9:0]+10'd515,	SCORE_RIGHT	=X_START[9:0]+10'd615, 
+		  SCORE_TOP	=Y_START[9:0]+10'd236,	SCORE_BOT	=Y_START[9:0]+10'd261;
+		
+parameter SNUM_LEFT	=X_START[9:0]+10'd189,	SNUM_RIGHT	=X_START[9:0]+10'd207, 
+		  SNUM_TOP	=Y_START[9:0]+10'd394,	SNUM_BOT	=Y_START[9:0]+10'd419;
+
+parameter LIMG_LEFT	=X_START[9:0]+10'd39,	LIMG_RIGHT	=X_START[9:0]+10'd167, 
+		  LIMG_TOP	=Y_START[9:0]+10'd341,	LIMG_BOT	=Y_START[9:0]+10'd405;
+
+
+/***********************************************************************************************
+**																							  **
+**			The Inputs/Outputs																		  **
+**																							  **
+***********************************************************************************************/
+
+//	Internal Registers and Wires
+reg		[9:0]		H_Cont;
+reg		[9:0]		V_Cont;
+reg		[9:0]		Cur_Color_R;
+reg		[9:0]		Cur_Color_G;
+reg		[9:0]		Cur_Color_B;
+
+wire				mCursor_EN;
+wire				mRed_EN;
+wire				mGreen_EN;
+wire				mBlue_EN;
+
+/************ Decoding and assign ************************************/
+assign	oVGA_BLANK	=	oVGA_H_SYNC & oVGA_V_SYNC;
+assign	oVGA_SYNC	=	1'b0;
+assign	oVGA_CLOCK	=	iCLK;
+assign	mCursor_EN	=	iCursor_RGB_EN[3];
+assign	mRed_EN		=	iCursor_RGB_EN[2];
+assign	mGreen_EN	=	iCursor_RGB_EN[1];
+assign	mBlue_EN	=	iCursor_RGB_EN[0];
+
+/************ Final VGA Output MUX ************************************/
+assign	oVGA_R	=	(	H_Cont>=X_START[9:0]+10'd9 	&& H_Cont<X_START[9:0]+H_SYNC_ACT[9:0]+10'd9 &&
+						V_Cont>=Y_START[9:0] 	&& V_Cont<Y_START[9:0]+V_SYNC_ACT[9:0] )
+						?	(mRed_EN	?	Cur_Color_R	:	10'b0)	:	10'b0;
+assign	oVGA_G	=	(	H_Cont>=X_START[9:0]+10'd9 	&& H_Cont<X_START[9:0]+H_SYNC_ACT[9:0]+10'd9 &&
+						V_Cont>=Y_START[9:0] 	&& V_Cont<Y_START[9:0]+V_SYNC_ACT[9:0] )
+						?	(mGreen_EN	?	Cur_Color_G	:	10'b0)	:	10'b0;
+assign	oVGA_B	=	(	H_Cont>=X_START[9:0]+10'd9 	&& H_Cont<X_START[9:0]+H_SYNC_ACT[9:0]+10'd9 &&
+						V_Cont>=Y_START[9:0] 	&& V_Cont<Y_START[9:0]+V_SYNC_ACT[9:0] )
+						?	(mBlue_EN	?	Cur_Color_B	:	10'b0)	:	10'b0;
+
+
+/************ Pixel LUT Address Generator ************************************/
+always@(posedge iCLK or negedge iRST_N)
+begin
+	if(!iRST_N)
+	begin
+		oCoord_X	<=	0;
+		oCoord_Y	<=	0;
+		oAddress	<=	0;
+	end
+	else
+	begin
+		if(	H_Cont>=X_START && H_Cont<X_START+H_SYNC_ACT &&
+			V_Cont>=Y_START && V_Cont<Y_START+V_SYNC_ACT )
+		begin
+			oCoord_X	<=	H_Cont-X_START[9:0];
+			oCoord_Y	<=	V_Cont-Y_START[9:0];
+			oAddress	<=	oCoord_Y*H_SYNC_ACT[9:0]+oCoord_X-10'd3;
+		end
+	end
+end
+
+
+/*************** LED & 7 Segment *********************************************/
+reg [7:0]	LED_G;
+reg [17:0]	LED_R;
+
+assign LEDG = LED_G;
+assign LEDR[17:0] = LED_R[17:0];
+
+HexDigit Digit0(HEX0, Score[3:0]);
+HexDigit Digit1(HEX1, Score[7:4]);
+HexDigit Digit2(HEX2, Score[11:8]);
+HexDigit Digit3(HEX3, Score[15:12]);
+HexDigit Digit4(HEX4, Level[3:0]);
+HexDigit Digit5(HEX5, Level[7:4]);
+HexDigit Digit6(HEX6, 4'b0 );
+HexDigit Digit7(HEX7, {1'b0,StickStack_in[2:0]});
+
+
+
+/***********************************************************************************************
+**																							  **
+**			Image Geneartor																	  **
+**																							  **
+***********************************************************************************************/
+
+/*************** Display Colors *******************************************/
+// Cursor
+reg [9:0] Cursor_R;	
+reg [9:0] Cursor_G;
+reg [9:0] Cursor_B;
+
+// stick Figure
+reg [9:0] Stick_R;	
+reg [9:0] Stick_G;
+reg [9:0] Stick_B;
+
+wire [9:0] StickL_R;	
+wire [9:0] StickL_G;
+wire [9:0] StickL_B;
+
+assign StickL_R = 10'd880;
+assign StickL_G = 10'd585;
+assign StickL_B = 10'd340;
+
+wire [9:0] StickR_R;	
+wire [9:0] StickR_G;
+wire [9:0] StickR_B;
+
+assign StickR_R = 10'd585;
+assign StickR_G = 10'd440;
+assign StickR_B = 10'd340;
+
+// Number Color
+wire [9:0] Num_R;	
+wire [9:0] Num_G;
+wire [9:0] Num_B;
+
+assign Num_R = 10'd1000;
+assign Num_G = 10'd200;
+assign Num_B = 10'd100;
+
+// Stack Number Color
+wire [9:0] StickStackNum_R;	
+wire [9:0] StickStackNum_G;
+wire [9:0] StickStackNum_B;
+
+assign StickStackNum_R = 10'd1000;
+assign StickStackNum_G = 10'd850;
+assign StickStackNum_B = 10'd0;
+
+
+/***********************************************************************************************
+				The Cursor and the Stick
+***********************************************************************************************/
+
+wire [9:0] Cursor_Xref;
+wire [9:0] Cursor_Yref;
+reg		   fCursor;
+
+// reference for stick
+wire [9:0] Stick_Xref;
+wire [9:0] Stick_Yref;
+
+wire [9:0] iStick_length;
+reg		   fStick;
+wire 	   fStick_show;			// also the signal for starting the game
+wire	   fStick_X_hold;
+
+// decode the Stick status input
+assign fStick_show = iStick_status[0];
+
+// can't move stick in x direction when it is not at its original length
+assign fStick_X_hold = (iStick_length!=9'd0);  
+
+// set the reference value for the cursor
+assign Cursor_Xref = X_START[9:0] + 10'd6 + iCursor_X;
+assign Cursor_Yref = Y_START[9:0] + iCursor_Y;
+
+// set the reference value for the stick
+assign Stick_Xref = fStick_X_hold? Stick_Xref :		// the code implies a latch on Stick_Xref 
+					// boundary condition
+					(Cursor_Xref < BBQ_LEFT+9'd3)? (BBQ_LEFT+9'd3) :   
+					(Cursor_Xref > BBQ_RIGHT-9'd1)? (BBQ_RIGHT-9'd1) : 
+					Cursor_Xref;
+assign Stick_Yref = STICK_NTOP - iStick_length;
+
+
+/***********************************************************************************************
+				The Pixcel color chooser
+***********************************************************************************************/
+always@(posedge iCLK or negedge iRST_N)
+begin
+	if(!iRST_N)
+	begin
+		Cur_Color_R	<=	0;
+		Cur_Color_G	<=	0;
+		Cur_Color_B	<=	0;
+		
+		fCursor		<=	0;
+	end
+	else
+	begin
+		// check boundary for the cursor/display area
+		if(	mCursor_EN && H_Cont>=X_START+8 && H_Cont<X_START+H_SYNC_ACT+8 &&
+			V_Cont>=Y_START && V_Cont<Y_START+V_SYNC_ACT )
+		  begin			
+			// The cursor generator
+			case (V_Cont - Cursor_Yref)
+				10'd0: 
+				  begin 
+					if(H_Cont==Cursor_Xref) //turn the pixel black
+					  begin
+						fCursor <= 1'b1;
+						Cursor_R <= 10'b0;
+						Cursor_G <= 10'b0;
+						Cursor_B <= 10'b0;
+					  end
+					else fCursor <= 1'b0;
+				  end 
+				10'd1: 
+				  begin 
+					if( (H_Cont==Cursor_Xref)||(H_Cont==Cursor_Xref+1) ) //turn the pixel black
+					  begin
+						fCursor <= 1'b1;
+						Cursor_R <= 10'b0;
+						Cursor_G <= 10'b0;
+						Cursor_B <= 10'b0;
+					  end 
+					else fCursor <= 1'b0;
+				  end	
+				10'd2:
+				  begin 
+					if( (H_Cont==Cursor_Xref)||(H_Cont==Cursor_Xref+2) ) //turn the pixel black
+					  begin
+						fCursor <= 1'b1;
+						Cursor_R <= 10'b0;
+						Cursor_G <= 10'b0;
+						Cursor_B <= 10'b0;
+					  end
+					else if (H_Cont==Cursor_Xref+1) //turn the pixel white
+					  begin
+						fCursor <= 1'b1;
+						Cursor_R <= 10'h3ff;
+						Cursor_G <= 10'h3ff;
+						Cursor_B <= 10'h3ff;
+					  end
+					else fCursor <= 1'b0;
+				  end
+				10'd3:
+				  begin 
+					if( (H_Cont==Cursor_Xref)||(H_Cont==Cursor_Xref+3) ) //turn the pixel black
+					  begin
+						fCursor <= 1'b1;
+						Cursor_R <= 10'b0;
+						Cursor_G <= 10'b0;
+						Cursor_B <= 10'b0;
+					  end
+					else if( (H_Cont==Cursor_Xref+1)||(H_Cont==Cursor_Xref+2) ) //turn the pixel white
+					  begin
+						fCursor <= 1'b1;
+						Cursor_R <= 10'h3ff;
+						Cursor_G <= 10'h3ff;
+						Cursor_B <= 10'h3ff;
+					  end 
+					else fCursor <= 1'b0;
+				  end
+				10'd4:
+				  begin 
+					if( (H_Cont==Cursor_Xref)||(H_Cont==Cursor_Xref+4) ) //turn the pixel black
+					  begin
+						fCursor <= 1'b1;
+						Cursor_R <= 10'b0;
+						Cursor_G <= 10'b0;
+						Cursor_B <= 10'b0;
+					  end
+					else if ((H_Cont==Cursor_Xref+1)||(H_Cont==Cursor_Xref+2)||(H_Cont==Cursor_Xref+3) ) //turn the pixel white
+					  begin
+						fCursor <= 1'b1;
+						Cursor_R <= 10'h3ff;
+						Cursor_G <= 10'h3ff;
+						Cursor_B <= 10'h3ff;
+					  end 
+					else fCursor <= 1'b0;
+				  end
+				10'd5:
+				  begin 
+					if( (H_Cont==Cursor_Xref)||(H_Cont==Cursor_Xref+5) ) //turn the pixel black
+					  begin
+						fCursor <= 1'b1;
+						Cursor_R <= 10'b0;
+						Cursor_G <= 10'b0;
+						Cursor_B <= 10'b0;
+					  end
+					else if ((H_Cont==Cursor_Xref+1)||(H_Cont==Cursor_Xref+2)||(H_Cont==Cursor_Xref+3) ||
+							 (H_Cont==Cursor_Xref+4) ) //turn the pixel white
+					  begin
+						fCursor <= 1'b1;
+						Cursor_R <= 10'h3ff;
+						Cursor_G <= 10'h3ff;
+						Cursor_B <= 10'h3ff;
+					  end 
+					else fCursor <= 1'b0;
+				  end
+				10'd6:
+				  begin 
+					if( (H_Cont==Cursor_Xref)||(H_Cont==Cursor_Xref+6) ) //turn the pixel black
+					  begin
+						fCursor <= 1'b1;
+						Cursor_R <= 10'b0;
+						Cursor_G <= 10'b0;
+						Cursor_B <= 10'b0;
+					  end
+					else if ((H_Cont==Cursor_Xref+1)||(H_Cont==Cursor_Xref+2)||(H_Cont==Cursor_Xref+3) ||
+							 (H_Cont==Cursor_Xref+4)||(H_Cont==Cursor_Xref+5) ) //turn the pixel white
+					  begin
+						fCursor <= 1'b1;
+						Cursor_R <= 10'h3ff;
+						Cursor_G <= 10'h3ff;
+						Cursor_B <= 10'h3ff;
+					  end 
+					else fCursor <= 1'b0;
+				  end
+				10'd7:
+				  begin 
+					if( (H_Cont==Cursor_Xref)||(H_Cont==Cursor_Xref+4)||(H_Cont==Cursor_Xref+5)||
+						(H_Cont==Cursor_Xref+6)||(H_Cont==Cursor_Xref+7) ) //turn the pixel black
+					  begin
+						fCursor <= 1'b1;
+						Cursor_R <= 10'b0;
+						Cursor_G <= 10'b0;
+						Cursor_B <= 10'b0;
+					  end
+					else if ((H_Cont==Cursor_Xref+1)||(H_Cont==Cursor_Xref+2)||(H_Cont==Cursor_Xref+3) ) //turn the pixel white
+					  begin
+						fCursor <= 1'b1;
+						Cursor_R <= 10'h3ff;
+						Cursor_G <= 10'h3ff;
+						Cursor_B <= 10'h3ff;
+					  end 
+					else fCursor <= 1'b0;
+				  end				
+				10'd8:
+				  begin 
+					if( (H_Cont==Cursor_Xref)||(H_Cont==Cursor_Xref+2)||(H_Cont==Cursor_Xref+5) ) //turn the pixel black
+					  begin
+						fCursor <= 1'b1;
+						Cursor_R <= 10'b0;
+						Cursor_G <= 10'b0;
+						Cursor_B <= 10'b0;
+					  end
+					else if ((H_Cont==Cursor_Xref+1)||(H_Cont==Cursor_Xref+3)||(H_Cont==Cursor_Xref+4) ) //turn the pixel white
+					  begin
+						fCursor <= 1'b1;
+						Cursor_R <= 10'h3ff;
+						Cursor_G <= 10'h3ff;
+						Cursor_B <= 10'h3ff;
+					  end 
+					else fCursor <= 1'b0;
+				  end
+				10'd9:
+				  begin 
+					if( (H_Cont==Cursor_Xref)||(H_Cont==Cursor_Xref+1)||(H_Cont==Cursor_Xref+2)||
+						(H_Cont==Cursor_Xref+3)||(H_Cont==Cursor_Xref+5))  //turn the pixel black
+					  begin
+						fCursor <= 1'b1;
+						Cursor_R <= 10'b0;
+						Cursor_G <= 10'b0;
+						Cursor_B <= 10'b0;
+					  end
+					else if (H_Cont==Cursor_Xref+4) //turn the pixel white
+					  begin
+						fCursor <= 1'b1;
+						Cursor_R <= 10'h3ff;
+						Cursor_G <= 10'h3ff;
+						Cursor_B <= 10'h3ff;
+					  end 
+					else fCursor <= 1'b0;
+				  end
+				10'd10:
+				  begin 
+					if( (H_Cont==Cursor_Xref)||(H_Cont==Cursor_Xref+3)||(H_Cont==Cursor_Xref+6)) //turn the pixel black
+					  begin
+						fCursor <= 1'b1;
+						Cursor_R <= 10'b0;
+						Cursor_G <= 10'b0;
+						Cursor_B <= 10'b0;
+					  end
+					else if ( (H_Cont==Cursor_Xref+4)||(H_Cont==Cursor_Xref+5) ) //turn the pixel white
+					  begin
+						fCursor <= 1'b1;
+						Cursor_R <= 10'h3ff;
+						Cursor_G <= 10'h3ff;
+						Cursor_B <= 10'h3ff;
+					  end 
+					else fCursor <= 1'b0;
+				  end				
+				10'd11:
+				  begin 
+					if( (H_Cont==Cursor_Xref+4)||(H_Cont==Cursor_Xref+6) ) //turn the pixel black
+					  begin
+						fCursor <= 1'b1;
+						Cursor_R <= 10'b0;
+						Cursor_G <= 10'b0;
+						Cursor_B <= 10'b0;
+					  end
+					else if (H_Cont==Cursor_Xref+5) //turn the pixel white
+					  begin
+						fCursor <= 1'b1;
+						Cursor_R <= 10'h3ff;
+						Cursor_G <= 10'h3ff;
+						Cursor_B <= 10'h3ff;
+					  end 
+					else fCursor <= 1'b0;
+				  end
+				10'd12:
+				  begin 
+					if( (H_Cont==Cursor_Xref+4)||(H_Cont==Cursor_Xref+7) ) //turn the pixel black
+					  begin
+						fCursor <= 1'b1;
+						Cursor_R <= 10'b0;
+						Cursor_G <= 10'b0;
+						Cursor_B <= 10'b0;
+					  end
+					else if ( (H_Cont==Cursor_Xref+5)||(H_Cont==Cursor_Xref+6) ) //turn the pixel white
+					  begin
+						fCursor <= 1'b1;
+						Cursor_R <= 10'h3ff;
+						Cursor_G <= 10'h3ff;
+						Cursor_B <= 10'h3ff;
+					  end 
+					else fCursor <= 1'b0;
+				  end
+				10'd13:
+				  begin 
+					if( (H_Cont==Cursor_Xref+5)||(H_Cont==Cursor_Xref+6)||(H_Cont==Cursor_Xref+7) ) //turn the pixel black
+					  begin
+						fCursor <= 1'b1;
+						Cursor_R <= 10'b0;
+						Cursor_G <= 10'b0;
+						Cursor_B <= 10'b0;
+					  end
+					else fCursor <= 1'b0;
+				  end
+												
+				default:
+				  begin
+					fCursor <=1'b0;
+				  end			
+			endcase // case (V_cont - Cursor_Yref)  
+			// end of cursor generator
+
+			// check boundary for the BBQ stick
+			if(	fStick_show && H_Cont>=BBQ_LEFT+9'd3 && H_Cont<=BBQ_RIGHT-9'd1 &&
+				V_Cont>=BBQ_TOP && V_Cont<=BBQ_BOT )
+			  begin				
+				// The BBQ stick generator
+				case (V_Cont - Stick_Yref)
+					10'd0:
+					  begin
+						if (H_Cont == Stick_Xref)
+						  begin							
+							fStick <= 1'b1;
+							Stick_R <= StickR_R;
+							Stick_G <= StickR_G;
+							Stick_B <= StickR_B;  
+						  end
+						else fStick <= 1'b0;							
+					  end
+					10'd1:
+					  begin
+						if (H_Cont == Stick_Xref)
+						  begin							
+							fStick <= 1'b1;
+							Stick_R <= StickR_R;
+							Stick_G <= StickR_G;
+							Stick_B <= StickR_B;  
+						  end
+						else fStick <=1'b0;
+					  end
+					10'd2:
+					  begin
+						if (H_Cont==Stick_Xref-1)
+						  begin							
+							fStick <= 1'b1;
+							Stick_R <= StickL_R;
+							Stick_G <= StickL_G;
+							Stick_B <= StickL_B;  
+						  end 
+						else if( (H_Cont==Stick_Xref) || (H_Cont==Stick_Xref+1) )
+						  begin							
+							fStick <= 1'b1;
+							Stick_R <= StickR_R;
+							Stick_G <= StickR_G;
+							Stick_B <= StickR_B;  
+						  end
+						else fStick <= 1'b0;
+					  end
+					10'd3:
+					  begin
+						if (H_Cont==Stick_Xref-1)
+						  begin							
+							fStick <= 1'b1;
+							Stick_R <= StickL_R;
+							Stick_G <= StickL_G;
+							Stick_B <= StickL_B;  
+						  end 
+						else if( (H_Cont==Stick_Xref) || (H_Cont==Stick_Xref+1) )
+						  begin							
+							fStick <= 1'b1;
+							Stick_R <= StickR_R;
+							Stick_G <= StickR_G;
+							Stick_B <= StickR_B;  
+						  end
+						else fStick <= 1'b0;
+					  end
+					
+					default:
+					  begin
+						if ( (V_Cont > Stick_Yref) && ((H_Cont==Stick_Xref-2) || (H_Cont==Stick_Xref-1) ) )
+						  begin							
+							fStick <= 1'b1;
+							Stick_R <= StickL_R;
+							Stick_G <= StickL_G;
+							Stick_B <= StickL_B;  
+						  end						 
+						else if	( (V_Cont > Stick_Yref) && ((H_Cont==Stick_Xref) || (H_Cont==Stick_Xref+1) ) )
+						  begin							
+							fStick <= 1'b1;
+							Stick_R <= StickR_R;
+							Stick_G <= StickR_G;
+							Stick_B <= StickR_B;  
+						  end
+						else fStick <=1'b0;
+					  end
+				endcase // case for BBQ Stick
+				// end of BBQ Stick generator								
+			  end // Boundary for BBQ Stick
+			else
+			  begin
+				fStick <= 1'b0;
+			  end			
+		
+			// The priority decoder mux	
+			if (fCursor||fStick||fFig_en_dp||fStickFig_en_dp||fLevelNum_en_dp||fScoreNum_en_dp||
+				fStickStackNum_en_dp||fLostImg_en_dp)
+			  begin 
+				if (fCursor) // Cursor has the highest priority
+				  begin
+					Cur_Color_R	<=	Cursor_R;
+					Cur_Color_G	<=	Cursor_G;
+					Cur_Color_B	<=	Cursor_B;
+				  end
+				else if (fFig_en_dp) // Figure image has the second highest priority
+				  begin				  
+					Cur_Color_R <= {Fig_out_dp[7:5],Fig_out_dp[7:5],Fig_out_dp[7:5],Fig_out_dp[7]};
+					Cur_Color_G <= {Fig_out_dp[4:2],Fig_out_dp[4:2],Fig_out_dp[4:2],Fig_out_dp[4]};
+					Cur_Color_B <= {Fig_out_dp[1:0],Fig_out_dp[1:0],Fig_out_dp[1:0],Fig_out_dp[1:0],Fig_out_dp[1:0]};
+				  end
+				else if (fStickFig_en_dp) // Stick Figure image
+				  begin
+					Cur_Color_R <= {StickFig_out_dp[7:5],StickFig_out_dp[7:5],StickFig_out_dp[7:5],StickFig_out_dp[7]};
+					Cur_Color_G <= {StickFig_out_dp[4:2],StickFig_out_dp[4:2],StickFig_out_dp[4:2],StickFig_out_dp[4]};
+					Cur_Color_B <= {StickFig_out_dp[1:0],StickFig_out_dp[1:0],StickFig_out_dp[1:0],StickFig_out_dp[1:0],StickFig_out_dp[1:0]};
+				  end
+				else if(fStick)	// Stick
+				  begin
+					Cur_Color_R	<=	Stick_R;
+					Cur_Color_G	<=	Stick_G;
+					Cur_Color_B	<=	Stick_B;
+				  end
+				else if (fLostImg_en_dp)  // The You Lost image 
+				  begin
+					Cur_Color_R <= {LostImg_show_dp[7:5],LostImg_show_dp[7:5],LostImg_show_dp[7:5],LostImg_show_dp[7]};
+					Cur_Color_G <= {LostImg_show_dp[4:2],LostImg_show_dp[4:2],LostImg_show_dp[4:2],LostImg_show_dp[4]};
+					Cur_Color_B <= {LostImg_show_dp[1:0],LostImg_show_dp[1:0],LostImg_show_dp[1:0],LostImg_show_dp[1:0],LostImg_show_dp[1:0]};
+				  end
+				else if (fStickStackNum_en_dp) // The BBQ stack number
+				  begin
+					Cur_Color_R	<=	StickStackNum_R;
+					Cur_Color_G	<=	StickStackNum_G;
+					Cur_Color_B	<=	StickStackNum_B;
+				  end
+				else // if (fLevelNum_en_dp||fScoreNum_en_dp) // The level and score number
+				  begin
+					Cur_Color_R	<=	Num_R;
+					Cur_Color_G	<=	Num_G;
+					Cur_Color_B	<=	Num_B;
+				  end					
+			  end // end of if (fCursor||fStick|| ... ||fLostImg_en_dp)
+			else
+			  begin
+				Cur_Color_R	<=	iRed;
+				Cur_Color_G	<=	iGreen;
+				Cur_Color_B	<=	iBlue;
+			  end			
+		  end
+		// end of priority decoder mux
+		else
+		  begin
+			Cur_Color_R	<=	iRed;
+			Cur_Color_G	<=	iGreen;
+			Cur_Color_B	<=	iBlue;
+		  end
+	end //(iRST_N)
+end // end of VGA mux inputs
+
+
+/***********************************************************************************************
+**																							  **
+**		Enabling Signal & Flags																  **
+**																							  **	
+***********************************************************************************************/
+
+// Figure enableing
+reg				fFig_x_en_in, fFig_y_en_in;
+reg				fFig_x_en_mem, fFig_y_en_mem;
+reg				fFig_x_en_dp, fFig_y_en_dp;
+wire			fFig_en_dp;
+
+// Stick Figure enabling
+reg				fStickFig_x_en_in, 	fStickFig_y_en_in;
+reg				fStickFig_x_en_mem, fStickFig_y_en_mem;
+reg				fStickFig_x_en_dp,	fStickFig_y_en_dp;
+wire 			fStickFig_en_dp;
+
+// Stick hitting flag
+reg				fStick_x_hit_in, 	fStick_y_hit_in;
+reg				fStick_x_hit_mem,	fStick_y_hit_mem;
+wire			fStick_hit_in;
+wire			fStick_hit_mem;
+
+//Level Number Enabling
+reg				fLevelNum_x_en_in,	fLevelNum_y_en_in;
+reg				fLevelNum_x_en_mem, fLevelNum_y_en_mem;
+reg				fLevelNum_x_en_dp, 	fLevelNum_y_en_dp;
+wire			fLevelNum_en_dp;
+
+//Score Number Enabling
+reg				fScoreNum_x_en_in,	fScoreNum_y_en_in;
+reg				fScoreNum_x_en_mem, fScoreNum_y_en_mem;
+reg				fScoreNum_x_en_dp, 	fScoreNum_y_en_dp;
+wire			fScoreNum_en_dp;
+
+//Stick Number Enabling
+reg				fStickStackNum_x_en_in,	fStickStackNum_y_en_in;
+reg				fStickStackNum_x_en_mem, fStickStackNum_y_en_mem;
+reg				fStickStackNum_x_en_dp, 	fStickStackNum_y_en_dp;
+wire			fStickStackNum_en_mem;
+wire			fStickStackNum_en_dp;
+
+//Lost Image Enabling
+reg				fLostImg_x_en_in,	fLostImg_y_en_in;
+reg				fLostImg_x_en_mem,	fLostImg_y_en_mem;
+reg				fLostImg_x_en_dp, 	fLostImg_y_en_dp;
+wire			fLostImg_en_dp;
+
+
+/*************** The BBQ Image enable *************************************************/
+// the Figure Icon
+assign fFig_en_dp = (fStick_show & fFig_x_en_dp & fFig_y_en_dp &  // The general and x&y enabling 
+					(Fig_index_dp[3]!=1'b1) & 					  // The status does not indicate empty figure
+					(Fig_out_dp!=8'hff) );						  // The Color is not white
+
+// the Figure on the stick Icon
+assign fStickFig_en_dp = ( fStick_show & fStickFig_x_en_dp & fStickFig_y_en_dp & // The general and x&y enabling 
+						 (StickFig_index_dp[3]!=1'b1) & 						 // The status does not indicate empty figure
+						 (StickFig_out_dp!=8'hff) &  							 // The Color is not white
+					  	 (H_Cont>=BBQ_LEFT) & (H_Cont<=BBQ_RIGHT) & (V_Cont>=BBQ_TOP) & (V_Cont<=BBQ_BOT) ); // Inside the bondary of displaying
+
+// the stick hit signal
+assign fStick_hit_in  = (fStick_x_hit_in & fStick_y_hit_in); // signal for possible hit
+assign fStick_hit_mem = (fStick_x_hit_mem & fStick_y_hit_mem &(StickHit_index_mem[3]!=1'b1)); //signal for gurantee hit
+
+
+/*************** The Number Image enable *************************************************/
+// the Level number show signal
+assign fLevelNum_en_dp = (fLevelNum_x_en_dp & fLevelNum_y_en_dp & (LevelNum_off_dp==0) );
+
+// the Score number show signal
+assign fScoreNum_en_dp = (fScoreNum_x_en_dp & fScoreNum_y_en_dp & (ScoreNum_off_dp==0) );
+
+// the StackNum number show signal
+assign fStickStackNum_en_dp = (fStickStackNum_x_en_dp & fStickStackNum_y_en_dp & (StickStackNum_off_dp==0) );
+assign fStickStackNum_en_mem = (fStickStackNum_x_en_mem & fStickStackNum_y_en_mem);
+
+/*************** The Lost Image enable *************************************************/
+// the Lost Image show signal
+assign fLostImg_en_dp = (fLostImg_x_en_dp & fLostImg_y_en_dp & 
+						(LostImg_show_dp!=8'hff)&	// The Color is not white
+						(fBBQ_Lost==1'b1) );		// The Game is lost
+
+
+
+/***********************************************************************************************
+**																							  **
+**		M4K Block & Logic Cell memory management											  **
+**																							  **	
+***********************************************************************************************/
+
+/*************** The Icon Table *************************************************/
+wire	[14:0]  Fig_addr_mem, StickFig_addr_mem;
+wire	[7:0]	Fig_out_dp, StickFig_out_dp;
+
+/*************** The Figure Table *************************************************/
+
+//	The index of the Figure table
+reg   	[2:0]	Figure_x_read_in, Figure_y_read_in; 	  // for VGA reading
+reg   	[2:0]	StickHit_x_check_in, StickHit_y_check_in; // for Stick hit checking
+// the writing of the figure table
+reg		[2:0]	Figure_wr_yaddr_in,Figure_wr_xaddr_in;	  
+reg		[3:0]	Figure_wr_data_in; //The content to be written to the Figure table
+reg				Figure_wren_in;
+
+wire	[3:0]	Fig_index_mem;
+reg		[3:0]	Fig_index_dp;
+wire	[3:0]	StickHit_index_mem;
+
+/*************** The Stick Figure Table *******************************************/
+
+//	The index of the Figure table
+reg   	[2:0]	StickFig_read_in;  // for VGA reading
+reg		[3:0]	StickFigErase_check_in;// for BBQ_Stick Figure Erase Checking
+
+// the writing of the Stick Figure table
+reg		[3:0]	StickFig_waddr_in;
+reg		[3:0]	StickFig_wr_data_in;
+reg				StickFig_wren_in;
+
+wire	[3:0]	StickFig_index_mem;
+reg		[3:0]	StickFig_index_dp;
+wire	[3:0]	StickFigErase_index_mem;
+
+/*************** The Figure Status Table *******************************************/
+reg		[3:0]	FigTable_waddr_in;
+reg		[3:0]	FigTable_wr_data_in;
+reg				FigTable_wren_in;
+
+wire	[3:0]	FigTable_remain_mem; // The number of Figure Icon is still in the row of the Fig table
+
+/*************** The Number Table **************************************************/
+////// The Level number //////
+wire	[14:0]	LevelNum_addr_mem;
+wire			LevelNum_off_dp;
+
+reg		[3:0]	LevelNum_Digit1_mem, LevelNum_Digit2_mem, LevelNum_Digit3_mem;
+reg		[3:0]	LevelNum_mem;
+reg		[1:0]	LevelNum_digit;
+
+////// The Score StickStack number //////
+wire	[14:0]	Score_StickStack_Num_addr_mem;
+wire			Score_StickStack_Num_off_dp;
+
+// Score Number
+wire	[13:0]	ScoreNum_addr_mem;
+wire			ScoreNum_off_dp;
+
+reg		[3:0]	ScoreNum_Digit1_mem, ScoreNum_Digit2_mem, ScoreNum_Digit3_mem,
+				ScoreNum_Digit4_mem, ScoreNum_Digit5_mem;
+reg		[3:0]	ScoreNum_mem;
+reg		[2:0]	ScoreNum_digit;
+
+// The Stack number
+wire	[13:0]	StickStackNum_addr_mem;
+wire			StickStackNum_off_dp;
+reg		[2:0]	StickStackNum_mem;
+
+/*************** The Lost Image Table ********************************************/
+wire	[12:0]	LostImg_addr_mem;
+wire	[7:0]	LostImg_show_dp;
+
+/*************** The address for reading for Icon ROM ******************************/
+// the x and y address in the Icon ROM
+reg		[5:0]	Fig_x_addr_in, Fig_y_addr_in; 
+reg		[5:0]	Fig_x_addr_mem, Fig_y_addr_mem;
+
+// the x and y address in the Icon ROM
+reg		[5:0]	StickFig_x_addr_in, StickFig_y_addr_in; 
+reg		[5:0]	StickFig_x_addr_mem, StickFig_y_addr_mem;
+
+/*************** The address for reading for Number ROM *****************************/
+// the x and y address for the Level Number ROM
+reg		[5:0]	LevelNum_x_addr_in, LevelNum_y_addr_in;
+reg		[5:0]	LevelNum_x_addr_mem, LevelNum_y_addr_mem;
+
+// the x and y address for the Score Number ROM
+reg		[5:0]	ScoreNum_x_addr_in, ScoreNum_y_addr_in;
+reg		[5:0]	ScoreNum_x_addr_mem, ScoreNum_y_addr_mem;
+
+// the x and y address for the Stick Stack Number ROM
+reg		[5:0]	StickStackNum_x_addr_in, StickStackNum_y_addr_in;
+reg		[5:0]	StickStackNum_x_addr_mem, StickStackNum_y_addr_mem;
+
+/*************** The address for reading the Lost Image ROM ***********************/
+// the x and y address for the Lost Image ROM
+reg		[6:0]	LostImg_x_addr_in, LostImg_x_addr_mem;
+reg		[5:0]	LostImg_y_addr_in, LostImg_y_addr_mem;
+
+
+/***********************************************************************************************
+				The BBQ Image Display
+***********************************************************************************************/
+
+/*************** The Icon ROM Table ************************************************/	
+// reading The Icon image for Fig and StickFig
+assign Fig_addr_mem = {Fig_index_mem[2:0],Fig_y_addr_mem, Fig_x_addr_mem};
+assign StickFig_addr_mem = {StickFig_index_mem[2:0],StickFig_y_addr_mem, StickFig_x_addr_mem};
+
+Icon_ROM Icon_rom(
+	.clock(iCLK), 
+	// Mem stage
+	.address_a(Fig_addr_mem),		// Figure Reading
+	.address_b(StickFig_addr_mem), 	// Stick Fig Reading
+	// Display stage				
+	.q_a(Fig_out_dp),				// Fig Image output
+	.q_b(StickFig_out_dp)			// StickFig Image output
+	);
+
+/*************** The Figure RAM Table ************************************************/
+Figure_RAM Fig_table(
+	.clock(iCLK),
+	// In Stage
+	.rdaddress_a({Figure_y_read_in,Figure_x_read_in}),		 // For VGA
+	.rdaddress_b({StickHit_y_check_in,StickHit_x_check_in}), // For StickHit_check	
+	.data(Figure_wr_data_in),
+	.wraddress({Figure_wr_yaddr_in,Figure_wr_xaddr_in}),
+	.wren(Figure_wren_in),
+	// Mem stage
+	.qa(Fig_index_mem),										 // For VGA
+	.qb(StickHit_index_mem)									 // For StickHit_check
+	);
+
+/*************** The StickFig RAM Table ************************************************/
+StickFig_RAM StickFig_table(
+	.clock(iCLK),
+	// In Stage
+	.rdaddress_a({1'b1, StickFig_read_in}),		// For VGA
+	.rdaddress_b(StickFigErase_check_in),		// For StickFig Erase
+	.data(StickFig_wr_data_in),
+	.wraddress(StickFig_waddr_in),
+	.wren(StickFig_wren_in),
+	// Mem stage
+	.qa(StickFig_index_mem),					// For VGA
+	.qb(StickFigErase_index_mem)				// For StickFig Erase
+	);
+
+/*************** The Figure Table Status RAM ************************************************/
+FigTable_status FigTable_status(
+	.clock(iCLK),
+	// In Stage
+	.data(FigTable_wr_data_in),	
+	.rdaddress({1'b0, StickHit_y_check_in}),
+	.wraddress(FigTable_waddr_in),
+	.wren(FigTable_wren_in),
+	// Mem stage
+	.q(FigTable_remain_mem)
+	);
+
+
+/***********************************************************************************************
+				The Number Image Display
+***********************************************************************************************/
+
+/*************** The Number ROM Table ***********************************************************/
+
+/////// For Level Number	 --> 64X32 //////
+assign LevelNum_addr_mem = {LevelNum_mem, LevelNum_y_addr_mem, LevelNum_x_addr_mem[4:0]};
+
+////// For Score_StickStack number  --> 32X32 //////
+// mux of Score and StickStack, the original address + the offset for ROM table reading
+assign Score_StickStack_Num_addr_mem = fStickStackNum_en_mem? {StickStackNum_addr_mem+15'h5800}: 
+															  {ScoreNum_addr_mem+15'h5800};
+// For Score anumber
+assign ScoreNum_addr_mem = {ScoreNum_mem, ScoreNum_y_addr_mem[4:0], ScoreNum_x_addr_mem[4:0]};
+// For StickStack anumber
+assign StickStackNum_addr_mem = {StickStackNum_mem, StickStackNum_y_addr_mem[4:0], StickStackNum_x_addr_mem[4:0]};
+
+Number_ROM Number_rom(
+	.clock(iCLK),
+	// Mem Stage
+	.address_a(LevelNum_addr_mem),				// Level				--> 64X32
+	.address_b(Score_StickStack_Num_addr_mem),	// Score & StickStack	--> 32X32
+	// Display Stage
+	.q_a(LevelNum_off_dp),						// Level				--> 64X32
+	.q_b(Score_StickStack_Num_off_dp)			// Score & StickStack	--> 32X32
+	);
+
+// The output
+assign ScoreNum_off_dp = Score_StickStack_Num_off_dp;
+assign StickStackNum_off_dp = Score_StickStack_Num_off_dp;
+
+/*************** The Table for Level Number ************************************************/
+
+// The register
+always@(posedge iCLK or negedge iRST_N)
+begin
+	if(!iRST_N)
+	  begin
+		LevelNum_Digit1_mem <= 4'b0;
+		LevelNum_Digit2_mem <= 4'b0;
+		LevelNum_Digit3_mem <= 4'b0;
+	  end
+	else
+	  begin
+		// Convert to decimal value for display
+		LevelNum_Digit1_mem <= Level/7'd100;
+		LevelNum_Digit2_mem <= (Level%7'd100)/4'd10;
+		LevelNum_Digit3_mem <= Level%4'd10;
+	  end
+end
+
+// The mux
+always@*
+begin
+	case (LevelNum_digit)
+		2'd1:	LevelNum_mem = LevelNum_Digit1_mem;
+		2'd2:	LevelNum_mem = LevelNum_Digit2_mem;
+		2'd3:	LevelNum_mem = LevelNum_Digit3_mem;
+		default:  LevelNum_mem = 4'b0;
+	endcase
+end
+
+/*************** The Table for Score Number ************************************************/
+
+// The register
+always@(posedge iCLK or negedge iRST_N)
+begin
+	if(!iRST_N)
+	  begin
+		ScoreNum_Digit1_mem <= 4'b0;
+		ScoreNum_Digit2_mem <= 4'b0;
+		ScoreNum_Digit3_mem <= 4'b0;
+		ScoreNum_Digit4_mem <= 4'b0;
+		ScoreNum_Digit5_mem <= 4'b0;
+	  end
+	else
+	  begin
+		// Convert to decimal value for display
+		ScoreNum_Digit1_mem <= Score/14'd10000;
+		ScoreNum_Digit2_mem <= (Score%14'd10000)/10'd1000;
+		ScoreNum_Digit3_mem <= (Score%10'd1000)/7'd100;
+		ScoreNum_Digit4_mem <= (Score%7'd100)/4'd10;
+		ScoreNum_Digit5_mem <= Score%4'd10;
+	  end
+end
+
+// The mux
+always@*
+begin
+	case (ScoreNum_digit)
+		3'd1:	ScoreNum_mem = ScoreNum_Digit1_mem;
+		3'd2:	ScoreNum_mem = ScoreNum_Digit2_mem;
+		3'd3:	ScoreNum_mem = ScoreNum_Digit3_mem;
+		3'd4:	ScoreNum_mem = ScoreNum_Digit4_mem;
+		3'd5:	ScoreNum_mem = ScoreNum_Digit5_mem;
+		default:  ScoreNum_mem = 4'b0;
+	endcase
+end
+
+/*************** The Register for Stick Stack Number *********************************************/
+
+always@(posedge iCLK or negedge iRST_N)
+begin
+	if(!iRST_N)
+	  begin
+		StickStackNum_mem <= 3'b0;
+	  end
+	else
+	  begin
+		StickStackNum_mem <= StickStack_in[2:0];
+	  end
+end
+
+
+/***********************************************************************************************
+				The Lost Image Display
+***********************************************************************************************/
+
+// Lost Image ROM table address
+assign LostImg_addr_mem = {LostImg_y_addr_mem, LostImg_x_addr_mem};
+
+Lost_ROM Lost_rom(
+	.clock(iCLK),
+	// Mem stage
+	.address(LostImg_addr_mem),
+	// Display Stage	
+	.q(LostImg_show_dp)
+);
+
+
+/***********************************************************************************************
+**																							  **
+**			The Index to the RAM Table														  **
+**																							  **
+***********************************************************************************************/
+
+// For Figure
+wire	[9:0]	H_Cont_dif;
+wire	[9:0]	V_Cont_dif;
+// For Stick Hit
+wire	[9:0]	Stick_x_dif;
+wire	[9:0]	Stick_y_dif;
+// For Stick Figure
+wire	[9:0]	StickFig_y_dif;
+// For Level Number
+wire	[9:0]	Level_x_dif;
+// For Score Number
+wire	[9:0]	Score_x_dif;
+
+/*************** The differences *********************************************/
+// For Figure
+assign H_Cont_dif = H_Cont-BBQ_LEFT;
+assign V_Cont_dif = V_Cont-BBQ_TOP;
+// For Stick Hit
+assign Stick_x_dif = Stick_Xref-BBQ_LEFT;
+assign Stick_y_dif = Stick_Yref-BBQ_TOP;
+// For Stick Figure
+assign StickFig_y_dif = V_Cont - Stick_Yref;
+// For Level Number
+assign Level_x_dif = H_Cont-LEVEL_LEFT;
+// For Score Number
+assign Score_x_dif = H_Cont-SCORE_LEFT;
+
+
+/***********************************************************************************************
+				The BBQ Image Display
+***********************************************************************************************/
+
+/*************** For Figure *********************************************/
+
+// Figure_x_read_in = (H_Cont-BBQ_LEFT)/41
+// If divisible, it is at the boundray point. And disable Image display 
+always @*
+begin
+	if ((H_Cont>=BBQ_LEFT)&&(H_Cont<=BBQ_RIGHT))
+	  begin
+		case (1'b1)
+			(H_Cont_dif<10'd40)							:	begin Figure_x_read_in = 3'd0; fFig_x_en_in=1'b1; end 
+			((H_Cont_dif<10'd81) &&(H_Cont_dif>10'd40)) :	begin Figure_x_read_in = 3'd1; fFig_x_en_in=1'b1; end
+			((H_Cont_dif<10'd122)&&(H_Cont_dif>10'd81)) :	begin Figure_x_read_in = 3'd2; fFig_x_en_in=1'b1; end
+			((H_Cont_dif<10'd163)&&(H_Cont_dif>10'd122)):	begin Figure_x_read_in = 3'd3; fFig_x_en_in=1'b1; end
+			((H_Cont_dif<10'd204)&&(H_Cont_dif>10'd163)):	begin Figure_x_read_in = 3'd4; fFig_x_en_in=1'b1; end
+			((H_Cont_dif<10'd245)&&(H_Cont_dif>10'd204)):	begin Figure_x_read_in = 3'd5; fFig_x_en_in=1'b1; end
+			((H_Cont_dif<10'd286)&&(H_Cont_dif>10'd245)):	begin Figure_x_read_in = 3'd6; fFig_x_en_in=1'b1; end
+			default: 										begin Figure_x_read_in = 3'd7; fFig_x_en_in=1'b0; end					
+		endcase
+	  end
+	else													
+	  begin 
+		Figure_x_read_in = 3'd7;
+		fFig_x_en_in=1'b0;
+	  end
+end
+
+// Figure_y_read_in = (V_Cont-BBQ_TOP)/41 - Fiq_que
+// If divisible, it is at the boundray point. And disable Image display
+always @*
+begin
+	if ((V_Cont>=BBQ_TOP)&&(V_Cont<=BBQ_BOT))
+	  begin
+		case (1'b1)
+			(V_Cont_dif<10'd40)							:	begin Figure_y_read_in = 3'd0-Fig_RowTop_DisplayPtr; fFig_y_en_in=1'b1; end 
+			((V_Cont_dif<10'd81) &&(V_Cont_dif>10'd40)) :	begin Figure_y_read_in = 3'd1-Fig_RowTop_DisplayPtr; fFig_y_en_in=1'b1; end
+			((V_Cont_dif<10'd122)&&(V_Cont_dif>10'd81)) :	begin Figure_y_read_in = 3'd2-Fig_RowTop_DisplayPtr; fFig_y_en_in=1'b1; end
+			((V_Cont_dif<10'd163)&&(V_Cont_dif>10'd122)):	begin Figure_y_read_in = 3'd3-Fig_RowTop_DisplayPtr; fFig_y_en_in=1'b1; end
+			((V_Cont_dif<10'd204)&&(V_Cont_dif>10'd163)):	begin Figure_y_read_in = 3'd4-Fig_RowTop_DisplayPtr; fFig_y_en_in=1'b1; end
+			((V_Cont_dif<10'd245)&&(V_Cont_dif>10'd204)):	begin Figure_y_read_in = 3'd5-Fig_RowTop_DisplayPtr; fFig_y_en_in=1'b1; end
+			((V_Cont_dif<10'd286)&&(V_Cont_dif>10'd245)):	begin Figure_y_read_in = 3'd6-Fig_RowTop_DisplayPtr; fFig_y_en_in=1'b1; end
+			default: 										begin Figure_y_read_in = 3'd7-Fig_RowTop_DisplayPtr; fFig_y_en_in=1'b0; end					
+		endcase
+	  end
+	else													
+	  begin 
+		Figure_y_read_in = 3'd7-Fig_RowTop_DisplayPtr;
+		fFig_y_en_in=1'b0;
+	  end
+end
+
+/*************** For StickHit *********************************************/
+
+// StickHit_x_check_in = (Stick_Xref-BBQ_LEFT)/41
+// If divisible, it is at the boundray point. At disable Image display
+always @*
+begin
+	if ((Stick_Xref>=BBQ_LEFT)&&(Stick_Xref<=BBQ_RIGHT))
+	  begin
+		case (1'b1)
+			(Stick_x_dif<10'd40)						  :	begin StickHit_x_check_in = 3'd0; fStick_x_hit_in=1'b1; end 
+			((Stick_x_dif<10'd81) &&(Stick_x_dif>10'd40)) :	begin StickHit_x_check_in = 3'd1; fStick_x_hit_in=1'b1; end
+			((Stick_x_dif<10'd122)&&(Stick_x_dif>10'd81)) :	begin StickHit_x_check_in = 3'd2; fStick_x_hit_in=1'b1; end
+			((Stick_x_dif<10'd163)&&(Stick_x_dif>10'd122)):	begin StickHit_x_check_in = 3'd3; fStick_x_hit_in=1'b1; end
+			((Stick_x_dif<10'd204)&&(Stick_x_dif>10'd163)):	begin StickHit_x_check_in = 3'd4; fStick_x_hit_in=1'b1; end
+			((Stick_x_dif<10'd245)&&(Stick_x_dif>10'd204)):	begin StickHit_x_check_in = 3'd5; fStick_x_hit_in=1'b1; end
+			((Stick_x_dif<10'd286)&&(Stick_x_dif>10'd245)):	begin StickHit_x_check_in = 3'd6; fStick_x_hit_in=1'b1; end
+			default: 										begin StickHit_x_check_in = 3'd7; fStick_x_hit_in=1'b0; end					
+		endcase
+	  end
+	else													
+	  begin 
+		StickHit_x_check_in = 3'd7;
+		fStick_x_hit_in=1'b0;
+	  end
+end
+
+// StickHit_y_check_in = (Stick_Yref-BBQ_TOP)/41-Fig_RowTop_DisplayPtr
+// If divisible, it is at the boundray point. And disable Image display
+always @*
+begin
+	if ((Stick_Yref>=BBQ_TOP)&&(Stick_Yref<=BBQ_BOT))
+	  begin
+		case (1'b1)
+			(Stick_y_dif<10'd40)						  :	begin StickHit_y_check_in = 3'd0-Fig_RowTop_DisplayPtr; fStick_y_hit_in=1'b1; end 
+			((Stick_y_dif<10'd81) &&(Stick_y_dif>10'd40)) :	begin StickHit_y_check_in = 3'd1-Fig_RowTop_DisplayPtr; fStick_y_hit_in=1'b1; end
+			((Stick_y_dif<10'd122)&&(Stick_y_dif>10'd81)) :	begin StickHit_y_check_in = 3'd2-Fig_RowTop_DisplayPtr; fStick_y_hit_in=1'b1; end
+			((Stick_y_dif<10'd163)&&(Stick_y_dif>10'd122)):	begin StickHit_y_check_in = 3'd3-Fig_RowTop_DisplayPtr; fStick_y_hit_in=1'b1; end
+			((Stick_y_dif<10'd204)&&(Stick_y_dif>10'd163)):	begin StickHit_y_check_in = 3'd4-Fig_RowTop_DisplayPtr; fStick_y_hit_in=1'b1; end
+			((Stick_y_dif<10'd245)&&(Stick_y_dif>10'd204)):	begin StickHit_y_check_in = 3'd5-Fig_RowTop_DisplayPtr; fStick_y_hit_in=1'b1; end
+			((Stick_y_dif<10'd286)&&(Stick_y_dif>10'd245)):	begin StickHit_y_check_in = 3'd6-Fig_RowTop_DisplayPtr; fStick_y_hit_in=1'b1; end
+			default: 										begin StickHit_y_check_in = 3'd7-Fig_RowTop_DisplayPtr; fStick_y_hit_in=1'b0; end					
+		endcase
+	  end
+	else													
+	  begin 
+		StickHit_y_check_in = 3'd7-Fig_RowTop_DisplayPtr;
+		fStick_y_hit_in=1'b0;
+	  end
+end
+
+/*************** For Stick Fig *********************************************/
+
+// The Stick Fig Image is +/- 20 of the Stick_Xref
+always @*
+begin
+	if ((Stick_Xref>=BBQ_LEFT)&&(Stick_Xref<=BBQ_RIGHT))
+	  begin
+		if( ( ((H_Cont-Stick_Xref)<10'd20)&&((H_Cont-Stick_Xref)>=0) ) || 
+			( ((Stick_Xref-H_Cont)<=10'd20)&&((Stick_Xref-H_Cont)>=0) ) )
+			fStickFig_x_en_in = 1'b1;
+		else
+			fStickFig_x_en_in = 1'b0;
+	  end
+	else													
+	  begin 
+		fStickFig_x_en_in = 1'b0;
+	  end
+end
+
+
+// StickFig_y_dif = StickStack - (V_Cont-Stick_Yref-10)/41;
+// If divisible, it is at the boundray point. And disable Image display
+always @*
+begin
+	if ((Stick_Yref>=BBQ_TOP)&&(Stick_Yref<=BBQ_BOT)) // inside the range for displaying
+	  begin
+		case (1'b1)
+			((StickFig_y_dif<10'd50) &&(StickFig_y_dif>10'd9))	:	begin StickFig_read_in = StickStack_in[2:0]-3'd1; fStickFig_y_en_in=1'b1; end 
+			((StickFig_y_dif<10'd91) &&(StickFig_y_dif>10'd50)) :	begin StickFig_read_in = StickStack_in[2:0]-3'd2; fStickFig_y_en_in=1'b1; end
+			((StickFig_y_dif<10'd132)&&(StickFig_y_dif>10'd91)) :	begin StickFig_read_in = StickStack_in[2:0]-3'd3; fStickFig_y_en_in=1'b1; end
+			((StickFig_y_dif<10'd173)&&(StickFig_y_dif>10'd132)):	begin StickFig_read_in = StickStack_in[2:0]-3'd4; fStickFig_y_en_in=1'b1; end
+			((StickFig_y_dif<10'd214)&&(StickFig_y_dif>10'd173)):	begin StickFig_read_in = StickStack_in[2:0]-3'd5; fStickFig_y_en_in=1'b1; end
+			((StickFig_y_dif<10'd255)&&(StickFig_y_dif>10'd214)):	begin StickFig_read_in = StickStack_in[2:0]-3'd6; fStickFig_y_en_in=1'b1; end
+			((StickFig_y_dif<10'd296)&&(StickFig_y_dif>10'd255)):	begin StickFig_read_in = StickStack_in[2:0]-3'd7; fStickFig_y_en_in=1'b1; end			
+			default: 												begin StickFig_read_in = 3'd0; fStickFig_y_en_in=1'b0; end			
+		endcase
+	  end
+	else													
+	  begin 
+		StickFig_read_in = 3'd0;
+		fStickFig_y_en_in=1'b0;
+	  end
+end
+
+/***********************************************************************************************
+				The Number Image Display
+***********************************************************************************************/
+
+/*************** For Level Number *********************************************/
+
+// LevelNum_digit=(H_Cont-LEVEL_LEFT)/30
+// If divisible, it is at the boundray point. And disable Image display
+always @*
+begin
+	if ((H_Cont>=LEVEL_LEFT)&&(H_Cont<=LEVEL_RIGHT)) // inside the range for displaying
+	  begin
+		case (1'b1)
+			 (Level_x_dif<10'd30) 						 :	begin LevelNum_digit=2'd1; fLevelNum_x_en_in=1'b1; end 
+			((Level_x_dif<10'd60)&&(Level_x_dif>10'd30)) :	begin LevelNum_digit=2'd2; fLevelNum_x_en_in=1'b1; end
+			((Level_x_dif<10'd90)&&(Level_x_dif>10'd60)) :	begin LevelNum_digit=2'd3; fLevelNum_x_en_in=1'b1; end
+				
+			default:										begin LevelNum_digit=2'd0; fLevelNum_x_en_in=1'b0; end			
+		endcase
+	  end
+	else													
+	  begin 
+		LevelNum_digit=2'd0;
+		fLevelNum_x_en_in=1'b0;
+	  end
+end
+
+
+// Y enabling of Level 
+always @*
+begin
+	if ((V_Cont>=LEVEL_TOP)&&(V_Cont<=LEVEL_BOT))
+	  begin
+		fLevelNum_y_en_in = 1'b1;
+	  end
+	else													
+	  begin 
+		fLevelNum_y_en_in = 1'b0;
+	  end
+end
+
+/*************** For Level Number *********************************************/
+
+// LevelNum_digit=(H_Cont-Score_LEFT)/18
+// If divisible, it is at the boundray point. And disable Image display
+always @*
+begin
+	if ((H_Cont>=SCORE_LEFT)&&(H_Cont<=SCORE_RIGHT)) // inside the range for displaying
+	  begin
+		case (1'b1)
+			 (Score_x_dif<10'd18) 						 :	begin ScoreNum_digit=3'd1; fScoreNum_x_en_in=1'b1; end 
+			((Score_x_dif<10'd36)&&(Score_x_dif>10'd18)) :	begin ScoreNum_digit=3'd2; fScoreNum_x_en_in=1'b1; end
+			((Score_x_dif<10'd54)&&(Score_x_dif>10'd36)) :	begin ScoreNum_digit=3'd3; fScoreNum_x_en_in=1'b1; end
+			((Score_x_dif<10'd72)&&(Score_x_dif>10'd54)) :	begin ScoreNum_digit=3'd4; fScoreNum_x_en_in=1'b1; end
+			((Score_x_dif<10'd90)&&(Score_x_dif>10'd72)) :	begin ScoreNum_digit=3'd5; fScoreNum_x_en_in=1'b1; end
+						
+			default:										begin ScoreNum_digit=3'd0; fScoreNum_x_en_in=1'b0; end			
+		endcase
+	  end
+	else													
+	  begin 
+		ScoreNum_digit=3'd0;
+		fScoreNum_x_en_in=1'b0;
+	  end
+end
+
+// Y enabling of Score
+always @*
+begin
+	if ((V_Cont>=SCORE_TOP)&&(V_Cont<=SCORE_BOT))
+	  begin
+		fScoreNum_y_en_in = 1'b1;
+	  end
+	else													
+	  begin 
+		fScoreNum_y_en_in = 1'b0;
+	  end
+end
+
+/*************** For Stick Stack Number *********************************************/
+	
+// x enabling of StickStackNum
+always @*
+begin
+	if ((H_Cont>=SNUM_LEFT)&&(H_Cont<=SNUM_RIGHT))
+	  begin
+		fStickStackNum_x_en_in = 1'b1;
+	  end
+	else													
+	  begin 
+		fStickStackNum_x_en_in = 1'b0;
+	  end
+end
+
+// Y enabling of StickStackNum
+always @*
+begin
+	if ((V_Cont>=SNUM_TOP)&&(V_Cont<=SNUM_BOT))
+	  begin
+		fStickStackNum_y_en_in = 1'b1;
+	  end
+	else													
+	  begin 
+		fStickStackNum_y_en_in = 1'b0;
+	  end
+end
+
+/***********************************************************************************************
+				The Lost Image Display
+***********************************************************************************************/
+
+// x enabling of LostImg
+always @*
+begin
+	if ((H_Cont>=LIMG_LEFT)&&(H_Cont<=LIMG_RIGHT))
+	  begin
+		fLostImg_x_en_in = 1'b1;
+	  end
+	else													
+	  begin 
+		fLostImg_x_en_in = 1'b0;
+	  end
+end
+
+// Y enabling of LostImg
+always @*
+begin
+	if ((V_Cont>=LIMG_TOP)&&(V_Cont<=LIMG_BOT))
+	  begin
+		fLostImg_y_en_in = 1'b1;
+	  end
+	else													
+	  begin 
+		fLostImg_y_en_in = 1'b0;
+	  end
+end
+
+
+
+
+/***********************************************************************************************
+**																							  **
+**			The Pipeline 																	  **
+**																							  **
+***********************************************************************************************/
+
+always@(posedge iCLK or negedge iRST_N)
+begin
+	if(!iRST_N)
+	  begin
+		// fFig_en_dp
+		fFig_x_en_mem		<= 1'b0;
+		fFig_y_en_mem		<= 1'b0;
+		fFig_x_en_dp		<= 1'b0;
+		fFig_y_en_dp		<= 1'b0;
+		// Fig_index
+		Fig_index_dp		<= 1'b0;
+		// fStick_hit
+		fStick_x_hit_mem	<= 1'b0;
+		fStick_y_hit_mem	<= 1'b0;
+		
+		// fStickFig_en
+		fStickFig_x_en_mem	<= 1'b0;
+		fStickFig_y_en_mem	<= 1'b0;
+		fStickFig_x_en_dp	<= 1'b0;
+		fStickFig_y_en_dp	<= 1'b0;
+		//StickFig_index
+		StickFig_index_dp	<= 1'b0;
+		
+		//Icon address reading
+		Fig_x_addr_mem		<= 6'b0;
+		Fig_y_addr_mem		<= 6'b0;
+		StickFig_x_addr_mem	<= 6'b0;
+		StickFig_y_addr_mem	<= 6'b0;
+		
+		//Level number addressing
+		LevelNum_x_addr_mem <= 6'b0;
+		LevelNum_y_addr_mem <= 6'b0;
+		
+		// fLevelNum
+		fLevelNum_x_en_mem	<= 1'b0;
+		fLevelNum_y_en_mem	<= 1'b0;
+		fLevelNum_x_en_dp	<= 1'b0;
+		fLevelNum_y_en_dp	<= 1'b0;
+		
+		//Score number addressing
+		ScoreNum_x_addr_mem <= 6'b0;
+		ScoreNum_y_addr_mem <= 6'b0;
+		
+		// fScoreNum
+		fScoreNum_x_en_mem	<= 1'b0;
+		fScoreNum_y_en_mem	<= 1'b0;
+		fScoreNum_x_en_dp	<= 1'b0;
+		fScoreNum_y_en_dp	<= 1'b0;
+
+		//StickStack number addressing
+		StickStackNum_x_addr_mem <= 6'b0;
+		StickStackNum_y_addr_mem <= 6'b0;
+		
+		// fStickStackNum
+		fStickStackNum_x_en_mem	<= 1'b0;
+		fStickStackNum_y_en_mem	<= 1'b0;
+		fStickStackNum_x_en_dp	<= 1'b0;
+		fStickStackNum_y_en_dp	<= 1'b0;
+
+		// Lost Image number addressing
+		LostImg_x_addr_mem <= 7'b0;
+		LostImg_y_addr_mem <= 6'b0;
+		
+		// fLostImg
+		fLostImg_x_en_mem	<= 1'b0;
+		fLostImg_y_en_mem	<= 1'b0;
+		fLostImg_x_en_dp	<= 1'b0;
+		fLostImg_y_en_dp	<= 1'b0;		
+		
+	  end
+	else
+	  begin
+		// fStickFig_en
+		fFig_x_en_mem	<= fFig_x_en_in;
+		fFig_y_en_mem	<= fFig_y_en_in;
+		fFig_x_en_dp	<= fFig_x_en_mem;
+		fFig_y_en_dp 	<= fFig_y_en_mem;
+		//Fig_index
+		Fig_index_dp	<= Fig_index_mem;
+		// fStick_hit
+		fStick_x_hit_mem	<= fStick_x_hit_in;
+		fStick_y_hit_mem	<= fStick_y_hit_in;
+		
+		// fStickFig_en
+		fStickFig_x_en_mem	<= fStickFig_x_en_in;
+		fStickFig_y_en_mem	<= fStickFig_y_en_in;
+		fStickFig_x_en_dp	<= fStickFig_x_en_mem;
+		fStickFig_y_en_dp 	<= fStickFig_y_en_mem;
+		//StickFig_index
+		StickFig_index_dp	 <= StickFig_index_mem;
+		
+		//Icon address reading
+		Fig_x_addr_mem		<= Fig_x_addr_in;
+		Fig_y_addr_mem		<= Fig_y_addr_in;
+		StickFig_x_addr_mem	<= StickFig_x_addr_in;
+		StickFig_y_addr_mem	<= StickFig_y_addr_in;
+		
+		//Level number addressing
+		LevelNum_x_addr_mem <= LevelNum_x_addr_in;
+		LevelNum_y_addr_mem <= LevelNum_y_addr_in;
+		
+		// fLevelNum
+		fLevelNum_x_en_mem	<= fLevelNum_x_en_in;
+		fLevelNum_y_en_mem	<= fLevelNum_y_en_in;
+		fLevelNum_x_en_dp	<= fLevelNum_x_en_mem;
+		fLevelNum_y_en_dp	<= fLevelNum_y_en_mem;
+
+		//Score number addressing
+		ScoreNum_x_addr_mem <= ScoreNum_x_addr_in;
+		ScoreNum_y_addr_mem <= ScoreNum_y_addr_in;
+		
+		// fScoreNum
+		fScoreNum_x_en_mem	<= fScoreNum_x_en_in;
+		fScoreNum_y_en_mem	<= fScoreNum_y_en_in;
+		fScoreNum_x_en_dp	<= fScoreNum_x_en_mem;
+		fScoreNum_y_en_dp	<= fScoreNum_y_en_mem;
+
+		// StickStack number addressing
+		StickStackNum_x_addr_mem <= StickStackNum_x_addr_in;
+		StickStackNum_y_addr_mem <= StickStackNum_y_addr_in;
+		
+		// fStickStackNum
+		fStickStackNum_x_en_mem	<= fStickStackNum_x_en_in;
+		fStickStackNum_y_en_mem	<= fStickStackNum_y_en_in;
+		fStickStackNum_x_en_dp	<= fStickStackNum_x_en_mem;
+		fStickStackNum_y_en_dp	<= fStickStackNum_y_en_mem;
+		
+		//LostImg number addressing
+		LostImg_x_addr_mem <= LostImg_x_addr_in;
+		LostImg_y_addr_mem <= LostImg_y_addr_in;
+		
+		// fLostImgNum
+		fLostImg_x_en_mem	<= fLostImg_x_en_in;
+		fLostImg_y_en_mem	<= fLostImg_y_en_in;
+		fLostImg_x_en_dp	<= fLostImg_x_en_mem;
+		fLostImg_y_en_dp	<= fLostImg_y_en_mem;		
+	  end
+end
+
+	
+/***********************************************************************************************
+**																							  **
+**			The State Machine																  **
+**																							  **
+***********************************************************************************************/
+
+/*************** The BBQ States **********************************************************/
+parameter 	BBQ_Start=4'd0,		BBQ_Random=4'd1,	BBQ_Init=4'd2,		BBQ_Wait=4'd3, 		
+		 	BBQ_Delay=4'd4, 	BBQ_Erase=4'd5,		BBQ_Push=4'd6,		BBQ_Check=4'd7,
+			BBQ_StickErase=4'd8,BBQ_RegenRand=4'd9, BBQ_Regen=4'd10,	BBQ_ForceOccur=4'd11,
+			BBQ_Update=4'd12,	BBQ_Lost=4'd13;	
+
+/*************** The State Machine Variables **********************************************/
+reg		[3:0]	BBQ_State;
+
+// The Init address counter for the RAM
+reg		[2:0]	FigTable_x_init, FigTable_y_init;
+reg		[3:0]	StickFig_addr_init;
+
+// store registers
+reg		[3:0]	StickHit_index_out_next;
+reg		[2:0]	StickHit_x_check_next, StickHit_y_check_next;
+reg		[3:0]	StickFig_prev;
+
+// store registor for randomly generated value
+reg		[2:0]	RandAddr;
+reg		[3:0]	RandData;	
+
+// The pointers
+reg		[2:0]	Fig_RowTop_DisplayPtr;// The pointer that points the Top Row when displaying the Figure
+reg		[2:0]	Fig_RowBot_TablePtr;  // The pointer that points the Bottom Row of the TableFig RAM
+
+// The Counter
+reg		[2:0]	Regen_Count;	// Counts for how many rows needs to be regenerated
+reg		[2:0]	FigType_Count;  // Counts How many Figure Type should be displayed
+
+// The Indicator
+reg		[3:0]	StickStack_in;
+reg		[7:0]	Level;
+reg		[15:0]	Score;
+
+// flags
+reg				fForceOccur;
+reg				fBBQ_Lost;
+
+/*************** The Random Generator	 ************************************/
+reg		[30:0]	rand_shift;
+wire	rand_low_bit;
+
+assign rand_low_bit = rand_shift[27] ^ rand_shift[30];
+
+
+/*************** The State Machine Always Block ************************************/
+always@(posedge iCLK or negedge iRST_N)
+begin
+	if(!iRST_N)
+	  begin
+		Figure_wren_in		<= 1'b0;
+		FigTable_x_init		<= 3'b0;
+		FigTable_y_init		<= 3'b0;	
+		
+		StickFig_wren_in	<= 1'b0;
+		StickFig_addr_init	<= 4'b0;
+		
+		FigTable_wren_in	<= 1'b0;
+		
+		StickHit_index_out_next <= 4'd0;
+		StickHit_x_check_next	<= 3'd0;
+		StickHit_y_check_next	<= 3'd0;
+		StickFig_prev			<= 4'd0;
+		
+		StickStack_in			<= 4'd8;
+		Fig_RowBot_TablePtr		<= 3'd6;
+		Fig_RowTop_DisplayPtr	<= 3'd0;
+		
+		Regen_Count	<= 3'b0;
+		
+		FigType_Count	<= 3'd3;
+		
+		Level			<= 7'd1;
+		Score			<= 16'b0;
+		
+		fForceOccur		<= 1'b0;
+		fBBQ_Lost		<= 1'b0;
+		
+		LED_R[17:0] 	<= 18'h0;
+		LED_G[7:0]		<= 8'b0; 
+		
+		rand_shift	<= 31'b110_0110_0110_0110_0110_0110_0110_0110;
+		
+		BBQ_State	 	<= BBQ_Random;
+	  end
+	else
+	  begin 
+		case (BBQ_State)
+			BBQ_Start:  // The Starting point for the next game, reset all the variables
+			  begin
+				Figure_wren_in		<= 1'b0;
+				FigTable_x_init		<= 3'b0;
+				FigTable_y_init		<= 3'b0;	
+		
+				StickFig_wren_in	<= 1'b0;
+				StickFig_addr_init	<= 4'b0;
+		
+				FigTable_wren_in	<= 1'b0;
+		
+				StickHit_index_out_next <= 4'd0;
+				StickHit_x_check_next	<= 3'd0;
+				StickHit_y_check_next	<= 3'd0;
+				StickFig_prev			<= 4'd0;
+		
+				StickStack_in			<= 4'd8;
+				Fig_RowBot_TablePtr		<= 3'd6;
+				Fig_RowTop_DisplayPtr	<= 3'd0;
+		
+				Regen_Count	<= 3'b0;
+		
+				FigType_Count	<= 3'd3;
+				
+				Level			<= 7'd1;
+				Score			<= 16'b0;
+		
+				fForceOccur		<= 1'b0;
+				
+				BBQ_State	 	<= BBQ_Random;
+			  end
+		
+			BBQ_Random:	// allow the random shif register to be working till fStickShow is enabled
+			  begin
+				if( fStick_show==1'b1)
+					BBQ_State <= BBQ_Init;
+				else
+					rand_shift <= {rand_shift[29:0], rand_low_bit};
+			  end
+			
+			BBQ_Init: // Init the RAM table
+			  begin
+				rand_shift <= {rand_shift[29:0], rand_low_bit};
+				
+				// Indicate new game started
+				LED_R[17:0] 	<= 18'h0;
+				LED_G[7:0]		<= 8'hff; 
+				fBBQ_Lost		<= 1'b0;
+
+				// clear the StickFig Image
+				StickFig_wren_in	 <= 1'b1;
+				StickFig_waddr_in	 <= StickFig_addr_init;			
+				StickFig_wr_data_in  <= 4'd8; 
+				
+				StickFig_addr_init <= StickFig_addr_init + 1'b1; //update
+				
+				// ReSet the Figure Table Status to 7 for all rows
+				FigTable_waddr_in	<= StickFig_addr_init;
+				FigTable_wren_in	<= 1'b1;
+				FigTable_wr_data_in <= 4'd7;
+				
+				// random Fig image
+				Figure_wren_in <= 1'b1;
+				Figure_wr_yaddr_in <= FigTable_y_init;
+				Figure_wr_xaddr_in <= FigTable_x_init;								
+				Figure_wr_data_in  <= {2'd0, rand_shift[0],rand_shift[14]}; 					
+
+				// update
+				if (FigTable_x_init == 3'd6)
+		  		  begin
+					// done updating
+					if (FigTable_y_init == 3'd7) // generate one more ramdom img row, so when one row 
+						BBQ_State <= BBQ_Wait;   // is cleared, the next row is available
+
+					FigTable_x_init <= 3'd0;
+					FigTable_y_init <= FigTable_y_init + 1'b1;					
+		  		  end
+				else
+		  		  begin
+					FigTable_x_init <= FigTable_x_init + 1'b1;			  	  	  
+		  		  end
+		
+				
+			  end// BBQ_Init
+			
+			BBQ_Wait: // waiting for the Stick to hit one of the Figure Image
+			  begin
+				FigTable_wren_in <= 1'b0;	
+				StickFig_wren_in <= 1'b0;		
+	  			Figure_wren_in <= 1'b0;
+			
+				if(fStick_hit_in==1'b1)// if maybe the Stick hit a figure (can be empty figure)
+				  begin										
+					// store the hitted figure's X and Y information
+					StickHit_y_check_next <= StickHit_y_check_in;
+					StickHit_x_check_next <= StickHit_x_check_in;					
+					// read out the previous stick figure index
+					StickFigErase_check_in <= StickStack_in - 1'b1;
+					
+					BBQ_State <= BBQ_Delay; 
+				  end
+				
+				// need to generate another line of random figure
+				// only generate another line when the Stick is back to normal length
+				else if((Regen_Count!=0) & (!fStick_X_hold)) 
+				  begin					
+					FigTable_y_init <= 3'd7-Fig_RowTop_DisplayPtr;
+					FigTable_x_init <= 3'd0;
+					Regen_Count <= Regen_Count - 1'b1;
+					
+					// Increase the one more Figure Type per 16 levels
+					if (Level[3:0]==4'b0)
+				  	  begin
+						if (FigType_Count != 3'd7)
+							FigType_Count <= FigType_Count + 1'b1;				
+						fForceOccur <= 1'b1;
+				  	  end				  
+					else
+						fForceOccur <= 1'b0;					
+					
+					BBQ_State <= BBQ_RegenRand;
+				  end
+				
+				// keep waiting
+				else
+				  begin
+					rand_shift <= {rand_shift[29:0], rand_low_bit};
+					BBQ_State <= BBQ_Wait;
+				  end				
+
+		  	  end // BBQ_Wait			
+			
+			BBQ_Delay: // A delay state to make sure the Stick Hits the Figure
+			  begin
+				if(fStick_hit_mem==1'b1)// if Stick hit a figure (empty figure doesn't count as hit)
+				  begin					
+					// store the hitted figure's index information
+					StickHit_index_out_next <= StickHit_index_mem;
+					// read out the previous previous stick figure index				
+					StickFigErase_check_in <= StickStack_in - 2'd2;						
+					
+					// score 1 point per hit
+					Score <= Score + 1'b1;
+					
+					BBQ_State <= BBQ_Erase;
+				  end
+				
+				// if flase alarm, return back to wait state
+				else
+					BBQ_State <= BBQ_Wait;	
+			  end
+				
+			BBQ_Erase: // erase the Figure
+			  begin			
+				// erase the Figure
+				Figure_wr_data_in <= 4'd8;
+				Figure_wr_yaddr_in <= StickHit_y_check_next;
+				Figure_wr_xaddr_in <= StickHit_x_check_next;
+				Figure_wren_in <= 1'b1;				
+				// store the previous stick figure index
+				StickFig_prev <= StickFigErase_index_mem;
+				
+				// decremeant the remaning figure number
+				FigTable_wr_data_in <= FigTable_remain_mem - 1'b1;
+				FigTable_waddr_in <= StickHit_y_check_next;
+				FigTable_wren_in    <= 1'b1;
+				
+				// check if it is the bottom Figure table being hitted and the last one in the row
+				if ( (Fig_RowBot_TablePtr==StickHit_y_check_next+Regen_Count) && (FigTable_remain_mem == 1'b1) )
+				  begin
+					Regen_Count <= Regen_Count +1'b1;	// if so needs to generate more rows		
+				  end
+				BBQ_State <= BBQ_Push;
+			  end
+				
+			BBQ_Push: // put the image to the stick
+			  begin
+				Figure_wren_in <= 1'b0;
+				FigTable_wren_in <= 1'b0;
+				
+				// Three same figure in a row
+				if ( (StickFigErase_index_mem==StickFig_prev)&&(StickFig_prev==StickHit_index_out_next) )
+				  begin
+					// Don't Push the image to the StickStack
+					// Instead Pop the Stick Stack
+					StickFig_wr_data_in <= 4'd8;
+					StickFig_waddr_in <= StickStack_in-2'd1;			
+					StickFig_wren_in <= 1'b1;
+					BBQ_State <= BBQ_StickErase;
+				  end
+				else
+				  begin	
+					// Push the image to the Stick Stack					
+					StickFig_wr_data_in <= StickHit_index_out_next;
+					StickFig_waddr_in <= StickStack_in;			
+					StickFig_wren_in <= 1'b1;				
+					StickStack_in <= StickStack_in+1'b1;				
+					BBQ_State <= BBQ_Check;
+				  end
+			  end
+				
+			BBQ_Check: // check for availability on the Stick Stack
+			  begin
+				StickFig_wren_in <= 1'b0;
+				
+				if (StickStack_in == 4'd0) // over the Stick Stack limit
+					BBQ_State <= BBQ_Lost;
+				else 				
+					BBQ_State <= BBQ_Wait;
+			  end
+			
+			BBQ_StickErase: // Erase one more Stick Stack Image
+			  begin
+				// Pop another Stick Stack Image
+				StickFig_wr_data_in <= 4'd8;
+				StickFig_waddr_in <= StickStack_in-2'd2;			
+				StickFig_wren_in <= 1'b1;
+				StickStack_in <= StickStack_in-2'd2;
+				
+				// Score 5 + The remain of the StickStack
+				Score <= Score + 4'd3 + StickStack_in[2:0];
+				
+				BBQ_State <= BBQ_Wait;
+			  end
+			
+			BBQ_RegenRand: // Generate Random Data
+			  begin
+				FigTable_wren_in    <= 1'b0;
+				Figure_wren_in 		<= 1'b0;
+				
+				RandData <= {1'b0, rand_shift[13], rand_shift[25], rand_shift[1]};
+				BBQ_State <= BBQ_Regen;				
+			  end
+			
+			BBQ_Regen: // Regenerate a raw on the top of the Figure Display
+			  begin
+				rand_shift <= {rand_shift[29:0], rand_low_bit};
+				
+				if (RandData <= FigType_Count) // Make sure the Fig Type is within the level limit
+				  begin	
+					// New row generated on the Fig Table Status and Fig Table RAM 			
+					FigTable_wr_data_in <= 3'd7;
+					FigTable_waddr_in	<= FigTable_y_init;
+					FigTable_wren_in    <= 1'b1;
+								
+					Figure_wren_in <= 1'b1;
+					Figure_wr_yaddr_in <= FigTable_y_init;
+					Figure_wr_xaddr_in <= FigTable_x_init;								
+					Figure_wr_data_in  <= RandData; // random input
+				  
+					if (FigTable_x_init == 3'd6) // finished generating the row
+				  	  begin
+						
+						// Score + 10 when generate one more row
+						Score <= Score + 4'd10; 
+						
+						// If the level allows a new type of figure
+						if (fForceOccur== 1'b1)
+						  begin
+						  	RandAddr  <= {rand_shift[8],rand_shift[11],rand_shift[27]};
+							BBQ_State <= BBQ_ForceOccur;							
+						  end					
+						else
+							BBQ_State <= BBQ_Update;
+				  	  end
+					else // Keep generating the row
+					  begin
+						FigTable_x_init <= FigTable_x_init+1'b1;
+						BBQ_State <= BBQ_RegenRand;
+					  end
+				  end
+				// If the Fig Type is more than the Level allows, generate the Figure again
+				else
+				  begin
+					BBQ_State <= BBQ_RegenRand;
+				  end	
+			  end // BBQ_Regen
+			
+			BBQ_ForceOccur: // Force the new type of figure to appear in a random place in the row
+			  begin
+				FigTable_wren_in    <= 1'b0;
+				
+				if (RandAddr <=3'd6) // Make sure the address it within the Figure Image display
+				  begin
+					Figure_wren_in <= 1'b1;
+					Figure_wr_yaddr_in <= FigTable_y_init;
+					Figure_wr_xaddr_in <= RandAddr;								
+					Figure_wr_data_in  <= FigType_Count;
+					fForceOccur <= 1'b0;
+					
+					// Score + 40 when new type of figure is added
+					Score <= Score + 6'd40;
+					
+					BBQ_State <= BBQ_Update;
+				  end				
+				else // geneate the random address again				
+				  begin
+					Figure_wren_in <= 1'b0;
+					RandAddr  <= {rand_shift[8],rand_shift[11],rand_shift[27]};
+					rand_shift <= {rand_shift[29:0], rand_low_bit};
+				  end
+			  end
+			
+			BBQ_Update: // Update the pointer and Level
+			  begin
+				Figure_wren_in <= 1'b0;
+				FigTable_wren_in    <= 1'b0;
+				
+				if (Fig_RowBot_TablePtr==3'd0)
+					Fig_RowBot_TablePtr <= 3'd7;
+				else
+					Fig_RowBot_TablePtr <= Fig_RowBot_TablePtr-1'b1;
+					
+				if (Fig_RowTop_DisplayPtr == 3'd7)
+					Fig_RowTop_DisplayPtr <= 3'd0;
+				else
+					Fig_RowTop_DisplayPtr	  <= Fig_RowTop_DisplayPtr + 1'b1;					
+				
+				Level <= Level + 1'b1;
+				BBQ_State <= BBQ_Wait;			
+			  end
+			
+			BBQ_Lost: // You Lost state, turn on the you lost image
+			  begin
+				fBBQ_Lost <= 1'b1;
+				LED_R[17:0] <= 18'h3ffff;
+				LED_G[7:0]	<= 8'b0;
+				if (fStick_show==1'b0) // restart the game
+					BBQ_State <= BBQ_Start;					
+			  end
+			
+		endcase// endcase for State_StickHit
+	   
+	 end // iRST_N
+end // always block
+
+		
+/***********************************************************************************************
+**																							  **
+**			The Sync and Image Address generator											  **
+**																							  **
+***********************************************************************************************/
+
+/***************************************************************************************************
+			H_SYNC +  Image X_address generator
+***************************************************************************************************/
+
+//	H_Sync Generator, Ref. 25.175 MHz Clock
+always@(posedge iCLK or negedge iRST_N)
+begin
+	if(!iRST_N)
+	begin
+		H_Cont		<=	0;
+		oVGA_H_SYNC	<=	0;
+		Fig_x_addr_in 	<=	6'b0; 
+		StickFig_x_addr_in <= 6'b0;
+		LevelNum_x_addr_in <= 6'b0;
+		ScoreNum_x_addr_in <= 6'b0;	
+		StickStackNum_x_addr_in <= 6'b0;
+		LostImg_x_addr_in <= 7'b0;			
+	end
+	else
+	begin
+		//	H_Sync Counter
+		if( H_Cont < H_SYNC_TOTAL )
+		  begin
+			H_Cont	<=	H_Cont+1'b1;
+			// increment the x address when a Figure needs to be Figureed
+			if (Fig_x_addr_in < 6'd40 && fFig_x_en_in)
+				Fig_x_addr_in <= Fig_x_addr_in+1'b1;
+			else
+				Fig_x_addr_in <= 6'b0;
+			
+			// increment the x address when a Stick Figure needs to be Figureed
+			if (StickFig_x_addr_in < 6'd40 && fStickFig_x_en_in)
+				StickFig_x_addr_in <= StickFig_x_addr_in+1'b1;
+			else
+				StickFig_x_addr_in <= 6'b0;
+				
+			// increment the x address when a level number need to be shown
+			if (LevelNum_x_addr_in < 6'd30 && fLevelNum_x_en_in)
+				LevelNum_x_addr_in <= LevelNum_x_addr_in +1'b1;
+			else
+				LevelNum_x_addr_in <= 6'b0;
+
+			// increment the x address when a score number need to be shown
+			if (ScoreNum_x_addr_in < 6'd18 && fScoreNum_x_en_in)
+				ScoreNum_x_addr_in <= ScoreNum_x_addr_in +1'b1;
+			else
+				ScoreNum_x_addr_in <= 6'b0;
+
+			// increment the x address when a stick number need to be shown
+			if (StickStackNum_x_addr_in < 6'd18 && fStickStackNum_x_en_in)
+				StickStackNum_x_addr_in <= StickStackNum_x_addr_in +1'b1;
+			else
+				StickStackNum_x_addr_in <= 6'b0;
+			
+			// increment the x address when the Lost Image needs to be shown
+			if (LostImg_x_addr_in < 8'd128 && fLostImg_x_en_in)
+				LostImg_x_addr_in <= LostImg_x_addr_in +1'b1;
+			else
+				LostImg_x_addr_in <= 6'b0;
+				
+		  end 
+		else
+			H_Cont	<=	0;
+		//	H_Sync Generator
+		if( H_Cont < H_SYNC_CYC )
+			oVGA_H_SYNC	<=	0;
+		else
+			oVGA_H_SYNC	<=	1;
+	end
+end
+
+/***************************************************************************************************
+			V_SYNC +  Image Y_address generator
+***************************************************************************************************/
+//	V_Sync Generator, Ref. H_Sync
+always@(posedge iCLK or negedge iRST_N)
+begin
+	if(!iRST_N)
+	begin
+		V_Cont		<=	0;
+		oVGA_V_SYNC	<=	0;
+		Fig_y_addr_in	<=	6'b0;
+		StickFig_y_addr_in <= 6'b0;
+		LevelNum_y_addr_in <= 6'b0;
+		ScoreNum_y_addr_in <= 6'b0;
+		StickStackNum_y_addr_in <= 6'b0;
+		LostImg_y_addr_in <= 6'b0;
+	end
+	else
+	begin
+		//	When H_Sync Re-start
+		if(H_Cont==0)
+		begin
+			//	V_Sync Counter
+			if( V_Cont < V_SYNC_TOTAL )
+			  begin
+				V_Cont	<=	V_Cont+1'b1;
+				// increment the y address when a Figure needs to be Figureed
+				if ((Fig_y_addr_in < 6'd40) && fFig_y_en_in)
+					Fig_y_addr_in <= Fig_y_addr_in+1'b1;
+				else
+					Fig_y_addr_in <= 6'b0;
+					
+				// increment the y address when a Stick Figure needs to be Figureed
+				if ((StickFig_y_addr_in < 6'd40) && fStickFig_y_en_in)
+					StickFig_y_addr_in <= StickFig_y_addr_in+1'b1;
+				else
+					StickFig_y_addr_in <= 6'b0;
+					
+				// increment the y address when a level number need to be shown
+				if (LevelNum_y_addr_in < 6'd50 && fLevelNum_y_en_in)
+					LevelNum_y_addr_in <= LevelNum_y_addr_in +1'b1;
+				else
+					LevelNum_y_addr_in <= 6'b0;
+
+				// increment the y address when a score number need to be shown
+				if (ScoreNum_y_addr_in < 6'd25 && fScoreNum_y_en_in)
+					ScoreNum_y_addr_in <= ScoreNum_y_addr_in +1'b1;
+				else
+					ScoreNum_y_addr_in <= 6'b0;
+
+				// increment the y address when a stick number need to be shown
+				if (StickStackNum_y_addr_in < 6'd25 && fStickStackNum_y_en_in)
+					StickStackNum_y_addr_in <= StickStackNum_y_addr_in +1'b1;
+				else
+					StickStackNum_y_addr_in <= 6'b0;
+				
+				// increment the y address when the Lost Image needs to be shown
+				if (LostImg_y_addr_in < 7'd64 && fLostImg_y_en_in)
+					LostImg_y_addr_in <= LostImg_y_addr_in +1'b1;
+				else
+					LostImg_y_addr_in <= 6'b0;				
+					
+			  end
+			else
+				V_Cont	<=	0;
+			//	V_Sync Generator
+			if(	V_Cont < V_SYNC_CYC )
+				oVGA_V_SYNC	<=	0;
+			else
+				oVGA_V_SYNC	<=	1;
+		end
+	end
+end
+
+endmodule
+// END OF VGA CONTROLLER MODULE

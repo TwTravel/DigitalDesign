@@ -1,0 +1,633 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><!--
+	This document provides the basis of a semantically structured web page 
+	authored in XHTML 1.0 Transitional using established Cornell University
+	naming conventions.
+--><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<title>Augmented Reality Ball Game</title>
+	
+	<meta http-equiv="Content-Language" content="en-us">
+	<link rel="shortcut icon"  type="image/x-icon">
+	
+<!--
+	All layout and formatting should be controlled through Cascading Stylesheets (CSS).
+	The following link tag should appear in the head of every page in the website. see
+	styles/screen.css.
+-->
+	<link rel="stylesheet" type="text/css" media="screen" href="Cornell University Website Template - Two Column_files/screen.css">
+</head>
+
+<body class="twocolumn">
+
+<!--
+	The following link provides a way for people using text-based browsers and
+	screen readers to skip over repetitive navigation elements so that they can 
+	get directly to the content. It is hidden from general users through CSS.
+-->
+<div id="skipnav">
+	<a href="#content">Skip to main content</a>
+</div>
+
+<hr>
+
+<!-- The following div contains the Cornell University logo with unit signature -->
+<div id="cu-identity">
+	<div id="cu-logo">
+		<a id="insignia-link" href="../../../../../../../www.cornell.edu/default.htm"><img src="Cornell University Website Template - Two Column_files/unit_signature_unstyled.gif" alt="Cornell University" width="416" height="88" border="0"></a>
+		<div id="unit-signature-links">
+			<a id="cornell-link" href="../../../../../../../www.cornell.edu/default.htm">Cornell University</a>
+			<a id="unit-link1" href="../cwf38_mao65_as889/cwf38_mao65_as889/UNIT%201%20URL%20GOES%20HERE">Unit Name 1</a>
+			<a id="unit-link2" href="../cwf38_mao65_as889/cwf38_mao65_as889/UNIT%202%20URL%20GOES%20HERE">Unit Name 2</a>
+		</div>
+	</div>
+	
+	<!-- 
+		The search-form div contains a form that allows the user to search 
+		either pages or people within cornell.edu directly from the banner.
+	-->
+	<div id="search-form">
+		<form action="http://www.cornell.edu/search/" method="get" enctype="application/x-www-form-urlencoded">
+			<div id="search-input">
+				<label for="search-form-query">SEARCH CORNELL:</label>
+				<input type="text" id="search-form-query" name="q" value="" size="20">
+				<input type="submit" id="search-form-submit" name="submit" value="go">
+			</div>
+
+			<div id="search-filters">
+					<input type="radio" id="search-filters1" name="tab" value="" checked="checked">
+					<label for="search-filters1">Pages</label>
+				
+					<input type="radio" id="search-filters2" name="tab" value="people">
+					<label for="search-filters2">People</label>
+					
+					<a href="../../../../../../../www.cornell.edu/search/default.htm">more options</a>
+			</div>	
+		</form>
+	</div>
+</div>
+
+<!-- The header div contains the main identity and main navigation for the site -->
+<div id="header">	
+	<!--
+		The navigation div contains the site's main navigation. These
+		links will be displayed in a horizontal, gray navigation bar 
+		under the unit signature banner.
+	-->	
+	<div id="navigation">
+		<ul>
+			<li><a href="#Overview">Overview</a></li>
+			<li><a href="#high_level_design">High Level Design</a></li>
+			<li><a href="#hardware_design">Hardware Design</a></li>		
+			<li><a href="#software_design">Software Design</a></li>		
+			<li><a href="#results">Results</a></li>		
+            <li><a href="#conclusions">Conclusions</a></li>	
+			<li><a href="#intellectual">Related Work and IP</a></li>	
+            <li><a href="#appendix">Appendix</a></li>	
+			
+			<!-- More navigation as needed
+			<li><a href="#">Navigation 6</a></li>
+			-->
+						
+		</ul>
+	</div>
+	
+	<hr>
+	
+	<!-- 
+		The identity div contains the name of a main site section
+	-->
+	<div id="identity">
+		<h1> Augmented Reality Ball Game </h1>
+	</div>
+</div>
+
+<hr>
+
+<div id="wrap">
+
+<!-- The content div contains the main content of the page -->
+<div id="content">
+
+	<!--
+		The section-navigation div contains the second level of site navigation.
+		These links appear at the top of the left sidebar of the two-column page.
+	-->
+	<div id="section-navigation">
+		<ul>
+			<li><a href="#Overview">Overview</a></li>
+			<li><a href="#high_level_design">High Level Design</a></li>
+			<li><a href="#rationale"><font size="0.8em" color="black">&nbsp;&nbsp;Rationale</font></a></li>
+			<li><a href="#sysarch"><font size="0.8em" color="black">&nbsp;&nbsp;System Architecture</font></a></li>
+			<li><a href="#image_processing_background"><font size="0.8em" color="black">&nbsp;&nbsp;Image Processing Filter Background</font></a></li>
+			<li><a href="#hardware_software_tradeoffs"><font size="0.8em" color="black">&nbsp;&nbsp;Hardware and Software Tradeoffs</font></a></li>
+            <li><a href="#hardware_design">Hardware Design</a></li>
+			<li><a href="#video_input"><font size="0.8em" color="black">&nbsp;&nbsp;Video Input</font></a></li>
+			<li><a href="#gaussian_filter"><font size="0.8em" color="black">&nbsp;&nbsp;Gaussian Filter</font></a></li>
+      <li><a href="#grid_generator"><font size="0.8em" color="black">&nbsp;&nbsp;Grid Generation</font></a></li>
+			<li><a href="#sobel_convolution"><font size="0.8em" color="black">&nbsp;&nbsp;Sobel Convolution</font></a></li>
+			<li><a href="#time_averager"><font size="0.8em" color="black">&nbsp;&nbsp;Time Averager</font></a></li>
+			<li><a href="#cpu_interface"><font size="0.8em" color="black">&nbsp;&nbsp;Interface with Processor</font></a></li>
+			<li><a href="#ball_drawer"><font size="0.8em" color="black">&nbsp;&nbsp;Drawing the Ball</font></a></li>
+			<li><a href="#impulse_control"><font size="0.8em" color="black">&nbsp;&nbsp;Impulse Control</font></a></li>
+			<li><a href="#impulse_drawer"><font size="0.8em" color="black">&nbsp;&nbsp;Impulse Drawer</font></a></li>
+			<li><a href="#seven_seg"><font size="0.8em" color="black">&nbsp;&nbsp;7-Segment Display</font></a></li>
+			<li><a href="#resource_utilization"><font size="0.8em" color="black">&nbsp;&nbsp;Resource Utilization</font></a></li>
+			<li><a href="#software_design">Software Design</a></li>
+			<li><a href="#collision_detection"><font size="0.8em" color="black">&nbsp;&nbsp;Collision Detection</font></a></li>
+			<li><a href="#collision_physics"><font size="0.8em" color="black">&nbsp;&nbsp;Collision Physics</font></a></li>
+			<li><a href="#results">Results</a></li> 
+			<li><a href="#res_edge_detection"><font size="0.8em" color="black">&nbsp;&nbsp;Edge Detection</font></a></li>
+			<li><a href="#physics_engine"><font size="0.8em" color="black">&nbsp;&nbsp;Physics Engine</font></a></li>
+			<li><a href="#conclusions">Conclusions</a></li>
+			<li><a href="#intellectual"><font size="0.8em" color="black">&nbsp;&nbsp;Intellectual Property Considerations</font></a></li>
+      <li><a href="#appendix">Appendix</a></li>
+		</ul>
+	</div>
+	
+	<hr>
+
+	<!--
+		The main div contains the main contents of the page. It will be displayed
+		as the wide right column with the beige background.
+	-->
+	<div id="main">
+		
+		<p>Chris Fairfax (cwf38) Matheus Ogleari (mao65), Aadeetya Shreedhar. (as889)</p>
+    
+    <p>
+		<div class="image-caption">
+		<a href="images/photos/group_picture_hq.jpg"><img src="images/photos/compressed/group_picture.jpg" width="600" height="326"></a>
+		<div></div>
+		</div>
+		</p>
+    
+    
+        <a name="Overview"></a>
+	  <h3>Overview</h3>
+		<p>
+		Our project implements a two-player game based on real-time edge detection. 
+		The design is built on a Cyclone II FPGA on an Altera DE2 development board.
+		</p><p>The project uses the Sobel operator to detect the edges of a map drawn on a whiteboard.
+		A physics engine implemented on a <a href="../../../DE2/Stack_cpu.html">Pancake processor</a> controls the motion of a ball on the map. The map and the ball are displayed on a VGA screen. 
+		</p>
+		<p>
+		The game is played by controlling the switches and keys on the DE2 development board.  Player 1 draws an arbitrary number of straight lines on the map. Player 1 and Player 2 each try and move the ball to the destination. The ball’s motion is controlled by a fixed impulse that can be applied at any angle. The number of impulses required to reach the destination is recorded and displayed on a seven segment display. The player who applies the minimum number of impulses to the ball wins. Player 2 then draws the obstacles on the map, and the game proceeds as before.
+		</p>
+		<a name="high_level_design"></a>
+	  <h3>High Level Design</h3>
+		<a name="rationale"></a><h4>Rationale</h4>
+	  <p>
+		The project uses concepts about embedded systems and systems-on-chip learnt as part of ECE 4760 and ECE 5760. Edge detection is an excellent example of a computation that benefits from hardware acceleration, while the behavior for motion and collisions of a ball is easier to implement in software. Our project implements a general purpose processor and an edge-detection hardware accelerator on the FPGA. The resulting system-on-chip effectively combines hardware and software design concepts to create a fun application of real time edge-detection.
+		</p>
+		<a name="sysarch"></a><h4>System Architecture</h4>
+		
+		<p>
+		<div class="image-caption">
+		<a href="images/sys_arch.png"><img src="images/sys_arch.png" width="600" height="450"></a>
+		<div>High Level System Architecture</div>
+		</div>
+		</p>
+	  
+	  <p>
+		The system-on-programmable-chip (SOPC) has a video decoder to acquire video input from the camera. The Video Input and Grayscale module converts the input video to a grayscale image. The grayscale image is passed through the Edge Detection Accelerator in the SOPC to generate the game map. 
+		</p><p>
+The Pancake processor outputs the coordinates of the ball. A window of pixels around the ball’s position on the map is input to the processor from the Edge Detection Accelerator. The processor uses the input data to detect the ball’s collisions with edges on the map, and to calculate the ball’s new position and velocity vector. The Ball Drawer module uses the computed ball position to draw the ball on the map. A VGA Controller displays the map and the ball on a VGA screen.
+		</p><p>
+The Impulse Controller module reads the input switches to determine the initial ball velocity. The Bounce Counter keeps track of the number of bounces per player. 
+		</p>
+		<a name="image_processing_background"></a><h4>Image Processing Filter Background: Gaussian Filter</h4>
+	  <p>
+		The grayscale image generated by the Video Input and Grayscale module is passed through a Gaussian filter to attenuate image noise and enable cleaner edge detection. The system uses a 5x5 Gaussian kernel with equal elements to simulate a Gaussian radius of infinity. The filter thus effectively acts as an averaging function.
+		</p>
+
+		<p>
+		<div class="image-caption">
+		<a><img src="images/gaussian_kernel.png" width="300" height="236"></a>
+		<div>5 x 5 Gaussian Kernel</div>
+		</div>
+		</p>
+		<p>
+		Each pixel in the map is influenced by 24 of its neighbors. Spatial averaging helps get rid of several unwanted video artifacts including specular reflection. The filter is implemented by convolving the the kernel with the camera output. The detailed RTL implementation is described in the Hardware Design section of this page.
+		</p>
+		<h4>Image Processing Filter Background: Sobel Operator</h4>
+		<p>
+		The cleaned-up image from the Gaussian filter is passed through a Sobel operator to detect edges. The Sobel operator performs discrete differentiation to get the approximate vertical and horizontal gradients of the image intensity. The Sobel filter is implemented by convolving a 3x3 kernel with the image twice, once for each dimension. 
+		</p>
+		<p>
+		<div class="image-caption">
+		<a><img src="images/sobel_convolution.png" width="300" height="205"></a>
+		<div>Sobel Convolution</div>
+		</div>
+		</p>
+		<p>
+		The Sobel operator is computationally inexpensive in hardware. Like the Gaussian filter, implementation of the sobel filter requires multiple line buffers that will add delay to the system; however the edge-detection accelerator does not violate the real-time operation of the system.
+		</p><p>
+The tradeoff for the computational simplicity of the Sobel operator is its inability to handle high frequency variations in image intensity. The Sobel operator is sufficiently accurate for the purposes of the game.
+</p>
+		<a name="hardware_software_tradeoffs"></a><h4>Hardware and Software Tradeoffs</h4>
+		<h4>Physics Implementation in Hardware</h4>
+	  <p>
+		The computation of the ball’s coordinates, collision detection and velocity-change computation are all done in software running on the Pancake processor rather than in register-transfer logic because physics calculations are easier to implement in software. These computations have to be performed once each time a VGA frame is displayed; this timing requirement is sufficiently relaxed to make hardware acceleration unnecessary.
+		</p>
+		<h4>Limited Collision Detection</h4>
+		<p>
+		The collision detection scheme, described in the Hardware Design and Software Design sections of this page, uses only four points on the ball to detect collisions with edges in the map. The ball bounces when the pixels on the north, south, west or east points of the ball meet an edge on the map. Using only four points for collision detection makes the design easier to implement. A more sophisticated collision detection scheme would make the game smoother and enable more complicated shapes to be drawn on the map; however, the four-point scheme provides sufficient accuracy for the game to be played smoothly.
+		</p>
+		<h4>Averaging Instead of Using a True Gaussian Function</h4>
+		<p>
+		The image noise attenuation scheme uses a Gaussian function of infinite radius approximated to a 5x5 matrix. A Gaussian kernel with a limited radius would provide less distortion, but did not reduce the noise sufficiently. The system uses an averaging kernel that requires multiple adders and a single multiplier. A traditional Gaussian kernel requires several multipliers. The noise attenuation provided by an averaging kernel is sufficient to achieve clean edge detection for the purposes of the game.
+		</p>
+		
+		<h4>Sobel Filter instead of a Canny Filter for Edge-Detection</h4>
+		<p>
+A Canny filter is a more sophisticated edge-detection algorithm than a Sobel filter. A Canny filter adds hysteresis to a Sobel filter to detect a wide range of edges. The accuracy of a Sobel filter was determined to be sufficient for the purposes of detecting edges on a map for the game, hence the computational overhead of a Canny Filter is unnecessary for this application.
+		</p>
+		<a name="game play"></a><h4>Game Play</h4>
+    		
+		<p>
+		The target area for the game’s victory condition is defined as the left edge of the map. The inputs used to control the game are listed in the table below.
+		</p>
+    
+        <div class="image-caption">
+    <OBJECT width="600" height="338"  ><PARAM name="movie" value="MPFLVPlayer.swf" /><PARAM name="allowFullScreen" value="true" /><PARAM name="FlashVars" value="fn=../../../../../../../www.youtube.com/watch@v=URmyrQykgI0&flvskin=MPFLVSkin.swf" /><EMBED src="MPFLVPlayer.swf"  width="600" height="338"  type="application/x-shockwave-flash" allowFullScreen="true" FlashVars="fn=../../../../../../../www.youtube.com/watch@v=URmyrQykgI0&flvskin=MPFLVSkin.swf"></EMBED></OBJECT>	  <td>Key 0</td>
+		  <td>Reset</td>
+		</tr>
+		<tr class="row1">
+		<tr>
+		  <td>Key 1</td>
+		  <td>Rotate impulse clockwise</td>
+		</tr>
+		<tr class="row2">
+		<tr>
+		  <td>Key 2</td>
+		  <td>Fire impulse</td>
+		</tr>
+		<tr class="row1">
+		<tr>
+		  <td>Key 3</td>
+		  <td>Rotate impulse counter-clockwise</td>
+		</tr>
+		<tr class="row2">
+		<tr>
+		  <td>Switch 0</td>
+		  <td>Toggle between grayscaled image and edge detected image</td>
+		</tr>
+		<tr class="row1">
+		<tr>
+		  <td>Switch 1</td>
+		  <td>Turn on gaussian filtering</td>
+		</tr>
+		<tr class="row2">
+		<tr>
+		  <td>Switch 2 through 17</td>
+		  <td>Control edge detection threshold</td>
+		</tr>
+		</table>
+		
+		<a name="hardware_design"></a>
+	  <h3>Hardware Design</h3>
+		<a name="video_input"></a><h4>Video Input</h4>
+	  <p>
+		The video input originates from the TD_DATA input of the FPGA. This data comes from the camera and is in ITU-R 656 format. That input is downsampled from 720 to 640, converted to YUV 4:2:2 format and then converted to YUV 4:4:4. Until further conversion, the video input is stored in SDRAM and read when the proper control signals are asserted. 
+
+		</p>
+		<p>
+		The video format is then converted to 10-bit RGB which can then be readily used for our purposes and sent to the VGA output. We added one additional modification to the image which is to mirror the image horizontally. We did this for a mirror effect so that things on the right side looking into the camera appear on the right side of the video image, simplifying user interaction with the game.
+		</p>
+		<p>
+		
+		The video input and conversion code was taken from the “Air String” project from ECE 5760 in Fall 2011. See the IP Considerations section for more information.
+		</p>
+		<p>
+		The image taken from the video input is converted to grayscale before any further operations are performed on it. We do this because it allows us to merge the three color channels (R, G, and B) into a single value. The equation used for converting a channel to grayscale is as follows:
+		</p>
+		<p>
+		<div class="image-caption">
+		<a><img src="images/grayscale_eqn.png" width="300" height="55"></a>
+		<div>Grayscale Conversion Equation</div>
+		</div>
+		</p>
+		<p>
+		The three colors are weighted differently because green is the color channel that the human eye senses the most and blue is the color channel that the human eye senses the least. We adjusted the weights to be powers of two to simplify the math done in hardware (using logical shifts instead of divides).  
+		</p>
+		<p>
+If edge detection is done on each channel individually, the three color channels appear on the screen misaligned with each other, producing three confusing monochromatic images.
+		</p>
+		
+		<a name="gaussian_filter"></a><h4>Gaussian Filter</h4>
+	  <p>
+		The Gaussian filter module takes a 5x5 window of pixels and performs the aforementioned computation using adders and a fixed point multiplication to multiply the result by the correct fraction.
+		</p>
+		<p>
+The filter needs an array of wires. However, since Verilog modules cannot have arrays of ports, the array of wires are packed into one wide bus which is the input port. In the case of the Gaussian Filter, the port is 250 bits wide. Within the code, the ports are unpacked into a wire array which are then operated upon.
+		</p>
+		<a name="grid_generator"></a><h4>Grid Generation</h4>
+		<p>
+		There are two grid generator modules that store arrays of pixels read from the video input. The array of pixels use line buffers to store horizontal lines of pixels until they are overwritten by new pixels. There are two grid generators because one is for a 3x3 window of pixels and the other is for a 5x5 window of pixels. The line buffers are 640 elements long to accommodate a single horizontal line of the VGA frame.
+		</p>
+		<p>
+		<div class="image-caption">
+		<a href="images/grid-generator-3x3-dpath.png"><img src="images/grid-generator-3x3-dpath.png" width="600" height="414"></a>
+		<div>Datapath diagram of a 3x3 Grid Generator</div>
+		</div>
+		</p>
+		<p>
+		The Gaussian Filter operates on a 5x5 array of pixels so it connects to the 5x5 grid generator, storing the output gaussian value to each of the pixels. The 3x3 grid of pixels is connected to the Sobel Convolution module because the calculation performed there only requires a 3x3 pixel window. Similarly to the Gaussian filter, port packing and unpacking is done to simplify the code and reduce the number of port names.
+		</p>
+		<a name="sobel_convolution"></a><h4>Sobel Convolution</h4>
+	  <p>
+		The edge_detect module performs the Sobel Convolution. We use logical shifts in place of multiplies and divides to save FPGA resources. However, once we convolve the x and y edges (independently), their magnitudes are adjusted using their squares before the result is output. We notice through inspection that horizontal edges were weakly detected compared to vertical edges. As an adjustment, we amplify horizontal edges by a factor of four. Thresholding is done at end of the computation and is determined by the number encoded from the FPGA’s switches.
+		</p>
+		<a name="time_averager"></a><h4>Time Averager</h4>
+	  <p>
+		The Time Averager module takes the output from the edge detector and averages the pixels over time. This module stores data about the RGB value of the pixels from the previous frames and averages them. This module is extremely helpful in reducing jitter and noise, and removing random flashes from the VGA which would periodically blur the screen.
+		</p>
+		<p>
+The code for this Time Averager module was taken from the <a href="../../f2010/kaf42_jay29_teg25/teg25_jay29_kaf42/index.html">“Video Realtime Cartoonifier”</a> project from ECE 5760 fall 2010. See the IP Considerations section for more information.
+		</p>
+		<a name="cpu_interface"></a><h4>Interface with Processor</h4>
+	  <p>
+		The Pancake processor is used to compute the physics involving the ball. To do this, it is continuously fed an 18x19 window of pixels which surrounds the ball, centered on the ball itself. These pixels are updated in real time along with the coordinates of the ball, which is also controlled and determined by the Pancake.
+		</p>
+		<p>
+		<div class="image-caption">
+		<a href="images/ball-pixel-window.png"><img src="images/ball-pixel-window.png" width="400" height="305"></a>
+		<div>Pixel Window Input to Pancake</div>
+		</div>
+		</p>
+		<p>
+		Each pixel input to the Pancake processor is a logic one or zero depending on whether the pixel is part of an edge on the map. 
+		</p>
+		
+		<a name="ball_drawer"></a><h4>Drawing the Ball</h4>
+	  <p>
+		A module called Ball Drawer draws the ball on the screen in place of part of the video feed. The x and y coordinates of the center of the ball on the VGA are handled by Pancake and sent to this module. The ball coordinates are compared to the current VGA coordinates. If the current VGA coordinates fall within the area of the ball, the white pixels are overwritten with red pixels from the ball, according to the following equation:
+		</p>
+		<p>
+		<div class="image-caption">
+		<a href="images/ball_eqn.png"><img src="images/ball_eqn.png" width="400" height="40"></a>
+		<div>Ball Drawing Condition</div>
+		</div>
+		</p>
+		
+		<a name="impulse_control"></a><h4>Impulse Control</h4>
+	  <p>
+	  The Impulse controller allows the user to use the push buttons to control the angle of the impulse thrust. KEY[3] rotates the angle counterclockwise while KEY[1] rotates the angle clockwise. KEY[2] is used to apply the impulse to the ball. Positive-edge detection is used for each of these push buttons so that the user is required to depress the button before registering another press. The impulse button, once registered, is sent to the Pancake processor and then used to apply a force over a short time-step to the ball, altering its velocity.
+	  </p>
+	  <p>
+The angle for thrust are adjusted in increments of 30 degrees, so there are 12 total angles possible. The angle is also sent to the Pancake and the Pancake uses its built-in functions to apply an impulse function in the specific angle to the ball. 
+	  </p>
+	  
+	  <a name="impulse_drawer"></a><h4>Impulse Drawer</h4>
+	  <p>
+	  To provide the user with visual feedback to know at what angle the impulse would be directed, a representation of the angle is displayed in the lower left of the display. The Impulse Drawer module handles this by drawing an impulse direction minimap at the bottom left of the screen, overriding the video output. A magenta diamond shows all the possible directions while a green dot traces the diamond showing the current direction of the impulse. A Look Up Table (LUT) is used to determine whether a given pixel on the VGA is contained within this minimap.
+	  </p>
+	  
+		<a name="seven_seg"></a><h4>7-Segment Display</h4>
+	  <p>
+	  The 7-segment displays are used to communicate messages between the user and the Pancake machine. The four rightmost displays are used to display the win or lose message. The LEDs display “ACEd” for a win condition and “dEAd” for a loss condition. The two middle displays show the current count (in decimal) of the number of impulses used since the start of the game. 
+	  </p>
+		
+		
+		<a name="resource_utilization"></a><h4>Resource Utilization</h4>
+	  <p>
+		The line buffers are implemented using m4k blocks. The video input uses SDRAM to read and store frames. The Pancake processor uses m4k blocks to store its instructions and data memory. The Time Averager uses SRAM to store frames from previous cycles to use for averaging. We use so many different types of memory because we have various modules which require memory, and few I/O ports per memory type that we can utilize.
+		</p>
+		<p>
+		<div class="image-caption">
+		<a href="images/memory-usage.png"><img src="images/memory-usage.png" width="600" height="579"></a>
+		<div>System Memory Usage</div>
+		</div>
+		</p>
+		
+		
+		<a name="software_design"></a>
+	  <h3>Software Design</h3>
+		<a name="collision_detection"></a><h4>Collision Detection</h4>
+	  <p>
+		Collision detection is handled by the pancake processor using information about the area surrounding the ball. The collision_check function compares the north, south, west and east corners of the bounding box representing the ball with the corresponding points in the window of pixels input to the processor; if corners lie on a pixel representing an edge, a collision is detected, and the normal vector to the tangent along the point of collision is updated. The normal vector <b>R</b> is used to compute the ball’s new velocity vector after a collision. 
+		</p>
+		<p>
+It was sometimes possible for multiple collisions to be detected when only one collision should have occurred. To prevent this, two counters were added, one for the x dimension, and one for the y dimension.  When the ball collides in the x dimension, the counter is set to 12, and then decremented on each subsequent frame cycle. If either frame counter is greater than zero, collisions in the corresponding direction are not detected.  This mechanism ensures clean bouncing where only a single collision is detected each time the ball strikes an edge on the map.  Additionally, the x-frame counter is incremented each time a collision occurs in the y direction, and vice versa.
+		</p>
+		<a name="collision_physics"></a><h4>Collision Physics</h4>
+		<p>
+		<div class="image-caption">
+		<a href="images/ball-collision-vectors.png"><img src="images/ball-collision-vectors.png" width="200" height="293"></a>
+		<div>Dot Product of Vectors During Collision</div>
+		</div>
+		</p>
+		
+	  <p>
+		The change in velocity due to the collision is computed by the dot product of the normal vector <b>R</b> obtained from the collision detection function, and the ball’s velocity vector <b>V</b>.
+		</p>
+		
+		<p>
+		<div class="image-caption">
+		<a href="images/collision-equations.png"><img src="images/collision-equations.png" width="300" height="140"></a>
+		<div>Velocity Update Equations</div>
+		</div>
+		</p>
+		
+		<p>
+		A damping function decreases the energy of the ball with each collision. The velocity computed by the collision function is used to update the ball’s position. 
+		</p>
+		<p>
+		The position of the ball is updated by a simple addition of the velocity vector to the ball’s position vector. The vertical component of the ball’s velocity is incremented by a fixed value once per VGA frame update to simulate gravity. The ball’s velocity is saturated if it increases past a preset value to prevent the ball from going fast enough that it breaks through walls. The ball’s position is output to the Ball Drawer module.
+		</p>
+		
+		<a name="results"></a>
+	  <h3>Results</h3>
+		<a name="res_edge_detection"></a><h4>Edge Detection</h4>
+	  <p>
+		The edge-detection is remarkably clean and robust. The edge-detection system meets real-time deadlines without noticeable lag. The threshold for detecting edges can be varied to display different amounts of detail on the VGA screen.
+		</p>
+		<p>
+		The following images show the VGA frame output from different stages of the edge detection accelerator. The raw image is the unprocessed image captured by the camera. The edge detected image is the final output of the edge-detection accelerator after passing through the Gaussian filter, time averager and the sobel operator. The Ball Drawer module is disabled to focus on the results of image processing. The grayscale image and the edge detected image are mirrored. This feature was added to enable future work like moving paddles in real-time on the screen. 
+		</p>
+		<p>
+		<table>
+		<tr>
+		<td>
+		<div class="image-caption">
+		<a href="images/photos/map_raw.jpg"><img src="images/photos/compressed/map_raw.jpg" width="280" height="209"></a>
+		<div>Raw Image of Map</div>
+		</div>
+		</td>
+		<td>
+		<div class="image-caption">
+		<a href="images/photos/map_greyscale.jpg"><img src="images/photos/compressed/map_greyscale.jpg" width="280" height="209"></a>
+		<div>Greyscale Image of Map</div>
+		</div>
+		</td>
+		</tr>
+		<tr>
+		<td>
+		<div class="image-caption">
+		<a href="images/photos/map_specular.jpg"><img src="images/photos/compressed/map_specular.jpg" width="280" height="209"></a>
+		<div>Edge Detection Image of Map With Specular Reflection</div>
+		</div>
+		</td>
+		<td>
+		<div class="image-caption">
+		<a href="images/photos/map_edge.jpg"><img src="images/photos/compressed/map_edge.jpg" width="280" height="209"></a>
+		<div>Edge Detection Image of Map with Spatial Averaging</div>
+		</div>
+		</td>
+		</tr>
+		</table>
+		</p>
+		
+		<!-- lab images -->
+		
+		<p>
+		The following image show the results of edge detection where the raw image has more details and a wider range of gradients. The edge detection logic is good enough to make out different objects in the lab. A more advanced image processing scheme is required for applications like computer vision that need higher precision.
+		</p>
+		<p>
+		<table>
+		<tr>
+		<td>
+		<div class="image-caption">
+		<a href="images/photos/background.jpg"><img src="images/photos/compressed/background.jpg" width="280" height="209"></a>
+		<div>Greyscale Image of Lab</div>
+		</div>
+		</td>
+		<td>
+		<div class="image-caption">
+		<a href="images/photos/background_edge.jpg"><img src="images/photos/compressed/background_edge.jpg" width="280" height="209"></a>
+		<div>Edge Detection Image of Lab</div>
+		</div>
+		</td>
+		</tr>
+		</table>
+		</p>
+		<!-- fpga images -->
+		
+		<p>
+		The following images show the results of changing the threshold for edge detection. The best threshold varies by application. The game does not require a high amount of detail, so a high threshold is best for a clean map display.
+		</p>
+		
+		<p>
+		<table>
+		<tr>
+		<td>
+		<div class="image-caption">
+		<a href="images/photos/fpga_greyscale.jpg"><img src="images/photos/compressed/fpga_grey.jpg" width="280" height="209"></a>
+		<div>Greyscale Image of DE2 Board</div>
+		</div>
+		</td>
+		<td>
+		<div class="image-caption">
+		<a href="images/photos/fpga_medium_threshold.jpg"><img src="images/photos/compressed/fpga_medium_threshold.jpg" width="280" height="209"></a>
+		<div>Edge Detection with low threshold</div>
+		</div>
+		</td>
+		</tr>
+		<tr>
+		<td>
+		<div class="image-caption">
+		<a href="images/photos/fpga_high_threshold.jpg"><img src="images/photos/compressed/fpga_high_threshold.jpg" width="280" height="209"></a>
+		<div>Edge Detection with medium threshold</div>
+		</div>
+		</td>
+		<td>
+		<div class="image-caption">
+		<a href="images/photos/fpga_very_high_threshold.jpg"><img src="images/photos/compressed/fpga_very_high_threshold.jpg" width="280" height="209"></a>
+		<div>Edge Detection with high threshold</div>
+		</div>
+		</td>
+		</tr>
+		</table>
+		</p>
+		
+		<p>
+		<div class="image-caption">
+		<a href="images/photos/lab_setup_edge2.jpg"><img src="images/photos/compressed/lab_setup_edge2.jpg" width="600" height="448"></a>
+		<div>The lab setup. The handycam is in the upper left, with the DE2 Board and monitor on the desk.  The raw output can be seen on the viewfinder, and the post processed video is displayed on the monitor.</div>
+		</div>
+		</p>
+		
+    <div class="image-caption">
+    <OBJECT width="600" height="338"  ><PARAM name="movie" value="MPFLVPlayer.swf" /><PARAM name="allowFullScreen" value="true" /><PARAM name="FlashVars" value="fn=../../../../../../../www.youtube.com/watch@v=RhrrpA-iocQ&flvskin=MPFLVSkin.swf" /><EMBED src="MPFLVPlayer.swf"  width="600" height="338"  type="application/x-shockwave-flash" allowFullScreen="true" FlashVars="fn=../../../../../../../www.youtube.com/watch@v=RhrrpA-iocQ&flvskin=MPFLVSkin.swf"></EMBED></OBJECT>nly detects collisions when the north, south, west or east corners of the ball’s bounding box strike and edge on the map. Increasing the number of points on the bounding box where collisions are detected will make bouncing more realistic.  The improved physics engine could also keep track of the velocity of objects approaching the ball by measuring how quickly pixels in the window around the ball fill up; this can be leveraged to make collisions responsive to relative speeds of the ball and the edge and enable features like striking the ball with a paddle.
+		</p>
+		
+		<a name="video_artifacts"></a><h4>Video Artifacts</h4>
+		<p>
+		The game produces a relatively clean display on the VGA screen. The display is free from artifacts like flickering and screen tearing.  Before adding the time averager, the game suffered from flickering effects produced by noise from the camera or in the decoder.  These flickers only lasted one frame, so time averaging completely eliminated these problems.
+		</p>
+		
+		<a name="conclusions"></a>
+	  <h3>Conclusions</h3>
+	  <p>
+		We were able to use the concepts of system-on-chip design to create a successful application of edge detection.  The design met our expectations for quality and speed of edge-detection, and robustness of the game engine. We were able to apply our understanding of state-machines, parallel computations, hardware-software interfacing and embedded control systems to create a clean, working finished product.
+		</p>
+		<p>
+While we were satisfied with the way we handle collisions and edge detection, it may be possible to further improve these functionalities.  The edge detection could possibly be improved through the use of a Canny algorithm, however, this would require further experimentation. While the physics engine performed as required, it would be useful to have a physics engine that is capable of detecting the motion of objects and using this to add energy to the ball more realistically.		<a name="intellectual"></a>
+	  <h3>Related Work and IP Considerations</h3>
+
+		<ul>
+		<li type=circle>The RTL for video acquisition was taken from the Fall 2011 project for ECE 5760 - <a href="../../f2011/yk579_vm285/yk579_vm285/index.html">Air String, made by Young Hwa (Terry) Kim and Varsha Madhuranath. </a></li>
+		<li>The RTL for time averaging was taken from the Fall 2010 project for ECE 5760 - <a href="../../f2010/kaf42_jay29_teg25/teg25_jay29_kaf42/index.html">Real-time Cartoonifier, made by Jeff Yates, Tom Gowing, and Kerran Flanangan.  </a></li>
+		<li>We used several RTL modules generated by Altera’s Megawizard Plug-in Manager including the SRAM, M4K blocks for processor memory, and the line buffers. </li>
+		<li>The <a href="../../../DE2/Stack_cpu.html">Pancake processor</a> was adapted by Professor Bruce Land from the processor designed by K. Nakano, K. Kawakami, K, Shigemoto, and Y. Kamada and Y. Ito. We also used the associated compiler, Syrup designed by Professor Land. </li>
+		<li>The <a href="../../../DE2/indexVGA.html">VGA Controller</a> was taken from the VGA Examples page of the ECE 5760 website </li>
+		<li>W.H. Tsang, P.W.M. Tsang, <a href="../../../../../../../dx.doi.org/10.1016/S0167-8655(96)00125-0">“Suppression of false edge detection due to specular reflection in color images”</a>, Pattern Recognition Letters, Volume 18, Issue 2, February 1997 </li>
+		<li><a href="../../../../../../../en.wikipedia.org/wiki/Sobel_operator">Wikipedia: Sobel Operator </a></li>
+		<li><a href="../../../../../../../en.wikipedia.org/wiki/gaussian_filter">Wikipedia: Gaussian Filter </li>
+		</ul>
+      <a name="appendix"></a>
+	  <h3>Appendix A: Code</h3>
+		<p><a href="code/ece5760-final-cwf38-mao65-as889.zip">Zipped Quartus project folder</a></p>
+	  <h3>Appendix B: Task Breakdown</h3>
+		<p>
+		All tasks were distributed evenly between group members.
+		</p>
+		
+		
+
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+	<hr>
+	
+	<!--
+		The contents of the secondary div are displayed in the left column sidebar
+		below the secondary navigation. Each group of secondary content should be 
+		organized in a secondary-section div, which will pad the content from the 
+		edges of the sidebar and separate it from other content.
+	-->
+	<div id="secondary">
+		<div class="secondary-section">
+			<h2>&nbsp;</h2>
+</div>
+		
+		<div class="secondary-section">
+			<h2>&nbsp;</h2>
+		</div>
+		<div class="secondary-photo"> </div>
+	</div>
+</div>
+</div>
+
+<hr>
+
+<div id="footer">
+<!-- The footer-content div contains the Cornell University copyright -->
+<div id="footer-content">
+	©2013 <a href="../../../../../../../www.cornell.edu/default.htm">Cornell University</a>
+</div>
+</div>
+
+
+
+</body></html>

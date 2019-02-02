@@ -1,0 +1,301 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>3D WireMesh Generator</title>
+<style type="text/css">
+<!--
+.style27 {font-size: large}
+.style30 {	color: #466579;
+	font-size: large;
+}
+.style31 {
+	color: #000000;
+	font-weight: bold;
+	font-size: 36px;
+}
+.style33 {
+	font-weight: bold;
+	font-size: 24px;
+	color: #000000;
+}
+.style34 {
+	color: #669900;
+	font-size: 18px;
+	font-weight: bold;
+}
+.style35 {color: #FF6600; font-size: large; }
+.style8 {font-size: 10px;
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-weight: bold;
+}
+a:link {
+	text-decoration: none;
+	color: #FF6600;
+}
+a:visited {
+	text-decoration: none;
+	color: #FF6600;
+}
+a:hover {
+	text-decoration: underline;
+	color: #FF3300;
+}
+a:active {
+	text-decoration: none;
+	color: #FF6600;
+}
+.style38 {color: #466579; font-size: large; font-weight: bold; }
+.style40 {font-size: 10px; font-family: Verdana, Arial, Helvetica, sans-serif; font-weight: bold; color: #000000; }
+.style41 {color: #000000; font-size: large; }
+-->
+</style>
+</head>
+
+<body>
+<p align="justify" class="style30"><span class="style31">3D WireMesh Generator</span><br />
+ECE576 Final Project, November 30th 2007<br />
+(Advisor: Prof. Bruce Land)</p>
+<p align="justify" class="style35"><a href="index.html">Introduction</a> <span class="style33">|</span> <a href="index.html#h1">High Level Design</a> <span class="style33">|</span> <a href="index.html#h2">Hardware Design</a> <span class="style33">|</span> <a href="index.html#h3">Results</a> <span class="style33">|</span> <a href="index.html#h5">Appendix</a> <span class="style33">|</span> <a href="index.html#h6">Pictures</a></p>
+<p align="justify" class="style30"><img src="horz_line.jpg" width="722" height="1" /></p>
+<p align="justify" class="style34">Introduction<br />
+</p>
+<p align="justify" class="style30">The  project was an attempt to create a hardware transformation unit and a 3D  rasterization system on the Cyclone II FPGA. The description of the 3D object to be modelled as a wire frame was  provided  to the system in form of a vertex list and face list which were stored in the M4K  memory blocks using MIF (Memory Initialization Files). The world coordinates from the vertex list were  transformed into screen coordinates and were drawn as wire frame by extracing the polygon information from the face list, on the VGA in  real time. The user could control the camera position and orientation with a 3-degree freedom of movement  and navigate through the scene with the user interface provided on the DE2  board.</p>
+<p align="justify" class="style30"><span class="style27">This project report documents all the work done during the  course of the project. It starts with providing background knowledge on transformation and then moves on to High Level Design. Then we discuss the  approaches followed and the various problems faced during implementation. The  report concludes with observations and results.</span><br />
+</p>
+<p align="justify" class="style30"><em>The motivation  behind&nbsp;developing 3D wire mesh generator&nbsp;is professor  Bruce Land's lecture on&nbsp;Computer Graphics that he took&nbsp;as a part of  the course, ECE576 (Advanced Microcontroller Design)&nbsp;at Cornell  University.</em></p>
+<p align="center" class="style30"><span class="style38"><img src="DSC004241.jpg" width="960" height="540" /></span><br />
+<span class="style40">Figure. 1</span></p>
+<p align="justify" class="style35"><span class="style8"><a name="h1" id="h1"></a></span></p>
+<p align="justify" class="style35"><a href="index.html">Introduction</a> <span class="style33">|</span> <a href="index.html#h1">High Level Design</a> <span class="style33">|</span> <a href="index.html#h2">Hardware Design</a> <span class="style33">|</span> <a href="index.html#h3">Results</a> <span class="style33">|</span> <a href="index.html#h5">Appendix</a> <span class="style33">|</span> <a href="index.html#h6">Pictures</a></p>
+<p align="justify" class="style30"><img src="horz_line.jpg" width="722" height="1" /></p>
+<p align="justify" class="style34">High Level Design<br />
+</p>
+<p align="justify" class="style30">How does a flat two dimensional computer monitor   show three dimensional looking views?  How do game programmers convince you that   you're seeing a real landscape? The answer to these questions is fast 3D   rendering. </p>
+<p align="justify" class="style30">A picture that has or appears to have height,   width and depth is three-dimensional (or 3-D).A picture that has height and   width but no depth is two-dimensional (or 2-D).  This mapping of 3-D  points to 2-D points which can be displayed on a raster display is called transformation and depends on the viewing parameters. </p>
+<p align="justify" class="style30"><strong>Object Defination</strong>: <br />
+  How an object is defined in the 3D space   is known as the object definition.  A <strong>polygon mesh</strong>  is a <em>collection of vertices and polygons</em> that defines the shape of   an  object in 3D computer graphics. A triangle mesh is a commonly used construct in computer graphics. It   comprises of a set of triangles    that are connected by their common edges. Any complex 3D objects can be described by this method. We choose  a triangle representation for defining objects in 3-D space. These   coordinates form the local coordinate space. </p>
+<p align="center" class="style30"><a href="../../../../../../../../upload.wikimedia.org/wikipedia/en/f/fb/Dolphin_triangle_mesh.png">	<img border="0" width="432" height="267" src="index_clip_image002.jpg" alt="Image:Dolphin triangle mesh.png" /></a><br />
+    <span class="style40">Figure. 2 (Courtesy: http://en.wikipedia.org/wiki/Polygon_mesh)</span></p>
+<p align="justify" class="style30">Figure. 2 depicts a dolphin rendered in a triangular mesh. This is a perfect example of representing a 3D object in 2D space. The reason for choosing a triangular mesh over a quadrilateral mesh is because a triangular mesh can faithfully represent a 3D object but that comes with the trade-off of memory requirements. The effect of increasing the number of triangles to represent an object can be observed in Figure. 3.</p>
+<p align="center" class="style30"><img height="220" src="sandal.jpg" width="408" /><br />
+    <span class="style40">Figure. 3 (Courtesy: http://www.cs.berkeley.edu/~jrs/mesh/present.html)</span></p>
+<p align="justify" class="style30">&nbsp;</p>
+<p align="justify" class="style30">Viewing a 3D object on 2D computer screen is like viewing a photograph of that   object. This photograph is taken with a real camera from a given viewpoint and   angle. Extending   this analogy we imagine a virtual camera in 3D space at a given location, facing   a specific direction and tilted in a particular angle. This virtual camera is   called a synthetic camera. The synthetic camera is moved and transformed within   world coordinate system, in which different objects in the scene are present. If   we observe carefully the working principle of this model, then we can construct   a user coordinate system with the camera at origin. We can compare synthetic   camera film with XY plane in the user coordinate system. These local coordinates now need to be transformed into  view coordinates. This transformation neccessiates that we define a viewing system. A viewing system defines the various parameters that define the position and orientation of the synthetic camera. A number of different viewing   systems are used in 3D computer graphics. These range in complexity from the   simple three parameter system consisting of two angles and a distance, to the   system used in OpenGL. The more complex systems have greater flexibility, but   come at the cost of more complex user interfaces, requiring the user to enter a   larger number of parameters. </p>
+<p class="style30">The viewing system implemented by us takes in six parameters from the user  interface. The camera position is defined by a three-dimensional point, which is called &quot;Look From&quot; Point. The point in the world coordinate space where the camera points to is called the &quot;Look To&quot; point.  The axis joining &quot;Look to&quot; and &quot;Look from&quot; points defines the viewing direction.  The &quot;up&quot; vector determines how much the camera is tilted.   These are the normal degrees of freedom a real   photographer has. Once we set these attributes of synthetic camera, a photograph is taken by the   camera and it is rendered on the computer screen as it is. </p>
+<p align="center" class="style30"><img src="figure_4.png" width="459" height="310" /><br />  
+  <span class="style40">Figure. 4 (Courtesy: http://www.suchit-tiwari.org/synthetic_camera.html)</span><br />
+</p>
+<p align="center" class="style30"></p>
+<p class="style30">The view direction, N can be calculated from the LookTo and LookFrom 3-D points as follows.</p>
+<p align="center" class="style30"><img src="N.jpg" width="228" height="64" /></p>
+<p align="left" class="style30">V vector can be calculated as follows from the Up vector and N vector. Note that UpVector needs to be normalized to colinearity.</p>
+<p align="center" class="style30"></p>
+<pre class="style30">								 <img src="upvector.jpg" width="236" height="69" class="style30" />
+
+								<img src="V.jpg" width="274" height="71" />
+
+								<img src="U.jpg" width="92" height="30" />
+</pre>
+<p class="style30"><br>
+  Conversion of object descriptions from world to viewing coordinates is equivalent to a transformation that superimposes the viewing refernce frame onto the world frame using the basic translate-rotate operations. As shown in Figure. --- below, the transformation sequence is - first translate the view reference point to the origin of the world- coordinate system and then apply rotations to align the x<tt>v</tt>,y<tt>v</tt> and z<tt>v</tt> axes with the world x<tt>w</tt>,y<tt>w</tt> and z<tt>w</tt> axes respectively.</p>
+<p class="style30">&nbsp;</p>
+<p align="center" class="style30"><img src="translate_rotate.jpg" width="650" height="174" /><br />
+  <span class="style40">Figure. 5</span></p>
+<p align="left" class="style30">The viewing transformation can be derived from the following   steps:</p>
+<p align="center" class="style30"><img src="T.jpg" width="460" height="149" /></p>
+<p align="center" class="style30"><img src="B.jpg" width="234" height="135" /></p>
+<p align="center" class="style30"><img src="TB.jpg" width="97" height="34" /></p>
+<p class="style30">In camera analogy, the type of lens used on the camera is one factor that determines how much of the scene is caught on film. A wide angle lens takes in more of the scene than a regular lens. In 3-D viewing, a rectangular view window , in the view plane is used to the same effect. Only those objects that are within the view volume will appear in the generated display on an output device; all others will be clipped away. A computer graphics system differs from a real   camera in the one aspect that is a 3D view volume can be specified. A view volume   in view space can thus be specified and any object information outside this   space can be removed. </p>
+<p class="style30"></p>
+<p align="center" class="style30">	<img height="249" src="HighLevelDesign_clip_image005.jpg" width="449" /><br />
+  <span class="style40">Figure. 6</span><br />
+</p>
+<p align="center" class="style30"><img height="250" src="HighLevelDesign_clip_image007.jpg" width="454" /><br />
+  <span class="style40">Figure. 7</span></p>
+<p align="center" class="style30">&nbsp;</p>
+<p align="center" class="style30">		<img src="tper.jpg" alt="" width="262" height="245" /></p>
+<p class="style30">The three-dimensional objects must be flattened so that the   display device - namely a monitor - can display it in only two dimensions, this   process is called 3D projection. This is   done perspective   projection. The basic idea behind perspective projection is that objects   that are further away are made smaller in relation to those that are closer to   the eye.</p>
+<p align="center" class="style30"><img src="HighLevelDesign_clip_image002_0001.gif" width="264" height="180" /><br />
+  <span class="style40">Figure. 8</span></p>
+<p align="left" class="style30">Whereas parallel projections are used to project   points onto the image plane along parallel lines, the perspective projection   projects points onto the image plane along lines that emanate from a single   point, called the center of projection. This means that an object has a smaller   projection when it is far away from the center of projection and a larger   projection when it is closer.<br />
+  The simplest perspective projection uses the   origin as the center of projection, and <em>z</em> = 1 as the image plane. The   functional form of this transformation is then <em>x</em>' = <em>x</em> / <em>z</em>; <em>y</em>' = <em>y</em> / <em>z</em>. We can express this in   homogeneous coordinates as:</p>
+<p align="center" class="style30"><br />
+<img height="98" src="HighLevelDesign_clip_image001_0002.gif" width="230" /></p>
+<p align="left" class="style30"><br />
+  (The result of carrying out this multiplication   is that (<em>xc</em>,<em>yc</em>,<em>zc</em>,<em>wc</em>) =   (<em>x</em>,<em>y</em>,<em>z</em>,<em>z</em>).)<br />
+  After carrying out the matrix   multiplication, the homogeneous component <em>wc</em> will, in general, not be   equal to 1. Therefore, to map back into the real plane we must perform the   homogeneous divide, i.e. divide each component by <em>wc</em>:</p>
+<p align="center" class="style30"><img height="75" alt="" src="HighLevelDesign_clip_image002_0005.gif" width="147" /></p>
+<p align="center" class="style30">&nbsp;</p>
+<p align="justify" class="style30">Thus the minimum requirements   for converting a three dimensional scene to a two dimensional projection require   a projective transformation and a viewing transformation. </p>
+<p align="center" class="style30"> <img src="transformation_flow.jpg" width="821" height="238" /><br />
+    <span class="style40">Figure. 9</span></p>
+<p class="style30"></p>
+<p align="left" class="style30">Now these coordinates, need to be scaled to make them device dependent i.e. so that they can be displayed on the VGA screen.</p>
+<p align="center"><img width="301" height="425" src="index_clip_image001.jpg" /><br />
+  <span class="style40">Figure. 10</span></p>
+<div align="center"></div>
+<p align="left" class="style38">MATHS BACKGROUND </p>
+<p class="style38">Fixed Point Number Representation</p>
+<p align="justify" class="style30">Interactive graphics demands speed and floating   point is not usually the fastest kind of arithmetic. Because graphics programs   do so much arithmetic we want to do the arithmetic as fast as possible. To   improve the speed of execution and throughput, fixed point arithmetic is   preferred over floating point. A fixed point number is called fixed point   because the decimal point is in a fixed location in the number. 2s complement   signed fixed point representation of 1 sign-bit, 9- bit integer and 8-bit   fraction were used. A virtual decimal point is assumed between the 9th and the   8th bit. This particular representation was used because of the availability of   the embedded 18-bit multiplier available on the cyclone II FPGA. The device   EP2C35 FPGA has a total of 35 18-bit multipliers. Multiplying floating point   decimal numbers by 28  256 gives us the signed fixed point representation.</p>
+<p align="justify" class="style30">The multiplier stage supports 9 × 9 or 18 × 18   multipliers as well as other smaller multipliers in between these   configurations. Depending on the data width or operational mode of the   multiplier, a single embedded multiplier can perform one or two multiplications   in parallel.<br />
+</p>
+
+  <div align="center"></div>
+  
+<table cellspacing="0" cellpadding="0" align="center" border="1">
+  <tbody>
+    <tr>
+      <td valign="top" width="110"><p align="center">Signed Fixed Point Representation</p></td>
+      <td valign="top" width="102"><p align="center">Decimal Number</p></td>
+    </tr>
+    <tr>
+      <td valign="top" width="110"><p align="center">3FF_00</p></td>
+      <td valign="top" width="102"><p align="center">-1.0</p></td>
+    </tr>
+    <tr>
+      <td valign="top" width="110"><p align="center">3FF_80</p></td>
+      <td valign="top" width="102"><p align="center">-0.5</p></td>
+    </tr>
+    <tr>
+      <td valign="top" width="110"><p align="center">000_00</p></td>
+      <td valign="top" width="102"><p align="center">0</p></td>
+    </tr>
+    <tr>
+      <td valign="top" width="110"><p align="center">000_80</p></td>
+      <td valign="top" width="102"><p align="center">0.5</p></td>
+    </tr>
+    <tr>
+      <td valign="top" width="110" height="22"><p align="center">1FF_00</p></td>
+      <td valign="top" width="102"><p align="center">511</p></td>
+    </tr>
+  </tbody>
+</table>
+<p align="justify" class="style30"><br />
+  The various mathematical operations performed in Fixed   Point are multiplication, division, and square root. Multipication and Division utilized   altera lpm functions and were then shifted and sign preserved to bring them in   the right format.  Addition and   subtractions were the usual operations. Square Root was computed using the   algorithm found in the Graphic Gems paper written by Ken Turkowski. It is based   on the method of long division. For higher accuracy the square root calculation   was carried out on a fixed point number with 30 fractional bits and 2 integer   bits. The number whose square root was to be calculated was converted into this   format by dividing it by the lowest perfect square which would result in a   number less than 2. The square root computation was then done on this number and   then again converted back by multiplication with the square root of the perfect square to get the desired answer. </p>
+<p align="justify" class="style30"><span class="style35"><span class="style8"><a name="h2" id="h2"></a></span></span></p>
+<p align="justify" class="style35"><a href="index.html">Introduction</a> <span class="style33">|</span> <a href="index.html#h1">High Level Design</a> <span class="style33">|</span> <a href="index.html#h2">Hardware Design</a> <span class="style33">|</span> <a href="index.html#h3">Results</a> <span class="style33">|</span> <a href="index.html#h5">Appendix</a> <span class="style33">|</span> <a href="index.html#h6">Pictures</a></p>
+<p align="justify" class="style30"><img src="horz_line.jpg" width="722" height="1" /></p>
+<p align="justify" class="style34">Program/Hardware Design<br />
+</p>
+<p align="justify" class="style30">The flow of the hardware design starts from the transform module which calculates all   the vectors required for carrying out transformation of the world coordinates.   Transform module takes in parameters from the DE2 board. The various switches   and buttons on the board are used as an user interface to completely describe the viewing  system. Control Module reads vertices from the World RAM and gives it to   Compute Screen Coordinates module which performs transformation on them to produce   view coordinates. The compute screen module instantiates mathematic operations from math   module and is responsible for all the transformation of the vertices. The math module performs multiplication, division, square root, matrix multiplication, cross product etc on 18 bit fixed point numbers. Compute screen coordinates   returns the screen coordinates to the Control module, which it stores it in Screen   RAM. Then Control module uses the Face Ram as index to store these values in the   display Ram in the format required by the triangle drawer module. The triangle   drawer module further calls the line drawer module to draw the triangular faces on the screen. The line drawer module is employed for connecting the vertices passed by the triangle drawer module. It plots various lines on   the VGA using Breshenham’s line drawing algorithm.</p>
+<p align="center" class="style30"><img src="hardware_flow.jpg" width="891" height="415" /><br />
+  <span class="style40">Figure. 11 Hardware Description</span></p>
+<p align="center" class="style30"><img src="state_machine.png" width="731" height="550" /><br />
+  <span class="style40">Figure. 12 State machine for Control module</span></p>
+<p align="justify" class="style38">&nbsp;</p>
+<p align="justify" class="style38">&nbsp;</p>
+<p align="justify" class="style38">User Interface</p>
+<p align="justify" class="style30">The user interface allows the user to change the position of the camera and all the parameters associated with the viewing system.</p>
+<p align="center" class="style41">  SW[17] &amp;&amp; ~KEY[3] = Increase the value<br />
+  ~SW[17] &amp;&amp; ~KEY[3] = Decrease the value</p>
+<p align="center" class="style38"><img src="user_interface.jpg" width="329" height="262" /><br />
+  <span class="style40">Figure. 13 User Interface summary</span><br />
+</p>
+<p align="center" class="style30"><span class="style35"><span class="style8"><img src="input_interface.jpg" width="937" height="410" /></span></span><br />
+  <span class="style40">Figure. 14 User Interface Hardware</span></p>
+<p align="justify" class="style30"><span class="style35"><span class="style8"><a name="h3" id="h3"></a></span></span></p>
+<p align="justify" class="style35"><a href="index.html">Introduction</a> <span class="style33">|</span> <a href="index.html#h1">High Level Design</a> <span class="style33">|</span> <a href="index.html#h2">Hardware Design</a> <span class="style33">|</span> <a href="index.html#h3">Results</a> <span class="style33">|</span> <a href="index.html#h5">Appendix</a> <span class="style33">|</span> <a href="index.html#h6">Pictures</a></p>
+<p align="justify" class="style30"><img src="horz_line.jpg" width="722" height="1" /></p>
+<p align="justify" class="style34">Results<br />
+</p>
+<p align="justify" class="style30">The project ran into many problems during the implementation   and testing phase, especially timing considerations. These problems were solved   painstakingly slowly with the help of careful debugging and In-System memory   content editor. Integrating the In-System Memory conte<span class="style30">nt editor with our project   gave errors in the compilation. This was solved by setting the following,</span></p>
+<p align="center" class="style30"><span class="style30"><br />
+  </span><img src="InSystemMem.gif" width="741" height="626" /><br />
+<span class="style40">Figure. 15</span></p>
+<p align="left" class="style30"><br />
+  Earlier we integrated an NIOS II soft   processor to provide the user interface but that consumed a lot of FPGA space   with little utility, so we switched to the keys and switched provided on the DE2   board.<br />
+</p>
+<p class="style38">Difficulties Faced:</p>
+<p><span class="style30">1. Providing the system with vertex and face list.<br />
+  - The  first version of the project took the vertex list from the NIOS. This  added significantly to the compilation time making it 40-45 minutes to  compile the complete system. The later version of the project was  changed to take vertices and facelist from M4K blocks which were  initialised with the data using memory initialization file. </span></p>
+<p align="left" class="style30">2. Implementation of square root in hardware.<br />
+- To evaluate  transform matrix we needed to find magnitude hence square root of  various vectors. The square root algorithm has been adapted from  Ken Turkowski's paper. It takes 30 cycles to compute the square  root of a number and gives high accuracy. Implementing the algorithm in  hardware took significant time.</p>
+<p align="left" class="style30"><br />
+  <strong>Hardware Usage</strong></p>
+<p align="center" class="style30"><img height="629" alt="hardware" src="hardware_usage.gif" width="819" /><br />
+<span class="style40">Figure. 16</span></p>
+<p class="style38">Conclusion</p>
+<p align="justify" class="style30">The wire mesh generator was provided face and vertex information of a cube and the camera position and orientation was changed to view the cube from different perspectives. Because clipping was not implemented, the image produced on the VGA screen went completly haywire when we went too close to the object. Also there was no provision to detect an divide by zero error which again caused random lines to appear on the screen. The system could not be tested for other shapes except a cube due to timing constraints. </p>
+<p align="center" class="style30"><span class="style38"><img src="DSC004351.jpg" width="500" height="281" /></span><br />
+  <span class="style40">Figure. 17</span></p>
+<p align="center" class="style30"><span class="style38"><img src="DSC004211.jpg" width="503" height="282" /></span><br />
+<span class="style40">Figure. 18</span></p>
+<p align="justify" class="style30"><strong>Acknowlegements</strong></p>
+<p align="justify" class="style30">We would like to thank Dr. Bruce Land for his undamped motivation and support.</p>
+<p align="right" class="style30">- Manisha Singh and Sahil Arora</p>
+<p align="justify" class="style30"><span class="style35"><span class="style8"><a name="h5" id="h5"></a></span></span></p>
+<p align="justify" class="style35"><a href="index.html">Introduction</a> <span class="style33">|</span> <a href="index.html#h1">High Level Design</a> <span class="style33">|</span> <a href="index.html#h2">Hardware Design</a> <span class="style33">|</span> <a href="index.html#h3">Results</a> <span class="style33">|</span> <a href="index.html#h5">Appendix</a> <span class="style33">|</span> <a href="index.html#h6">Pictures</a></p>
+<p align="justify" class="style30"><img src="horz_line.jpg" width="722" height="1" /></p>
+<p align="justify" class="style34">Appendix<br />
+</p>
+<p align="justify" class="style38">Project Code Listing</p>
+<p class="style30">The code  maps looks like:</p>
+<ul class="style30">
+  <li><a href="DE2_TOP.v">DE2_TOP.v</a>
+    <ul>
+      <li><a href="transform.v">transform.v</a> </li>
+      <li><a href="ComputeScreenCoord.v">ComputeScreenCoord.v</a></li>
+      <li><a href="Controller.v">Controller.v</a></li>
+      <li><a href="TriangleDrawer.v">TriangleDrawer.v</a></li>
+      <li><a href="LineDrawer.v">LineDrawer.v</a></li>
+      <li><a href="math.v">math.v</a></li>
+      <li><a href="display_ram.v">display_ram.v</a></li>
+      <li><a href="face_ram.v">face_ram.v</a></li>
+      <li><a href="world_ram.v">world_ram.v</a></li>
+      <li><a href="screen_ram.v">screen_ram.v</a></li>
+    </ul>
+  </li>
+</ul>
+<ul class="style30"><li><a href="FaceRam.mif">FaceRam.mif</a></li>
+  <li><a href="WorldVertex.mif">WorldVertex.mif</a></li>
+</ul>
+<p align="justify" class="style38">References</p>
+<ul class="style30"><li>Books
+    <ul>
+        <li>3D Computer Graphics by Allan Watt </li>
+      <li>Math Toolkit for REAL-TIME Programming</li>
+      <li>Computer Graphics - Donald Hearn and M. Pauline Baker</li>
+    </ul>
+  </li>
+  <li>Websities
+    <ul>
+        <li><a href="../../../../../../../../www.altera.com/default.htm">http://www.altera.com</a></li>
+      <li><a href="../../../../../../../../www.nbb.cornell.edu/neurobio/land/PROJECTS/Hierarchy/default.htm">http://www.nbb.cornell.edu/neurobio/land/PROJECTS/Hierarchy/</a> </li>
+      <li><a href="../../../../../../../../www.wikipedia.org/default.htm">http://www.wikipedia.org/</a> </li>
+    </ul>
+  </li>
+  <li>Papers
+    <ul>
+        <li><a href="../../../../../../../../www.worldserver.com/turk/computergraphics/FixedSqrt.pdf">http://www.worldserver.com/turk/computergraphics/FixedSqrt.pdf</a></li>
+    </ul>
+  </li>
+</ul>
+<p><span class="style35"><span class="style8"><a name="h6" id="h6"></a></span></span></p>
+<p align="justify" class="style35"><a href="index.html">Introduction</a> <span class="style33">|</span> <a href="index.html#h1">High Level Design</a> <span class="style33">|</span> <a href="index.html#h2">Hardware Design</a> <span class="style33">|</span> <a href="index.html#h3">Results</a> <span class="style33">|</span> <a href="index.html#h5">Appendix</a> <span class="style33">|</span> <a href="index.html#h6">Pictures</a></p>
+<p align="justify" class="style30"><img src="horz_line.jpg" width="722" height="1" /></p>
+<p align="justify" class="style34">Pictures</p>
+<p align="center" class="style30"><span class="style38"><img src="DSC004321.jpg" width="499" height="280" /></span><br />
+    <span class="style40">Figure. 19</span><br />
+    <br />
+  <span class="style38"><img src="DSC004291.jpg" width="501" height="281" /><br />
+    <span class="style40">Figure. 20</span><br />
+    <br />
+  <img src="DSC004281.jpg" width="500" height="281" /><br />
+      <span class="style40">Figure. 21</span><br />
+      <br />
+  <img src="DSC004271.jpg" width="502" height="282" /><br />
+    <span class="style40">Figure. 22<br />
+  </span></span><span class="style38"><br />
+    <img src="DSC004231.jpg" width="500" height="281" /><br />
+    <span class="style40">Figure. 23</span><br />
+    <br />
+    <img src="DSC004221.jpg" width="499" height="280" /><br />
+    <span class="style40">Figure. 24</span><br />
+    <br />
+    <img src="DSC004201.jpg" width="500" height="281" /></span><br />
+<span class="style40">Figure. 25</span></p>
+<p align="left" class="style30"><br />    
+  <img src="horz_line.jpg" width="722" height="1" /></p>
+</body>
+</html>

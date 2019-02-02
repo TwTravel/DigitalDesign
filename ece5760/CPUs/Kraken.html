@@ -1,0 +1,532 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>kraken ISA</title>
+</head>
+
+<body>
+<p> </p>
+<center>
+  <h2 align="left">Kraken CPU ISA (Stanford ee272, 2000) </h2>
+  <p align="left">This information is modified from a <a href="../../../../../mos.stanford.edu/ee272/proj00/kraken/index.html">report</a> by 
+  <b>Dennis Kim and Andrew Lin</b> at Stanford. </p>
+  <table border="1" cellpadding="7" width="710">
+    <tbody>
+      <tr>
+        <td rowspan="2" valign="top" width="11%"><center>
+            <font face="Times"><font size="-1">Operation</font></font>
+        </center></td>
+        <td colspan="7" valign="top"><center>
+            <font face="Times"><font size="-1">Opcode</font></font>
+        </center></td>
+        <td colspan="4" valign="top"><center>
+            <font face="Times"><font size="-1">Destination Reg</font></font>
+        </center></td>
+        <td colspan="4" valign="top"><center>
+            <font face="Times"><font size="-1">Source Reg</font></font>
+        </center></td>
+        <td colspan="5" valign="top"><center>
+            <font face="Times"><font size="-1">Target Reg</font></font>
+        </center></td>
+      </tr>
+      <tr>
+        <td valign="top" width="5%"><center>
+            <font face="Times"><font size="-1">15</font></font>
+        </center></td>
+        <td colspan="2" valign="top"><center>
+            <font face="Times"><font size="-1">14</font></font>
+        </center></td>
+        <td colspan="3" valign="top"><center>
+            <font face="Times"><font size="-1">13</font></font>
+        </center></td>
+        <td valign="top" width="9%"><center>
+            <font face="Times"><font size="-1">12</font></font>
+        </center></td>
+        <td valign="top" width="5%"><center>
+            <font face="Times"><font size="-1">11</font></font>
+        </center></td>
+        <td valign="top" width="5%"><center>
+            <font face="Times"><font size="-1">10</font></font>
+        </center></td>
+        <td valign="top" width="4%"><center>
+            <font face="Times"><font size="-1">9</font></font>
+        </center></td>
+        <td valign="top" width="10%"><center>
+            <font face="Times"><font size="-1">8</font></font>
+        </center></td>
+        <td valign="top" width="4%"><center>
+            <font face="Times"><font size="-1">7</font></font>
+        </center></td>
+        <td valign="top" width="4%"><center>
+            <font face="Times"><font size="-1">6</font></font>
+        </center></td>
+        <td valign="top" width="4%"><center>
+            <font face="Times"><font size="-1">5</font></font>
+        </center></td>
+        <td valign="top" width="7%"><center>
+            <font face="Times"><font size="-1">4</font></font>
+        </center></td>
+        <!-- <td valign="top" width="4%"><center>
+            <font face="Times"><font size="-1">x</font></font>
+        </center></td> -->
+        <td valign="top" width="4%"><font face="Times"><font size="-1">3</font></font></td>
+        <td valign="top" width="4%"><center>
+            <font face="Times"><font size="-1">2</font></font>
+        </center></td>
+        <td valign="top" width="4%"><center>
+            <font face="Times"><font size="-1">1</font></font>
+        </center></td>
+        <td valign="top" width="6%"><center>
+            <font face="Times"><font size="-1">0</font></font>
+        </center></td>
+      </tr>
+      <tr>
+        <td colspan="21" valign="top">&nbsp;</td>
+      </tr>
+      <tr>
+        <td valign="top" width="11%"><font face="Times"><font size="-1">ADD</font></font></td>
+        <td colspan="2" valign="top"><center>
+            <font face="Times"><font size="-1">0</font></font>
+        </center></td>
+        <td colspan="2" valign="top"><center>
+            <font face="Times"><font size="-1">0</font></font>
+        </center></td>
+        <td valign="top" width="4%"><center>
+            <font face="Times"><font size="-1">0</font></font>
+        </center></td>
+        <td colspan="2" valign="top"><center>
+            <font face="Times"><font size="-1">0</font></font>
+        </center></td>
+        <td colspan="4" valign="top"><center>
+            <font face="Times"><font size="-1">Rd</font></font>
+        </center></td>
+        <td colspan="4" valign="top"><center>
+            <font face="Times"><font size="-1">Rs</font></font>
+        </center></td>
+        <td colspan="5" valign="top"><center>
+            <font face="Times"><font size="-1">Rt</font></font>
+        </center></td>
+      </tr>
+      <tr>
+        <td valign="top" width="11%"><font face="Times"><font size="-1">SUB</font></font></td>
+        <td colspan="2" valign="top"><center>
+            <font face="Times"><font size="-1">0</font></font>
+        </center></td>
+        <td colspan="2" valign="top"><center>
+            <font face="Times"><font size="-1">0</font></font>
+        </center></td>
+        <td valign="top" width="4%"><center>
+            <font face="Times"><font size="-1">0</font></font>
+        </center></td>
+        <td colspan="2" valign="top"><center>
+            <font face="Times"><font size="-1">1</font></font>
+        </center></td>
+        <td colspan="4" valign="top"><center>
+            <font face="Times"><font size="-1">Rd</font></font>
+        </center></td>
+        <td colspan="4" valign="top"><center>
+            <font face="Times"><font size="-1">Rs</font></font>
+        </center></td>
+        <td colspan="5" valign="top"><center>
+            <font face="Times"><font size="-1">Rt</font></font>
+        </center></td>
+      </tr>
+      <tr>
+        <td valign="top" width="11%"><font face="Times"><font size="-1">AND</font></font></td>
+        <td colspan="2" valign="top"><center>
+            <font face="Times"><font size="-1">0</font></font>
+        </center></td>
+        <td colspan="2" valign="top"><center>
+            <font face="Times"><font size="-1">0</font></font>
+        </center></td>
+        <td valign="top" width="4%"><center>
+            <font face="Times"><font size="-1">1</font></font>
+        </center></td>
+        <td colspan="2" valign="top"><center>
+            <font face="Times"><font size="-1">0</font></font>
+        </center></td>
+        <td colspan="4" valign="top"><center>
+            <font face="Times"><font size="-1">Rd</font></font>
+        </center></td>
+        <td colspan="4" valign="top"><center>
+            <font face="Times"><font size="-1">Rs</font></font>
+        </center></td>
+        <td colspan="5" valign="top"><center>
+            <font face="Times"><font size="-1">Rt</font></font>
+        </center></td>
+      </tr>
+      <tr>
+        <td valign="top" width="11%"><font face="Times"><font size="-1">OR</font></font></td>
+        <td colspan="2" valign="top"><center>
+            <font face="Times"><font size="-1">0</font></font>
+        </center></td>
+        <td colspan="2" valign="top"><center>
+            <font face="Times"><font size="-1">0</font></font>
+        </center></td>
+        <td valign="top" width="4%"><center>
+            <font face="Times"><font size="-1">1</font></font>
+        </center></td>
+        <td colspan="2" valign="top"><center>
+            <font face="Times"><font size="-1">1</font></font>
+        </center></td>
+        <td colspan="4" valign="top"><center>
+            <font face="Times"><font size="-1">Rd</font></font>
+        </center></td>
+        <td colspan="4" valign="top"><center>
+            <font face="Times"><font size="-1">Rs</font></font>
+        </center></td>
+        <td colspan="5" valign="top"><center>
+            <font face="Times"><font size="-1">Rt</font></font>
+        </center></td>
+      </tr>
+      <tr>
+        <td valign="top" width="11%"><font face="Times"><font size="-1">XOR</font></font></td>
+        <td colspan="2" valign="top"><center>
+            <font face="Times"><font size="-1">0</font></font>
+        </center></td>
+        <td colspan="2" valign="top"><center>
+            <font face="Times"><font size="-1">1</font></font>
+        </center></td>
+        <td valign="top" width="4%"><center>
+            <font face="Times"><font size="-1">0</font></font>
+        </center></td>
+        <td colspan="2" valign="top"><center>
+            <font face="Times"><font size="-1">0</font></font>
+        </center></td>
+        <td colspan="4" valign="top"><center>
+            <font face="Times"><font size="-1">Rd</font></font>
+        </center></td>
+        <td colspan="4" valign="top"><center>
+            <font face="Times"><font size="-1">Rs</font></font>
+        </center></td>
+        <td colspan="5" valign="top"><center>
+            <font face="Times"><font size="-1">Rt</font></font>
+        </center></td>
+      </tr>
+      <tr>
+        <td valign="top" width="11%"><font face="Times"><font size="-1">NOT</font></font></td>
+        <td colspan="2" valign="top"><center>
+            <font face="Times"><font size="-1">0</font></font>
+        </center></td>
+        <td colspan="2" valign="top"><center>
+            <font face="Times"><font size="-1">1</font></font>
+        </center></td>
+        <td valign="top" width="4%"><center>
+            <font face="Times"><font size="-1">0</font></font>
+        </center></td>
+        <td colspan="2" valign="top"><center>
+            <font face="Times"><font size="-1">1</font></font>
+        </center></td>
+        <td colspan="4" valign="top"><center>
+            <font face="Times"><font size="-1">Rd</font></font>
+        </center></td>
+        <td colspan="4" valign="top"><center>
+            <font face="Times"><font size="-1">Rs</font></font>
+        </center></td>
+        <td colspan="5" bgcolor="#ffffff" valign="top">&nbsp;</td>
+      </tr>
+      <tr>
+        <td valign="top" width="11%"><font face="Times"><font size="-1">SL</font></font></td>
+        <td colspan="2" valign="top"><center>
+            <font face="Times"><font size="-1">0</font></font>
+        </center></td>
+        <td colspan="2" valign="top"><center>
+            <font face="Times"><font size="-1">1</font></font>
+        </center></td>
+        <td valign="top" width="4%"><center>
+            <font face="Times"><font size="-1">1</font></font>
+        </center></td>
+        <td colspan="2" valign="top"><center>
+            <font face="Times"><font size="-1">0</font></font>
+        </center></td>
+        <td colspan="4" valign="top"><center>
+            <font face="Times"><font size="-1">Rd</font></font>
+        </center></td>
+        <td colspan="4" valign="top"><center>
+            <font face="Times"><font size="-1">Rs</font></font>
+        </center></td>
+        <td colspan="5" bgcolor="#ffffff" valign="top">&nbsp;</td>
+      </tr>
+      <tr>
+        <td valign="top" width="11%"><font face="Times"><font size="-1">SR</font></font></td>
+        <td colspan="2" valign="top"><center>
+            <font face="Times"><font size="-1">0</font></font>
+        </center></td>
+        <td colspan="2" valign="top"><center>
+            <font face="Times"><font size="-1">1</font></font>
+        </center></td>
+        <td valign="top" width="4%"><center>
+            <font face="Times"><font size="-1">1</font></font>
+        </center></td>
+        <td colspan="2" valign="top"><center>
+            <font face="Times"><font size="-1">1</font></font>
+        </center></td>
+        <td colspan="4" valign="top"><center>
+            <font face="Times"><font size="-1">Rd</font></font>
+        </center></td>
+        <td colspan="4" valign="top"><center>
+            <font face="Times"><font size="-1">Rs</font></font>
+        </center></td>
+        <td colspan="5" bgcolor="#ffffff" valign="top">&nbsp;</td>
+      </tr>
+      <tr>
+        <td colspan="21" valign="top">&nbsp;</td>
+      </tr>
+      <tr>
+        <td valign="top" width="11%"><font face="Times"><font size="-1">LI</font></font></td>
+        <td colspan="2" valign="top"><center>
+            <font face="Times"><font size="-1">1</font></font>
+        </center></td>
+        <td colspan="2" valign="top"><center>
+            <font face="Times"><font size="-1">0</font></font>
+        </center></td>
+        <td valign="top" width="4%"><center>
+            <font face="Times"><font size="-1">0</font></font>
+        </center></td>
+        <td colspan="2" valign="top"><center>
+            <font face="Times"><font size="-1">0</font></font>
+        </center></td>
+        <td colspan="4" valign="top"><center>
+            <font face="Times"><font size="-1">Rd</font></font>
+        </center></td>
+        <td colspan="9" valign="top"><center>
+            <font face="Times"><font size="-1">Immediate</font></font>
+        </center></td>
+      </tr>
+      <tr>
+        <td valign="top" width="11%"><font face="Times"><font size="-1">LW</font></font></td>
+        <td colspan="2" valign="top"><center>
+            <font face="Times"><font size="-1">1</font></font>
+        </center></td>
+        <td colspan="2" valign="top"><center>
+            <font face="Times"><font size="-1">0</font></font>
+        </center></td>
+        <td valign="top" width="4%"><center>
+            <font face="Times"><font size="-1">0</font></font>
+        </center></td>
+        <td colspan="2" valign="top"><center>
+            <font face="Times"><font size="-1">1</font></font>
+        </center></td>
+        <td colspan="4" valign="top"><center>
+            <font face="Times"><font size="-1">Rd</font></font>
+        </center></td>
+        <td colspan="4" valign="top"><center>
+            <font face="Times"><font size="-1">Rs</font></font>
+        </center></td>
+        <td colspan="5" bgcolor="#ffffff" valign="top">&nbsp;</td>
+      </tr>
+      <tr>
+        <td valign="top" width="11%"><font face="Times"><font size="-1">SW</font></font></td>
+        <td colspan="2" valign="top"><center>
+            <font face="Times"><font size="-1">1</font></font>
+        </center></td>
+        <td colspan="2" valign="top"><center>
+            <font face="Times"><font size="-1">0</font></font>
+        </center></td>
+        <td valign="top" width="4%"><center>
+            <font face="Times"><font size="-1">1</font></font>
+        </center></td>
+        <td colspan="2" valign="top"><center>
+            <font face="Times"><font size="-1">0</font></font>
+        </center></td>
+        <td colspan="4" bgcolor="#ffffff" valign="top">&nbsp;</td>
+        <td colspan="4" valign="top"><center>
+            <font face="Times"><font size="-1">Rs</font></font>
+        </center></td>
+        <td colspan="5" valign="top"><center>
+            <font face="Times"><font size="-1">Rt</font></font>
+        </center></td>
+      </tr>
+      <tr>
+        <td colspan="21" valign="top">&nbsp;</td>
+      </tr>
+      <tr>
+        <td valign="top" width="11%"><font face="Times"><font size="-1">BIZ</font></font></td>
+        <td colspan="2" valign="top"><center>
+            <font face="Times"><font size="-1">1</font></font>
+        </center></td>
+        <td colspan="2" valign="top"><center>
+            <font face="Times"><font size="-1">0</font></font>
+        </center></td>
+        <td valign="top" width="4%"><center>
+            <font face="Times"><font size="-1">1</font></font>
+        </center></td>
+        <td colspan="2" valign="top"><center>
+            <font face="Times"><font size="-1">1</font></font>
+        </center></td>
+        <td colspan="4" valign="top"><center>
+            <font face="Times"><font size="-1">Rs</font></font>
+        </center></td>
+        <td colspan="9" valign="top"><center>
+            <font face="Times"><font size="-1">Offset</font></font>
+        </center></td>
+      </tr>
+      <tr>
+        <td valign="top" width="11%"><font face="Times"><font size="-1">BNZ</font></font></td>
+        <td colspan="2" valign="top"><center>
+            <font face="Times"><font size="-1">1</font></font>
+        </center></td>
+        <td colspan="2" valign="top"><center>
+            <font face="Times"><font size="-1">1</font></font>
+        </center></td>
+        <td valign="top" width="4%"><center>
+            <font face="Times"><font size="-1">0</font></font>
+        </center></td>
+        <td colspan="2" valign="top"><center>
+            <font face="Times"><font size="-1">0</font></font>
+        </center></td>
+        <td colspan="4" valign="top"><center>
+            <font face="Times"><font size="-1">Rs</font></font>
+        </center></td>
+        <td colspan="9" valign="top"><center>
+            <font face="Times"><font size="-1">Offset</font></font>
+        </center></td>
+      </tr>
+      <tr>
+        <td colspan="21" valign="top">&nbsp;</td>
+      </tr>
+      <tr>
+        <td valign="top" width="11%"><font face="Times"><font size="-1">JAL</font></font></td>
+        <td colspan="2" valign="top"><center>
+            <font face="Times"><font size="-1">1</font></font>
+        </center></td>
+        <td colspan="2" valign="top"><center>
+            <font face="Times"><font size="-1">1</font></font>
+        </center></td>
+        <td valign="top" width="4%"><center>
+            <font face="Times"><font size="-1">0</font></font>
+        </center></td>
+        <td colspan="2" valign="top"><center>
+            <font face="Times"><font size="-1">1</font></font>
+        </center></td>
+        <td colspan="4" valign="top"><center>
+            <font face="Times"><font size="-1">Rd</font></font>
+        </center></td>
+        <td colspan="9" valign="top"><center>
+            <font face="Times"><font size="-1">Offset</font></font>
+        </center></td>
+      </tr>
+      <tr>
+        <td valign="top" width="11%"><font face="Times"><font size="-1">JMP</font></font></td>
+        <td colspan="2" valign="top"><center>
+            <font face="Times"><font size="-1">1</font></font>
+        </center></td>
+        <td colspan="2" valign="top"><center>
+            <font face="Times"><font size="-1">1</font></font>
+        </center></td>
+        <td valign="top" width="4%"><center>
+            <font face="Times"><font size="-1">1</font></font>
+        </center></td>
+        <td colspan="2" valign="top"><center>
+            <font face="Times"><font size="-1">0</font></font>
+        </center></td>
+        <td colspan="4" bgcolor="#ffffff" valign="top">&nbsp;</td>
+        <td colspan="9" valign="top"><center>
+            <font face="Times"><font size="-1">Offset</font></font>
+        </center></td>
+      </tr>
+      <tr>
+        <td valign="top" width="11%"><font face="Times"><font size="-1">JR</font></font></td>
+        <td colspan="2" valign="top"><center>
+            <font face="Times"><font size="-1">1</font></font>
+        </center></td>
+        <td colspan="2" valign="top"><center>
+            <font face="Times"><font size="-1">1</font></font>
+        </center></td>
+        <td valign="top" width="4%"><center>
+            <font face="Times"><font size="-1">1</font></font>
+        </center></td>
+        <td colspan="2" valign="top"><center>
+            <font face="Times"><font size="-1">1</font></font>
+        </center></td>
+        <td colspan="4" bgcolor="#ffffff" valign="top">&nbsp;</td>
+        <td colspan="4" valign="top"><center>
+            <font face="Times"><font size="-1">Rs</font></font>
+        </center></td>
+        <td colspan="5" bgcolor="#ffffff" valign="top">&nbsp;</td>
+      </tr>
+    </tbody>
+  </table>
+  <p align="left"><font face="Times">The Kraken features five instruction classes:</font> </p>
+  <p align="left"><font face="Times">1.&nbsp; Arithmetic (Two's Complement) ALU operation (2 instructions) </font></p>
+  <div align="left">
+    <ul>
+      <li> <font face="Times"><b>ADD</b>: Rd &lt;- Rs + Rt</font></li>
+    </ul>
+    
+    <ul>
+      <li> <font face="Times"><b>SUB</b>: Rd &lt;- Rs - Rt</font></li>
+    </ul>
+  </div>
+  <dir> <dir><div align="left"></div>
+  </dir></dir>
+  <div align="left"><font face="Times">2.&nbsp; Logical ALU operation (6)</font>
+      <ul>
+        <li> <font face="Times"><b>AND</b>: Rd &lt;- Rs &amp; Rt</font></dir></dir></li>
+      </ul>
+  </div>
+  
+  <ul>
+  <li> 
+    <div align="left"><font face="Times"><b>OR</b>: Rd &lt;- Rs | Rt</font></div>
+  </li>
+</ul>
+<div align="left">
+    <ul>
+      <li> <font face="Times"><b>XOR</b>: Rd &lt;- Rs ^ Rt</font></li>
+    </ul>
+    <font face="Times"> </font>
+    <ul>
+      <li> <font face="Times"><b>NOT</b>: Rd &lt;- ~Rs</font></li>
+    </ul>
+    
+    <ul>
+      <li> <font face="Times"><b>SL</b>: Rd &lt;- Rs &lt;&lt; 1</font></li>
+    </ul>
+    
+    <ul>
+      <li> <font face="Times"><b>SR</b>: Rd &lt;- Rs &gt;&gt; 1</font></li>
+    </ul>
+  <font face="Times"> </font></div>
+<p align="left"><font face="Times">3.&nbsp; Memory operations (3)</font> </p>
+<div align="left">
+  <ul>
+      <li> <font face="Times"><b>LI: </b>Rd &lt;- (8@0)# immediate</font></li>
+  </ul>
+  
+  <ul>
+      <li> <font face="Times"><b>LW:</b> Rd &lt;- Mem[Rs]</font></li>
+  </ul>
+  
+  <ul>
+      <li> <font face="Times"><b>SW:</b> Mem[Rs] &lt;- Rt</font></li>
+  </ul>
+  </div>
+<p align="left"><font face="Times">4.&nbsp; Conditional Branch operations (2)</font> </p>
+<div align="left">
+  <ul>
+      <li> <font face="Times"><b>BIZ: </b>(Rs==0) -&gt; (PC &lt;- PC  + Offset)</font></li>
+  </ul>
+  
+  <ul>
+      <li> <font face="Times"><b>BNZ: </b>(Rs != 0) -&gt; (PC &lt;- PC  + Offset)</font></li>
+  </ul>
+  </div>
+<p align="left"><font face="Times">5.&nbsp; Program Count Jump operations (3)</font> </p>
+<div align="left">
+  <ul>
+      <li> <font face="Times"><b>JAL</b>: (Rd &lt;-PC  : PC &lt;- PC  + Offset)</font></li>
+  </ul>
+  
+  <ul>
+      <li> <font face="Times"><b>JMP</b>: PC &lt;- PC  + Offset</font></li>
+  </ul>
+  <ul>
+      <li> <font face="Times"><b>JR</b>: PC &lt;- Rs</font></li>
+  </ul>
+  </div>
+</center>
+</body>
+</html>

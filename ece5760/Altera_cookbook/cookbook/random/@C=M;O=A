@@ -1,0 +1,31 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+ <head>
+  <title>Index of /land/courses/ece5760/Altera_cookbook/cookbook/random</title>
+ </head>
+ <body>
+<h1>Index of /land/courses/ece5760/Altera_cookbook/cookbook/random</h1>
+  <table>
+   <tr><th valign="top"><img src="../../../../../../icons/blank.gif" alt="[ICO]"></th><th><a href="@C=N;O=A">Name</a></th><th><a href="@C=M;O=D">Last modified</a></th><th><a href="@C=S;O=A">Size</a></th><th><a href="@C=D;O=A">Description</a></th></tr>
+   <tr><th colspan="5"><hr></th></tr>
+<tr><td valign="top"><img src="../../../../../../icons/back.gif" alt="[PARENTDIR]"></td><td><a href="../default.htm">Parent Directory</a>       </td><td>&nbsp;</td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="bilbo_lfsr.v">bilbo_lfsr.v</a>           </td><td align="right">2015-03-26 09:43  </td><td align="right">3.5K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="bilbo_lfsr_tb.v">bilbo_lfsr_tb.v</a>        </td><td align="right">2015-03-26 09:43  </td><td align="right">2.4K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="c_rand.v">c_rand.v</a>               </td><td align="right">2015-03-26 09:43  </td><td align="right">1.9K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="chain_delay_adjust.v">chain_delay_adjust.v</a>   </td><td align="right">2015-03-26 09:43  </td><td align="right">3.2K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="chain_delay_race.v">chain_delay_race.v</a>     </td><td align="right">2015-03-26 09:43  </td><td align="right">3.9K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="chain_delay_rand.v">chain_delay_rand.v</a>     </td><td align="right">2015-03-26 09:43  </td><td align="right">2.8K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="lfsr.v">lfsr.v</a>                 </td><td align="right">2015-03-26 09:43  </td><td align="right">3.2K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="lfsr_test.v">lfsr_test.v</a>            </td><td align="right">2015-03-26 09:43  </td><td align="right">2.1K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="log2.inc">log2.inc</a>               </td><td align="right">2015-03-26 09:43  </td><td align="right">1.9K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="make_scrambler.cpp">make_scrambler.cpp</a>     </td><td align="right">2015-03-26 09:43  </td><td align="right"> 11K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="pipelined_word_mux.v">pipelined_word_mux.v</a>   </td><td align="right">2015-03-26 09:43  </td><td align="right">5.4K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="rand_test.cpp">rand_test.cpp</a>          </td><td align="right">2015-03-26 09:43  </td><td align="right">1.6K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="rand_test.v">rand_test.v</a>            </td><td align="right">2015-03-26 09:43  </td><td align="right">1.8K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="ring_counter.v">ring_counter.v</a>         </td><td align="right">2015-03-26 09:43  </td><td align="right">2.2K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="unstable_counters.v">unstable_counters.v</a>    </td><td align="right">2015-03-26 09:43  </td><td align="right">2.4K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="word_stream_scramble.v">word_stream_scramble.v</a> </td><td align="right">2015-03-26 09:43  </td><td align="right">7.1K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="word_stream_scramble_tb.v">word_stream_scramble..&gt;</a></td><td align="right">2015-03-26 09:43  </td><td align="right">2.5K</td><td>&nbsp;</td></tr>
+   <tr><th colspan="5"><hr></th></tr>
+</table>
+</body></html>

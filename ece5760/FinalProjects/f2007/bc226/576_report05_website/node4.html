@@ -1,0 +1,100 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Object Pipeline</TITLE>
+<META NAME="description" CONTENT="Object Pipeline">
+<META NAME="keywords" CONTENT="576_report05">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="576_report05.css">
+
+<LINK REL="next" HREF="node5.html">
+<LINK REL="previous" HREF="node3.html">
+<LINK REL="up" HREF="node3.html">
+<LINK REL="next" HREF="node5.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation"><!--Navigation Panel-->
+<A NAME="tex2html74"
+  HREF="node5.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="next.png"></A> 
+<A NAME="tex2html72"
+  HREF="node3.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="up.png"></A> 
+<A NAME="tex2html66"
+  HREF="node3.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="prev.png"></A>   
+<BR>
+<B> Next:</B> <A NAME="tex2html75"
+  HREF="node5.html">Computation Pipeline</A>
+<B> Up:</B> <A NAME="tex2html73"
+  HREF="node3.html">Hardware Design</A>
+<B> Previous:</B> <A NAME="tex2html67"
+  HREF="node3.html">Hardware Design</A>
+<BR>
+<BR></DIV>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00031000000000000000">
+Object Pipeline</A>
+</H2>
+<P>
+<BIG CLASS="LARGE">As many edge generators for objects can be incorporated into the design.
+For now, only a circle and a cube have been implemented.<A NAME="tex2html5"
+  HREF="footnode.html#foot28"><SUP><SPAN CLASS="arabic">5</SPAN></SUP></A>Although the edge generators aim to always generate a valid edge once per cycle, the pipeline can deal with pauses that are inherent to the algorithm and only save edges when the <TT>busy</TT> line for each corresponding generator is high.
+</BIG>
+<P>
+<BIG CLASS="LARGE">The pipeline selects one generator - currently tied to the onboard switches on the DE2 - initializes the arguments to the generator, and raises the <TT>init</TT> line for that generator.
+The generator will raise its <TT>busy</TT> line when there is a few valid edge available through its output lines [<TT>(Ax, Ay, Az), (Bx, By, Bz)</TT>], and raise <TT>done</TT> when it is done.
+<TT>done</TT> is asserted for as long as <TT>init</TT> is high.
+Deasserting <TT>init</TT> and waiting one cycle will reset the module.
+As long as the generator is designed with this format and communication method, the generator will work with the driving circuitry in the objects pipeline.
+</BIG>
+<P>
+<BIG CLASS="LARGE">For each edge that is generated and saved, <TT>edge_count</TT> is incremented.
+</BIG>
+<P>
+
+<DIV CLASS="navigation"><HR>
+<!--Navigation Panel-->
+<A NAME="tex2html74"
+  HREF="node5.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="next.png"></A> 
+<A NAME="tex2html72"
+  HREF="node3.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="up.png"></A> 
+<A NAME="tex2html66"
+  HREF="node3.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="prev.png"></A>   
+<BR>
+<B> Next:</B> <A NAME="tex2html75"
+  HREF="node5.html">Computation Pipeline</A>
+<B> Up:</B> <A NAME="tex2html73"
+  HREF="node3.html">Hardware Design</A>
+<B> Previous:</B> <A NAME="tex2html67"
+  HREF="node3.html">Hardware Design</A></DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+
+2007-12-02
+</ADDRESS>
+</BODY>
+</HTML>

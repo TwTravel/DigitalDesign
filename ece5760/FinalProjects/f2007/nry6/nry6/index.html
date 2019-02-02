@@ -1,0 +1,441 @@
+<html>
+<head>
+<title>Jezzball Game - Fall 2007 ECE 576 Final Project</title>
+</head>
+
+
+<body>
+
+<center>
+<h1><font face="Comic Sans MS" color="blue">--- Jezzball ---</font></h1>
+
+by 
+<font size="3" face="Verdana" color="blue">Nancy Yu</font> (nry6) <br>
+Cornell University - College of ECE<br>
+ECE 574 - Advanced Microcontroller Design <br>
+Fall 2007 Final Project <br>
+November 29, 2007 <br><br>
+</center>
+
+
+
+The objective of the game is to trap the bouncing ball in the smallest space 
+possible by drawing lines to cut off the area in which the ball can roam. 
+To play this game, move the mouse to the location where you want the line to 
+be drawn. If the left button on the mouse is clicked, a vertical line will 
+be drawn from that point; if the right button is clicked a horizontal line is 
+drawn. If the line reaches the boundary on both sides without the ball hitting 
+it, the line will become a new boundary for the ball. However, if the ball 
+bumps into the line before it has finished drawing, the game ends. Try to 
+clear as much of the area without the ball hitting the line as it is drawing. 
+The level is cleared if you trap the ball in a small enough area. In the next 
+level, you will have to clear an even smaller area. Good luck and have fun!
+<br><br><br>
+<center><img src="screen.jpg"><br></center>
+
+<br><br><br>
+<hr><br>
+<h2><font color='blue'>Table of Contents</font></h2>
+<ul>
+  <li><b><font face="Times New Roman" size="4"><a href="#Introduction">
+  Introduction</a></font></b></li>
+  <li><b><font face="Times New Roman" size="4"><a href="#Design">High-Level Design</a></font></b></li>
+  <li><b><font face="Times New Roman" size="4"><a href="#Hardware">Hardware</a></font></b></li>
+  <li><b><font face="Times New Roman" size="4"><a href="#Software">Software</a></font></b></li>
+  <li><b><font face="Times New Roman" size="4"><a href="#Results">Results</a></font></b></li>
+  <li><b><font face="Times New Roman" size="4"><a href="#Conclusion">
+  Conclusions</a></font></b></li>
+  <li><b><font face="Times New Roman" size="4"><a href="#Appendix">Appendix</a></font></b></li>
+</ul>
+<br><hr>
+
+
+<br><br>
+<dl>
+<dt><a name="Introduction"><big><b><font color="blue">INTRODUCTION</font></b></big></a><br></dt>
+<dd> This final project for the Fall 2007 ECE 576 Advanced Microcontroller 
+class is an imitation of the classic computer game, Jezzball.
+<p></p>
+As a kid, I would play this game whenever I could. It is entertaining and addictive. 
+Who would not want to play Jezzball? Plus, I thought it would be fun to program this 
+game onto our board. Using the Altera DE2 board, the hardware will need to communicate 
+to the VGA and draw the game on the connected monitor while the software will need 
+determine the dynamics of the bouncing ball and detect the occurrence of ball and line 
+collision. In addition, a USB mouse component will be inserted to draw lines on the VGA. 
+This project seemed to have all the components of a good project: hardware, software, 
+and additional components, such as the VGA and USB mouse.
+</dd><br><br>
+
+
+<dt><a name="Design"></a><big><b><font color="blue">OVERALL DESIGN</font></b></big></dt>
+<dd>This project has both a software component and a hardware component. The hardware 
+will draw the points on the VGA. The software will determine where the mouse is, when 
+it is clicked, which button was clicked, and determine the dynamics of the ball. Thus, 
+the hardware has the written line generator and ball drawer state machine code and the 
+VGA connected. The USB mouse and the brain behind the game are built into the software.
+To get Jezzball to work, the main tasks the code must be able to do are:
+
+<ol>
+<li> Draw a line in opposite directions at the same time</li>
+<li> Draw the ball </li>
+<li> Erase the ball </li>
+<li> Calculate the movement of the ball </li>
+<li> Indicate when ball hits a boundary or a line </li>
+<li> Determine end of level or end of game </li>
+<li> Enable use of the USB mouse and its buttons </li>
+<li> Match the movement of the VGA cursor to the mouse movement </li>
+<li> Display the game on the VGA </li>
+</ol>
+<br>
+Then all these tasks need to be integrated. Some of these tasks will need to be executed 
+simultaneously (or appear that way); some may need to occur after another task is 
+executed; and some may need to always run in the background. For example, the ball must 
+continue to move while a line is being drawn. In another case, if one of the mouse buttons 
+is clicked, the appropriate line must draw. Also, any changes to the mouse, movement or 
+button click, must be continually polled and handled if occurred. Since some of the tasks 
+are executed in hardware and some in software, there will need to be a bridge to connect 
+the two parts together. A central processing unit will be built to communicate from one 
+part to the other. Variables will be passed through this channel.<br><br>
+Most of the logic is written in software since hardware commands runs in parallel. All the
+value comparisons and ball dynamics is more appropriate in software; it can easily be handled 
+the logic in software. 
+However, building the line generator and ball drawer in hardware is fine because the speed of 
+hardware can handle drawing. In addition, the line generator and ball drawer can be handled
+with a state machine. This project is similar to Fall 2007 ECE576 Lab 2: NiosII Graphics 
+Interface. However, this final project was rebuilt separate from that lab. 
+</dd><br><br>
+
+
+<dt><a name="Hardware"></a><big><b><font color="blue">HARDWARE</font></b></big></dt>
+<dd><b>SOPC BUILDER</b><br>
+To communicate between hardware and 
+software, a NiosII processor needs to be created through SOPC builder. The SOPC 
+builder is used with the current QuartusII CAD project to create the processing unit 
+to transfer variables from the hardware to the software. Within the SOPC builder, the 
+specific target hardware the project needs to build on needs to be specified as a 
+Cyclone II family device. All the components the board will need to use, including 
+the on-chip RAM memory, the LCD monitor, and USB interfaces, need to be added 
+connected to the C program written in NiosII IDE needs to be indexed in the processor.
+The processing unit components used are listed in the below table:<br><br>
+
+<center><table border="1">
+<caption>Table 1: CPU modules in SOPC Builder</caption>
+<tr>
+<th>Module Name</th> <!-- Headings -->
+<th>Description</th>
+<th>Type</th>
+<th>Data Size</th>
+<th>Function</th>
+</tr>
+<tr>
+<td>cpu_0</td> <!--row 1, cell 1-->
+<td>NiosII Processor </td> <!--row 1, cell 2-->
+<td>N/A</td>
+<td>N/A </td>
+<td>build processing unit - needed components connected &nbsp; </td>
+</tr>
+<tr>
+<td>sdram_0</td> <!--row 1, cell 1-->
+<td>SDRAM Controller &nbsp; </td> <!--row 1, cell 2-->
+<td>N/A</td>
+<td>16 bits &nbsp; </td>
+<td>use SDRAM memory to store values &nbsp; </td>
+</tr>
+<tr>
+<td>wideOut</td> <!--row 2, cell 1-->
+<td>PIO (Parallel I/O)</td> <!--row 2, cell 2-->
+<td>Output port &nbsp; </td>
+<td>32 bits</td>
+<td>transfer line 1 pixel values - 30 bits used &nbsp; </td>
+</tr>
+<tr>
+<td>wideOut1</td> <!--row 2, cell 1-->
+<td>PIO (Parallel I/O)</td> <!--row 2, cell 2-->
+<td>Output port</td>
+<td>32 bits</td>
+<td>transfer line 2 pixel values - 30 bits used &nbsp; </td>
+</tr>
+<tr>
+<td>mouse_xy</td> <!--row 2, cell 1-->
+<td>PIO (Parallel I/O)</td> <!--row 2, cell 2-->
+<td>Output port</td>
+<td>32 bits</td>
+<td>transfer location of mouse, (x,y) values - 10 bits each &nbsp;</td>
+</tr>
+<tr>
+<td>ball_xy</td> <!--row 2, cell 1-->
+<td>PIO (Parallel I/O)</td> <!--row 2, cell 2-->
+<td>Output port</td>
+<td>32 bits</td>
+<td>transfer ball location, (x,y) values - 10 bits each &nbsp; </td>
+</tr>
+</table> </center>
+
+<p></p>
+<b>QUARTUSII</b><br>
+Altera QuartusII is used for the hardware component of this project. The line 
+generator and ball drawer are written here. The line generator handles two lines at a 
+time to give an impression that they are being drawn at the same time. The point being 
+drawn switches from being the next point on one line to the other, every cycle. For 
+example, in the first cycle, the first point of line 1 will be drawn. In the second 
+cycle, the first point of line 2 will be drawn. Cycle 3 will draw the second point of 
+line 1, and so on. The ball is drawn and erased in every other state, except for when 
+the line point is being drawn. In that case, the ball is neither drawn nor erased. This is 
+due to the fact that only one point can be drawn to the VGA at one time.<br><br>
+
+The state machine build in verilog is structured in the following way:<br>
+--- The state machine starts at state '<code>new_walker</code>', and initializes the 
+end points of the lines being drawn and the location of the ball by retrieving those 
+values from the variables passed in from software (see above table). The first ball is 
+also drawn. 
+<br>
+--- The next state, '<code>init</code>', initializes temporary variables that hold the 
+pixel value of the point that the line generator needs to draw next. In addition, the 
+previously drawn ball is erased. 
+<br>
+--- The state then goes directly into state '<code>test1</code>', where the algorithm 
+determines which line out of the two it is working on and whether that line is finished 
+drawing. 
+<ul>
+<li>If it is done drawing, the code needs to check whether the other line is also done. <br>
+	<ul>
+	<li>If only the first line is done, the algorithm will loop back to this same 
+		state, '<code>test1</code>', to work on the unfinished line. </li>
+	<li>If both are done, the state returns to '<code>new_walker</code>', which 
+		completes this iteration of the cycle.</li> 
+	</ul>
+<li>If the line is not done drawing, the code will determine which point it needs to draw 
+next and goes into state '<code>test2</code>'. The ball is also drawn in this state.</li> 
+</ul>
+--- In '<code>test2</code>' state, if the state machine is in sync, and thus lock is on, 
+the next point of a line is drawn and state machine goes into '<code>update_walker</code>' 
+state. The previously drawn ball will be erased if a line was not drawn in 
+'<code>test2</code>' state and the state machine will then loop back to '<code>test1</code>' 
+to try to get back into sync with the lock variable. 
+<br>
+--- If the state machine reaches '<code>update_walker</code>', it means that a line point 
+was just written to the VGA and needs to be updated. Knowing the direction of the line, 
+the code will change the next point to be in the appropriate pixel location and send the 
+state back into '<code>test1</code>' and start this process over again in that state. 
+<br>
+This state machine built in hardware is shown below. <br>
+<center><img src="StateMachine.GIF" width="670" height="472"><br>
+Figure 1: State Machine to draw lines and points</center>
+
+<p></p>
+<b>HARDWARE DIFFICULTIES</b><br>
+[1.] Since verilog runs command in parallel, having multiple points, the ball and the 
+lines, be drawn on the VGA at the same time is a problem. When a mouse button is 
+clicked, the line should draw in both directions, either vertical or horizontal, to 
+the boundary from that pixel point. However, because the board can operate faster 
+than the eye can recognize change, the code can write one pixel at a time, but give 
+the illusion that multiple points are being written at the same time. The point being 
+drawn needs to oscillate from one end of the line to the other. In addition, the 
+new pixel value of the ball needs to constantly be written to the VGA while the old 
+pixel value is erased. Therefore, the line generator is now designed to always draw 
+two line together in opposite direction. For every cycle of the state machine, the 
+point drawn switches from one end of the line to the other. In the state machine, 
+every other state either draws the ball or erases the old ball. <br><br>
+[2.] The resolution of the VGA, 640x480, was difficult to account for. To get the value 
+640, ten bits needs to be passed. However, SRAM can only take nine bits. Therefore, 
+variables that hold the Y coordinate value has no problems since the maximum Y 
+coordinate value will only go up to 480, which nine bits can handle. The variables 
+for the X coordinate cannot handle values up to 640. The solution to this is taking 
+the top nine bits for the X coordinate and the bottom nine bits for the Y coordinate, 
+as shown below:
+<br><br><ul><ul><code>
+    addr_reg <= {Coord_X[9:1], Coord_Y[8:0]}; <br></ul></ul>
+</code><br>
+This will account for the non-symmetric resolution.<br><br>
+[3.]Sometimes, completely drawing the lines out to the boundaries can be a problem. The end 
+points of the lines been drawn are sometimes unreliable or not as expected. The line 
+generator had been tested while being programmed and succeeded in drawing multiple lines 
+in both directions across the whole VGA. However, once embedded into the whole project, 
+some unexpected behavior (drawing wrong end points) would occur occasionally. After 
+analyzing the line generator state machine, this problem still could not be solved. 
+Another possibility could have been an error in unexpected values being passed as end 
+points to the line generator and not an error in the actual state machine itself. However, 
+when testing that possibility, the variables passed to the line generator were correct. 
+Problem in the VGA resolution was also considered in addition to a few other possibilities.
+No solution had been found for this problem.
+</dd><br><br>
+
+
+<dt><a name="Software"></a><big><b><font color="blue">SOFTWARE</font></b></big></dt>
+<dd><b>NIOSII IDE</b><br>
+The software is written in C code in Altera NiosII IDE. This project has been built off 
+of the 'DE2_NIOS_HOST_MOUSE_VGA' demonstration on the Altera Development and Education 
+Board 2 CD or on Altera's website (it is in the zipped cd file). <br><br>
+
+The '<code>main</code>' function in the software is in the hello_led.c file. All the 
+<code>.h</code> header files and <code>.c</code> C code files are either in the 
+<code>software</code> folder or  <code>ISP362</code> folder. However, the original code 
+written by Altera is in the <code>hello_led_0</code> folder. The main file that is worked 
+with and holds the majority of the code relevant to the game is in the <code>mouse.c</code> 
+file. In this file and the included files, the USB mouse is connected and activated. A 
+function inside the <code>PTD.c</code> file, the function '<code>send_int</code>' is 
+called to continuously poll for any movement or clicking of the mouse. Within this 
+function, the function, '<code>move_ball</code>', that handles the movement and drawing 
+command of the ball is called. Once the mouse event occurs, the  '<code>send_int</code>' 
+function breaks out of a while loop and returns to '<code>play_mouse</code>' function. This
+is where all the line and ball collision detection, location of mouse, update line end point 
+variable values, determination of next level or end game, etc. occurs. 
+
+
+<p></p>
+<b>BALL DYNAMICS</b><br>
+The dynamics, roaming area, and pixel location of the ball is determined in software. 
+However, initial ball location on the VGA has been hardcoded into the hardware. Once the 
+board is programmed, the hardware will pass the initial xy coordinates of the ball into 
+the software through the variable <code>ball_h2s</code>. These right bit values picked 
+out from this variable, as shown below: 
+<br><br><ul><ul><code>
+    ballxy = IORD(BALL_H2S_BASE, 0);	<br>
+    ballx = ((ballxy << 22) >> 22);                 // [9:0]	<br>
+    bally = (((ballxy >> 10) << 22) >> 22);         // [19:0]	<br></ul></ul>
+</code><br>
+Then, the software does some calculations to determine the next location of the ball. 
+Since the bouncing ball follows a straight line path, the magnitude of dx and dy are 
+constant. Therefore, the distance between the x coordinates of two consecutive points 
+will not change, but the sign will depending on the direction the ball is travelling. 
+This is the same with the y coordinate. So, if the ball hits the top or bottom 
+boundaries, the ball's dy will change signs; if the ball hits the left or right 
+boundaries, dx will change signs. This can be done through a few simple <code>if</code> 
+statements. The newly computed xy coordinates is compressed into one variable to pass 
+back the pixel location of the ball into the hardware to be drawn. 
+<br><br><ul><ul><code>
+    cmdball = (ballx) | (bally << 10);    // add 6 to offset x_corr <br>
+    IOWR(BALL_XY_BASE, 0, cmdball);				    <br></ul></ul>
+</code><br>
+The drawn point is then passed back into software to repeat the process. <br><br>
+
+<p></p>
+<b>MOUSE and LINES</b><br>
+The software continuously polls for any mouse activity. The algorithm is programmed to 
+keep track of how much the mouse actually moves and which button is pressed. The number 
+of x and y pixels the mouse has moved since the last update is added to the previous 
+location, as shown below:
+<br><br><ul><ul><code>
+   if(timecnt!=0)<br>
+   {<ul>
+	   X=(rbuf[4]>>8);<br>
+	   Y=(rbuf[5]&0x00FF);<br>
+	   B=(rbuf[4]&0x000F);<br>
+   </ul>}<br>
+
+   oX=pX;<br>
+   oY=pY;<br>
+   pX=pX+X;<br>
+   pY=pY+Y;	<br></ul></ul>
+</code><br>
+When a button is pressed, the variable B holds a value of 1 for the left mouse button 
+and 2 for the right mouse button. The left button is programmed to send send the 
+hardware a 'draw vertical line' command. Once a line is drawn, it will become a new 
+appropriate boundary if it is within the roaming area of the ball. The right button is 
+programmed for the horizontal line. When the line is drawing, it also checks if the 
+next point is the same pixel as the ball. If it is, the program breaks out of the while 
+loop and the game ends. <br><br>
+If the roaming area has been cut to a small enough by drawing the lines, the game will 
+go onto the next level. The screen can be cleared using KEY[0] on the board. The next 
+level will then require more of the area to be cut. 
+
+<p></p>
+<b>SOFTWARE DIFFICULTIES</b><br>
+[1.]One of the difficulties was a random offset in the X coordinate on the VGA. The 
+coordinates from the mouse would match the coordinates of the cursor on the VGA. 
+However, when those coordinates were transferred over to QuartusII for the hardware 
+to draw the line, the coordinates would be shifted. This can be taken care of by 
+adding the offset to the pixel values being sent to the VGA. Through trial and error 
+the offset is found to be a positive six pixels (6 pixels to the right).<br><br>
+[2.]Another problem was that the hardware is constantly calling the software. If any 
+variables are given initial values, once the software is called again, the variables 
+will be initialized again. Therefore, if any computation is done on those variables, 
+they are not saved. To solve this problem, the new values of the variables can be sent to 
+QuartusII through an output port, and then sent back to NiosII through an input port. 
+Thus, the variables will be initialized with the values in the input port, in the 
+variable 'ball_h2s' and not by a hardcoded value.<br><br>
+[3.]Since this project was build on the DE2_NIOS_HOST_MOUSE_VGA Altera DE2 demos, 
+understanding what the code does and determining locations events happen. In the 
+most difficult case, the code in a do/while loop was not being run continuously. In 
+context, the hardware would connect to software and run the main function. Within 
+the main function, every code is run through once, including the <code>mouse</code> 
+function call. Once in the <code>mouse</code> function, there is a while loop that runs. 
+However, since another function (<code>play_mouse</code>) with a do/while loop that 
+always repeats is called, the <code>mouse</code> function's while loop only runs once. 
+Thus, it is the do/while loop in the <code>play_mouse</code> function that continues 
+in a constant loop. Or rather, the do/while loop SHOULD continue to run in a constant 
+loop. The code seems like it was written to trigger the do/while loop when the USB 
+mouse was moved or clicked. However, after much further investigation, another 
+function call, <code>send_int</code>, with a while loop was found within the 
+<code>play_mouse</code>. This problem was solved by moving the code that should always 
+be running in the background into the <code>send_int</code> function. However, to do 
+this, all the variables used must be made into global variables. So, when other 
+functions refer to those variables, they can register that the calculations have been 
+done and be able to retrieve the values that have been updated.<br><br>
+[4.]Also this software cannot accurately detect every time the ball collides with an 
+incomplete line. Therefore, the game does not always end when it should. This is 
+a problem because the line generator state machine does not update the software that 
+it is done drawing that line. Even if a bit was sent to software to notify a finished 
+line, the software will have a difficult time distinguishing that bit from the bit 
+resulting in the next cycle since the state machine continuously loops around circles.
+</dd><br><br>
+
+
+<dt><a name="Results"></a><big><b><font color="blue">RESULTS</font></b></big></dt>
+<dd>
+This project works for the most part. Aesthetics of the game on the VGA will need to 
+be enhanced since the area outside of the boundaries is not colored in. A few bugs 
+that cannot be explained also need to be fixed. However, the line generator and ball 
+drawer works to achieve the purpose of showing where the area in which the ball can 
+roam is and where the ball is bouncing. However, sometimes, the line generator does 
+not complete close off the area with the right line end points. Since the line generator 
+and ball drawer are combined into the same state machine, there is a very slight delay 
+in the movement of the ball when a line is being drawn. This is barely even noticeable 
+to affect the game. The VGA display Works and displays correctly. All the functions of 
+the USB mouse that are needed for this game has been handled. The VGA cursor matches the
+movement of the mouse and the lines drawn match the function expected from the 
+appropriate button clicked. One function that does not completely work correctly is 
+the detection of an unfinished line and ball collision. The game only ends occasionally 
+in the case of this situation. The level determination for the game is in a loop. 
+Therefore, a very good Jezzball player can be quite entertained.
+</dd><br><br>
+
+
+<dt><a name="Conclusion"></a><big><b><font color="blue">CONCLUSION</font></b></big></dt>
+<dd>This project was almost done by the deadline. The appearance of the game was not 
+perfect, and there were a few bugs when occasionally cause problems with drawing a line. 
+However, the game is playable, with multiple levels.  
+	
+<p></p>
+<b>Future Developments</b><br>
+Even though multiple levels have been implemented into this game, the difficulty of 
+higher levels can be developed even more. Some ideas can include speed of the ball, size 
+of the ball, number of balls, speed of the line being drawn, and area that needs to be 
+cleared. 
+</dd><br><br><br><br><hr><br><br>
+
+<dt><a name="Appendix"><big><b><font color="blue">APPENDIX</font></b></big></a><br></dt>
+<dd>
+<b>Main Hardware Code</b><br>
+<a href="DE2_NIOS_HOST_MOUSE_VGA(11_29_07).v">DE2_NIOS_HOST_MOUSE_VGA.v</a><br><br>
+
+<b>Main Software Code</b><br>
+<a href="MOUSE(11_29_07).C">MOUSE.C</a><br><br>
+
+<b>Zipped Project</b><br>
+<a href="DE2_NIOS_HOST_MOUSE_VGA.zip">DE2_NIOS_HOST_MOUSE_VGA.zip</a><br><br>
+1. Download this zipped folder.<br>
+2. Unzip folder. <br>
+3. Run the QuartusII project file, which should have the hardware code linked above 
+already loaded in. Compile the code.<br>
+4. Run NiosII IDE and set the workspace as the <code>software</code> folder and open the 
+<code>hello_led.c</code>. Build the project.<br>
+5. Program the board in QuartusII. <br>
+6. Run the project in NiosII. <br>
+
+</dl>
+
+
+</body>
+
+</html>

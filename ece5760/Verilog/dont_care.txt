@@ -1,0 +1,17 @@
+
+//////////////////////////////////////////////////
+// code fragment to  detect the number
+// of leading zeros using dont care
+//////////////////////////////////////////////////
+casex (denorm_mout[8:0])
+	9'b1xxxxxxxx: num_zeros = 8'd0 ;
+	9'b01xxxxxxx: num_zeros = 8'd1 ;
+	9'b001xxxxxx: num_zeros = 8'd2 ;
+	9'b0001xxxxx: num_zeros = 8'd3 ;
+	9'b00001xxxx: num_zeros = 8'd4 ;
+	9'b000001xxx: num_zeros = 8'd5 ;
+	9'b0000001xx: num_zeros = 8'd6 ;
+	9'b00000001x: num_zeros = 8'd7 ;
+	9'b000000001: num_zeros = 8'd8 ;
+	default:       num_zeros = 8'd9 ;
+endcase	

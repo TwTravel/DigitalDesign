@@ -1,0 +1,217 @@
+<!--
+Nice Template
+-->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html>
+<head>
+
+	<title>ECE 5760 | Simulation of Reaction Diffusion </title>
+	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+
+	<meta name="keywords" content="Gautham Ponnu, reaction diffusion" />
+	<meta name="description" content="This webpage is gp348 awesome project report for ECE 5990 at Cornell University" />
+	<link rel="stylesheet" type="text/css" href="../../../../../../../../yui.yahooapis.com/2.7.0/build/reset-fonts-grids/reset-fonts-grids.css" media="all" />
+	<link rel="stylesheet" type="text/css" href="CSS/report.css" media="all" />
+	<link rel="stylesheet" href="CSS/project.css" type="text/css" media="screen, projection" />
+</head>
+<body>
+
+<div id="doc2" class="yui-t7">
+	<div id="inner">
+		<div id="hd">
+			<div class="yui-gc">
+				<!--<div class="yui-u first">-->
+					<h1>Simulation of Reaction Diffusion</h1>
+					<h2>Delin Cao</h2>
+				<!--</div>-->
+
+			</div><!--// .yui-gc -->
+		</div><!--// hd -->
+
+		<div id="bd"> <!--// Main Body begins here -->
+			<div id="yui-main">
+				<div class="yui-b">
+
+
+						<div class="yui-gf"> <!--// This is a section -->
+							<div class="yui-u first">
+								<h2>Introduction</h2> <!--// put your heading here -->
+							</div>
+							<br>
+						<div class="yui-u">
+								<p align="justify">
+								This idea of project was originally from internal combustion engine. How the chemicals react and how they diffuse are very interesting questions. Basically, when chemicals react, substances transformed to each other. And diffusion causes the chemicals to spread out in certain rules. The goal of this project is designing and implementing a real-time chemical reaction solution on VGA screen based on Altera DE1-SOC.  Reaction-diffusion system of Alan Turing and cellular automata model of Belousov-Zhabotinsky Reaction were chosen and implemented. 
+								</p> <!--// Put Content here -->
+						 </div>
+						</div><!--// Your section has ended -->
+
+						
+					
+						<div class="yui-gf"> <!--// This is a section -->
+							<div class="yui-u first">
+								<h2>Mathematical Considerations</h2> <!--// put your heading here -->
+							</div>
+							<div class="yui-u">
+								<h3><a href="../../../../../../../../https@en.wikipedia.org/wiki/Reaction_25E2_2580_2593diffusion_system">Reaction-Diffusion System</a></h3>
+								<p>For this system, a finite solution of partial differential equation was implemented as figure below.</p>
+								<br />
+								<img src="images/math_karl.png" title="reaction diffusion" alt="This is a picture" width="600" height="210"/>
+								<p>Credit to karlsims.com</p>
+								<br />
+								<p align="justify">This model works with two-dimensional grid, or Cartesian Coordinate System. In the reaction part, chemical A is fed to chemical B at given “feed” rate while chemical B is gradually removed at “kill” rate. As for the diffusion, it is simulated by two-dimensional Laplacian function. The Laplacian function is performed with a three by three convolution with certain weights of its neighbors.</p>
+								<p align="justify">Typical values were referenced from karlsims. These are: Da = 1.0, Db = 0.5, k=0.062, dt=1.0.The weights of Laplacian function are: center weight = -1, adjacent neighbors weight = 0.2 and diagonals weight = 0.05.
+								</p> 
+								<br />
+								<h3><a href="../../../../../../../../https@en.wikipedia.org/wiki/Belousov_25E2_2580_2593Zhabotinsky_reaction">Belousov-Zhabotinsky Reaction</a></h3>
+								<p>This model was first discovered by Belousov and then proved by Zhabotinsky. Basically it is a nonlinear chemical oscillator. The cellular automata of BZ reaction is a q-state life model. The model obeys the following rules:</p>
+								<br />
+								<p align="justify">1. There are three constants: k1,k2 and g. k1 and k2 represents the weights while g is th gain in the automata process</p>
+								<p align="justify">2. Three variables, a,b and s are derived from Moore's Neighborhood Law. Variable a is the number of infected cells in its neighbors. Variable b is the number of ill cells. Variable s is the sum of all cell states with in the neighbors including cell state itself.</p>
+								<p align="justify">3. When state=0, the cell is in healthy state. The next state of the cell is defined with a/k1 + b/k2.</p>
+								<p align="justify">4. When state=q, the cell is in ill state. The next state will be 0.</p>
+								<p align="justify">5. When in other state, the cell is in infected state. The next state will be s/(a+b+1)+g</p>
+								<p align="justify">6. All the calculations are rounded to integers. </p>
+								<br />
+								<p>Credit to hermetic.ch</p>
+							</div>
+						</div><!--// Your section has ended -->
+
+						<div class="yui-gf"> <!--// This is a section -->
+							<div class="yui-u first">
+								<h2>Implementations</h2> <!--// put your heading here -->
+							</div>
+							<div class="yui-u">
+								<h3>Matlab Simulation</h3>
+								<p align="justify">The Matlab part was used to realize algorithms. Because of rich environments of this platform, it is very convenient to try the ideas out first and then proceed to the next step. Also, the performance of Matlab code is a comparison to the implementation on the DE1-SOC.
+								</p>
+								<p align="justify">For the Reaction-diffusion system, four matrices are initiated representing the amount of chemical A and chemical B in current state and next state. By following the finite solution of the system, the cells are updated one by one, or serially in each transverse. After the calculation, the next state is given to the current state for the next transverse.
+								</p> 
+								<p align="justify">As for the BZ reaction cellular automata, only two matrices are required. With the q-state life rules, the cells are automatically updated. Also, this process is serial.
+								</p> 
+								<br />
+								<h3>HPS Solution</h3>
+								<p align="justify">The HPS solution follows the same logic used in the Matlab implementation but in C language. The main optimization is dynamic memory allocation, or malloc. With malloc, the program can better utilize the memory to process the matrices faster. Also, with some carefully use of variable type, the processing time can be slightly reduced.
+								</p> 
+								<br />
+								<h3>FPGA Solution</h3>
+								<p align="justify">The implementation on FPGA is quite different from the previous work. Due to limited time, only BZ reaction cellular automata was implemented.
+								</p>
+								<p align="justify">In the FPGA, the update of cells is parallelized. The parallelization utilized M10k blocks on the DE1-SOC to store the data in the two matrices mentioned above. Also, only one matrix is required for the implementation. In the design, the matrix is stored by column. Hence, every time the data is required, a whole row can be presented. 
+								</p>
+								<p align="justify">To realize the Moore’s Neighborhood Law, three rows are required. In the initial state, three rows of registers are loaded with boundary condition, row 0 and row 1. Let’s name these three register rows as a[0], a[1] and a[2] for clarity. After loading, the values of next state for row 0 are stored in another row of registers, reg_nxt. In the end, row 0 is presented to the VGA controller. 
+								</p>
+								<p align="justify">In the update state, when the VGA finishes displaying and requires the next row, row 1 is shifted to a[0] and row zero is shifted to a[1]. A new row from memory is read to a[2]. After the shifting, reg_nxt is written back to the memory. 
+								</p>
+								<p align="justify">With these two main steps, the parallelization scheme is structured with good memory usage. However, with 640x480 resolution, the scheme will run out of logic elements on the board. It is lucky that the 320x240 version fits tightly. The combinational logic requires some series optimize for a high-resolution version.
+								</p>
+								<p align="justify">Unfortunatelly the parallelized solver only achieved Modelsim simulation. The VGA controller I implentmented is still buggy and couldn't display correctly.
+								</p>
+								<br />
+								<p>You can download the code from <a href="Reaction_Diffusion_Simulation.zip">here</a></p>
+								
+							</div>
+						</div><!--// Your section has ended -->
+
+						<div class="yui-gf"> <!--// This is a section -->
+							<div class="yui-u first">
+								<h2>Results and Discussion</h2> <!--// put your heading here -->
+							</div>
+							<div class="yui-u">
+								<p align="justify">The performance difference is as follows:
+								</p> <!--// Put Content here -->
+								<p align="justify">Matlab Reaction Diffusion: 1 FPS
+								</p> <!--// Put Content here -->
+								<p align="justify">Matlab BZ Reaction CA  : 1 FPS
+								</p> <!--// Put Content here -->
+								<p align="justify">HPS Reaction Diffusion  : 5-6 FPS
+								</p> <!--// Put Content here -->
+								<p align="justify">HPS BZ Reaction       : 6-8 FPS
+								</p> <!--// Put Content here -->
+								<p align="justify">HPS BZ Reaction low res : 11-13FPS
+								</p> <!--// Put Content here -->
+								<br />
+								<p align="justify">Screenshots of HPS solutions:
+								</p> <!--// Put Content here -->
+								<img src="images/RD_104s.jpg" title="HPS Reac" alt="This is a picture" width="576" height="432"/>
+								<p align="center">Reaction Diffusion: Disk in Center, 104 Seconds</p>
+								<img src="images/RD_322s.jpg" title="HPS Reac" alt="This is a picture" width="576" height="432"/>
+								<p align="center">Reaction Diffusion: Disk in Center, 322 Seconds</p>
+								<img src="images/RD_600s.jpg" title="HPS Reac" alt="This is a picture" width="576" height="432"/>
+								<p align="center">Reaction Diffusion: Disk in Center, 600 Seconds</p>
+								<img src="images/CA_1s.jpg" title="HPS BZ" alt="This is a picture" width="576" height="432"/>
+								<p align="center">BZ Reaction: Random, 320x240</p>
+								<img src="images/CA_2s.jpg" title="HPS BZ" alt="This is a picture" width="576" height="432"/>
+								<p align="center">BZ Reaction: Random, 640x480</p>
+								<br />
+
+								<h2 align="center"><a href="../../../../../../../../https@www.youtube.com/watch@v=XqCPUvazw5g">Video Demonstration</a></h2>
+
+							</div>
+						</div><!--// Your section has ended -->
+
+	
+
+					<div class="yui-gf">
+						<div class="yui-u first">
+							<h2>Appendix</h2>
+						</div>
+						<div class="yui-u">
+						<p> The group approves this report for inclusion on the course website. </p>
+						<p> The group approves the video for inclusion on the course YouTube channel. </p>
+						</div>
+					</div>
+					</div>
+
+					<div class="yui-gf">
+						<div class="yui-u first">
+							<h2>Reference</h2>
+						</div>
+						<div class="yui-u">
+						<p>[1]  <a href="../../../../../../../../www.karlsims.com/rd.html">Karl Sims</a></p>
+						<p>[2]  <a href="../../../../../../../../https@groups.csail.mit.edu/mac/projects/amorphous/GrayScott/default.htm">Gray Scott Model 1</a></p>
+						<p>[3]  <a href=../../../../../../../../mrob.com/pub/comp/xmorphia/#fn_wolfram1984"> Gray Scott Model 2</a></p>
+						<p>[4]  <a href="../../../../../../../../https@www.youtube.com/watch@v=BV9ny785UNc">Video Tutorial From Coding Training</a></p>
+						<p>[5]  <a href="../../../../../../../../https@www.hermetic.ch/pca/bz.htm">Five Cellular Automata:The Belousov-Zhabotinsky Reaction</a></p>
+						
+						
+						
+						</div>
+					</div>
+					</div>
+
+					<div class="yui-gf">
+						<div class="yui-u first">
+							<h2>Contact</h2>
+						</div>
+						<div class="yui-u">
+						<p align="justify"> Huge thanks to Prof.Land for helping me realize the ideas of reaction diffusion.  </p>
+					</div>
+					</div>
+					</div>
+
+				</div><!--// .yui-b -->
+			</div><!--// yui-main -->
+		</div><!--// bd -->
+
+		<div id="ft">
+			<p><a href="../../../../../../../../validator.w3.org/check@uri=referer"><img src=
+			"images/w3chatered.gif" title="W3C+Hates+Me" alt="W3C+Hates+Me"
+			width="80" height="15" /></a>
+			<a href="../../../../../../../../jigsaw.w3.org/css-validator/check/referer"><img src=
+			"images/css_copy.gif" title="Valid+CSS%21" alt="Valid+CSS%21"
+			width="80" height="15" /></a>
+			<img src="images/code.gif" title="Handcrafted with sweat and blood" alt="Handcrafted with sweat and blood" width="80" height="15" />
+			<img src="images/anybrowser.gif" title="Run Any Browser Any OS" alt="Runs on Any Browser Any OS" width="80" height="15" /></p>
+			<br />
+		</div><!--// footer -->
+
+	</div><!-- // inner -->
+
+
+</div><!--// doc -->
+
+
+</body>
+</html>

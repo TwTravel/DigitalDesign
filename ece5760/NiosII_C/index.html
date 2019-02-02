@@ -1,0 +1,124 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>NiosII GCC on DE2</title>
+</head>
+
+<body>
+ <h2>NiosII GCC examples on DE2
+</h2>
+ <p>I used these examples to start teaching myself NiosII design. They are in the order I did them, rather than in a pedagogical order. The first example should only be used for background information and not used as a programming style. </p>
+ <p><strong>Special Note</strong>: The component <code>altpll</code> has changed between release 7 and 8 of Quartus. When defining a PLL for the phase-shifted SDRAM clock <code>c0</code> (as explained in the <a href="../../../../../instruct1.cit.cornell.edu/courses/ece576/DE2/tut_DE2_sdram_verilog.pdf">SDRAM tutorial</a>), you need to add an <code>c1</code> output to the PLL with zero phase-shift and use this signal for the NiosII clock! If you don't do this, the program will load normally, with no error messages, <strong>but the program will not run</strong>! A new, corrected project is zipped <a href="NiosSDRAMv8.zip">here</a>. </p>
+ <ol>
+   <li><strong>Hardware timer with interrupt <br>
+     A. 
+    Using raw memory address hacking </strong>. Each specific NiosII processor has different characteristics, so when talking about an GCC program, you also have to specifiy the specific NiosII that it runs on. The first GCC example uses the same economy cpu (<strong>E</strong> version) as describled in the <a href="../../../../../instruct1.cit.cornell.edu/courses/ece576/NiosII_asm/index.html">first assembler example</a>. I used this version because I did not want to deal with cache while hacking on memory. The program was compiled and downloaded using the NiosII Debug Client. This <a href="TimerTestISR.c">GCC program</a> builds a timer ISR from scratch and uses it to blink some lights. In general, we will use a higher level interface to exceptions, but this example is entertaining because it gets down to the hardware. Some things to note:<br>
+     <ul>
+       <li>The style of this program is primitive. Memory is modified directly. In particular, after initialization, <em>the init code is overwritten by the exception vector branch instruction </em>. This is really bad practice and is not ROMable. In fact, the program won't even restart if reset! The <em>only</em> reason to code this way is if you want better ISR response time than is available through the standard library interfaces. This scheme is as fast as assembler, while the standard librarys take 100-400 cycles to get into an ISR. See Altera <a href="../../../../../altera.com/literature/hb/nios2/n2sw_nii52006.pdf">NiosII exception handling</a> section on ISR performance. <em>For all real projects in this class, use the style shown in part B below. </em>Precise, high speed, software interrupt handling should be replaced by FPGA hardware whenever possible. </li>
+         <li>The exception branch instruction is constructed brute force as 
+           <code><br>
+           BR_exception = (((int)pISR - exception_addr - 4) &lt;&lt; 6 ) + 0x06 ;</code>
+           <br>
+         The offset formed by the <code>(function entry)-exception_addr-4</code> is shifted in the correct bit position in the instruction, then the <code>0x06</code> opcode is added. </li>
+         <li> All i/o addresses were taken directly from the SOPC builder GUI. Later examples will use an auto-generated library. </li>
+         <li>The ISR is written completely in assembler, with no attempt to save context, because for this simple case we don't need to. The ISR just clears the necessary <code>TO</code> bit, inverts a register, corrects the exception return address (<code>ea</code>), and leaves. The <code>ea</code> needs to be corrected because hardware and software exceptions are handled slightly differently. <a href="../../../../../altera.com/literature/hb/nios2/n2cpu_nii5v1.pdf">See processor manual</a>. </li>
+         <li>The IRQ bits in the <code>enable</code> control register and the master PIE bit in the cpu <code>status</code> register have to be manipulated with direct assembler commands. 
+         </li>
+     </ul>
+     <br>
+     <strong>B.     Using the <a href="../../../../../altera.com/literature/hb/nios2/n2sw_nii5v2_02.pdf">HAL system library</a> and NiosII IDE</strong>. This GCC example uses a economy cpu (<strong>E</strong> version) with an 8-bit input port (for switches), an 8-bit output port (for LEDs), a timer with interrupt, and 16k of on-chip RAM. The SOPC configuration is shown below and is complete in the <a href="TimerTest_time_limited.sof">sof</a> and <a href="cpu.ptf">ptf</a> files. The <a href="TimerTest.v">top level module</a> is the same as above.<br>
+     <img src="ISRbiggerRAM.png" width="811" height="255"><br>
+   The <a href="ISRtest1.c">GCC program</a> was written, compiled and downloaded using the NiosII IDE. The enitre project is <a href="NiosIIisr.zip">zipped here</a>. Chapter 16 of Hamblen's book was very useful in learning to use the IDE. The IDE uses the ptf file to generate a system library for the specific processor you have just built using the SOPC builder and QuartusII. The system library can then be included in your GCC program. Some things to note:<br>
+   <ul>
+      <li>You must generate a system library  for each processor you build. In example 1 above we needed to hardcode each peripheral address. Using the auto-generated library, we can use symbolic equivalents without hardcoding addresses.
+         <ul>
+           <li>Each peripheral has a set of interface routines in <code>...syslib/DeviceDrivers[sopc_builder]/</code>. </li>
+             <li>The file <code>...syslib/debug/system_description/system.h</code> has peripheral base addresses, IRQ definitions, and many cpu details. </li>
+         </ul>
+      </li>
+       <li>The style  used in this example is called <em>Direct Register Access</em> by Altera. Each peripheral register is manipulated directly by macros given in the <code>DeviceDriver</code> directories. </li>
+       <li>The <a href="../../../../../altera.com/literature/hb/nios2/n2sw_nii52010.pdf">HAL API Reference</a> shows how to use various higher level functions. In particular, there are a complete set of interrupt control functions.</li>
+       <li>Registering an ISR with HAL automatically turns on the interrupt. You can change this behavior if necessary. </li>
+       <li>This version of the code (and economy cpu) fails when the timer interval falls below about 400 cycles. </li>
+   </ul>
+   </li>
+   <br>
+   <li><strong>Hardware timer and external DDS (running from SDRAM)</strong>. <br>
+     <strong>Special Note</strong>: The component <code>altpll</code> has changed between release 7 and 8 of Quartus. When defining a PLL for the phase-shifted SDRAM clock <code>c0</code> (as explained in the <a href="../../../../../instruct1.cit.cornell.edu/courses/ece576/DE2/tut_DE2_sdram_verilog.pdf">SDRAM tutorial</a>), you need to add an <code>c1</code> output to the PLL with zero phase-shift and use this signal for the NiosII clock! If you don't do this, the program will load normally, with no error messages, <strong>but the program will not run</strong>!<br>     
+     <br>
+     This <a href="ISRtestSDRAM.c">GCC example</a> runs on a  pipelined NiosII CPU (S version), running code from external 8 Mbyte SDRAM. The SOPC configuration is shown below and is complete in the <a href="TimerSDRAM_time_limited.sof">sof</a> and <a href="NiosSDRAM.ptf">ptf</a> files. Remember to add a PLL to the system to <a href="../../../../../www.altera.com/education/univ/materials/manual/labs/tut_DE2_sdram_verilog.pdf">phase-shift the SDRAM clock</a>. <br>
+     <img src="ISR_SDRAM.png" width="811" height="274">     <br>
+     Circuitry in the<a href="TimerSDRAM.v"> top-level module</a> implements  DDS (direct digital synthesis) running at 50 MHz. Using DDS hardware external to the CPU makes the timing of the DDS independent of any interrupt variability, and makes the DDS clock rate faster than could be realized in software. The program reads switches 7:0 and blinks some LEDs at a rate determined by the hardware timer interrupt. The switch settings are scaled by the cpu to produce a convenient frequency range of 1 Hz per switch value. As an example, setting <code>FF</code> on the switches will result in 255.0 Hz at pins 7:0 of the JP1 (GPIO_0) connector. Monitoring pin 7 with a scope verifies the frequency accuracy. Programming was carried out using the NiosII IDE.<br>
+     <br> 
+   A minor change in the <a href="ISRtest1a.c">GCC program</a> eliminates the global variable used to communicate between the timer ISR and <code>main</code>. Instead, a variable declared in <code>main</code> is shared with the ISR by means of the context pointer defined when the ISR is registered with the top-level exception handler. It is easy to think that this shared variable is a parameter passed to the ISR. <em>But it is not!</em> It changes asynchronously at any time in the <code>main</code> loop. The entire project is <a href="Nios2sdram.zip">zipped here</a>. <br> 
+   </li><br>
+   <li><strong>Analog audio output from DDS</strong>. <br>
+     Using the same cpu as in #2 above, but adding a bit more circuitry to the <a href="TimerSDRAMvga.v">top-level module</a> routes the DDS output sawtooth waveform to the red channel (pin 1) of the VGA plug. The VGA driver chip can act as a 50 MHz, 10-bit DAC for up to three audio channels, if it is not being used for video. The <code>vga_blanking</code> and <code>vga_sync</code> signals have to be set high to enable continuous DAC conversion. <br>
+     <br>
+     Adding a ROM lookup sine table to the <a href="TimerSINE.v">top-level module</a> allows sinewave synthesis from the DDS circuitry. A <a href="SineROM.m">matlab program</a> generated the ROM table code. The <a href="ISRtest1sine.c">GCC program</a> was modified to produce a scale. A computer speaker or oscilloscope needs to be connected to pin 1 of the VGA connector. Suggestions for inferring ROM from Verilog code are given in the <a href="../../../../../altera.com/literature/hb/qts/qts_qii51007.pdf">Altera HDL Coding Style manual</a>. Adding another <a href="TimerSinCos.v">ROM lookup table</a> with a 90 degree phase-shift in the address makes a simultaneous cosine wave on the VGA blue channel. The image below shows the two waveforms in quatrature. The output is about 600 mV peak-to-peak. Full scale output from the DAC is about 1.2 volts. <br>
+   <img src="SinCosScope.jpg" width="300" height="218">     </li><p></p>
+   <li><strong>Using the LCD</strong>. <br>
+   Using the same cpu as in the <a href="../../../../../instruct1.cit.cornell.edu/courses/ece576/NiosII_muCOS/index.html">MicroC/OS page</a>, and making sure that the LCD hardware is turned on in the top-level Verilog module, we can use the LCD easily. The device driver for the LCD is named in <a href="../NiosII_muCOS/system.h">system.h</a> and seems to be recognized as a UNIX-style stream file device by the GCC library <code>stdio.h</code>. Using it is just a matter of opening a device using <code>fopen</code> and writing to it using <code>fprintf</code>. The device driver recognizes <a href="../../../../../www.isthe.com/chongo/tech/comp/ansi_escapes.html">ansi escape codes</a> to control the cursor position. This <a href="scaleLCD.c">GCC program</a> runs the DDS, as above, and adds LCD readout of the frequency. </li><br>
+   <li><strong>Two NiosII Processors with Hardware Mutex</strong><br>
+     As a first step in multiprocessing, I built two processors which share a hardware mutex to synchronize them. The GCC program running on each processor will count on the LEDs when it owns the mutex and stop when it does not. Switch SW15 causes processor 1 to get the mutex which holds it until SW15 is off and processor 2 gets the mutex by turning on SW0. The SOPC configuration is shown below, along with the memory maps of the reset and exception addresses. Each processor was configured as  <code>standard</code> with 1kbyte of instruction cache. <br>
+     <img src="HardwareMutex/SOPCbuilder1.png" width="808" height="300">     <br>
+     <img src="HardwareMutex/SOPCbuilder2.png" width="471" height="151"><img src="HardwareMutex/SOPCbuilder3.png" width="472" height="151">     <br>
+     <a href="HardwareMutex/TwoProcessor.v">Top level module</a> consists of one line which instantiates the two processors and connects i/o to both of them. A long comment (from the  verilog file generated by SOPC) and the one line are shown below. <br>
+	 <pre>//From SOPC builder
+/*
+module TwoProc (
+                 //global signals:
+                  clk, reset_n,
+                 // the_in_0
+                  in_port_to_the_in_0,
+                 // the_in_1
+                  in_port_to_the_in_1,
+                 // the_out_0
+                  out_port_from_the_out_0,
+                 // the_out_1
+                  out_port_from_the_out_1
+               );
+  output  [ 31: 0] out_port_from_the_out_0, out_port_from_the_out_1;
+  input            clk, reset_n;
+  input   [  7: 0] in_port_to_the_in_0, in_port_to_the_in_1;
+*/
+//Build the two processors
+TwoProc mytwo(CLOCK_50, KEY[0], SW[15:8], SW[7:0], LEDR, LEDG);</pre>
+     
+   The two GCC programs were developed using the <a href="../../../../../www.altera.com/support/examples/nios2/exm-multi-nios2-hardware.html">Altera multiprocessor tutorial</a> as a guide. The <a href="../../../../../www.altera.com/literature/hb/nios2/n2cpu_nii51020.pdf">Avalon mutex core</a> description was also useful. The <a href="HardwareMutex/CodeForProc1.c">processor 1 program</a> counts on the red LEDs when it owns the mutex. It gets the mutex if SW15 is on, and processor 2 does not own the mutex. The <a href="HardwareMutex/CodeForProc2.c">processor 2 program</a> counts on the green LEDs when it owns the mutex. It gets the mutex if SW0 is on, and processor 1 does not own the mutex. Neither processor can get the mutex until the other releases it with the respective switch  in the down position. The whole project is <a href="HardwareMutex/NiosIItwoProcessor.zip">zipped here</a>. </li><br>
+   <li><strong>Two NiosII Processors with Hardware Mutex</strong> <strong>and Hardware Mailbox</strong> <br>
+     Two processors share a mutex and a mailbox for communication. The SOPC builder configuration is shown below.  The mailbox requires a small associated memory which is configured in the dialog box shown when you click on the <code>more mailbox settings</code> tab in the SOPC. <br>
+     <img src="HardwareMailbox/SOPCbuilder1.png" width="807" height="332">     <br>
+     <img src="HardwareMailbox/SOPCbulider2.png" width="612" height="285">     <br>
+   The two GCC programs were developed using the <a href="../../../../../www.altera.com/support/examples/nios2/exm-multi-nios2-hardware.html">Altera multiprocessor tutorial</a> as a guide. The <a href="../../../../../www.altera.com/literature/hb/nios2/n2cpu_nii53001.pdf">Avalon mailbox core</a> description was also useful. The <a href="HardwareMailbox/CodeForProc1.c">processor 1 program</a> counts on the red LEDs when it owns the mutex and sends a message to processor 2 on every clock tick. It gets the mutex if SW15 is on, and processor 2 does not own the mutex. The <a href="HardwareMailbox/CodeForProc2.c">processor 2 program</a> counts on the green LEDs when it owns the mutex and puts the count (message) from procesor 1on the green LEDS when it does not. It gets the mutex if SW0 is on, and processor 1 does not own the mutex. Note that if processor 1 owns the mutex, then SW15 is turned off while SW0 is off, that processor 2 will hang waiting for a message which never arrives. Neither processor can get the mutex until the other releases it with the respective switch in the down position. The whole project is <a href="HardwareMailbox/NiosIItwoProcessor.zip">zipped here</a>.     </li><br>
+   <li><strong>Two NiosII Processors running programs from SDRAM with Hardware Mutex</strong> <strong>and Hardware Mailbox</strong> <br>
+     To run a program of any reasonable size (such as one including a printf) requires more memory than is available on-chip. Several processors can run out of SDRAM, as long as the reset and execption vectors for each are separated in SDRAM address space. You can set the vector positions in the <code>more cpu Settings </code> dialog boxes in the SOPC builder. In this example, each processor was given a MByte by placing the reset vectors at 1 MByte intervals in SDRAM. At 1 MByte each, you could support up to 8 processors with the existing SDRAM. The SOPC builder configuration and the two cpu dialog boxes are shown below. Each cpu was configured as <code>standard</code>, with 4kByte of instruction cache. <br>
+     <img src="TwoProcSDRAM/SOPCbuilder1.png" width="808" height="316">     <br>
+     <img src="TwoProcSDRAM/SOPCbuilder2.png" width="471" height="148"><img src="TwoProcSDRAM/SOPCbuilder3.png" width="471" height="148">     <br>
+   The <a href="TwoProcSDRAM/TwoProcessor.v">top-level module</a> needs to be changed to interface the to the extermal SDRAM, but the GCC programs do not need to be modified (from example 6 above) because the <a href="../../../../../www.altera.com/literature/hb/nios2/n2sw_nii5v2_02.pdf">HAL layer</a> hides the memory modification from the applications programs. The whole project is <a href="TwoProcSDRAM/NiosIItwoProcessor.zip">zipped here</a>. </li><br>
+   <li><strong>Performance and optimization</strong><br>
+     A <code>standard</code> NiosII was defined with a timer and JTAG UART was used to experiment with processor performance. The computation was some variant on a simple loop with a few arithmetic operations in it, either inline or in a function. <br> 
+     <br>
+   </li>
+ </ol>
+ <hr>
+   <p><strong>References
+</strong></p>
+   <p>JO Hamblen, TS Hall and MD Furman, <em>Rapid protoyping of digital systems</em>, Springer 2005 </p>
+   <p><a href="../../../../../gcc.gnu.org/onlinedocs/gcc-4.1.1/gcc/default.htm">GNU GCC manual</a> </p>
+   <p><a href="../../../../../tigcc.ticalc.org/doc/gnuasm.html">GNU assembler manual</a> </p>
+   <p>Altera <a href="../../../../../altera.com/literature/hb/nios2/n2cpu_nii51017.pdf">NiosII instruction set reference</a> </p>
+   <p>Altera <a href="../../../../../altera.com/literature/hb/nios2/n2sw_nii52006.pdf">NiosII exception handling</a> </p>
+   <p>Altera <a href="../../../../../www.altera.com/support/examples/nios2/exm-micro_mutex.html">Mutex example</a> for use of LCD </p>
+   <p> <a href="../../../../../https@www.altera.com/en_US/pdfs/literature/tt/tt_nios2_multiprocessor_tutorial.pdf">Altera multiprocessor tutorial</a></p>
+   <p>Mutex <a href="ug_embedded_ip.pdf">Peripherical manual</a> chapter 29</p>
+   <p>Mailbox <a href="ug_embedded_ip.pdf">Peripherial manual</a> chapter 30</p>
+   <p><a href="../../../../../www.altera.com/literature/hb/nios2/n2cpu_nii53001.pdf">Avalon mailbox core</a></p>
+   <p><a href="../../../../../www.altera.com/literature/hb/nios2/n2cpu_nii51020.pdf">Avalon mutex core</a></p>
+   <hr>
+   <p>Copyright Cornell University June 2006 </p>
+   <p>&nbsp;</p>
+</body>
+</html>

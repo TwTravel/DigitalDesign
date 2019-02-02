@@ -1,0 +1,52 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+ <head>
+  <title>Index of /land/courses/ece5760/Altera_cookbook/cookbook/crc</title>
+ </head>
+ <body>
+<h1>Index of /land/courses/ece5760/Altera_cookbook/cookbook/crc</h1>
+  <table>
+   <tr><th valign="top"><img src="../../../../../../icons/blank.gif" alt="[ICO]"></th><th><a href="@C=N;O=A">Name</a></th><th><a href="@C=M;O=A">Last modified</a></th><th><a href="@C=S;O=A">Size</a></th><th><a href="@C=D;O=A">Description</a></th></tr>
+   <tr><th colspan="5"><hr></th></tr>
+<tr><td valign="top"><img src="../../../../../../icons/back.gif" alt="[PARENTDIR]"></td><td><a href="../default.htm">Parent Directory</a>       </td><td>&nbsp;</td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="crc32_dat128.v">crc32_dat128.v</a>         </td><td align="right">2015-03-26 09:43  </td><td align="right"> 73K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="crc32_dat120.v">crc32_dat120.v</a>         </td><td align="right">2015-03-26 09:43  </td><td align="right"> 67K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="crc32_dat112.v">crc32_dat112.v</a>         </td><td align="right">2015-03-26 09:43  </td><td align="right"> 64K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="crc32_dat104.v">crc32_dat104.v</a>         </td><td align="right">2015-03-26 09:43  </td><td align="right"> 59K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="crc32_dat96.v">crc32_dat96.v</a>          </td><td align="right">2015-03-26 09:43  </td><td align="right"> 54K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="crc32_dat88.v">crc32_dat88.v</a>          </td><td align="right">2015-03-26 09:43  </td><td align="right"> 51K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="crc32_dat80.v">crc32_dat80.v</a>          </td><td align="right">2015-03-26 09:43  </td><td align="right"> 43K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="crc32_dat72.v">crc32_dat72.v</a>          </td><td align="right">2015-03-26 09:43  </td><td align="right"> 41K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="crc32_dat64.v">crc32_dat64.v</a>          </td><td align="right">2015-03-26 09:43  </td><td align="right"> 35K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="crc32c_dat64.v">crc32c_dat64.v</a>         </td><td align="right">2015-03-26 09:43  </td><td align="right"> 34K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="crc32_dat56.v">crc32_dat56.v</a>          </td><td align="right">2015-03-26 09:43  </td><td align="right"> 32K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="crc32_dat48.v">crc32_dat48.v</a>          </td><td align="right">2015-03-26 09:43  </td><td align="right"> 31K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="crc32c_dat64_only.v">crc32c_dat64_only.v</a>    </td><td align="right">2015-03-26 09:43  </td><td align="right"> 28K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="crc32_dat40.v">crc32_dat40.v</a>          </td><td align="right">2015-03-26 09:43  </td><td align="right"> 27K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="crc24_dat64.v">crc24_dat64.v</a>          </td><td align="right">2015-03-26 09:43  </td><td align="right"> 26K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="crc32_dat32.v">crc32_dat32.v</a>          </td><td align="right">2015-03-26 09:43  </td><td align="right"> 25K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="crc32c_dat32.v">crc32c_dat32.v</a>         </td><td align="right">2015-03-26 09:43  </td><td align="right"> 24K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="crc32_dat24.v">crc32_dat24.v</a>          </td><td align="right">2015-03-26 09:43  </td><td align="right"> 20K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="crc32c_zer64.v">crc32c_zer64.v</a>         </td><td align="right">2015-03-26 09:43  </td><td align="right"> 17K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="crc32_dat16.v">crc32_dat16.v</a>          </td><td align="right">2015-03-26 09:43  </td><td align="right"> 16K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="crc32_dat8.v">crc32_dat8.v</a>           </td><td align="right">2015-03-26 09:43  </td><td align="right"> 13K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="crc16_dat32.v">crc16_dat32.v</a>          </td><td align="right">2015-03-26 09:43  </td><td align="right"> 13K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="crc24_dat64_only_flat.v">crc24_dat64_only_flat.v</a></td><td align="right">2015-03-26 09:43  </td><td align="right"> 12K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="crc16_dat24.v">crc16_dat24.v</a>          </td><td align="right">2015-03-26 09:43  </td><td align="right"> 10K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="crc16_dat16.v">crc16_dat16.v</a>          </td><td align="right">2015-03-26 09:43  </td><td align="right">8.7K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="crc24_zer64_flat.v">crc24_zer64_flat.v</a>     </td><td align="right">2015-03-26 09:43  </td><td align="right">7.7K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="crc24_zer64x2_flat.v">crc24_zer64x2_flat.v</a>   </td><td align="right">2015-03-26 09:43  </td><td align="right">7.7K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="crc24_zer64x3_flat.v">crc24_zer64x3_flat.v</a>   </td><td align="right">2015-03-26 09:43  </td><td align="right">7.5K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="crc32_dat128_any_byte.v">crc32_dat128_any_byte.v</a></td><td align="right">2015-03-26 09:43  </td><td align="right">7.5K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="crc16_dat8.v">crc16_dat8.v</a>           </td><td align="right">2015-03-26 09:43  </td><td align="right">7.2K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="crc32_dat64_any_byte.v">crc32_dat64_any_byte.v</a> </td><td align="right">2015-03-26 09:43  </td><td align="right">5.0K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="crc_ethernet.v">crc_ethernet.v</a>         </td><td align="right">2015-03-26 09:43  </td><td align="right">3.9K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="crc32_dat32_any_byte.v">crc32_dat32_any_byte.v</a> </td><td align="right">2015-03-26 09:43  </td><td align="right">3.9K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="crc32_tb.v">crc32_tb.v</a>             </td><td align="right">2015-03-26 09:43  </td><td align="right">3.8K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="crc32c_tb.sv">crc32c_tb.sv</a>           </td><td align="right">2015-03-26 09:43  </td><td align="right">3.7K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="crc32_128_tb.v">crc32_128_tb.v</a>         </td><td align="right">2015-03-26 09:43  </td><td align="right">3.3K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="crc_register.v">crc_register.v</a>         </td><td align="right">2015-03-26 09:43  </td><td align="right">3.1K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="xor6.v">xor6.v</a>                 </td><td align="right">2015-03-26 09:43  </td><td align="right">1.9K</td><td>&nbsp;</td></tr>
+   <tr><th colspan="5"><hr></th></tr>
+</table>
+</body></html>

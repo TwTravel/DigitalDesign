@@ -1,0 +1,477 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><!--
+	This document provides the basis of a semantically structured web page 
+	authored in XHTML 1.0 Transitional using established Cornell University
+	naming conventions.
+--><title>ECE 5760</title>
+	
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+	<meta http-equiv="Content-Language" content="en-us">
+	<link rel="shortcut icon" href="../../favicon.ico" type="image/x-icon"><!--
+	All layout and formatting should be controlled through Cascading Stylesheets (CSS).
+	The following link tag should appear in the head of every page in the website. see
+	styles/screen.css.
+-->
+	
+
+	<link rel="stylesheet" type="text/css" media="screen" href="styles/screen.css">
+	<link href="styles/prettify_002.htm" type="text/css" rel="stylesheet">
+<script type="text/javascript" src="styles/prettify.htm"></script>
+
+    <style type="text/css">
+<!--
+.style1 {font-weight: bold}
+.style2 {font-weight: bold}
+.revision {
+	color: #F00;
+}
+.c11 {font-weight:bold}
+.c6 {direction:ltr}
+-->
+    </style>
+</head><body class="bridge" onload="prettyPrint()">
+
+<!--
+	The following link provides a way for people using text-based browsers and
+	screen readers to skip over repetitive navigation elements so that they can 
+	get directly to the content. It is hidden from general users through CSS.
+-->
+<div id="skipnav">
+	<a href="#content">Skip to main content</a>
+</div>
+
+
+
+<!-- The following div contains the Cornell University logo with unit signature -->
+<div id="cu-identity">
+	<div id="cu-logo">
+		<a id="insignia-link" href="../../../../www.cornell.edu/default.htm"><img src="styles/unit_signature_unstyled.gif" alt="Cornell University" border="0" height="75" width="240"></a>
+		<div id="unit-signature-links">
+			<a id="cornell-link" href="../../../../www.cornell.edu/default.htm">Cornell University</a>
+		</div>
+	</div>
+	
+	<!--
+		The search-navigation div contains links that allow the user to search
+		either the unit website or all of cornell.edu.
+		These links will be displayed in the unit signature banner and will
+		be aligned with the right edge of the page.
+	
+	<div id="search-navigation">
+		<ul>
+			<li><a href="http://www.cornell.edu/search/">Search Cornell</a></li>
+		</ul>
+	</div> -->
+	
+	 
+		<!--The search-form div contains a form that allows the user to search 
+		either pages or people within cornell.edu directly from the banner.-->
+	<div id="search-form">
+		<form action="http://www.cornell.edu/search/" method="get" enctype="application/x-www-form-urlencoded">
+			<div id="search-input">
+				<label for="search-form-query">SEARCH CORNELL:</label>
+				<input type="text" id="search-form-query" name="q" value="" size="20" />
+				<input type="submit" id="search-form-submit" name="submit" value="go" />
+			</div>
+
+			<div id="search-filters">
+					<input type="radio" id="search-filters1" name="tab" value="" checked="checked" />
+					<label for="search-filters1">Pages</label>
+				
+					<input type="radio" id="search-filters2" name="tab" value="people" />
+					<label for="search-filters2">People</label>
+					
+					<a href="../../../../www.cornell.edu/search/default.htm">more options</a>
+			</div>	
+		</form>
+	</div>
+	
+	
+	<!-- 
+		The search-form div contains a form that allows the user to search 
+		either the unit website or all of cornell.edu directly from the banner.
+	<div id="search-form">
+		<form action="#" method="post" enctype="application/x-www-form-urlencoded">
+			<div id="search-input">
+				<label for="search-form-query">SEARCH:</label>
+				<input type="text" id="search-form-query" name="query" value="" size="20" />
+				<input type="submit" id="search-form-submit" name="submit" value="go" />
+			</div>
+
+			<div id="search-filters">
+					<input type="radio" id="search-filters1" name="target" value="unit" checked="checked" />
+					<label for="search-filters1">Unit name</label>
+				
+					<input type="radio" id="search-filters2" name="target" value="cornell" />
+					<label for="search-filters2">Cornell</label>
+					
+					<a href="#">more options</a>
+			</div>	
+		</form>
+	</div>
+	-->
+</div>
+
+<!-- The header div contains the main identity and main navigation for the site -->
+<div id="header">	
+	<!--
+		The navigation div contains the site's main navigation. These
+		links will be displayed in a horizontal, gray navigation bar 
+		under the unit signature banner.
+	-->	
+	<div id="navigation">
+		<ul>
+			<li><a href="../../../../www.ece.cornell.edu/default.htm">ECE</a></li>
+			<li><a href="../../../../https@intranet.ece.cornell.edu/default.htm">ECE intranet</a></li>
+			<li><a href="../../../../www.cuinfo.cornell.edu/default.htm">CUinfo</a></li>
+			<li><a href="../../../../www.cornell.edu/default.htm">Cornell</a></li>
+			<li><a href="../../../../www.library.cornell.edu/default.htm">Library</a></li>
+			<li><a href="../../default.htm">Bruce Land</a></li>
+			<!-- More navigation as needed
+			<li><a href="#">Navigation 6</a></li>
+			-->
+						
+		</ul>
+	</div>
+	
+	<hr>
+	
+	<!-- 
+		The identity div contains the name of a main site section
+	-->
+	<div id="identity" align="center">
+	<h1>
+	<br />
+	ECE 5760 <br /> 
+	Advanced Microcontroller Design<br />
+	and system-on-chip
+	<br />
+	Spring 2019<br />
+	<br />
+	<br />
+	<br />
+	<br />
+
+	</h1>
+  </div>
+</div>
+
+<hr>
+
+<div id="wrap">
+
+<!-- The content div contains the main content of the page -->
+<div id="content">
+	<div id="main">
+		<!--
+			The pullquote blockquote is displayed in bold at the top right
+			corner of the page. It should contain a brief (one or two sentences) 
+			statement that captures the nature of the contents of the bridge page.
+			
+			Note that the text does not necessarily need to be an actual quotation,
+			in which case the caption div should be omitted.
+		
+		<blockquote class="pullquote">
+			<p>
+			 Wall of Pong is a fast-moving, interactive, laser-based pong game playable on any flat surface.
+			</p>
+			<div class="caption">
+			"The Elevator Pitch"
+			</div>
+		</blockquote>-->
+		
+		<!--
+			The following paragraph(s) will appear to the left of the pullquote.
+			The paragraph(s) should describe or introduce the contents of the 
+			bridge page.
+		-->
+	<!-- <div class="main-photo-small">
+		<a href="CUmap.png"><img src="CUmapSmall.png" alt="Map"  border="0"></a>
+		<p class="caption">Map (click to expand)</p>
+	</div> -->
+	
+	<p>ECE 5760  deals with system-on-chip and embedded control
+	 in electronic design. The course is  taught 
+	 by <A HREF="../../default.htm">Bruce Land</A>, who 
+	 is a staff member in <a href="../../../../www.ece.cornell.edu/default.htm">
+	 Electrical and Computer Engineering</a>.
+	 <!--
+			A bridge-section div will appear as an element that spans the entire
+			width of the page, clearing any left or right columns that appear above.
+			The bridge page can contain any number of bridge-section divs.
+			
+			Note that the bridge-section div can contain bridge-group1 and 
+			bridge-group2 divs, as in the example below. 
+		-->
+ECE 5760 thanks <a href="../../../../www.intel.com/content/www/us/en/fpga/solutions.html@cid=sem0&intel_term=&gclid=CLeCre7ShdECFciPswod-ZcL5Q">INTEL/
+ALTERA</a> for their donation of development hardware and software, and 
+<a href="../../../../www.terasic.com/default.htm">TERASIC</a> for donations and timely technical support of their hardware.
+<div class="bridge-section">
+	 <!--<h2>Teaching</h2> -->
+    <h4>
+	  <p><a href="FinalProjects/default.htm">Final Projects</a> | <a href="#assign">Assignments</a> | <a href="#sched">Staff and Schedule</a> | <a href="#links">Links</a> | <a href="../../../../https@www.youtube.com/playlist@list=PLKcjQ_UFkrd7UcOVMm39A6VdMbWWq-e_c">Lectures</a><font size=-2> (2017)</font></p>
+	  <div class="bridge-section">
+	  <a name="assign"></a>    </h4>
+<h2>Assignments &nbsp;&nbsp;<font size="-1"><strong> <a href="#labs">Lab exercises </a>  | <a href="#reading">Reading</a></strong></font></h2>
+	<!--<h4>
+	  <p> <a href="#labs">Lab exercises </a>  | <a href="#reading">Reading</a></p>
+	</h4> --><a name="labs"></a>
+<!-- <p>ECE5760 is on <a href="http://www.videonote.com/cornell">Videonote</a> (for Cornell students only)--> <h4>Lab Assignments</h4> 
+	<ol>
+	<li> <a href="LABS/s2019/lab1_DDA.html">  Hardware ODE solver with HPS  control </a>
+      (weeks of Jan 28, Feb 4 ,11)  
+    <li> <a href="LABS/s2019/lab2_drum.html"> Multiprocessor PDE realtime synthesis 
+      of a nonlinear drum </a>(weeks of Feb 18, 25 March 4) 
+      <li> <a href="LABS/s2019/lab3_mandelbrot.html"> Mandelbrot Set  </a>(weeks of March 11, 18, 25)
+      <li> <a href="LABS/s2019/lab4_project.html"> Final Project  </a>
+		  (weeks April 8, 15, 22, 29 and May 6)
+</ol>
+<p><a name="reading"></a></p>
+	<p><a href="../../../../https@piazza.com/class/iwxtrp0baxh1z#"><strong>Piazza</strong></a></p>
+	<p><a href="../../../../https@www.youtube.com/user/ece4760"><img src="youtube.png" width="51" height="21" alt="youtube" /></a> <a href="../../../../https@www.youtube.com/playlist@list=PLKcjQ_UFkrd7BGMJIYMn0pSk65dB8OYG-">Lectures</a> (2019), <a href="../../../../https@www.youtube.com/playlist@list=PLKcjQ_UFkrd7UcOVMm39A6VdMbWWq-e_c">Lectures</a> (2017, <a href="../../../../hackaday.com/2017/05/22/an-education-on-soc-using-verilog/default.htm">hackaday</a>), <a href="../../../../www.youtube.com/playlist@list=PL2BA78454E71FF0E5">Lectures</a> (2011) and <a href="../../../../www.youtube.com/playlist@list=PL2E0D05BEC0140F13">Final projects</a>
+<p><a href="LABS/oldlabs.html">Old lab assignments</a>, <a href="LABS/labIdeas.html">ideas for labs</a> <br />
+<a href="index_old.html"><strong>DE2, DE2-115 web page</strong></a> last used in 2016        
+<h4>Reading Assignments</h4></p>
+	<ul>
+	  <li> All semester:
+	    <ul>
+	      <li><a href="policy.html"><strong>Policy</strong></a><br />
+          <a href="equipment/TEKtds1002.pdf">Tektronix TDS1002 oscilloscope manual</a></li>
+          <li><a href="equipment/BK4040a.pdf">B&amp;K 4040a signal generator manual</a> </li>
+          <li>DE1-SoC  <a href="DE1_SOC/DE1-SoC_User_manualv.1.2.2_revE.pdf">Users Manual</a>, <a href="DE1_SOC/DE1-SoC schematic.pdf">Schematic</a>, <a href="DE1_SOC/expansion_ports.png">Expansion Ports</a></li>
+          <li><a href="DE1_SOC/CycloneV_SE_A5.PNG">Resources available</a> on our Cyclone5.</li>
+        </ul>
+	  <li>Lab 1:          
+	    <ul>
+          <li>Review <em>Synthesizable</em> Verilog syntax <a href="../../../../https@people.ece.cornell.edu/land/courses/ece5760/Verilog/coding_and_synthesis_with_verilog.pdf">Synthesis Methodology</a><!--
+	  --><br />
+          <li>Read <a href="DE1_SOC/HPS_peripherials/linux_index.html">Linux on DE1-SoC</a> </li>
+          <li>Read <a href="DE1_SOC/HPS_peripherials/univ_pgm_computer.index.html">University Program DE1-SoC_Computer_15_1</a> </li>
+          <li><a href="../../../../moodle.epfl.ch/pluginfile.php/1680498/mod_resource/content/5/SoC-FPGA Design Guide.pdf">SoC-FPGA Design Guide</a> EPFL, Sahand Kashani-Akhavan and Ren&eacute; Beuchat (<a href="DE1_SOC/SoC-FPGA Design Guide_EPFL.pdf">local copy</a>)</li>
+          <li>You are going to be programming C to display waveforms on the VGA subsystem. <br />
+            Therefore you are expected to be able to program in Linux/GCC. Read about:
+            <ol>
+              <li> /dev/mem for i/o mapping, e.g. <a href="../../../../www.simtec.co.uk/appnotes/AN0014/default.htm">simtec</a> and <a href="DE1_SOC/HPS_peripherials/FPGA_addr_index.html">local</a></li>
+              <li>Debian Linux. We are using a Debian variant, I believe.</li>
+              <li>GCC on Linux, e.g. <a href="../../../../https@linux.die.net/man/1/gcc">die.net</a></li>
+              <li><a href="DE1_SOC/HPS_peripherials/USB_index.html">USB on DE1-SoC</a></li>
+            </ol>
+          </li>
+          <li>You are going to connect the VGA controller using Qsys tools. Read about:
+            <ol>
+              <li><a href="../../../../ftp@ftp.intel.com/Pub/fpgaup/pub/Intel_Material/15.1/Tutorials/Introduction_to_the_Altera_Qsys_Tool.pdf">Qsys</a></li>
+              <li><a href="DE1_SOC/DE1-SoC_User_manualv.1.2.2_revE.pdf">VGA on DE1-SoC</a></li>
+              <li><a href="DE1_SOC/Video_core.pdf">University video core</a></li>
+            </ol>
+            <ul>
+              <li><a href="DDA/index.htm">Digital Differential Analyser</a></li>
+              <li><a href="DE1_SOC/External_Bus_to_Avalon_Bridge.pdf">External Bus to Avalon Bridge</a> (external master)</li>
+              <li><a href="DE1_SOC/Avalon_to_External_Bus_Bridge.pdf">Avalon to External Bus Bridge</a> (external slave)</li>
+              <li><a href="DE1_SOC/HPS_peripherials/Bus_master_slave_index.html">Using external buses</a></li>
+              <li><a href="ModelSim/index.html">Using ModelSim</a> to test computations</li>
+              <li></li>
+            </ul>
+          </li>
+      </ul>      
+<li>Lab 2:
+    <ul>
+      <li><a href="../../../../ccrma.stanford.edu/~jos/pmupd/default.htm">Physical music synthesis</a> </li>
+      <li><a href="LABS/s2017/WaveFDsoln.pdf"><em>Study Notes on Numerical Solutions of the Wave Equation with the Finite Difference Method</em></a>. </li>
+      <li><a href="LABS/s2017/FPGAfd.pdf"><em>IMPLEMENTATION OF FINITE DIFFERENCE SCHEMES FOR THE WAVE EQUATION</em></a><em> <a href="../../../../instruct1.cit.cornell.edu/courses/ece576/LABS/f2008/FPGAfd.pdf">ON FPGA</a></em> </li>
+      <li><a href="DE1_SOC/External_Bus_to_Avalon_Bridge.pdf">External Bus to Avalon Bridge</a> (last example -- audio bus master)</li>
+      <li><a href="DE1_SOC/Audio_core.pdf">University audio core</a></li>
+    </ul>
+  </li>
+  <li>Lab 3:
+    <ul>
+      <li><a href="../../../../https@en.wikipedia.org/wiki/Mandelbrot_set">Mandelbrot_set</a></li>
+      <li><a href="../../../../web.cecs.pdx.edu/~mperkows/CLASS_574/Oct16-2008/mand.pdf">Implementation on Cyclone2</a> (note that the DE1 mentioned here is NOT Cyclone5)</li>
+    </ul>
+  </li>
+</ul>
+
+
+    <p>
+<div class="bridge-section"> 
+	  <a name="sched"></a>	</p>
+<h2>Schedule and Staff &nbsp;&nbsp;<font size="-1"><strong><a href="#schedule">Schedule</a> | <a href="#staff">Staff </a> </strong></font></h2>
+	<!-- <h4><p><a href="#schedule">Schedule</a> | <a href="#staff">Staff </a>  </p>
+	</h4> -->
+
+	<a name="schedule"></a>	
+	<ul>
+	  <li>
+      <b>Lecture: MWF 1220-1310 Location: <a href="../../../../www.cornell.edu/about/maps/@q=Phillips%20Hall#CUmap" target="_blank" rel="nofollow">Phillips Hall 219</a><a href="../../../../www.cornell.edu/about/maps/@q=Hollister%20Hall#CUmap" target="_blank" rel="nofollow"></a></b></li>
+	  <li><b>Lab Section<strong> 238 Phillips</strong>:</b> <strong><br />
+      Thursday 1330-1630  <br />
+      Friday, 1330-1630</strong>
+	    <p> </p>
+	  </li>
+       <a name="staff"></a>
+       <li><span class="style2"><a href="../../default.htm">Bruce
+             Land</a>,<a href="mailto:brl4@cornell.edu"> BRL4@cornell.edu, </a>214 Phillips<a href="../../../../www.nbb.cornell.edu/neurobio/land/CUmap.png"></a></span><br />
+         <br />
+       </li>
+       <li><strong>TAs: </strong><br />
+       Joshua Diaz<strong> -- jd794@cornell.edu</strong></li>
+       <li>Ryan Hornung<strong> -- rmh286@cornell.edu<br />
+       </strong><br />
+       </li>
+	</ul>
+<div class="bridge-section"> 
+      <a name="links"></a>
+</p>
+<h2>Links &nbsp;&nbsp;<font size="-1"><strong> 
+	<a href="#CUstaff">Cornell </a>  | <a href="#Altera">Altera</a> | <a href="#verilog">Verilog</a> </strong></font></h2>
+	<!-- <h4>
+	  <p> <a href="#CUstaff">Cornell </a>  | <a href="#Altera">Altera</a> | <a href="#NiosII">NiosII</a> 
+	  | <a href="#NiosIIos">NiosII RTOS</a> 
+	  | <a href="#CPUcores">CPU/COREs</a> | <a href="#verilog">Verilog</a> | <a href="#GeneralDesign">Design</a></p>
+	</h4> -->
+	<ul>
+	  <li> <a name="CUstaff"></a><strong>Cornell staff maintained pages</strong>    
+	    <ul>
+      <li><b><a href="FinalProjects/default.htm">Final Projects</a> </b>and <a href="FinalProjects/ProjectIdeas.htm">some ideas</a> and <a href="Terasic/Terasic.pdf">other project locations</a><br />
+        ----- Lectures and background ------      </li>
+      <li><a href="Verilog/Verilog_index.html">Verilog summary</a></li>
+      <li><a href="DE1_SOC/HPS_peripherials/linux_index.html">Linux on HPS</a></li>
+      <li><a href="DE1_SOC/HPS_peripherials/Qsys_index.html">Qsys bus design</a></li>
+      <li><a href="DE1_SOC/HPS_peripherials/IP_module_index.html">Quartus IP Library</a></li>
+      <li><a href="DE1_SOC/HPS_peripherials/Analog_index.html">ADC and DAC</a> on DE1-SoC<br />
+        ----- Design examples ------
+      </li>
+      <li><a href="DE1_SOC/Memory/index.html">FPGA memory</a></li>
+      <li><a href="DE1_SOC/HPS_peripherials/USB_index.html">HPS USB</a></li>
+      <li><a href="DE1_SOC/HPS_peripherials/pthreads_index.html">pThreads on HPS</a></li>
+      <li><a href="DE1_SOC/HPS_peripherials/UDP_index.html">UDP and ethernet</a></li>
+      <li><a href="DE1_SOC/HPS_peripherials/FPGA_addr_index.html">FPGA Communication</a> (<strong>FIFO</strong> and <strong>DMA</strong>)</li>
+      <li><a href="DE1_SOC/HPS_peripherials/univ_pgm_computer.index.html">University Computer graphics/sound</a></li>
+      <li><a href="DE1_SOC/HPS_peripherials/Bus_master_slave_index.html">Avalon bus-master peripheral </a>(with HPS)</li>
+      <li><a href="DE1_SOC/HPS_peripherials/DSP_index.html">DSP on DE1-SoC</a></li>
+      <li><a href="DE1_SOC/HPS_peripherials/Floating_Point_index.html">Floating point hardware</a> for Cyclone5<br />
+        ----- Applications ---------
+      </li>
+      <li><a href="DE1_SOC/FP_DDA/index.htm">Floating Point Digital Differential Analyser</a> for Cyclone5</li>
+      <li><a href="DE1_SOC/HPS_peripherials/Lattice_Boltzmann_index.html">Lattice Boltzmann solver</a></li>
+      <li>----- Verification -----------
+      </li>
+      <li><a href="Quartus/Quartus_compile.html">Quartus Prime compilation process</a></li>
+      <li><a href="Quartus/Signal_tap.html">Signal-Tap logic analyzer</a></li>
+      <li><a href="DE1_SOC/Logic_analyzer/index_logic.html"><strong>HOLA</strong> Homebrew logic analyser</a></li>
+      <li><a href="Quartus/TimeQuest_sdc_file.html">TimeQuest and *.sdc files</a></li>
+      <li><a href="ModelSim/index.html">Using ModelSim</a></li>
+      <li><a href="DE1_SOC/HPS_peripherials/Power_est_index.html">Power estimation in Quartus</a></li>
+      <li><a href="DE1_SOC/GPIO_headers.png">GPIO header for DE1-SoC</a> -- <a href="DE1_SOC/GPIO_headers_connection.png">Scope connection</a><br />
+        -----------------------------
+      </li>
+      <li><a href="DE1_SOC/index.html">DE1-SOC</a> literature</li>
+      <li><a href="DE1_SOC/HPS_peripherials/index.html">Experimenting with DE1-SOC</a></li>
+      <li>----- Student DE1-SOC ------</li>
+      <li><a href="../eceprojectsland/STUDENTPROJ/2015to2016/sm893_mkp53/Final Report ECE 4999.pdf">Linux on DE1-SOC</a> MANISH PATEL and SYED TAHMID MAHBUB</li>
+      <li><a href="../eceprojectsland/STUDENTPROJ/2014to2015/ayk33/Independent_Study.pdf">DE1-SOC Evaluation</a> Ahmed Kamel</li>
+      <li><a href="../ece3400/FPGA_Verilog/fpga.html">Cyclone4 intro for ece3400</a></li>
+        </ul>   
+         
+	  <li><strong>DE2 and DE2-115 pages</strong>
+	  <ul>
+	    <li><a href="DE2/index.html">DE2 hardware and processor examples </a>(excluding NiosII)</li>
+	    <li><a href="Memory/index.html">FPGA memory</a></li>
+	    <li><a href="DE2/Stack_cpu.html">Stack CPU</a></li>
+	    <li><a href="NiosII_asm/index.html">NiosII assembler examples</a> </li>
+	    <li><a href="NiosII_C/index.html">NiosII GCC examples</a></li>
+	    <li><a href="NiosII_muCOS/index.html">NiosII MicroC/OS examples</a> </li>
+	    <li><a href="DDA/index.htm">FPGA as an Digital Differential Analyzer</a> (Analog Computer) </li>
+	    <li><a href="DDA/NeuronIndex.htm">Neural Models on the FPGA</a> </li>
+	    <li><a href="DE2/fpgaDSP.html">DSP on FPGA</a> </li>
+	    <li><a href="FloatingPoint/index.html">Simple Floating Point hardware</a> </li>
+	    <li><a href="DE2/indexVGA.html">VGA examples</a> -- </li>
+	    <li><a href="video/index.htm">NTSC Video</a></li>
+	    <li><a href="Chemical_Simulation/index.html">Stocastic Chemical Reactions</a> (<a href="../../../../hackaday.com/2011/07/19/modelling-chemical-reactions-using-an-fpga/default.htm">hackaday</a>)</li>
+	    <li><span class="c6"><span class="c11"><a href="ModelSim/index.html"></a><a href="StudentWork/Julie_wang/ModelSimLecture/ModelSimLecture.html"> The Quick and Dirty Guide to Using ModelSim with Quartus</a></span> -- by Julie Wang 2014</span></li>
+	    <li>------DE2-115 --------------</li>
+	    <li><a href="DE2_115/default.htm">DE2-115</a> top level, pin connections and DE2-115-640x480.zip</li>
+	    <li><a href="../../../../ftp@ftp.altera.com/up/pub/Altera_Material/9.0/Tutorials/Verilog/DE2-115/Using_the_SDRAM.pdf">Using SDRAM</a></li>
+      </ul>
+      <li><strong><a name="Altera" id="Altera"></a>Altera <a href="../../../../https@www.altera.com/support/training/university/overview.html/default.htm">University Program</a></strong>
+        <ul>
+          <li><a href="Altera_cookbook/cookbook/stx_cookbook.pdf">Design cookbook</a> -- <a href="Altera_cookbook/cookbook/default.htm">examples</a></li>
+          <li><a href="../../../../ftp@ftp.altera.com/up/pub/Altera_Material/default.htm">ALL versions of the University Program</a> (version 9 and up)</li>
+        </ul>
+      </li>
+</ul>
+
+
+<ul>
+  <li><a name="AtmelData"></a><span class="style1"><a href="../../../../www.altera.com/literature/lit-index.html">ALTERA Literature</a> and DE2 resources</span>
+    <ul><li><a href="../../../../www.altera.com/literature/lit-qts.jsp">QUARTUS II </a>design software
+      <li><a href="DE2/tut_quartus_intro_verilog.pdf">VERILOG in QUARTUS II</a>, <a href="DE2/tut_simulation_verilog.pdf">Simulation</a>, <a href="DE2/tut_timing_verilog.pdf">Timing</a>, <a href="Verilog/tut_signaltapII_verilogDE2.pdf">SignalTap</a>
+      <li><a href="../../../../quartushelp.altera.com/15.0/mergedProjects/reference/glossary/def_mif.htm">Memory Init File (mif) format</a>        
+      <li><a href="../../../../www.altera.com/literature/manual/stx_cookbook.pdf">Advanced Synthesis Cookbook</a>                  
+      <li><a href="../../../../www.altera.com/literature/hb/qts/qts_qii51007.pdf">Recommended HDL style</a>       
+          <ul>
+            <li>Reocomended design practice: chapter 11</li>
+            <li>HDL Design Guidelines: 11-3</li>
+            <li>Inferring RAM memory: page 12-8</li>
+            <li>Inferring ROM memory: 12-27</li>
+            <li>Inferring shift-registers: 12-30</li>
+            <li>Inferring multipliers: 12-3</li>
+                  <li>Tristate devices -- Do not use for internal signals. 12-41</li>
+                  <li>Unintential Latches: 12-37       </li>
+      </ul>      
+</ul>  
+  <li><strong><a name="verilog" id="verilog"></a>Verilog</strong>      
+        <ul>
+        <li><a href="../../../../www.sutherland-hdl.com/papers/2007-SNUG-SanJose_gotcha_again_paper.pdf">Verilog Gotcha's</a> and <a href="../../../../www.sutherland-hdl.com/papers/2006-SNUG-Boston_standard_gotchas_presentation.pdf">more</a>, and <a href="../../../../referencedesigner.com/blog/vertlog-gotchas/2465/default.htm">more</a></li>
+        <li><a href="../../../../verilog.org/default.htm">verilog.org</a></li>
+        <li><a href="../../../../www.verilog.net/default.htm">verilog.net</a></li>
+        <li><a href="../../../../www.verilog.com/default.htm">verilog.com</a> and <a href="../../../../www.verilog.com/IEEEVerilog.html">IEEE standard</a> </li>
+        <li><a href="../../../../www.sunburst-design.com/papers/CummingsSNUG2000SJ_NBA_rev1_2.pdf">Nonblocking Assignments in Verilog Synthesis, Coding Styles That Kill!</a> (Cliff Cummings) </li>
+        <li><a href="../../../../web.mit.edu/6.111/www/s2004/LECTURES/l5.pdf">Blocking/nonblocking</a> assignments        </li>
+        <li><a href="../../../../www.asic-world.com/verilog/synthesis.html">Verilog tutorial</a> (asic-world) </li>
+        <li><a href="../../../../sutherland-hdl.com/pdfs/verilog_2001_ref_guide.pdf">Quick Reference</a> (Sutherland HDL) </li>
+        <li><a href="Verilog/coding_and_synthesis_with_verilog.pdf">Verilog synthesis methodology</a> (Finbarr O&rsquo;Regan (finbarr@ee.ucd.ie)) </li>
+        <li><a href="Verilog/FreescaleVerilog.pdf">Verilog HDL coding</a> (Freescale)</li>
+        <li><a href="Verilog/LatticeTestbenchPrimer.pdf">Testbench Primer</a> (Lattice) </li>
+        <li><a href="../../../../www.ece.duke.edu/~dwyer/courses/ece52/Binary_to_BCD_Converter.pdf">Binary to BCD converter</a>         
+          <p></p>
+        </li>
+      </ul>
+  </li>
+      <li> <a name="GeneralDesign"></a><strong>General design information</strong>
+        <ul>
+        <li><a href="../../../../www.cs.ucr.edu/~vahid/pubs/comp07_circuits.pdf">It&rsquo;s Time to Stop Calling Circuits &ldquo;Hardware&rdquo;</a></li>
+        <li><a href="../../../../members.optushome.com.au/jekent/FPGA.htm">John Kent's FPGA page</a> </li>
+        <li><a href="../../../../www.fpgacpu.org/index.html">fpgacpu.org</a> and <a href="../../../../www.fpgacpu.org/links.html">links</a></li>
+        <li><a href="../../../../www.fpga4fun.com/default.htm">fpga4fun</a></li>
+        <li><a href="../../../../www.cs.virginia.edu/sigbed/archives/2005-10/10-wese2005%20(Edwards).pdf">Teaching with FPGAs</a> (Edwards, Columbia) <a href="../../../../www1.cs.columbia.edu/~sedwards/presentations/2005-wese-emsys.pdf">glossy version</a>: student projects <a href="../../../../www1.cs.columbia.edu/~sedwards/classes/2007/4840/highlights.html">2007</a>, <a href="../../../../www1.cs.columbia.edu/~sedwards/classes/2005/4840/highlights.html">2005</a>, <a href="../../../../www1.cs.columbia.edu/~sedwards/classes/2004/4840/highlights.html">2004 </a> and 2007 <a href="../../../../www1.cs.columbia.edu/~sedwards/classes/2007/4840/index.html">class</a> <br>
+          <br>
+        </li>
+  </ul>      
+</ul>
+    <hr>
+
+<div id="footer">
+<!-- The footer-content div contains the Cornell University copyright -->
+<div id="footer-content" align="center">
+Copyright 2008, Cornell University<br />
+This page is transmitted using 100% recycled electrons.
+</div>
+
+</div>
+<!--
+<!--ipt src="VIDindex_files/urchin.js" type="text/javascript">
+</scri-->
+<!--ipt type="text/javascript">
+_uacct = "UA-1817812-1";
+urchinTracker();
+</scri-->
+-->
+<div class="bridge-section"> 
+	<h2><!--
+<!--ipt src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+</scri-->
+<!--ipt type="text/javascript">
+_uacct = "UA-3015648-6";
+urchinTracker();
+</scri--> --></h2>
+</body></html>

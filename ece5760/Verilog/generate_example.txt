@@ -1,0 +1,42 @@
+
+From http://www.edaboard.com/thread99409.html
+Here's a simple 8-bit shift register created by generating eight "dflop" modules.
+The nine "path" wires connect the chain of dflops, from first input through last output.
+"count" simply generates a square-wave test signal, like a built-in test bench.
+
+Dff is a D flipflop
+
+path[0] -> Dff -> path[1] -> Dff -> path[n] ... -> Dff -> path[8] -> output
+           |                 |                     |
+clk-----------------------------------------------------------------------
+
+/////////////////////////////////////////////////////
+module top (clk, out);
+  input         clk;
+  reg     [3:0] count = 0;
+  wire    [8:0] path;
+  output        out;
+
+  always @ (posedge clk)
+    count <= count + 1;
+
+  assign path[0] = count[3];
+  assign out = path[8];
+
+  genvar n;
+  generate
+    for (n=0; n<=7; n=n+1) begin : flops
+      dflop u (.clk(clk), .in(path[n]), .out(path[n+1]));
+    end
+  endgenerate
+endmodule
+
+
+module dflop (clk, in, out);
+  input         clk, in;
+  output reg    out;
+
+  always @ (posedge clk)
+    out <= in;
+endmodule
+///////////////////////////////////////////////////

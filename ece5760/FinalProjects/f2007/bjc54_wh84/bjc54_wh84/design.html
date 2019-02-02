@@ -1,0 +1,156 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!--
+Design by Free CSS Templates
+http://www.freecsstemplates.org
+Released for free under a Creative Commons Attribution 2.5 License
+
+Name       : Blogsmith
+Description: A two-column, fixed-width blog design.
+Version    : 1.0
+Released   : 20071001
+
+-->
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title>ECE 576 Final Project: Laser Tracker</title>
+<meta name="keywords" content="" />
+<meta name="description" content="" />
+<link href="default.css" rel="stylesheet" type="text/css" media="screen" />
+</head>
+<body>
+<!-- start header -->
+<div id="logo">
+	<h1><a href="index.html">ECE 576 Final Project: Laser Tracker</a></h1>
+	<p>By Brandon Chan and Willie Huang</p>
+</div>
+<div id="menu">
+	<ul> <!--class="current_page_item"-->
+		<li><a href="index.html">Home</a></li>
+		<li class="current_page_item"><a href="design.html">Design</a></li>
+		<li><a href="results.html">Results</a></li>
+		<li><a href="conclusion.html">Conclusion</a></li>
+		<li><a href="Appendix.html">Appendix</a></li>
+	</ul>
+</div>
+<!-- end header -->
+<!-- start page -->
+<div id="page">
+	<div id="page-bg">
+		<!-- start content -->
+		<div id="content">
+			<div class="post">
+				<h2 class="title"><a name="high">High Level Design</a></h2>
+				<p class="byline"><small><a href="#">Top</a></small></p>
+				<div class="entry">
+					<p align='justify'>Our project consists of using a CCD camera, Altera DE2 board, and a VGA monitor. The CCD camera captures images and sends them to the Cyclone II FPGA. Verilog code on the FPGA converts the raw image to RGB and then stores it into SDRAM. After the image has been stored, the FPGA reads the image from SDRAM. We then determine the intensity of specific pixels to track light sources and we determine what color and where we want the pixel to be displayed on the VGA. The tracking box will initially be green and when a light source is locked on, the tracking box will turn blue. The image data is then sent to an SRAM VGA buffer and then it is displayed onto the VGA during a horizontal or vertical sync. A high level block diagram of the hardware is shown below.</p>
+					<p><center><img src="graphics/High_Level_Design.jpg"></center></p>
+				</div>			
+			</div>
+			<div class="post">
+				<h2 class="title"><a name="camera">Camera Module</a></h2>
+				<p class="byline"><small><a href="#">Top</a></small></p>
+				<div class="entry">
+					<p align='justify'>The camera we used was a CCD camera that uses a CMOS sensor to produce raw data. The raw data to RGB. During the RGB conversion process, each pixel's red, green, and blue components are determined. Once these three components are determined, the image is then mirrored to correct the image display and stored into SDRAM. The image data is then read out of SDRAM sequentially in a FIFO manner and placed into SRAM VGA buffer. Its coordinates on the screen corresponds directly with its physical address in SDRAM. Once there is either a horizontal sync or vertical sync, the pixels are blasted onto the VGA screen. A flow diagram of how the camera captures, processes, and displays and image is shown below in figure 1.</p>
+					<p><center><img src="graphics/Camera_Flow.jpg"></center></p>
+				</div>			
+			</div>
+			<div class="post">
+				<h2 class="title"><a name="bw">Color to Black and White Conversion</a></h2>
+				<p class="byline"><small><a href="#">Top</a></small></p>
+				<div class="entry">
+					<p align='justify'>The image is converted from color to black and white when the image is being mirrored. When the image is being mirrored initially, each of the red, green, and blue components are being flipped and then stored into SDRAM. Instead, we only take the bottom 10 bits of the red component and discard the green and blue components. When displaying the image, these 10 bits are used for all three VGA color components: red, green, and blue. Making all three components the same makes the image black and white.</p>
+				</div>
+			</div>
+			<div class="post">
+				<h2 class="title"><a name="vga">Displaying onto VGA</a></h2>
+				<p class="byline"><small><a href="#">Top</a></small></p>
+				<div class="entry">
+					<p align='justify'>Since we need to overlay the tracking box on top of the video display to show how it tracks moving light sources, we needed a way to decide whether, given a location on-screen, it should display a red pixel, a green pixel, a blue pixel or BW pixel representing data coming from the camera image stored in SDRAM.  Since the SRAM data bus is 16 bits long and the black and white image only requires the 10 most significant bits, we concatenate it with 6 extra bits, which carry out different functions depending on how they are set (see Table 1).</p>
+					<p class="byline"><b><center>Table 1:</center></b></p>					
+					<p><center><img src="graphics/table2.JPG"></center></p>					
+					<p><code>
+						// Show SRAM on the VGA<br>
+						CCD_MCLK	<=	~CCD_MCLK;  //25 Mhz<br>
+						<br>
+						if (SRAM_DQ[5]==1)<br>
+						begin<br>
+							inRed <= 10'hFFFF;<br>
+							inGreen <= 10'h0000;<br>
+							inBlue <= 10'h0000;<br>
+						end<br>
+						<br>
+						else if (SRAM_DQ[4]==1)<br>
+						begin<br>
+							inRed <= 10'h0000;<br>
+							inGreen <= 10'hFFFF;<br>
+							inBlue <= 10'h0000;<br>
+						end<br>
+						<br>
+						else if (SRAM_DQ[3]==1)<br>
+						begin<br>
+							inRed <= 10'h0000;<br>
+							inGreen <= 10'h0000;<br>
+							inBlue <= 10'hFFFF;<br>
+						end<br>
+						<br>
+						else<br>
+						begin<br>
+							inRed <= SRAM_DQ[15:6];<br>
+							inGreen <= SRAM_DQ[15:6];<br>
+							inBlue <= SRAM_DQ[15:6];<br>
+						end<br>
+						end<br>
+					</code></p>
+					<p align='justify'>Since the image is in black and white, the same SRAM data is assigned to all three color channels. If the SRAM buffer is detected to have a red output, then the VGA red component is set to 10'd1023 while both of the other components are set to zero. The same is done displaying the other colors as shown in the code segment above. The VGA outputs pixels onto the screen only when there is either a horizontal or vertical sync.</p>
+				</div>
+			</div>
+			<div class="post">
+				<h2 class="title"><a name="light_tracking">Light Tracking</a></h2>
+				<p class="byline"><small><a href="#">Top</a></small></p>
+				<div class="entry">
+					<p align='justify'>To track a laser/light source, we had a box that would search for a light source and once a light source is within the box, the box will lock onto the light source and then follow that particular light source. The dimension of our tracking box was 90 x 90 pixels with an initial green border. We detect a light source by determining how many pixels inside the tracking box are near white color. A near white color is defined as a pixel having its upper 10-bit value greater than 700. If there are more than 50 and less than 500 light pixels inside the tracking box, then it is a confirmed light source and the box will become locked on and the box's border will turn blue. We instantiated an upper bound to the total number of light pixels inside the tracking box so that the tracking box will not move if the light source is so large that it covers most or the entire tracking box area.<p>Since the image is in black and white, the same SRAM data is assigned to all three color channels. If the SRAM buffer is detected to have a red output, then the VGA red component is set to 10'd1023 while both of the other components are set to zero. The same is done displaying the other colors as shown in the code segment above. The VGA outputs pixels onto the screen only when there is either a horizontal or vertical sync.</p>
+					<p><center><img src="graphics/State_Machine.jpg"></center></p>
+					<p align='justify'>The VGA Controller first draws the tracking box then finishes drawing the rest of the B&W image. Once the tracking box has locked onto a light source, the border switches from green to blue. Computations are then performed to detect if the light source is moving. To determine this, we subdivided the tracking box into nine smaller boxes with dimensions 30 x 30 pixels. The sum of 'light' pixels is calculated for each of these nine smaller boxes. The sum of the number of light pixels in the nine smaller boxes is then compared with each other to determine which box has the greatest number of light pixels. So if the upper left square has the most light pixels, the tracking box will shift upwards by 34 pixels and to the left by 34 pixels, which is essentially re-centering the box around the new light source. Table 2 below shows the number of pixels the tracking box will shift according to which square has the most light pixels. Once the tracking box has updated its position, the state machine starts all over again with the drawing of the tracking box in its new position.</p>
+					<p class="byline"><b><center>Table 2:</center></b></p>
+					<p><center><img src="graphics/Tracking_Square.jpg"></center></p>
+					<p align='justify'>For example, if a light source was first detected in Box 2 (as in Box 2 having more white light in it compared to all the other Boxes), the whole tracking box will shift one square up so that the light source is now located back in the center of the tracking box (Box 5). Now if the light was moved so that it now appeared in Box 9, then the whole square again will shift 1 right and 1 down to again re-center the light source.</p>
+				</div>
+			</div>
+			<div class="post">
+				<h2 class="title"><a name="nowork">What Didn't Work</a></h2>
+				<p class="byline"><small><a href="#">Top</a></small></p>
+				<div class="entry">
+					<p align='justify'>Originally, we had wanted to track a red laser/light with color display. However, we encountered many problems when displaying a color image and displaying drawings at the same time. Therefore, we decided to use black and white imaging instead. We did manage to successfully detect intense red light. To detect red light, we used vector math calculations. For a complete red pixel, the RGB coordinates are [1023, 0, 0]. To determine if a pixel is a shade of red, we calculated the distance that point is from pure red. If the distance is less than a certain threshold, then the pixel is considered a shade of red. </p>
+					<p align='justify'>Since our light tracker had some difficulty tracking faster objects, we thought that storing and reading the image from SDRAM may have been too slow, causing a delay before the tracking box determines if it should reposition itself or not. Therefore, we tried speeding up the VGA control clock from 27MHz to 50MHz. That way we could make calculations independently from synchronizing the reading of the image from SDRAM. However, this attempt failed as the screen constantly flickered without displaying any distinguishable images.</p>
+				</div>
+			</div>
+		</div>
+		<!-- end content -->
+		<!-- start sidebar -->
+		<div id="sidebar">
+			<ul>
+				<li>
+					<h2>Sub Headers</h2>
+					<ul>
+						<li><a href="#high">High Level Design</a></li>
+						<li><a href="#camera">Camera Module</a></li>
+						<li><a href="#bw">Color to Black and White Conversion</a></li>
+						<li><a href="#vga">Displaying onto VGA</a></li>
+						<li><a href="#light_tracking">Light Tracking</a></li>
+						<li><a href="#nowork">What Didn't Work</a></li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+		<!-- end sidebar -->
+		<div style="clear: both;">&nbsp;</div>
+	</div>
+</div>
+<!-- end page -->
+<div id="footer">
+	<p>A Cornell University ECE 576 Project.</p>
+</div>
+</body>
+</html>
+

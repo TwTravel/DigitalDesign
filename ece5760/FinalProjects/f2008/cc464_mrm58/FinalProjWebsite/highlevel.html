@@ -1,0 +1,76 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+	<title>ECE 5760 Final Project :BALL-E</title>
+	<link href="style.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<div id="container">
+	<div id="main">
+		<div id="header"></div>
+		<div id="nav">
+			<ul>
+				<li><a href="index.html">Introduction</a></li>
+				<li><a href="highlevel.html">High Level Design</a></li>
+				<li><a href="hardware.html">Hardware </a></li>
+				<li><a href="results.html">Results </a></li>
+				<li><a href="conclusion.html">Conclusion</a></li>
+				<li><a href="appendix.html">Appendix</a></li>
+			</ul>
+		</div>
+		<div id="content">
+			<div id="full">
+				<div class="post">
+					<h1>High Level Design</h1><span>BALL-E</span>
+					
+					<p>Our project involved understanding of both analog circuits and hardware design. We had four main components:
+					four servo motors with a optoisolator and PWM control, hardware motor controller on the FPGA, camera input and image analysis, and a neural
+					network that interfaces with the motor controller to drive BALL-E.</p>
+					
+					<p>Data is read in from the video camera and interpreted to produce relevant data.  This data is then fed into a motor control circuit
+					consisting of a neural network and state machine to control what direction the robot moves.</p>
+					<p></p>
+					<p>
+					<div style="text-align: center;">
+					<img src="images/topLevelDesign.JPG" width="714" height="328">
+					<caption>Top Level Design Schematic</caption>
+					</div>
+					</p>
+					
+					
+				</div>
+				<!---<div class="post">
+					<h1>ECE 5760</h1><span>Fall 2008</span>
+					
+					<p>Cathy Chen </p> 
+					
+					<p><a href ="mailto:cc464@cornell.edu">cc464@cornell.edu</a></p>
+					
+					<p>If you're having problems editing the template please don't hesitate to ask for help on the <a href="http://www.freewebsitetemplates.com/forum/">forum</a>.</p>
+					
+					<p>If you're looking for beautiful and professionally made templates you can find them at <a href="http://www.templatebeauty.com">Template Beauty</a>.</p>
+					<p>To find great hosting providers visit <a href="http://www.webhostingzoom.com">Web Hosting Zoom</a>.</p>	
+				</div> -->
+			</div>
+
+			
+			<div class="clear"></div>
+		</div>
+	</div>
+	<div id="footer">
+		<ul>
+			<li><a href="index.html">Introduction</a></li> | 
+			<li><a href="highlevel.html">High Level Design</a></li> | 
+			<li><a href="hardware">Hardware </a></li> | 
+			<li><a href="results.html">Results</a></li> | 
+			<li><a href="conclusion.html">Conclusion</a></li> | 
+			<li><a href="appendix.html">Appendix</a></li>
+		</ul>
+		<span>&copy; <a href="../../../../../../../../www.csl.cornell.edu/~cathy">Cathy Chen</a> <a href="mailto:cc464@cornell.edu">(cc464@cornell.edu)</a> and Matt Meister <a href="mailto:mrm58@cornell.edu">(mrm58@cornell.edu)</a> </span>
+		<span> Information from this site may not be used without the permission of Cathy Chen and Matt Meister</span>
+	</div>
+</div>
+</body>
+</html>

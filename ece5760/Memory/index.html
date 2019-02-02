@@ -1,0 +1,61 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>Memory</title>
+<style type="text/css">
+<!--
+.style1 {font-weight: bold}
+-->
+</style>
+</head>
+
+<body>
+<h2 align="center">FPGA memory examples<br>
+ECE 5760 Cornell University </h2>
+ <p><br>
+ The memory systems of Altera FPGAs have various features and limitations. These are explained in several documents. <br>
+ I have tried here to show specific examples of memory use in realistic state machine schemes. Refer to:</p>
+ <ul>
+   <li>Altera <a href="../../../../../www.altera.com/literature/hb/qts/qts_qii51007.pdf">Recommended HDL Coding Styles</a> section on Inferring Memory Functions from HDL Code.</li>
+   <li><a href="../../../../../www.altera.com/literature/hb/qts/qts_qii51006.pdf">Recommended Design Practices</a> for FPGAs: Latches, clocks, metastability.</li>
+   <li><a href="../../../../../www.altera.com/literature/manual/stx_cookbook.pdf">Advanced Synthesis Cookbook</a> All kinds of cool mathmatical and logical structures.</li>
+   <li><a href="../../../../../www.altera.com/literature/hb/cyc2/cyc2_cii51008.pdf">Cyclone II Memory Blocks</a>: M4K memory: Figure 8-2 implies that memory operations occur on falling clock edge.</li>
+   <li><a href="../../../../../www.altera.com/literature/ug/ug_ram_rom.pdf">Internal Memory (RAM and ROM) Users Guide</a></li>
+   <li><a href="../../../../../www.altera.com/literature/hb/cyc/cyc_c51007.pdf">On-Chip Memory Implementations Using Cyclone Memory Blocks</a></li>
+   <li><a href="../../../../../www.altera.com/literature/ug/ug_shift_register_ram_based.pdf">RAM-Based Shift Register (ALTSHIFT_TAPS) Megafunction Users Guide</a></li>
+   <li><a href="../../../../../www.altera.com/literature/ug/ug_fifo.pdf">SCFIFO and DCFIFO Megafunctions Users Guide</a></li>
+ </ul>
+ <hr>
+ <h3><strong>M4k on Cyclone II.</strong></h3>
+ <p>M4K blocks can be configured as single-port RAM, dual-port RAM, shift-register, FIFO, or ROM. In some cases, you can infer memory from Verilog, but in some cases it is easier to use Altera MegaFunctions. Some examples show how to use M4K blocks. </p>
+ <p>---<strong> Sequential write/read</strong> -------------------------------------------------------------------</p>
+ <p>This example has a state machine which:</p>
+ <ol>
+   <li> increments a counter</li>
+   <li> uses the counter as both data and address to write to a M4K block</li>
+   <li> sets up a read at an address determined by <code>counter-SW[17:14]</code></li>
+   <li> displays the difference <code>counter -(read_data)</code> on one of the hex LED digits. </li>
+   <li>repeats</li>
+ </ol>
+ <p>The <a href="seq_write/M4K_test_April_2013.v">example</a> includes a Verilog-infered M4K block, an altsynram block, and a PLL. (<a href="seq_write/M4K_test_April_2013.qar">archive</a>) The design worked well with the state machine triggered on the negative clock edge. The archive includes a signal tap module to probe the counter and selected memory data. The design works to at least 100 MHz.</p>
+ <p>---<strong> Two reads and a write (3-port)</strong> ---------------------------------------------------------</p>
+ <p>This example has a state machine which:</p>
+ <ol>
+   <li>Reads two memory locations and writes one on the same cycle: <br>
+   Write address is given by the counter. <br>
+   Read addresses are <code>counter-SW[17:14]</code> and <code>counter-SW[3:0]</code></li>
+   <li>  Calculates two differences <code>counter -(read_data1)</code> and <code>counter -(read_data2)</code> to display on the HEX LEDs. </li>
+   <li>repeats</li>
+ </ol>
+ <p>The <a href="seq_write/M4K_dual_read_write_April_2013.v">example</a> includes a Verilog-infered, dual read, M4K block and a PLL. (<a href="seq_write/M4K_dual_read_write.qar">archive</a>) The design includes an <code>offset</code> signal to insure that the data being read is written on the same cycle by changing the data each time through memory. The archive includes a signal tap module to probe the counter, the offset, and  memory data. Data appears to be read in the same cycle as the write because of the write-thru specified in the memory block. The design works to at least 100 MHz when the state machine runs on the negedge of the memory clock.</p>
+ <p><strong>--- ROM </strong> ------------------------------------------------------------------------------------</p>
+ <p>A large, constant, table built as a case statement will be converted to ROM. See also the HDL style manual linked above. An <a href="seq_write/Sin_Wave_ROM_Table.txt">example</a> is a sin table for a DDS synthesizer. This table is used in some examples (<a href="../DDA/AnalogSimDriven2order/FilterSim.v">Driven second order system</a>, and <a href="../DDA/AnalogSimNiosII/FilterSimCPU.v">Second order system controlled by NiosII</a>) on the <a href="../DDA/index.htm">Digital Differential Analyser</a> page.</p>
+ <p><strong>--- Shift Register</strong> ----------------------------------------------------------------------------</p>
+<p>This example uses The altshift_taps megafunction to produce a shift register. You can specify multiple taps as output as shown below (from RAM-Based Shift Register Megafunction Users Guide). The <a href="seq_write/M4K_shift_reg_April_2013.v">example</a> includes the altshift_taps module and a PLL. The shift register is set up with two taps, each of length=4. The <code>read_data</code> output is therefore delayed by 8 cycles and the <code>taps[7:0] </code>output is delayed by 4. The <a href="seq_write/M4K_shift_reg.qar">archive</a> includes a signal tap module to probe the counter, the output data, and  the taps output. Triggering the state machine on either edge of the memory clock works.</p>
+<p><a href="seq_write/SR_taps.PNG"><img src="seq_write/SR_taps.PNG" width="608" height="382" alt="SR taps"></a></p>
+ <p>&nbsp;</p>
+ <p>&nbsp;</p>
+</body>
+</html>

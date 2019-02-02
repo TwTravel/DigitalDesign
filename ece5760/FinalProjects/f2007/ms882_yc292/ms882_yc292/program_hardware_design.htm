@@ -1,0 +1,776 @@
+<html xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv="Content-Language" content="en-au">
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<link rel="File-List" href="program_hardware_design_files/filelist.xml">
+
+<title>Analysis</title>
+<script language="JavaScript">
+<!--
+function FP_preloadImgs() {//v1.0
+ var d=document,a=arguments; if(!d.FP_imgs) d.FP_imgs=new Array();
+ for(var i=0; i<a.length; i++) { d.FP_imgs[i]=new Image; d.FP_imgs[i].src=a[i]; }
+}
+
+function FP_swapImg() {//v1.0
+ var doc=document,args=arguments,elm,n; doc.$imgSwaps=new Array(); for(n=2; n<args.length;
+ n+=2) { elm=FP_getObjectByID(args[n]); if(elm) { doc.$imgSwaps[doc.$imgSwaps.length]=elm;
+ elm.$src=elm.src; elm.src=args[n+1]; } }
+}
+
+function FP_getObjectByID(id,o) {//v1.0
+ var c,el,els,f,m,n; if(!o)o=document; if(o.getElementById) el=o.getElementById(id);
+ else if(o.layers) c=o.layers; else if(o.all) el=o.all[id]; if(el) return el;
+ if(o.id==id || o.name==id) return o; if(o.childNodes) c=o.childNodes; if(c)
+ for(n=0; n<c.length; n++) { el=FP_getObjectByID(id,c[n]); if(el) return el; }
+ f=o.forms; if(f) for(n=0; n<f.length; n++) { els=f[n].elements;
+ for(m=0; m<els.length; m++){ el=FP_getObjectByID(id,els[n]); if(el) return el; } }
+ return null;
+}
+// -->
+</script>
+<!--[if !mso]>
+<style>
+v\:*         { behavior: url(#default#VML) }
+o\:*         { behavior: url(#default#VML) }
+.shape       { behavior: url(#default#VML) }
+table.MsoTableGrid
+	{border:1.0pt solid windowtext;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	}
+</style>
+<![endif]--><!--[if gte mso 9]>
+<xml><o:shapedefaults v:ext="edit" spidmax="1027"/>
+</xml><![endif]-->
+</head>
+
+<body onload="FP_preloadImgs(/*url*/'button15.jpg',/*url*/'button18.jpg',/*url*/'button12.jpg',/*url*/'button11.jpg',/*url*/'button14.jpg',/*url*/'button13.jpg',/*url*/'button17.jpg',/*url*/'button16.jpg',/*url*/'button1B.jpg',/*url*/'button1A.jpg',/*url*/'button21.jpg',/*url*/'button20.jpg',/*url*/'button1E.jpg',/*url*/'button1D.jpg')" background="yello002.gif">
+
+<div style="position: absolute; width: 1060px; height: 489px; z-index: 2; left: 103px; top: 188px" id="layer2">
+	<h3><font face="Tahoma" color="#FF3300">Program/ Hardware Design</font></h3>
+	<hr color="#FF3300">
+	<h3><font face="Tahoma"><b>Write_SRAM Project</b></font></h3>
+	<p class="MsoNormal"><font face="Tahoma"><b>Displaying the Backgound Image</b></font></p>
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">We are 
+	proud to state that we become the pioneer to write any image into the SRAM 
+	and display the image on the VGA Monitor. Now we can display any types of 
+	image in to an 8 bit color with 640 x 480 resolutions on VGA monitor using 
+	our VGA controller.</font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>Writing Image into SRAM</b></font></p>
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">We write 
+	our own separate project to write an image into the SRAM. The project has 
+	both the hardware part and the software part. The basic purpose of the 
+	project is to read image data and transfer it to the SRAM. We used MATLAB to 
+	generate the bit map data for the image in text file. We generated 8 bit 
+	data for each pixel.</font></p>
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">The 
+	MATLAB program is available in the APPENDIX. Below is the description of our 
+	whole project.&nbsp;</font></p>
+	<p class="MsoNormal">&nbsp;</p>
+	<p class="MsoNormal" align="center"><!--[if gte vml 1]><v:shapetype id="_x0000_t75"
+ coordsize="21600,21600" o:spt="75" o:preferrelative="t" path="m@4@5l@4@11@9@11@9@5xe"
+ filled="f" stroked="f">
+ <v:stroke joinstyle="miter"/>
+ <v:formulas>
+  <v:f eqn="if lineDrawn pixelLineWidth 0"/>
+  <v:f eqn="sum @0 1 0"/>
+  <v:f eqn="sum 0 0 @1"/>
+  <v:f eqn="prod @2 1 2"/>
+  <v:f eqn="prod @3 21600 pixelWidth"/>
+  <v:f eqn="prod @3 21600 pixelHeight"/>
+  <v:f eqn="sum @0 0 1"/>
+  <v:f eqn="prod @6 1 2"/>
+  <v:f eqn="prod @7 21600 pixelWidth"/>
+  <v:f eqn="sum @8 21600 0"/>
+  <v:f eqn="prod @7 21600 pixelHeight"/>
+  <v:f eqn="sum @10 21600 0"/>
+ </v:formulas>
+ <v:path o:extrusionok="f" gradientshapeok="t" o:connecttype="rect"/>
+ <o:lock v:ext="edit" aspectratio="t"/>
+</v:shapetype><v:shape id="_x0000_s1028" type="#_x0000_t75" style='width:6in;
+ height:410.25pt'>
+ <v:imagedata src="program_hardware_design_files/image001.emz" o:title=""/>
+</v:shape><![endif]--><![if !vml]><img border=0 width=576 height=547
+src="program_hardware_design_files/image002.gif" v:shapes="_x0000_s1028"><![endif]><!--[if gte mso 9]><![endif]--></p>
+	<h4>&nbsp;</h4>
+	<h4><font face="Tahoma"><b>Hardware:</b></font></h4>
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">The 
+	hardware portion basically consists of a state machine. This state machine 
+	deals with the interaction with the CPU. The basic function of this state 
+	machine is to provide the two way handshaking so that the communication 
+	between the CPU and the hardware could be possible. It accepts data form the 
+	CPU and writes it into SRAM and sets a flag to let CPU know that writing has 
+	been completed. It gives the CPU a 1 bit status for ready that is when it is 
+	read to accept more data. </font></p>
+	<p class="ListParagraphCxSpFirst" style="margin-left: 0cm"><b>
+	<span style="font-size: 12.0pt; line-height: 115%; font-family: Tahoma">2 
+	WAY HANDSHAKING</span></b></p>
+	<p class="ListParagraphCxSpMiddle" style="text-align: justify; margin-left: 0cm">
+	<span style="font-size: 12.0pt; line-height: 115%; font-family: Tahoma">The 
+	handshaking works like this:</span></p>
+	<p class="ListParagraphCxSpLast" style="text-align: justify; margin-left: 0cm">
+	<span style="font-size: 12.0pt; line-height: 115%; font-family: Tahoma">The 
+	hardware state machine asserts a ready flag which means that it is ready to 
+	accept the data. The CPU provides the data, address and a valid signal. The 
+	valid signal is the indication to write. As soon as the hardware gets the 
+	valid signal it writes the data at the address provided by the CPU and after 
+	writing, it asserts a flag which tells the CPU that data has been written. 
+	The state machine than goes back to its initial state and asserts its ready 
+	flag for accepting another data. The CPU after getting the writing done 
+	signal clears the Valid so that same data is not written again.&nbsp; </span></p>
+	<p class="MsoNormal"><font face="Tahoma">TWO WAY HANDSHAKING State Machine
+	</font></p>
+	<p class="MsoNormal">&nbsp;</p>
+	<p class="MsoNormal" align="center" style="text-align:center"><!--[if gte vml 1]><v:shape
+ id="_x0000_s1029" type="#_x0000_t75" style='width:270pt;height:376.5pt'>
+ <v:imagedata src="program_hardware_design_files/image003.emz" o:title=""/>
+</v:shape><![endif]--><![if !vml]><img border=0 width=360 height=502
+src="program_hardware_design_files/image004.gif" v:shapes="_x0000_s1029"><![endif]><!--[if gte mso 9]><![endif]--></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>Software:</b></font></p>
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">The 
+	function of the software is to read data from the text file calculate its 
+	address (location in the SRAM) and send it to the hardware according to the 
+	proper two way handshaking protocol. </font></p>
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">The 
+	biggest problem we faced is to read data from the text file. Initially we 
+	used the <b>fopen</b> function but soon Dr.Land told us that <b>fopen</b> 
+	function could not be used to read data from a file stored into the file 
+	system of PC. NIOS II cannot recognize the local file system of the PC. 
+	Therefore we simply initialized an array which contained the whole text 
+	file.</font></p>
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">Each 
+	word of an array is of 8 bit and represents one pixel. We needed to send 16 
+	bit of data to SRAM with an 18 bit address. We needed 16 bit data because we 
+	have packed 2 pixels in 1 word of an SRAM. Therefore software is designed in 
+	such a way that it performs two reads and than sends it to SRAM. One read is 
+	of 8 bit and another read is of 8 bit again. When the word becomes 16 bit 
+	its address is calculated. After getting the address and the 16 bit data, <b>
+	write_data</b> function is called to send it to SRAM.&nbsp; <b>Write_data</b> 
+	function performs 2 way handshaking with the hardware to send data and 
+	address to the SRAM. The address is calculated in such a way that for every 
+	320 increments of x there is only one increment of y until y reaches 480. x 
+	is 320 because again we are packing two pixels in one words so x is divided 
+	by 2.</font></p>
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">This 
+	whole project was used to write an image to SRAM. The image is than read by 
+	a VGA controller to display it on the VGA monitor. It is to be noted that 
+	the reading of the image by the VGA Controller is also changed because SRAM 
+	no more contains one pixel per symbol. </font></p>
+	<p class="MsoNormal" style="text-align:justify">&nbsp;</p>
+	<h3><font face="Tahoma"><b>DE2_NIOS_HOST_MOUSE_VGA Project</b></font></h3>
+	<p class="MsoNormal"><font face="Tahoma"><b>Hardware:</b></font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>VGA Controller </b></font></p>
+	<p class="MsoNormal"><font face="Tahoma">The VGA Controller decides the 
+	output color for each pixel.&nbsp; It consists of a priority encoder to select 
+	the outputs from different images, the cursor, the stick, the BBQ meat ball 
+	images, the BBQ meat ball on the stick image, the Level number, the Score 
+	number, the Stick Stack number, the You Lost Image and the background.&nbsp; The 
+	image display is pipelined. </font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>Priority Encoder</b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </font></p>
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">After 
+	getting the flag set for the cursor and the stick we used priority encoder 
+	to pass the colors to the VGA monitor. Depending upon the flags the colors 
+	are passed to the registers<b> Cur_Color_R, Cur_Color_G</b> and<b> 
+	Cur_Color_B</b>. These registers are than further multiplexed with the 
+	enable signals to pass to the VGA DAC. The following chunk of code is used 
+	to multiplex these registers.</font></p>
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma"><b>
+	Memory Description</b></font></p>
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">We have 
+	used different memories for storing our images. We have used SRAM to store 
+	our background information. We have used registers to store the stick and 
+	mouse images. We have used ROM ( M4K ) to store the different images that 
+	appears on the background image, such as BBQ icon image, Number image, and 
+	You Lost Image. We have used RAM ( M4K ) to store the location of the images 
+	on the screen. These image storage locations are than multiplexed for an 
+	access to a VGA Controller.</font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>SRAM Controller</b></font></p>
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">The VGA 
+	Controller outputs the X <b>(Coord_X)</b> and Y<b>(Coord_Y)</b> coordinates 
+	of the screen, each 10 bits, which is treated as a SRAM address. We took the 
+	lower 9 bits of the Y coordinate <b>mCoord_Y[8:0]</b> and upper 9 bits of 
+	the X coordinate&nbsp; <b>mCoord_Y[9:1]. </b>As</font></p>
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">our SRAM 
+	contains two pixels per one word so we have taken the upper 9 bits of X 
+	coordinate. By taking the upper 9 bits of the X coordinate we have divided 
+	it by two and made its range from 0 to 319. The Y remains 480 which is well 
+	addressed by lower 9 bits.</font></p>
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">We have 
+	used the SRAM as our memory for storing information about the pixel and its 
+	color. The SRAM provides reading and writing with one clock cycle delay. For 
+	writing supply data, address and enable signal and it would take one clock 
+	cycle to write and same for the reading (you invert the enable signal and 
+	gets the data in next clock cycle).</font></p>
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">In our 
+	design the SRAM is used by the VGA controller.The 18 bit address of the SRAM 
+	is treated as X and Y Coordinate for the VGA Screen and the Color 
+	information is treated as SRAM data.</font></p>
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">The Data 
+	given by SRAM is read by the VGA which is the information for Red <b>(mVGA_R)</b>, 
+	Green <b>(mVGA_G)</b> and<b> </b>Blue<b> (mVGA_R)</b>. It is to be noted 
+	that each input for the Red, Green and Blue is 10 bits. And each pixel in 
+	the SRAM is of 1 byte with 3 bit of red, 3 bits of green and 2 bits of blue. 
+	So we have concatenated the 3 red bits together to get the whole 10 bit red. 
+	The same thing we did for Green and Blue. We have used the LSB of the X 
+	coordinate to multiplex between the two pixels in one word. The following 
+	chunk of code is used to read two pixels from one word of SRAM one by one.
+	</font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; VGA Data Reorder</b></font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>//&nbsp; Each pixel conetains 1 byte 
+	of color, 3 bits of red, 3 bits of green and 2 bits of blue</b></font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>assign&nbsp; mVGA_R&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	=&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; mCoord_X[0]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ?&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	{SRAM_DQ[15:13],SRAM_DQ[15:13],&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SRAM_DQ[15:13],&nbsp;&nbsp; 
+	SRAM_DQ[15]}:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </b></font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	{SRAM_DQ[7:5],&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SRAM_DQ[7:5],&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SRAM_DQ[7:5],&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	SRAM_DQ[7]};</b></font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>assign&nbsp; mVGA_G&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	=&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; mCoord_X[0]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ?&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	{SRAM_DQ[12:10],SRAM_DQ[12:10],&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SRAM_DQ[12:10],&nbsp;&nbsp; 
+	SRAM_DQ[12]}:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </b></font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	{SRAM_DQ[4:2],&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SRAM_DQ[4:2],&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SRAM_DQ[4:2],&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	SRAM_DQ[4]};&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </b></font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>assign&nbsp; mVGA_B&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	=&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; mCoord_X[0]&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ?&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; {SRAM_DQ[9:8],&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	SRAM_DQ[9:8],&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SRAM_DQ[9:8],&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SRAM_DQ[9:8],&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	SRAM_DQ[9:8]}:</b></font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	{SRAM_DQ[1:0],&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SRAM_DQ[1:0],&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SRAM_DQ[1:0],&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	SRAM_DQ[1:0],&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; SRAM_DQ[1:0]};</b></font></p>
+	<p class="MsoNormal"><font face="Tahoma">&nbsp;</font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>Displaying Cursor </b></font>
+	</p>
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">We used 
+	registers to display images. To display cursor we also used registers. The
+	<b>iCursor_X </b>and <b>iCursor_Y</b> are the X and Y Coordinates of the 
+	cursor supplied by the software. We calculated <b>Cursor_Xref </b>and <b>
+	Cursor_Yref </b>as shown in the following chunk of code. &nbsp;</font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>assign Cursor_Xref = 
+	X_START[9:0] + 10'd6 + iCursor_X;</b></font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>assign Cursor_Yref = 
+	Y_START[9:0] + iCursor_Y;</b></font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>Where X_START[9:0] and 
+	Y_START[9:0] are :</b></font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>X_START&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	=&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; H_SYNC_CYC+H_SYNC_BACK+4;</b></font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>Y_START&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	=&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V_SYNC_CYC+V_SYNC_BACK;</b></font></p>
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">In short 
+	X_START and Y_START are values before the active porch of the H_Sync and 
+	Y_sync pulses.&nbsp; </font></p>
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">There 
+	are two counters in the VGA controller. One is <b>V_Cont</b> which is used 
+	to count the vertical frames of the screen. One is <b>H_Cont</b> which is 
+	used to count the horizontal pixels on the screen. The<b> H_Cont</b> keeps 
+	incrementing until it reaches the end of the screen. On the other hand when
+	<b>H_Cont</b> reaches the end of the screen the <b>Y_Cont</b> is incremented 
+	by one. In this way both counters cover the whole screen.&nbsp;</font></p>
+	<p class="MsoNormal"><font face="Tahoma">We used these counters to display 
+	our picture. When checked for<b> (V_Cont - Cursor_Yref).</b> When it reaches 
+	zero it means that <b>V_Cont</b> is at the postion of the Cursor. At this 
+	position we checked if<b> H_Cont==Cursor_Xref</b>, means that whether <b>
+	H_Cont </b>is also at this position of the pixel. If both the condition are 
+	true we set the flag for the cursor ( <b>fCursor</b> ) high. In the similar 
+	fashion we checked the exact pixels we wanted to display by checking the <b>
+	V_Cont</b> and<b> H_Cont</b> values and set the flag high on the true 
+	conditions. This method enabled us to draw any shape of the object. For 
+	drawing the cursor we lighted up following pixels on the screen.</font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>// draw the cursor</b></font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /*</b></font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp; 01234567</b></font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </b></font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 00x0000000</b></font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 00xx000000</b></font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 00xxx00000</b></font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 00xxxx0000</b></font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 00xxxxx000</b></font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 00xxxx0000</b></font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 00x0xx0000</b></font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 7&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 00000xx000</b></font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 8&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 00000xx000</b></font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 9&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 000000xx00</b></font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </b>
+	</font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 01234567</b></font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; */&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </b>
+	</font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>Where “x” represents the cursor.
+	</b></font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>Displaying Stick</b></font></p>
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">By using 
+	the same logic we displayed the stick. But the flag used in the stick is 
+	different and the reference for the stick is also different. The reference 
+	for the cursor includes the whole boundary while the stick reference is 
+	limited to the blue screen of background in the picture below. The reference 
+	of the stick is limited to the game window only. User cannot move the stick 
+	to on the whole screen.</font></p>
+	<p class="MsoNormal"><font face="Tahoma">&nbsp;</font></p>
+	<p class="MsoNormal" align="center" style="text-align:center">
+	<font face="Tahoma"><!--[if gte vml 1]><v:shape
+ id="_x0000_s1030" type="#_x0000_t75" style='width:333pt;height:249.75pt'>
+ <v:imagedata src="program_hardware_design_files/image005.png" o:title=""/>
+</v:shape><![endif]--><![if !vml]><img border=0 width=444 height=333
+src="program_hardware_design_files/image006.jpg" v:shapes="_x0000_s1030"><![endif]></font></p>
+	<p class="MsoNormal"><font face="Tahoma">&nbsp;</font></p>
+	<p class="MsoNormal"><font face="Tahoma">The stick X and Y references are 
+	calculated by the following chunk of code:</font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>assign Stick_Xref = 
+	fStick_X_hold? Stick_Xref : (Cursor_Xref &lt; BBQ_LEFT+9'd3)? (BBQ_LEFT+9'd3) : 
+	(Cursor_Xref &gt; BBQ_RIGHT-9'd1)? (BBQ_RIGHT-9'd1) : Cursor_Xref;</b></font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>assign Stick_Yref = STICK_NTOP - 
+	iStick_length;</b></font></p>
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">In the 
+	above chunk of code <b>fStick_X_hold </b>tells that if the stick length is 
+	at its original or not. In our design a user cannot move the stick while 
+	increasing the length. The stick can only be moved around while it is at its 
+	original length. Therefore if <b>fStick_X_hold </b>is true means that stick 
+	length is increasing the <b>Stick_Xref</b> is assigned to itself but if it 
+	is not true than the game boundaries are checked. The <b>BBQ_LEFT</b> is the 
+	left boundary and <b>BBQ_RIGHT</b> is the right boundary. If the stick is 
+	crossing the boundaries it is adjusted accordingly as specified in the above 
+	chunk of code.</font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>Below is the description of the 
+	pixels lighted up to for the stick.&nbsp; </b></font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; // draw the stick</b></font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; /*</b></font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 321012&nbsp; </b>
+	</font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </b></font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 000x00</b></font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 1&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 000x00</b></font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 00xxx0</b></font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 3&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 00xxx0</b></font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 4&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 00xxx0</b></font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 5&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0xxxx0</b></font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 6&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 0xxxx0</b></font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>
+	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; */</b></font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>Where “x” represents the stick.</b></font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>Displaying the Cute BBQ Meat 
+	Balls </b></font></p>
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">To 
+	display the BBQ meat balls we used two memories, one is ROM and another one 
+	is RAM.&nbsp; </font></p>
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">The RAM 
+	stores the BBQ display table (7x7) information which indicates which type of 
+	BBQ icon should be displayed at which position.</font></p>
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">&nbsp;</font></p>
+	<p class="MsoNormal" align="center"><font face="Tahoma"><!--[if gte vml 1]><v:shape
+ id="_x0000_s1035" type="#_x0000_t75" style='width:171pt;height:189pt'>
+ <v:imagedata src="program_hardware_design_files/image007.jpg" o:title="IMG_3215"
+  croptop="2232f" cropbottom="23121f" cropleft="21487f" cropright="16832f"/>
+</v:shape><![endif]--><![if !vml]><img border=0 width=228 height=252
+src="program_hardware_design_files/image008.jpg" v:shapes="_x0000_s1035"><![endif]></font></p>
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">BBQ 
+	Display Table, Figure_RAM, 7X7</font></p>
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">The ROM 
+	stores eight different type of image.&nbsp; The image is stored in the ROM by 
+	first using the matlab code, figure_trans.m, in the appendix; and simply 
+	copy and paste the matrix from the matlab to the mif file of the ROM.</font></p>
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">The 
+	reading of the ROM is provided by the code below:</font></p>
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma"><b>
+	assign Fig_addr_mem={Fig_index_mem[2:0],Fig_y_addr_mem, Fig_x_addr_mem};<br>
+	<br>
+	</b>where Fig_index_mem is the output from the Figure_RAM file, and x&amp;y 
+	addresses are generated alone with the H_Cont and V_Cont.</font></p>
+	<p class="MsoNormal"><font face="Tahoma">For detail description and 
+	implementation of the displaying for the BBQ Icon, please see comments on 
+	the VGA_Controller.v in the appendix.</font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>Displaying the BBQ Meat Balls on 
+	the Stick </b></font></p>
+	<p class="MsoNormal"><font face="Tahoma">To display the BBQ Meatball on the 
+	Stick, the same ROM for the BBQ icon is used.&nbsp; A different RAM, StickFig_RAM 
+	is used to store the type and the address information of the BBQ icon on the 
+	stick.</font></p>
+	<p class="MsoNormal" align="center"><font face="Tahoma"><b><!--[if gte vml 1]><v:shape
+ id="_x0000_s1036" type="#_x0000_t75" style='width:56.25pt;height:2in'>
+ <v:imagedata src="program_hardware_design_files/image009.jpg" o:title="IMG_3219"
+  croptop="35023f" cropbottom="11075f" cropleft="29439f" cropright="30490f"/>
+</v:shape><![endif]--><![if !vml]><img border=0 width=75 height=192
+src="program_hardware_design_files/image010.jpg" v:shapes="_x0000_s1036"><![endif]></b></font></p>
+	<p class="MsoNormal"><font face="Tahoma">BBQ icon on the Stick, StickFig_RAM, 
+	1X7</font></p>
+	<p class="MsoNormal"><font face="Tahoma">The address of the BBQ icon on the 
+	Stick is relative to the stick reference, so it will move as the stick 
+	moves.&nbsp; </font></p>
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">The 
+	reading of the ROM is provided by the code below:</font></p>
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma"><b>
+	assign StickFig_addr_mem = {StickFig_index_mem[2:0],StickFig_y_addr_mem, 
+	StickFig_x_addr_mem};<br>
+	<br>
+	</b>where StickFig_index_mem is the output from the StickFigure_RAM file, 
+	and x&amp;y addresses are generated alone with the H_Cont and V_Cont.</font></p>
+	<p class="MsoNormal"><font face="Tahoma">For detail description and 
+	implementation of the displaying for the BBQ icon on the stick, please see 
+	comments on the VGA_Controller.v in the appendix.</font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>Displaying the Number</b></font></p>
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">The 
+	Number ROM stores 20 different types of images, 0-9 32x64 and 0-9 32x32.&nbsp; 
+	The image is stored in the ROM by first using the matlab code, 
+	number_trans.m, in the appendix; and simply copy and paste the matrix from 
+	the matlab to the mif file of the ROM.</font></p>
+	<p class="MsoNormal"><font face="Tahoma">The ROM is arranged in the way 
+	below:<br>
+	<br>
+&nbsp;</font></p>
+	<table class="MsoTableGrid" border="1" cellspacing="0" cellpadding="0" width="91" style="width: 68.4pt; border-collapse: collapse; border: medium none" id="table1">
+		<tr style="height: 27.5pt">
+			<td width="31" style="width: 23.4pt; height: 27.5pt; border: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0cm; padding-bottom: 0cm">
+			<p class="MsoNormal" align="center" style="text-align:center">
+			<font face="Tahoma"><b>0</b></font></td>
+			<td width="60" valign="top" style="width: 45.0pt; height: 27.5pt; border: medium none; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0cm; padding-bottom: 0cm">
+			<p class="MsoNormal" align="center" style="text-align:center">
+			<font face="Tahoma">64 bits</font></td>
+		</tr>
+		<tr style="height: 27.5pt">
+			<td width="31" style="width: 23.4pt; height: 27.5pt; border-left: 1.0pt solid windowtext; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0cm; padding-bottom: 0cm">
+			<p class="MsoNormal" align="center" style="text-align:center">
+			<font face="Tahoma"><b>&nbsp;1</b></font></td>
+			<td width="60" valign="top" style="width: 45.0pt; height: 27.5pt; border: medium none; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0cm; padding-bottom: 0cm">
+			<p class="MsoNormal" align="center" style="text-align:center">
+			<font face="Tahoma">&nbsp;</font></td>
+		</tr>
+		<tr style="height: 27.5pt">
+			<td width="31" style="width: 23.4pt; height: 27.5pt; border-left: 1.0pt solid windowtext; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0cm; padding-bottom: 0cm">
+			<p class="MsoNormal" align="center" style="text-align:center">
+			<font face="Tahoma"><b>2</b></font></td>
+			<td width="60" valign="top" style="width: 45.0pt; height: 27.5pt; border: medium none; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0cm; padding-bottom: 0cm">
+			<p class="MsoNormal" align="center" style="text-align:center">
+			<font face="Tahoma">&nbsp;</font></td>
+		</tr>
+		<tr style="height: 27.5pt">
+			<td width="31" style="width: 23.4pt; height: 27.5pt; border-left: 1.0pt solid windowtext; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0cm; padding-bottom: 0cm">
+			<p class="MsoNormal" align="center" style="text-align:center">
+			<font face="Tahoma"><b>3</b></font></td>
+			<td width="60" valign="top" style="width: 45.0pt; height: 27.5pt; border: medium none; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0cm; padding-bottom: 0cm">
+			<p class="MsoNormal" align="center" style="text-align:center">
+			<font face="Tahoma">:</font></td>
+		</tr>
+		<tr style="height: 27.5pt">
+			<td width="31" style="width: 23.4pt; height: 27.5pt; border-left: 1.0pt solid windowtext; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0cm; padding-bottom: 0cm">
+			<p class="MsoNormal" align="center" style="text-align:center">
+			<font face="Tahoma"><b>4</b></font></td>
+			<td width="60" valign="top" style="width: 45.0pt; height: 27.5pt; border: medium none; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0cm; padding-bottom: 0cm">
+			<p class="MsoNormal" align="center" style="text-align:center">
+			<font face="Tahoma">:</font></td>
+		</tr>
+		<tr style="height: 27.5pt">
+			<td width="31" style="width: 23.4pt; height: 27.5pt; border-left: 1.0pt solid windowtext; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0cm; padding-bottom: 0cm">
+			<p class="MsoNormal" align="center" style="text-align:center">
+			<font face="Tahoma"><b>5</b></font></td>
+			<td width="60" valign="top" style="width: 45.0pt; height: 27.5pt; border: medium none; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0cm; padding-bottom: 0cm">
+			<p class="MsoNormal" align="center" style="text-align:center">
+			<font face="Tahoma">:</font></td>
+		</tr>
+		<tr style="height: 27.5pt">
+			<td width="31" style="width: 23.4pt; height: 27.5pt; border-left: 1.0pt solid windowtext; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0cm; padding-bottom: 0cm">
+			<p class="MsoNormal" align="center" style="text-align:center">
+			<font face="Tahoma"><b>6</b></font></td>
+			<td width="60" valign="top" style="width: 45.0pt; height: 27.5pt; border: medium none; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0cm; padding-bottom: 0cm">
+			<p class="MsoNormal" align="center" style="text-align:center">
+			<font face="Tahoma">&nbsp;</font></td>
+		</tr>
+		<tr style="height: 27.5pt">
+			<td width="31" style="width: 23.4pt; height: 27.5pt; border-left: 1.0pt solid windowtext; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0cm; padding-bottom: 0cm">
+			<p class="MsoNormal" align="center" style="text-align:center">
+			<font face="Tahoma"><b>7</b></font></td>
+			<td width="60" valign="top" style="width: 45.0pt; height: 27.5pt; border: medium none; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0cm; padding-bottom: 0cm">
+			<p class="MsoNormal" align="center" style="text-align:center">
+			<font face="Tahoma">&nbsp;</font></td>
+		</tr>
+		<tr style="height: 27.5pt">
+			<td width="31" style="width: 23.4pt; height: 27.5pt; border-left: 1.0pt solid windowtext; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0cm; padding-bottom: 0cm">
+			<p class="MsoNormal" align="center" style="text-align:center">
+			<font face="Tahoma"><b>8</b></font></td>
+			<td width="60" valign="top" style="width: 45.0pt; height: 27.5pt; border: medium none; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0cm; padding-bottom: 0cm">
+			<p class="MsoNormal" align="center" style="text-align:center">
+			<font face="Tahoma">&nbsp;</font></td>
+		</tr>
+		<tr style="height: 27.5pt">
+			<td width="31" style="width: 23.4pt; height: 27.5pt; border-left: 1.0pt solid windowtext; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0cm; padding-bottom: 0cm">
+			<p class="MsoNormal" align="center" style="text-align:center">
+			<font face="Tahoma"><b>9</b></font></td>
+			<td width="60" valign="top" style="width: 45.0pt; height: 27.5pt; border: medium none; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0cm; padding-bottom: 0cm">
+			<p class="MsoNormal" align="center" style="text-align:center">
+			<font face="Tahoma">64 bits</font></td>
+		</tr>
+		<tr>
+			<td width="31" style="width: 23.4pt; border-left: 1.0pt solid windowtext; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0cm; padding-bottom: 0cm">
+			<p class="MsoNormal" align="center" style="text-align:center">
+			<font face="Tahoma"><b>0</b></font></td>
+			<td width="60" valign="top" style="width: 45.0pt; border: medium none; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0cm; padding-bottom: 0cm">
+			<p class="MsoNormal" align="center" style="text-align:center">
+			<font face="Tahoma">32 bits</font></td>
+		</tr>
+		<tr>
+			<td width="31" style="width: 23.4pt; border-left: 1.0pt solid windowtext; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0cm; padding-bottom: 0cm">
+			<p class="MsoNormal" align="center" style="text-align:center">
+			<font face="Tahoma"><b>1</b></font></td>
+			<td width="60" valign="top" style="width: 45.0pt; border: medium none; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0cm; padding-bottom: 0cm">
+			<p class="MsoNormal" align="center" style="text-align:center">
+			<font face="Tahoma">&nbsp;</font></td>
+		</tr>
+		<tr>
+			<td width="31" style="width: 23.4pt; border-left: 1.0pt solid windowtext; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0cm; padding-bottom: 0cm">
+			<p class="MsoNormal" align="center" style="text-align:center">
+			<font face="Tahoma"><b>2</b></font></td>
+			<td width="60" valign="top" style="width: 45.0pt; border: medium none; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0cm; padding-bottom: 0cm">
+			<p class="MsoNormal" align="center" style="text-align:center">
+			<font face="Tahoma">&nbsp;</font></td>
+		</tr>
+		<tr>
+			<td width="31" style="width: 23.4pt; border-left: 1.0pt solid windowtext; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0cm; padding-bottom: 0cm">
+			<p class="MsoNormal" align="center" style="text-align:center">
+			<font face="Tahoma"><b>3</b></font></td>
+			<td width="60" valign="top" style="width: 45.0pt; border: medium none; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0cm; padding-bottom: 0cm">
+			<p class="MsoNormal" align="center" style="text-align:center">
+			<font face="Tahoma">:</font></td>
+		</tr>
+		<tr>
+			<td width="31" style="width: 23.4pt; border-left: 1.0pt solid windowtext; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0cm; padding-bottom: 0cm">
+			<p class="MsoNormal" align="center" style="text-align:center">
+			<font face="Tahoma"><b>4</b></font></td>
+			<td width="60" valign="top" style="width: 45.0pt; border: medium none; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0cm; padding-bottom: 0cm">
+			<p class="MsoNormal" align="center" style="text-align:center">
+			<font face="Tahoma">:</font></td>
+		</tr>
+		<tr>
+			<td width="31" style="width: 23.4pt; border-left: 1.0pt solid windowtext; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0cm; padding-bottom: 0cm">
+			<p class="MsoNormal" align="center" style="text-align:center">
+			<font face="Tahoma"><b>5</b></font></td>
+			<td width="60" valign="top" style="width: 45.0pt; border: medium none; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0cm; padding-bottom: 0cm">
+			<p class="MsoNormal" align="center" style="text-align:center">
+			<font face="Tahoma">:</font></td>
+		</tr>
+		<tr>
+			<td width="31" style="width: 23.4pt; border-left: 1.0pt solid windowtext; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0cm; padding-bottom: 0cm">
+			<p class="MsoNormal" align="center" style="text-align:center">
+			<font face="Tahoma"><b>6</b></font></td>
+			<td width="60" valign="top" style="width: 45.0pt; border: medium none; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0cm; padding-bottom: 0cm">
+			<p class="MsoNormal" align="center" style="text-align:center">
+			<font face="Tahoma">&nbsp;</font></td>
+		</tr>
+		<tr>
+			<td width="31" style="width: 23.4pt; border-left: 1.0pt solid windowtext; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0cm; padding-bottom: 0cm">
+			<p class="MsoNormal" align="center" style="text-align:center">
+			<font face="Tahoma"><b>7</b></font></td>
+			<td width="60" valign="top" style="width: 45.0pt; border: medium none; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0cm; padding-bottom: 0cm">
+			<p class="MsoNormal" align="center" style="text-align:center">
+			<font face="Tahoma">&nbsp;</font></td>
+		</tr>
+		<tr>
+			<td width="31" style="width: 23.4pt; border-left: 1.0pt solid windowtext; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0cm; padding-bottom: 0cm">
+			<p class="MsoNormal" align="center" style="text-align:center">
+			<font face="Tahoma"><b>8</b></font></td>
+			<td width="60" valign="top" style="width: 45.0pt; border: medium none; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0cm; padding-bottom: 0cm">
+			<p class="MsoNormal" align="center" style="text-align:center">
+			<font face="Tahoma">&nbsp;</font></td>
+		</tr>
+		<tr>
+			<td width="31" style="width: 23.4pt; border-left: 1.0pt solid windowtext; border-right: 1.0pt solid windowtext; border-top: medium none; border-bottom: 1.0pt solid windowtext; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0cm; padding-bottom: 0cm">
+			<p class="MsoNormal" align="center" style="text-align:center">
+			<font face="Tahoma"><b>9</b></font></td>
+			<td width="60" valign="top" style="width: 45.0pt; border: medium none; padding-left: 5.4pt; padding-right: 5.4pt; padding-top: 0cm; padding-bottom: 0cm">
+			<p class="MsoNormal" align="center" style="text-align:center">
+			<font face="Tahoma">32 bits</font></td>
+		</tr>
+	</table>
+	<p class="MsoNormal"><font face="Tahoma">The Level logic reads the 32x64 
+	bits number to display the number of Level.<br>
+	The Score logic mux with stick stack number to read the 32x32 bits number to 
+	display the Score or the number of BBQ on the stick.</font></p>
+	<p class="MsoNormal"><font face="Tahoma">The reading addresses for the ROM 
+	are:</font></p>
+	<p class="MsoNormal"><font face="Tahoma">/////// For Level Number&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	--&gt; 32X64 //////</font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>assign LevelNum_addr_mem = {LevelNum_mem, 
+	LevelNum_y_addr_mem, LevelNum_x_addr_mem[4:0]};</b></font></p>
+	<p class="MsoNormal"><font face="Tahoma">////// For Score_StickStack number&nbsp; 
+	--&gt; 32X32 //////</font></p>
+	<p class="MsoNormal"><font face="Tahoma">// mux of Score and StickStack, the 
+	original address + the offset for ROM table reading</font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>assign 
+	Score_StickStack_Num_addr_mem = fStickStackNum_en_mem? 
+	{StickStackNum_addr_mem+15'h5800}:{ScoreNum_addr_mem+15'h5800};<br>
+	</b>// For Score number</font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>assign ScoreNum_addr_mem = {ScoreNum_mem, 
+	ScoreNum_y_addr_mem[4:0], ScoreNum_x_addr_mem[4:0]};</b></font></p>
+	<p class="MsoNormal"><font face="Tahoma">// For StickStack anumber</font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>assign StickStackNum_addr_mem = 
+	{StickStackNum_mem, StickStackNum_y_addr_mem[4:0], 
+	StickStackNum_x_addr_mem[4:0]};</b></font></p>
+	<p class="MsoNormal"><font face="Tahoma">For detail description and 
+	implementation of the displaying for the Number on the stick, please see 
+	comments on the VGA_Controller.v in the appendix.</font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>Displaying the You Lost Image &nbsp;</b></font></p>
+	<p class="MsoNormal"><font face="Tahoma">The Lost ROM contains the You Lost 
+	message to the user on the screen. Simply read the ROM when the player lost 
+	the game will display such message on the VGA monitor.</font></p>
+	<p class="MsoNormal"><font face="Tahoma">For detail description and 
+	implementation of the displaying for the Number on the stick, please see 
+	comments on the VGA_Controller.v in the appendix.</font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>The State Machine</b></font></p>
+	<p class="MsoNormal"><font face="Tahoma">The state machine manages the flow 
+	of the game.</font></p>
+	<p align="center">
+	<span style="font-size: 12.0pt; font-family: Times New Roman"><!--[if gte vml 1]><v:shape
+ id="_x0000_s1037" type="#_x0000_t75" style='width:6in;height:582.75pt'>
+ <v:imagedata src="program_hardware_design_files/image011.emz" o:title=""/>
+</v:shape><![endif]--><![if !vml]><img border=0 width=576 height=777
+src="program_hardware_design_files/image012.gif" v:shapes="_x0000_s1037"><![endif]><!--[if gte mso 9]><![endif]--></span></p>
+	<p class="MsoNormal" align="center"><font face="Tahoma">State Diagram of 
+	FPGA BBQ Stick</font></p>
+	<p class="MsoNormal" align="left">&nbsp;</p>
+	<p class="MsoNormal" align="left"><font face="Tahoma">For detail description 
+	and implementation of the state machine, please see comments on the 
+	VGA_Controller.v in the appendix.&nbsp;</font></p>
+	<p class="MsoNormal">&nbsp;</p>
+	<p class="MsoNormal"><font face="Tahoma"><b>Software:</b></font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>Length of the Stick</b></font></p>
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">The 
+	length of the stick is controlled with the mouse left button. The stick gets 
+	elongated with the left click of the mouse. The length of the stick can be 
+	adjusted by pressing and releasing the left button of the mouse for 
+	different time intervals. The length of the stick is provided by the 
+	software. </font></p>
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">The 
+	software detects press of the left button of the mouse and starts a counter. 
+	The counter is basically the length of the stick. The counter value is 
+	passed to the hardware. As long as the left mouse button is pressed the 
+	counter gets incremented until it reaches the maximum value that is the 
+	boundary of the screen. As soon as the user releases the left mouse button 
+	the counter starts decrementing with the decrements of five so that the 
+	stick length decreases immediately. The following chunk of code is used to 
+	implement the logic of the length of the stick. </font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>Things we tried but failed.</b></font></p>
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">Writing 
+	image to SRAM became one of the difficult tasks. It took us more than 100 
+	man hours to do it. Initially we believed that it would be an easy task but 
+	as soon as we started to implement it, it became more complicated.</font></p>
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">Our 
+	project required a background image of 640 x 480 resolution. We were using 
+	the Altera Paint Brush Example which uses M4K blocks to display the 
+	background image. We first tried to change the default background image 
+	displayed by the Altera. We tried to initialize our image into the M4K 
+	Blocks.</font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>Initializing an Image Into M4K 
+	Block</b></font></p>
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">Image 
+	can be initialized into the M4K block if image data is available into the 
+	MIF format. The basic procedure of doing that is to take the image and 
+	change its attributes to appropriate size using the Windows application 
+	Paint. After getting the required resolution image it needs to be converted 
+	into the text file. By text file we mean that it contains the value of each 
+	pixel in numbers separated by comma. We used Terasic&nbsp; <b><i>imgconv </i></b>
+	tool to convert the image into text file. After getting the text file it 
+	needs to be converted into the MIF format. </font></p>
+	<p class="MsoNormal"><font face="Tahoma"><b>MIF ( Memory Initialization File 
+	)</b></font></p>
+	<p class="MsoNormal"><font face="Tahoma">An ASCII text file (with the 
+	extension <b>.mif</b>) that specifies the initial content of a memory block 
+	(CAM, RAM, or ROM), that is, the initial values for each address. This file 
+	is used during project compilation and/or simulation.</font></p>
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">A MIF is 
+	used as an input file for memory initialization in the Compiler and 
+	Simulator. You can also use a Hexadecimal (Intel-Format) File (.<b>hex</b>) 
+	to provide memory initialization data.</font></p>
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">A MIF 
+	contains the initial values for each address in the memory. A separate file 
+	is required for each memory block. In a MIF, you are also required to 
+	specify the memory depth and width values. In addition, you can specify the 
+	radixes used to display and interpret addresses and data values.</font></p>
+	<p class="MsoNormal"><font face="Tahoma">Following is a sample MIF:</font></p>
+	<p class="MsoNormal"><font face="Tahoma">DEPTH = 32;<br>
+	WIDTH = 8;<br>
+	ADDRESS_RADIX = HEX;<br>
+	DATA_RADIX = BIN;<br>
+	CONTENT<br>
+	BEGIN</font></p>
+	<p class="MsoNormal"><font face="Tahoma">00 : 00000000;<br>
+	01 : 00000001;<br>
+	02 : 00000010;<br>
+	03 : 00000011;<br>
+	04 : 00000100;<br>
+	05 : 00000101;<br>
+	06 : 00000110;<br>
+	07 : 00000111;<br>
+	08 : 00001000;<br>
+	09 : 00001001;<br>
+	0A : 00001010;<br>
+	0B : 00001011;<br>
+	0C : 00001100;</font></p>
+	<p class="MsoNormal"><font face="Tahoma">END;</font></p>
+	<p class="MsoNormal"><font face="Tahoma">MIF file can be created by writing 
+	a small C program that reads from the text file and assign address to it. It 
+	can also be generated by using quartus II. Quartus II has an application 
+	that takes text file as an input and provides the MIF file.</font></p>
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">After 
+	getting through this whole procedure we initialized our memory contents with 
+	MIF file. We got the image but it is black and white. It is discovered at 
+	this point that the VGA controller used by Altera could only provide two 
+	colors that is ON and OFF and if one can look seriously to the default image 
+	of Altera it is also of two colors that is Blue and White.</font></p>
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">We 
+	changed our scheme of using the Altera Paint Brush example’s VGA controller. 
+	We also changed our memory for background image from M4K to SRAM. The basic 
+	reason for the change of memory is because of the size of the image to be 
+	displayed which is 640 x 480.</font></p>
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">We also 
+	tried to use the CONTROL PANNEL tool provided by the Terasic to write an 
+	image into SRAM. The DE2 board comes with a CONTROL PANNEL facility that 
+	allows a user to access various components on the board through a USB 
+	connection from a host computer. One of the functions is to write an image 
+	into SRAM. But after exploring its all options we discovered that CONTROL 
+	PANNEL tool is not able to display a color image. It can only be used to 
+	display black and white or grey scale images.</font></div>
+
+<div style="position: absolute; width: 1055px; height: 186px; z-index: 1; left: 104px; top: 1px; background-image: url('orange-block.jpg'); background-position:   center; " id="layer1">
+	<h1 align="center"><font face="Tahoma" size="5" color="#FF3300">FPGA BBQ Stick</font></h1>
+	<h1 align="center"><font face="Tahoma" size="4" color="#FF3300">Muhammad Bilal Shahid &amp; 
+	Yang-Ching Cheng</font></h1>
+	<hr color="#FF3300">
+	<h2 align="center"><a href="index.htm">
+	<img border="0" id="img7" src="button10.jpg" height="25" width="160" alt="Introduction" onmouseover="FP_swapImg(1,0,/*id*/'img7',/*url*/'button11.jpg')" onmouseout="FP_swapImg(0,0,/*id*/'img7',/*url*/'button10.jpg')" onmousedown="FP_swapImg(1,0,/*id*/'img7',/*url*/'button12.jpg')" onmouseup="FP_swapImg(0,0,/*id*/'img7',/*url*/'button11.jpg')" fp-style="fp-btn: Soft Rectangle 3; fp-proportional: 0; fp-orig: 0" fp-title="Introduction"></a><a href="high_level_design.htm"><img border="0" id="img13" src="button15.jpg" height="25" width="160" alt="High Level  Design" onmouseover="FP_swapImg(1,0,/*id*/'img13',/*url*/'button13.jpg')" onmouseout="FP_swapImg(0,0,/*id*/'img13',/*url*/'button15.jpg')" onmousedown="FP_swapImg(1,0,/*id*/'img13',/*url*/'button14.jpg')" onmouseup="FP_swapImg(0,0,/*id*/'img13',/*url*/'button13.jpg')" fp-style="fp-btn: Soft Rectangle 3; fp-proportional: 0; fp-orig: 0" fp-title="High Level  Design"></a><a href="program_hardware_design.htm"><img border="0" id="img14" src="button18.jpg" height="25" width="160" alt="Program/Hardware Design" fp-style="fp-btn: Soft Rectangle 3; fp-proportional: 0; fp-orig: 0" fp-title="Program/Hardware Design" onmouseover="FP_swapImg(1,0,/*id*/'img14',/*url*/'button16.jpg')" onmouseout="FP_swapImg(0,0,/*id*/'img14',/*url*/'button18.jpg')" onmousedown="FP_swapImg(1,0,/*id*/'img14',/*url*/'button17.jpg')" onmouseup="FP_swapImg(0,0,/*id*/'img14',/*url*/'button16.jpg')"></a><a href="results_and_conclusion.htm"><img border="0" id="img15" src="button19.jpg" height="25" width="160" alt="Results &amp; Conclusion" fp-style="fp-btn: Soft Rectangle 3; fp-proportional: 0; fp-orig: 0" fp-title="Results &amp; Conclusion" onmouseover="FP_swapImg(1,0,/*id*/'img15',/*url*/'button1A.jpg')" onmouseout="FP_swapImg(0,0,/*id*/'img15',/*url*/'button19.jpg')" onmousedown="FP_swapImg(1,0,/*id*/'img15',/*url*/'button1B.jpg')" onmouseup="FP_swapImg(0,0,/*id*/'img15',/*url*/'button1A.jpg')"></a><a href="ticks_and_inventions.htm"><img border="0" id="img17" src="button1F.jpg" height="25" width="160" alt="Tricks &amp; Inventions" fp-style="fp-btn: Soft Rectangle 3; fp-proportional: 0; fp-orig: 0" fp-title="Tricks &amp; Inventions" onmouseover="FP_swapImg(1,0,/*id*/'img17',/*url*/'button20.jpg')" onmouseout="FP_swapImg(0,0,/*id*/'img17',/*url*/'button1F.jpg')" onmousedown="FP_swapImg(1,0,/*id*/'img17',/*url*/'button21.jpg')" onmouseup="FP_swapImg(0,0,/*id*/'img17',/*url*/'button20.jpg')"></a><a href="appendix.htm"><img border="0" id="img16" src="button1C.jpg" height="25" width="160" alt="Appendix" fp-style="fp-btn: Soft Rectangle 3; fp-proportional: 0; fp-orig: 0" fp-title="Appendix" onmouseover="FP_swapImg(1,0,/*id*/'img16',/*url*/'button1D.jpg')" onmouseout="FP_swapImg(0,0,/*id*/'img16',/*url*/'button1C.jpg')" onmousedown="FP_swapImg(1,0,/*id*/'img16',/*url*/'button1E.jpg')" onmouseup="FP_swapImg(0,0,/*id*/'img16',/*url*/'button1D.jpg')"></a></h2>
+	<hr color="#FF3300">
+	</div>
+
+</body>
+
+</html>

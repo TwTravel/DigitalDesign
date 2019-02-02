@@ -1,0 +1,395 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!-- ECE 5760 (Fall 2014) Andrew Wilson, Ashkan Ravani, Divyanshu Tiwari -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta http-equiv="Content-Language" content="en-us">
+<title>ECE 5760</title>
+<link rel="stylesheet" type="text/css" media="all" href="webpage_files/cornell_main.css">
+<link rel="stylesheet" type="text/css" media="all" href="webpage_files/cornell_1column.css">
+<link rel="stylesheet" type="text/css" media="all" href="webpage_files/main.css">
+<meta name="author" content="Ashwath Laxminarayana , Ashkan Ravani, Murali Venkatraman">
+<meta name="copyright" content="Copyright (c) 2015 Ashwath Laxminarayana, Ashkan Ravani, Murali Venkatraman">
+<meta name="description" content="ECE 5760 Final Project: AES Encrypter/Decrypter">
+<meta name="keywords" content="INSERT KEYWORDS HERE">
+<style type="text/css">
+.c1 {line-height:1.0;direction:ltr}
+.c25 {text-align:center}
+.c0 {height:11pt;direction:ltr}
+.c13 {vertical-align:top;width:69.8pt;border-style:solid;border-color:#000000;border-width:1pt;padding:5pt 5pt 5pt 5pt}
+.c16 {vertical-align:top;width:73.5pt;border-style:solid;border-color:#000000;border-width:1pt;padding:5pt 5pt 5pt 5pt}
+.c19 {line-height:1.0}
+.c21 {vertical-align:baseline;color:#000000;font-size:11pt;font-style:normal;font-family:"Arial";text-decoration:none}
+.c22 {vertical-align:top;width:213.8pt;border-style:solid;border-color:#000000;border-width:1pt;padding:5pt 5pt 5pt 5pt}
+.c23 {padding-top:0pt;text-align:left;padding-bottom:0pt}
+.c3 {vertical-align:top;width:85.5pt;border-style:solid;border-color:#000000;border-width:1pt;padding:5pt 5pt 5pt 5pt}
+.c33 {vertical-align:top;width:57.8pt;border-style:solid;border-color:#000000;border-width:1pt;padding:5pt 5pt 5pt 5pt}
+.c37 {margin-right:auto;border-collapse:collapse}
+.c38 {text-indent:-0.8pt}
+.c5 {font-weight:bold}
+.c8 {height:26pt}
+.c9 {height:0pt}
+</style></head>
+<body>
+
+<div id="header">
+  <!-- The following div contains the Cornell University logo and search link -->
+  <div id="cu-identity"> 
+		<div id="cu-logo"> 
+			<a href="../../../../../../../../../www.ece.cornell.edu/default.htm"><img src="webpage_files/cu_logo.gif" alt="Cornell University" width="340" height="75" border="0"></a> 
+		</div> 
+  </div>
+  <div class="linklist"> <a name="top"></a> </div>
+  <!-- The search-form div contains a form that allows the user to search 
+		either pages or people within cornell.edu directly from the banner.	-->
+  <div id="search-form">
+    <form action="http://www.cornell.edu/search/" method="get" enctype="application/x-www-form-urlencoded">
+      <div id="search-input">
+        <label for="search-form-query">SEARCH:</label>
+        <input type="text" id="search-form-query" name="q" value="" size="20">
+        <input type="submit" id="search-form-submit" name="submit" value="go">
+      </div>
+      <div id="search-filters">
+        <input type="radio" id="search-filters1" name="tab" value="" checked="checked">
+        <label for="search-filters1">Pages</label>
+        <input type="radio" id="search-filters2" name="tab" value="people">
+        <label for="search-filters2">People</label>
+        <a href="../../../../../../../../../www.cornell.edu/search/default.htm">more options</a> </div>
+    </form>
+  </div>
+</div>
+<div id="mainnav">
+  <ul>
+    <li><a href="#design">High&nbsp;Level&nbsp;Design</a></li>
+    <li><a href="#software">Software</a></li>
+    <li><a href="#hardware">Hardware</a></li>
+    <li><a href="#results">Results</a></li>
+    <li><a href="#conclusions">Conclusions</a></li>
+    <li><a href="#appendices">Appendices</a></li>
+  </ul>
+</div>
+<!-- end mainnav -->
+<!-- end header -->
+<div id="sectiontitle">
+  <h4><a href="../../../../../default.htm">ECE 5760</a>: <a href="../../../../default.htm">Final Project</a></h4>
+  <h1>AES Encrypter/Decrypter</h1>
+  <h3>&nbsp;</h3>
+  <h3>Ashwath Laxminarayana (<a href="mailto:ank59@cornell.edu">ank59@cornell.edu</a>) </a></h3>
+ <h3>Ashkan Ravani (<a href="mailto:ar856@cornell.edu">ar856@cornell.edu</a>)</a></h3>
+ <h3>Murali Venkatraman (<a href="mailto:mv398@cornell.edu">mv398@cornell.edu</a>)</a></h3>
+</div>
+<div id="wrapper">
+  <div id="content">
+    <div id="maincontent" class="hub">
+    
+      <div id="introblurb">
+      <div id="pullquote">
+          <p class="quote">"AES implementation for Encryption and Decryption."</p>
+          <p class="source">project soundbyte</p>
+        </div>
+      <p dir="ltr">Advanced Encryption Standard (AES), a Federal Information Processing Standard (FIPS), is an approved cryptographic algorithm which can be used to protect electronic data. The main idea of this project is to demonstrate the acceleration that can be achieved in executing this computation intensive encryption/decryption algorithm on hardware. FPGAs with their highly parallel, reconfigurable architecture are best suited for this project. To achieve this, we plan to build an SoC system with a NIOS II softcore processor instantiated inside an Altera Cyclone IV FPGA. As an outcome of this project, we should be able to encrypt/decrypt a huge chunk of data read from an SD card. In addition, we expect the execution time to be much lower for the hardware implementation when compared to its software counterpart. </p>
+	  
+      <div class="image">
+        <p>&nbsp;</p>
+        <p class="caption"><a href="webpage_files/intro_diagram.JPG"><img src="webpage_files/intro_diagram.JPG" width="650" height="400"></a></p>
+        <p class="caption">The overall system design</p>
+    </div>
+      </div>
+      
+      <div class="linklist"> <a name="design"></a>
+        <h2>High Level Design &nbsp;&nbsp;&nbsp;<font size="-1"><strong><a href="#top">top</a></strong></font></h2>
+        <p dir="ltr">Altera DE2-115 development board has been used in executing this project. The design features an SD card which allows us to read any text files for encryption/decryption, JTAG UART for receiving the keys for encryption from the host PC and a VGA monitor to display the original image and encrypted image and an Altera Cyclone IV FPGA which holds the logic of the algorithm.</p>
+		</p>
+		
+  </p>
+<p dir="ltr"><strong>Rationale and Inspiration</strong></p>
+        <p dir="ltr">The primary goal was to design a system that can encrypt and decrypt any size of text or image. Advanced Encryption Standard(AES) is one of the most well known advanced encryption standards for electronic data. This standard is also referenced as Rijndael and the algorithm was standardised by by the U S National Institute of Standards and Technology in 2001. The nature of the encryption and the decryption flows make it highly amenable for parallelization which lends very well to the architecture of FPGAs. Thus, we came up with a fully pipelined hardware design that exploits the nature of the algorithm to achieve a significantly higher throughput. Also, since FPGAs are nowadays used as hardware accelerators for CPUs, we felt that this project might help us understand the complexities involved in such implementations. </p>
+
+
+
+		
+<p dir="ltr"><strong>Background Math of AES Encryption/Decryption</strong></p>
+		<p dir="ltr">AES algorithm involves 10 rounds of processing for 128-bit  Key. Each round consists of these 4 steps : One single-byte based substitution step, a row-wise shifting step, a column-wise mixing step, and the addition(XORing) of the round key. Out of all the rounds, the last round will be doing only three of the above steps. It will exclude the column mixing step.</p>
+		<p dir="ltr">We generally take a group of 16 characters ( 128 bits), store them in a matrix format and initially will XOR it with the input key (in case for encryption) or with last key generated by the key expansion module (for decryption) and then pass it for a round based processing. the output of every round will be an input to the subsequent round. Below are the 4 steps performed by every round (except the last round) </p>
+<p dir="ltr"><b><i>Substitution Step:</i></b></p>
+		<p dir="ltr">In this step, we can substitute every character for encryption by using the S-Box, S-Box is a 16X16 matrix of different Hexadecimal numbers. Each of the input character is converted into their hexadecimal values, the the 4 msb bits will be used to indicate row number and the remaining 4 bits will be used to indicate the column number in a S - Box. The input character is substituted with the one in that position.
+below is the S-Box used for encryption:</p>
+		<p class="c1 c25"><img src="webpage_files/lookup_table.jpg" alt="" width="500" height="250"></p>
+		<p class="c1 c25"><span>Figure 1: SBox</span>        </p>
+		<p dir="ltr">Similarly for decryption we will be having an inverse S-Box shown below</p>
+		<p class="c1 c25"><img src="webpage_files/lookup_table2.jpg" alt="" width="500" height="250"></p>
+		<p class="c1 c25"><span>Figure 2: Inverse SBox</span>        </p>
+		<p dir="ltr"><b><i>Row based Shifting :</i></b></p>
+		<p dir="ltr">In this step, the first row is left as it is, the second row gets circularly shifted to the left by one character, the third row gets shifted by two characters and the fourth row by three characters.
+It would look like this shown below:</p>
+		<p class="c1 c25"><img src="webpage_files/rowBased_shifting.jpg" alt="" width="400" height="180"></p>
+		<p class="c1 c25"><span>Figure 3: Row Based Shifting</span>        </p>
+		<p dir="ltr">in the case for decryption, we will be doing this by circularly shifting to the right side instead.</p>
+		<p dir="ltr"><b><i>Column Mixing :</i></b></p>
+		<p dir="ltr">Here, we will multiply the input matrix with a  Mix Matrix. There are two things about this multiplication different from a normal matrix multiplication :</p>
+		<p dir="ltr">a.	We will be performing galois multiplication between two characters.</p>		
+		<p dir="ltr">b.	We will be performing galois multiplication between two characters.</p>
+		<p dir="ltr">The mix matrix for encryption  is :</p>
+		<p class="c1 c25"><img src="webpage_files/column_mixing.jpg" alt="" width="200" height="150"></p>
+		<p class="c1 c25"><span>Figure 4: Mix column encryption</span>        </p>
+		<p dir="ltr">The mix matrix for decryption is : </p>
+		<p class="c1 c25"><img src="webpage_files/column_mixing2.jpg" alt="" width="200" height="150"></p>
+		<p class="c1 c25"><span>Figure 5: Mix column decryption</span>        </p>
+		<p dir="ltr">Except for round 10, all the other rounds will be performing this step.</p>
+		<p dir="ltr"><b>Using Round_Key</b></p>
+		<p dir="ltr">In this stage we will be performing XOR operation with the round key generated by the key_expansion module. The output of this round will be sent to the next round. To know how the keys are generated, we first have to understand the key expansion module</p>
+		<p dir="ltr"><b>Key Expansion Module</b></p>
+		<p dir="ltr"><i>Initial Key</i></p>
+		<p class="c1 c25"><img src="webpage_files/key_expansion_module.jpg" alt="" width="750" height="200"></p>
+		<p class="caption">Generation of 44 word key</p>
+		<p dir="ltr">K0,K1...K15 are the 16 characters which make up the key(128 bit long), We group each column into one word and pass it to the key expansion module. From the given initial key we are supposed to generate a 44 word length key. The first four words are the 4 words of the initial key. The remaining keys are generated using the following operations:</p>
+		<p dir="ltr">W(i)   = W(i-4) XOR g(W(i-3))</p>
+		<p dir="ltr">W(i+1) = W(i-3) XOR W(i)</p>
+		<p dir="ltr">W(i+2) = W(i-2) XOR W(i+1)</p>
+		<p dir="ltr">W(i+3) = W(i-1) XOR W(i+2)</p>		
+		<p dir="ltr"><b>Note: i should be a multiple of 4.</b></p>
+		<p dir="ltr">W(i), W(i+1), W(i+2) and W(i+3) are combined to generate the key for the next round. The function g() is explicitly used only for generating W(i). The function g() consists of the following three steps: –</p>
+		<p dir="ltr">a.	Perform a one-byte left circular rotation on the argument 4- byte word.</p>
+		<p dir="ltr">b. Perform a byte substitution for each byte of the word returned by the previous step by using the S-Box</p>
+		<p dir="ltr">c. XOR the bytes obtained from the previous step with what is known as a round constant. The round constant is a word whose three rightmost bytes are always zero.</p>
+		<p dir="ltr">The round constants for every round is as follows :</p>
+		<p dir="ltr">RC[1] = 0x01</p>
+		<p dir="ltr">RC[j] = 0x02 × RC[j − 1]</p>
+		<p dir="ltr">This function mainly adds to the latency in the key expansion module.</p>
+		<p class="c1 c25"><img src="webpage_files/key_expansion_module2.jpg" alt="" width="450" height="250"></p>
+		<p dir="ltr">Both encryption and decryption will be performing these 4 steps, but the order in which they will be performing is different :</p>
+		<p class="c1 c25"><img src="webpage_files/key_expansion3.jpg" alt="" width="450" height="250"></p>
+		<p class="caption">Key expansion</p>
+		
+		
+		
+		
+		
+		
+<p dir="ltr"><strong>Logical Structure</strong></p>
+        <p dir="ltr">The hardware implementation consists of two 10-stage pipelines of the encryption and decryption modules. SDRAM serves as the main memory for the Nios II processor. The processor is responsible for reading the plain-text data from the SD card for the encryption process. The 128-bit key for the process is obtained serially from the JTAG-UART terminal interfaced to the processor. The encrypted and decrypted values are reported to the user via the console and the VGA monitor. The interactions between the hardware and the processor occurs through PIO ports instantiated using the SOPC builder.</p>
+		
+<p dir="ltr"></p>
+<p dir="ltr"><strong>Hardware/Software Tradeoffs</strong></p>
+         <p dir="ltr">Since the purpose of this project was to demonstrate hardware acceleration of algorithms we decided that the entire encryption and decryption logic would be implemented in hardware. Although a software implementation would have had a lower development time, it is impossible to achieve the level of performance of that of a hardware implementation. </p>
+      
+
+  
+		<p dir="ltr"><strong>Relationship of Design to Standards and Patents</strong></p>
+	  <p dir="ltr">The Advanced Encryption Standard (AES) is defined in each of FIPS PUB 197: Advanced Encryption Standard (AES) and in ISO/IEC 18033-3: Information technology - Security techniques - Encryption algorithms - Part 3: Block ciphers. Also, our project adheres to the standards set by the SD Association for using the SD card through an SPI interface.</p>
+	  </div>
+     
+      <div class="linklist"> <a name="software"></a>
+        <h2>Software Design&nbsp;&nbsp;&nbsp;<font size="-1"><strong><a href="#top">top</a></strong></font>        </h2>
+        <p dir="ltr">The Nios II runs a C program that controls the hardware modules and interfaces with the SD card. The program implements a user interface that initially prompts the user to enter the 128-bit key. This key is then sent to the hardware using four PIO ports. Once the processor is done placing  the key on the PIO buses an interrupt is sent to the hardware to indicate the availability of a valid data on the buses.  </p>
+		<p class="caption"><img src="webpage_files/output_from_eclipe.jpg" width="674" height="489"><br>
+		
+		<p dir="ltr">The user is then prompted to press key 3 to start the encryption process. Once key 3 is pressed, the processor reads the data from the SD card and stores them in a buffer. The CPU then polls for the requests from hardware to read the SD card data. Data from the SD card is sent in chunks of 128 bits upon receiving the interrupt/request from the hardware. </p>
+		<p dir="ltr">After sending all the data, the processor polls for the data ready PIO from the hardware. The hardware is supposed to indicate the Nios once it is done with the encryption/decryption process. Upon receiving the interrupt from the hardware, the program reads the encrypted data from the PIO buses and is stored in an array/buffer. For every interrupt, 256 bits of data are read from the hardware. The processor then interrupts the hardware every time after it is done reading from all the PIO buses.</p>		
+		
+		<p class="caption"><img src="webpage_files/output_from_eclipse_final.jpg" width="674" height="489"><br>
+		
+		<p dir="ltr">After sending all the data, the processor polls for the data ready PIO from the hardware. The hardware is supposed to indicate the Nios once it is done with the encryption/decryption process. Upon receiving the interrupt from the hardware, the program reads the encrypted data from the PIO buses and is stored in an array/buffer. For every interrupt, 256 bits of data are read from the hardware. The processor then interrupts the hardware every time after it is done reading from all the PIO buses.</p>
+		<p dir="ltr">Reading data from the SD card was a challenge considering that there is no SD card controller IP support for DE2-115 boards. However, we found an example code and software drivers to read the SD card contents. We later decided to drop the idea of writing back the encrypted data into the SD card since figuring out the reading part had already taken more time than we had anticipated. We were suggested to move our project to DE2-board which has the SD card controller support as well as example programs for both reading and writing contents to the SD card but it comes with a Altera Cyclone II FPGA which supports lesser area when compared to the Cyclone IV of DE2-115. So, we felt that since our project was hardware intensive migrating to a lower end FPGA would be risky and hence decided against the suggestion.</p>
+		<p dir="ltr">Although we planned to demonstrate both encryption and decryption features we were only able to successfully demonstrate the encryption feature under the given timeline. However, we could successfully test the encrypter and decrypter modules in ModelSim and verified their functionality. Another challenge was handling large chunks of data. We tried to use FIFOs to store the encrypted data at the output of FPGA before sending them to the Nios. Due to certain timing issues we weren’t able to successfully read the output data from the FIFOs. Hence, the current design only supports encryption of 128 bits of character data. However, with additional effort one can extend this project to support encryption of huge chunks of data - from a text file or an image. Also, one can make use of the decrypter module to demonstrate AES decryption.</p>
+	
+        
+      </div>
+      <div class="linklist"> <a name="hardware"></a>
+        <h2>Hardware Design&nbsp;&nbsp;&nbsp;<font size="-1"><strong><a href="#top">top</a></strong></font></h2>
+        
+        <p dir="ltr"><strong>Nios Processor</strong></p>
+<p dir="ltr">A Nios II processor is used as the CPU to control all the modules in the project. SDRAM acts as the memory for the processorI. A JTAG UART interface was also connected to the Nios II for serial communication with a computer so that a user can manually enter in encryption or decryption keys. Since SOPC builder is unable to instantiate PIO ports of size greater than 32 bits, each 128 bit port had to be instantiated as four separate 32 bit ports. When reading from the ports, the four 32 bit inputs from the ports are concatenated in software to get the 128 bit data. When writing to the ports, the data is divided equally among the 4 PIO ports.</p>
+<p dir="ltr"><strong>Hardware Implementation of the Encryptor and Decryptor :</strong></p>
+        <p dir="ltr">The configuration for each round block would be like : </p>
+		<p class="caption"><img src="webpage_files/encryptANDdecrypter.jpg" width="550" height="400"><br>
+		<p class="c1 c25"><span>Figure 6: Single Block of Encryption/Decryption</span>        </p>
+		<p dir="ltr">Here each encryption/decryption block, will be getting data from the previous round and will also be enabled  by the previous round when they are done. We also provide a round number, so that we differentiate the last round from other rounds as it performs only three steps. We have provided some extra stages of buffering  for each module to avoid timing inconsistencies.</p>
+		<p dir="ltr">The general block diagram for our encryptor stage would be :</p>		
+		<p class="caption"><img src="webpage_files/encryptand decrypt.jpg" width="550" height="300"><br>
+		<p class="caption">Detailed block diagram explaining the 4 steps performed in each round</p>
+		<p dir="ltr">The general block diagram for our encryptor stage would be :</p>
+		<p class="caption"><img src="webpage_files/encryptanddecrypt2.jpg" width="550" height="300"><br>
+		<p class="caption">Detailed block diagram explaining the 4 steps performed in each round</p>
+		<p dir="ltr">In order to achieve high speedup in hardware, we have decided to pipeline our design, this will be very useful when we are dealing with large chunks of data.</p>
+		<p class="caption"><img src="webpage_files/encryptanddecrypt4.jpg" width="550" height="300"><br>
+		<p class="c1 c25"><span>Figure 7: Pipeline Diagram</span>        </p>
+		<p dir="ltr">After creating these modules in Quartus, we observed the following waveforms:</p>
+		<p dir="ltr">We can instantiate 10 such modules(R1 to R10) and pipeline them as shown in the above diagram. At an average it will take 20 clock cycles for every round.</p>
+		<p dir="ltr">From the above diagram we can see that for encryption 160 characters (in blocks of 16 characters) we will need a total of 380 clock cycles(19X20 cycles).</p>
+		<p dir="ltr">Average Time required to encrypt one character = 380/160 = 2.375 cycles (approximately 3 cycles). This is better compared to the non pipelined version, where we would require  200 cycles X 10 = 2000 clock cycles to encrypt 160 characters. Our design will be useful when we will sample a larger pool of data</p>
+		
+		
+		
+		
+		
+		
+		
+		
+
+		<p dir="ltr"><strong>Decrypter</strong></p>
+		<p dir="ltr">Since there is no SD card controller available for DE2-115, SD card was interfaced to the Nios through PIOs. The FAT File System function is implemented by Nios II software. The SD Card is connected to the hardware through SD 4-bit mode protocol for communication with SD Cards. We used a part of SD card example code from Altera University Program package for reading the contents of the SD card.</p>
+<p dir="ltr"><strong>SD card interface</strong></p>
+<p dir="ltr">Since there is no SD card controller available for DE2-115, SD card was interfaced to the Nios through PIOs. The FAT File System function is implemented by Nios II software. The SD Card is connected to the hardware through SD 4-bit mode protocol for communication with SD Cards. We used a part of SD card example code from Altera University Program package for reading the contents of the SD card.</p>
+<p dir="ltr"><strong>JTAG UART interface</strong></p>
+
+		<p dir="ltr">In order to display the image output from the Nios II onto a VGA monitor, we have instantiated the VGA controller. The VGA controller receives pixel data through a VGA buffer and outputs a VGA signal to the VGA connector on the DE2-115 board.
+</p>
+
+<p dir="ltr"><strong>VGA monitor for image display</strong></p>
+<p dir="ltr">In order to display the image output from the Nios II onto a VGA monitor, we have instantiated the VGA controller. The VGA controller receives pixel data through a VGA buffer and outputs a VGA signal to the VGA connector on the DE2-115 board.</p>
+      </div>
+      
+	  
+	  
+      <div class="linklist"> <a name="results"></a>
+        <h2>Results &nbsp;&nbsp;&nbsp;<font size="-1"><strong><a href="#top">top</a></strong></font></h2>
+        <p dir="ltr">We were able to demonstrate encryption on 16 characters read from the SD card. The output latency was 64.40 us( approx. 322 clock cycles). The latency is high only for the first encrypted data output since all the pipeline stages are idle initially. For the subsequent data outputs the latency is just 21 clock cycles which proves that the pipelining is indeed effective in increasing the throughput. We have also verified our functionality of the algorithm, by encrypting a data sample and getting it back by decrypting it. ModelSim simulation waveforms below show that the original plain-data is recovered at the end of decryption.</p>
+		<p class="caption"><img src="webpage_files/Encryption.jpg" width="550" height="300"><br>
+		<p class="caption"><i>Encryption</i></p>
+		
+		<p class="caption"><img src="webpage_files/decryption.jpg" width="550" height="300"><br>
+		<p class="caption"><i>Decryption</i></p>
+	<p dir="ltr">We have also observed improvement in timing by pipelining our design, this can be shown from the following waveforms</p>	
+		<p dir="ltr">Initial Latency for the first set of outputs</p>
+		<p class="caption"><img src="webpage_files/encryption1.jpg" width="550" height="300"><br>
+		
+		<p dir="ltr">Outputs for the next sets of words immediately available.</p>
+		
+		<p class="caption"><img src="webpage_files/decryption2.jpg" width="550" height="300"><br>
+		
+		
+<p dir="ltr"><strong>Safety and Usability</strong></p>
+        <p dir="ltr">There are no major issues that we need to consider in this project. The only human interaction involved pressing keys on the DE2-115 and keyboard to insert keys for encryption and decryption.</p>
+        <div class="linklist"> <a name="conclusions"></a>
+          <h2>Conclusions &nbsp;&nbsp;&nbsp;<font size="-1"><strong><a href="#top">top</a></strong></font></h2>
+        
+          <p dir="ltr">We were able to successfully demonstrate only the encryption feature under the given timeline. However, we could successfully test the encrypter and decrypter modules in ModelSim and verify their functionality. We also learnt about interfacing with an SD card. Also, our initial plan was to design a system which would be capable of handling large data sets. But after considering the increased complexity of the design due to the addition of multiple FIFOs(M9K) blocks we decided to scale down to a relatively simpler design which can handle a limited set of data. If we could do things differently, to reduce the development time we would have had the encryption done in software and the then focus only on the hardware implementation of decryption. This would have given us more time to figure out the challenges involved in handling large chunks of data.  Although we underestimated the complexity of the project, the overall learning experience was very good</p>
+
+<p dir="ltr"><strong>Intellectual Property Considerations</strong></p>
+          <p dir="ltr">The project uses Altera IP generated from SOPC builder and Megafunction wizard, including the Nios II, SDRAM controller, SD card interface, PLLs, VGA controller and SOPC PIO ports. All other code was written by us based on algorithms that are in the public domain.</p>
+
+          <div class="linklist"> <a name="appendices"></a>
+        <h2>Appendices &nbsp;&nbsp;&nbsp;<font size="-1"><strong><a href="#top">top</a></strong></font></h2>
+        
+        <h3>A. Cost Details</h3>
+        <div dir="ltr">
+          <table width="769" cellpadding="0" cellspacing="0">
+            <tbody>
+              <tr class="c9">
+                <td width="303" class="c22"><p class="c1"><span class="c5">Part Number</span></p></td>
+                <td width="111" class="c13"><p class="c23 c1"><span class="c5">Vendor</span></p></td>
+                <td width="95" class="c33"><p class="c23 c1"><span class="c5">Quantity</span></p></td>
+                <td width="132" class="c3"><p class="c1"><span class="c5">Price</span></p></td>
+                <td width="116" class="c16"><p class="c23 c1"><span class="c5">Total Cost</span></p></td>
+              </tr>
+              <tr class="c9">
+                <td class="c22"><p class="c1"><span>SD Card</span></p></td>
+                <td class="c13"><p class="c1"><span>Cornell Store</span></p></td>
+                <td class="c33"><p class="c1"><span>1</span></p></td>
+                <td class="c3"><p class="c1"><span>$10</span></p></td>
+                <td class="c16"><p class="c1"><span>$10</span></p></td>
+              </tr>
+              
+              
+          
+            </tbody>
+          </table>
+        </div>
+<h3>B. Distribution of Work</h3>
+         <table width="100%" border="1">
+          <thead>
+            <tr>
+              <th width="33%"><strong>Ashwath Laxminarayana</strong></th>
+              <th width="33%"><strong>Ashkan Ravani</strong></th>
+	      <th width="34%"><strong>Murali Venkatraman</strong></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="row1">
+              <td>Encryption</td>
+              <td>Interfaces</td>
+			  <td>Decryption</td>
+            </tr>
+            <tr class="row1">
+              <td>Final report</td>
+              <td>Final report</td>
+			  <td>Final report</td>
+            </tr>
+            <tr class="row1">
+            <td> troubleshooting</td>
+             <td> troubleshooting</td>
+			 <td> troubleshooting</td>
+            </tr>
+			
+			<tr class="row1">
+            <td> Ideas</td>
+             <td> Webpage</td>
+			 <td> Layout</td>
+            </tr>
+			
+            </tbody>
+            </table>
+         <h3>C. Code Listing</h3>
+         <p><a href="webpage_files/Decryption_pipeline.zip"><br>Decryption_pipeline.zip</a><a href="webpage_files/aes_char_16.zip"><br>aes_char_16.zip</a><a href="webpage_files/encryption_pipeline.zip"><br>encryption_pipeline.zip</a></p>
+         <div class="linklist">
+           <h2>References &nbsp;&nbsp;&nbsp;<font size="-1"><strong><a href="#top">top</a></strong></font></h2>
+        <p style="margin: 0 0 0.5em">This section provides links to external reference documents, code, and websites used throughout the project.</p>
+        <div class="group1">
+          <ul>
+		  <li><a href="../../../../../../../../../https@engineering.purdue.edu/kak/compsec/NewLectures/Lecture8.pdf">Lecture 8: AES: The Advanced Encryption Standard Lecture Notes on “Computer and Network Security”</a></li>
+		  <li><a href="../../../../../../../../../https@engineering.purdue.edu/kak/compsec/NewLectures/Lecture7.pdf">Lecture 7: Finite Fields (PART 4) PART 4</a></li>
+ 		  <li><a href="../../../../../../../../../portal.fke.utm.my/fkelibrary/files/salehqasemabdulrahmanabdulrab/2013/516_SALEHQASEMABDULRAHMANABDULRAB2013.pdf">”Prime Number Generator and RSA Encrypter/Decrypter”</a></li>
+            <li><a href="../../../../../../../../../https@engineering.purdue.edu/kak/compsec/NewLectures/Lecture8.pdf">AES Tutorial</a></li>
+            <li><a href="../../../../../../../../../ftp@ftp.altera.com/up/pub/Altera_Material/12.1/Boards/DE2-115/DE2_115_User_Manual.pdf">Altera User Manual</a></li>
+          </ul>
+        </div>
+        <div class="group2">
+         
+        </div>
+</div>
+
+        
+      </div>
+           
+        <div class="linklist">
+          <h2>Acknowledgements &nbsp;&nbsp;&nbsp;<font size="-1"><strong><a href="#top">top</a></strong></font></h2>
+
+        <p>We thank Professor Bruce Land and the lab TAs for the debugging help and knowledge on DE2-115 FPGA board they provided this semester.</p>
+        </div>
+      </div>
+    <!-- end maincontent -->
+  </div>
+  <!-- end content -->
+  <!--ipt type="text/javascript" async src="webpage_files/ga.js"></scri--><!--ipt type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-22818013-1']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</scri-->
+  <!-- content out -->
+  <hr>
+  <!-- footer in -->
+  <div id="footerwrap">
+    <div id="footer">
+      <div id="copyright">
+        <div class="copyright">©2015 Ashwath Laxminarayana, Ashkan Ravani &amp; Murali Venkatraman</div>
+        <div class="copyright">Style adapted with permission from Adam Papamarcos</div>
+        <div class="copyright">Layout ©2010 Cornell University</div>
+      </div>
+    </div>
+    <!-- end footer -->
+  </div>
+  <!-- end footerwrap -->
+  <!-- footer out -->
+</div>
+<!-- end wrapper -->
+
+
+<embed type="application/x-shockwave-flash" width="0" height="0"></div></div><iframe id="rdbIndicator" width="100%" height="270" border="0" src="webpage_files/indicator.html" style="display: none; border: 0; position: fixed; left: 0; top: 0; z-index: 2147483647"></iframe></body></html>

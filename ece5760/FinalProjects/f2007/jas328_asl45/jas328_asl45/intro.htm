@@ -1,0 +1,64 @@
+<title>ECE 576 - SimpleGPU</title>
+
+<head><style>
+a:link {color: #6666CC; text-decoration: overline; }     /* unvisited link */
+a:visited {color: #666666; text-decoration: overline; }  /* visited link */
+a:hover {color: #222222; text-decoration: underline; }   /* mouse over link */
+a:active {color: #5555FF; text-decoration: overline; }   /* selected link */ 
+</style></head>
+
+<body bgcolor="#DDDDDD">
+
+<table style="border-width: 15pt; border-collapse: separate; " ><tr><td colspan=2>
+
+<table width=759><tr><td align=center style="border: 1px solid black; padding: 1em; background-color: white;">
+<b><big><big><big>SimpleGPU</big>
+<br>ECE 576 - Fall 2007</big>
+<br>John Sicilia (jas328) & Austin Lu (asl45)
+</td></tr></table>
+
+</td></tr>
+<tr><td width=150 valign=top>
+<table width=150><tr><td valign=top style="border: 1px solid black; padding: 1em; background-color: white; height=700;"> 
+<p><a href="index.htm">Home</a>
+<p><a href="intro.htm">Introduction</a>
+<p><a href="sdesign.htm">Software Design</a>
+<p><a href="hdesign.htm">Hardware Design</a>
+<p><a href="results.htm">Results</a>
+<p><a href="issues.htm">Issues</a>
+<p><a href="conclusion.htm">Conclusion</a>
+<p><a href="pics.htm">More Pictures</a>
+<br><br><br><br><br><br><br>
+</td></tr></table>
+
+</td><td valign=top>
+<table width=600 ><tr><td style="border: 1px solid black; padding: 1em; background-color: white;">
+<b><big><big>Introduction</big></big></b><br><br>
+
+<p>For our final project, we chose to use the DE2 in order to create a simple graphics processor. Our goal was to be able to use the NIOS 2 to write simple software commands, then have the hardware and secondary supporting software display it on the monitor. We focused on 3-D graphics and perspective transformations in order to display input coordinates on the screen in 3-D.
+
+<p>From the start, it was obvious that we were going to have to divide our project into two major components: synchronous hardware designed in Verilog and a simple C program executed on a NiosII. We wanted to limit the amount of calculations actually performed on the Nios, because the output ports were limited and this could create a real bottleneck. As a result, only calculations that made great use of floating point operations were written as software, because it would be infeasible to create a hardware floating point unit.
+
+<p>After careful consideration, the tasks were split into two. 
+<p><table border=0 valign=top> <tr><td style="padding: 1em;" >
+<b>Software:</td><td style="border: 1px solid black; padding: 1em;">	Top-level control of polygons, camera position, and camera angle<br>
+		Conversion of polygons into canonical view<br>
+		Perspective transformation of polygons <br>
+		Clipping using the Sutherland-Hodgman Algorithm<br>
+		Scaling and conversion into window coordinates<br>
+</td></tr>
+<tr><td style="padding: 1em;">
+<b>Interface:</td><td style="border: 1px solid black; padding: 1em;">	NiosII sends out integer polygon vertices in (X, Y, Z, C) format.</td>
+<tr><td style="padding: 1em; ">
+
+<b>Hardware:</td><td style="border: 1px solid black; padding: 1em;">	Storage of polygon vertices and corresponding polygon colors<br>
+		Polygon filling calculations<br>
+		Z-coordinate mapping and depth buffers<br>
+		VGA controller and buffered writing to SRAM<br>
+		Storing and displaying performance statistics<br>
+</td></tr></table>
+
+</td></tr></table>
+
+
+</td></tr></table>

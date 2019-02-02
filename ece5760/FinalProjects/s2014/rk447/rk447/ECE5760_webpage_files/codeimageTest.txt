@@ -1,0 +1,583 @@
+;ourcodeimage. Program for our cpu
+;===================================
+constant
+    forever 1 ;while loop
+	; ports
+ 	switches 0 ; in port 0
+	sram_data 1  ; in port 1
+	sync 2     ; in port 2
+	cpu_id 3   ; in port 3
+	rom_data 4 ; in port 4
+	rom_addr 4 ; out port 4
+	LEDred 3   ; output port 3
+	
+    ; vga_cntl:
+    vga_cntl 2  ; out port 2
+	sram_cntl 2  ; out port 2
+    vga_addr 0;
+	vga_data 1; out port 1
+	sram_data 1
+
+	; vga color codes
+	white 255
+	black 0
+	gray1 21
+	gray2 42
+	gray3 63
+	gray4 170
+	gray5 213
+	gray6 234
+	red 240
+	yellow 252
+	green 204
+	cyan 207
+	
+	
+	zero 48 ; ascii zero
+	a 97 ; ascii lower case 'a'
+	;line directions
+	up 0
+	down 1
+	
+	
+;=====================================
+		
+	
+;======================================	
+;Variable definitions
+variable
+    direction
+    rand   ; low order random
+	rand2  ; high order random
+    temp ; needed for random num generator
+	
+	; putstr state
+	vga_putstr_count
+	vga_putstr_x
+	vga_putstr_y
+	vga_putstr_color
+	
+	; puthex state
+	vga_puthex_x
+	vga_puthex_y
+	vga_puthex_color
+	vga_puthex_value
+	vga_puthex_count
+	vga_puthex_shift	
+	
+	count ;point index
+	color
+	x1 ;for drawing lines
+	x2
+	y1
+	y2
+	dy
+	dx
+	s1
+	s2
+	y_temp
+	x_temp
+	e
+	xchange
+	ychange ;for drawing lines
+	
+	num2char_num ; used in num2char
+	num2char_xpos;
+	
+	;variables for max and min functions
+	max1
+	max2
+	min1
+	min2
+
+   ;two lines
+    line1y1
+    line1y2
+    line1color
+;=======================================
+
+;=======================================
+;Inline Functions
+inline vga_point; x in stack-top, y in next, color in 3rd
+   ; stack: color ycoord xcoord (top)
+   ; store lower bit of x in 4
+   ; and store shifted x to 5
+   dup
+   1 band pop.4 ; low order bit
+   1 shr pop.5 ; 9 high bits
+   ; y on stack, shift it 9 left
+   9 shl
+	; then OR with 9 bits of x
+   push.5 bor out[vga_addr]
+   ; color is top of stack
+   ; if low bit of x is set, shift color to high byte
+   if push.4 then 8 shl endif
+   out[vga_data] 
+   ; now zero we with low x-bit in bit-1
+	push.4 1 shl 
+	; ask for access (and set up write bits)
+	4 bor out[vga_cntl] 
+	; now wait for access
+   while in[sync] not do endwhile 
+   ;clear access and turn off write-bit (0)
+   1 out[vga_cntl]
+endinline
+
+inline vga_read ; x in stack-top, y in next
+   ; input stack: ycoord xcoord (top)
+	; output: color
+   ; store lower bit of x in 4
+   ; and store shifted x to 5
+   dup
+   1 band pop.4 ; low order bit
+   1 shr pop.5 ; 9 high bits
+   ; y on stack, shift it 9 left
+   9 shl
+	; then OR with 9 bits of x
+   push.5 bor out[vga_addr]
+	; set up control
+	; with write-enable high (bit 0)
+   ; bit 2 is request for memory
+	5 out[vga_cntl] 
+ 	; now wait for access
+	while in[sync] not do endwhile 
+	in[sram_data]
+	; clear access bit 2
+	1 out[vga_cntl] 
+   ; if low bit of x is set, shift color to low byte
+   if push.4 then 8 shr endif
+   ; color is now on stack
+endinline
+
+inline sram_read ; 16 bits
+; stack: addr (top)
+; output: 16 bit value
+	out[sram_addr]
+	5 out[sram_cntl] ; access (bit 2) + read (bit 0)
+	while in[sync] not do endwhile
+	in[sram_data]
+   ;clear access and turn off write-bit (0)
+   1 out[vga_cntl]
+endinline
+
+inline sram_write ; 16 bits
+	; stack: data addr (top)
+	out[sram_addr]
+	out[sram_data]
+	12 out[sram_cntl] ; access (bit 2) + full word (bit 3)
+	; now wait for access
+   while in[sync] not do endwhile 
+   ;clear access and turn off write-bit (0)
+   1 out[vga_cntl]
+	nop. ; needed for timing to next event
+endinline
+;====================================
+
+
+; ===================================
+function
+	rand_bit
+	vga_putchar
+	vga_putstr
+	vga_puthex
+	vga_line
+	num2char
+	max
+	min
+	rand_bit_mult
+; ===================================
+
+
+;===================================================================================================
+;;;;Actual program
+program
+main:
+;cli
+;nop.
+;sei
+; nchars color y x
+
+0 =line1y1
+479 =line1y2
+255 =line1color
+
+
+;set the (50.4 MHz)timer overflow value
+252000  setTimerOverflow ;50400 for 1ms
+;draw a few lines; color, x1, y1, x2, y2
+line1color 0 line1y1 639 line1y2 vga_line
+;set line direction
+down =direction
+;
+"ECE cyan 20 280 vga_putstr
+"5760 cyan 20 320 vga_putstr
+"Pancake gray6 40 240 vga_putstr
+"With gray6 40 310 vga_putstr
+"Interrupts gray6 40 350 vga_putstr
+;;;;
+while forever
+do 
+	nop.
+endwhile
+;================================
+
+;===============================
+; VGA put hex num2char_num
+;===============================
+; enters with an 18-bit value on the stack
+; to print to VGA
+; stack: value color y x (top)
+vga_puthex:
+	=vga_puthex_x
+	=vga_puthex_y
+	=vga_puthex_color
+	=vga_puthex_value
+	
+	5 =vga_puthex_count ; num2char_num of digits to print
+	16 =vga_puthex_shift ; shift factor
+	while vga_puthex_count 0 gt
+	do
+	   vga_puthex_value vga_puthex_shift shr 15 band
+	   if dup 10 lt
+	   then zero add 
+	   else 10 sub a add
+	   endif
+	   vga_puthex_color vga_puthex_y vga_puthex_x 
+		vga_putchar
+		; update counter and shift for next digit
+	   vga_puthex_count 1 sub =vga_puthex_count 
+	   vga_puthex_shift 4 sub =vga_puthex_shift 
+		vga_puthex_x 8 add =vga_puthex_x 
+	endwhile
+return
+
+;===============================
+; VGA put character
+;===============================
+; enters with a 8-bit character
+; x coordinate and y coordinate
+; and color
+; stack: char color y x (top)
+vga_putchar: 
+	pop.8 ; store x
+	pop.9 ; store y
+	pop.6 ; store color
+	4 shl pop.7 ; store char*16
+	0 pop.11 ; init y counter
+	while push.11 16 lt
+	do
+		push.7 push.11 add out[rom_addr] ; line of char in rom
+		0 pop.10 ; init bit counter (x)
+		while push.10 8 lt
+		do
+			; get the line and shift it so always
+			; check high bit of byte and set color
+			if in[rom_data] push.10 shl 128 band 
+			then push.6 else black endif
+			; form y
+			push.9 push.11 add
+			; form x
+			push.8 push.10 add
+			vga_point ; write the point
+			; x position update
+			push.10 1 add pop.10
+		endwhile
+		; y position update
+		push.11 1 add pop.11
+	endwhile	
+return
+
+;===============================
+; VGA put string
+;===============================
+; enters with stack:
+; nchars n... color y x (top)
+; count n on the stack 
+; followed by n characters on the stack
+vga_putstr:
+	=vga_putstr_x
+	=vga_putstr_y
+	=vga_putstr_color
+	=vga_putstr_count
+	while vga_putstr_count 0 gt
+	do
+	   vga_putstr_color vga_putstr_y vga_putstr_x 
+		vga_putchar
+		vga_putstr_x 8 add =vga_putstr_x 
+	   vga_putstr_count 1 sub =vga_putstr_count
+	endwhile
+return
+
+;===============================
+; random num2char_num generator
+;===============================
+; from "Art of Electronics" page 657
+; entry: uses nothing on stack
+; exit: +1 or -1 on stack.Modified to 1 or 0 on stack. Useful for generating n-bit numbers
+; 36-bit shift reg:
+; shift left one bit
+; bits 36 and 25 XORed (2nd reg bit 17 and 6)
+; and stored to bit 0
+rand_bit: 
+    ; get high order rand register and copy for xor
+    ; shift left to align bits 17 and 6
+    ; bitwise xor
+    ; move bit 17 to bit 0
+    ; save xor bit for later
+    rand2 dup 11 shl bxor 17 shr =temp
+
+    ; modify rand2 by shifting in the high
+    ; order bit from rand --
+    ; get rand and shift right 17
+    ; get rand2 shl 1-bit and OR with
+    ; bit from rand
+    rand 17 shr rand2 1 shl bor =rand2
+
+    ; modify rand
+    ; shift left to open up 0 bit  
+    ; get the stored xor bit (in temp)
+    ; OR to form new final rand
+    ; dup to store and for output
+    rand 1 shl temp bor dup =rand
+
+    ; construct +/-1 output
+    ; band with 1 to isolate bit 0
+    ; mult by 2 and subtract 1
+    ; so that final output is +1 or -1    
+    1 band ;1 shl 1 sub
+	
+	;use appropriate bits of random number on the stack
+return
+
+
+;=====================================================
+; Draws a colored line between any two points (x1,y1) and (x2,y2)
+vga_line: ; color, x1, y1, x2, y2 
+  =y2
+  =x2
+  =y1
+  =x1
+  =color
+  0 =count
+
+  x1 =x_temp
+  y1 =y_temp
+
+  ; Takes absolute value of difference and does something to it
+
+  ; Does the x's first
+  if x2 x1 lt
+  then
+    x1 x2 sub =dx
+    -1 =s1
+  endif
+
+  if x2 x1 eq
+  then
+    0 =dx
+    0 =s1
+  endif
+
+  if x2 x1 gt
+  then
+    x2 x1 sub =dx
+    1 =s1
+  endif
+
+  ; Now does the y's
+  if y2 y1 lt
+  then
+    y1 y2 sub =dy
+    -1 =s2
+  endif
+
+  if y2 y1 eq
+  then
+    0 =dy
+    0 =s2
+  endif
+
+  if y2 y1 gt
+  then
+    y2 y1 sub =dy
+    1 =s2
+  endif
+
+  ; Does some other stuff
+  
+  0 =xchange
+
+  if dy dx gt
+  then
+    dy dx
+    =dy
+    =dx
+    1 =xchange
+  endif
+
+  dy 1 shl dx sub =e
+
+  while count dx gt not
+  do
+    color y_temp x_temp vga_point
+
+    if e 0 lt not
+    then
+
+      if 1 xchange eq
+      then
+        x_temp s1 add =x_temp
+      else
+        y_temp s2 add =y_temp
+      endif
+
+      e dx 1 shl sub =e
+
+    endif
+
+    if 1 xchange eq
+    then
+      y_temp s2 add =y_temp
+    else
+      x_temp s1 add =x_temp
+    endif
+
+    e dy 1 shl add =e
+
+    1 count add =count
+  endwhile
+
+return
+
+;=====================================
+;simple num2char function for testing
+;displays one digit at a time
+; num2char_num (top)
+num2char: ;num2char_num
+   =num2char_num
+   num2char_xpos 10 add =num2char_xpos ;update xpos for writing
+   if num2char_num 0 eq 
+   then 48 white 2 num2char_xpos vga_putchar
+   endif
+   if num2char_num 1 eq
+   then 49 white 2 num2char_xpos vga_putchar
+   endif
+   if num2char_num 2 eq
+   then 50  white 2 num2char_xpos vga_putchar
+   endif
+   if  num2char_num 3 eq
+   then 51  white 2 num2char_xpos vga_putchar
+   endif
+   if num2char_num 4 eq
+   then 52  white 2 num2char_xpos vga_putchar
+   endif
+   if num2char_num 5 eq
+   then 53  white 2 num2char_xpos vga_putchar
+   endif
+   if num2char_num 6 eq
+   then 54  white 2 num2char_xpos vga_putchar 
+   endif
+   if num2char_num 7 eq
+   then 55  white 2 num2char_xpos vga_putchar
+   endif
+   if num2char_num 8 eq
+   then 56 white 2 num2char_xpos vga_putchar
+   endif
+   if num2char_num 9 eq
+   then 57 white 2 num2char_xpos vga_putchar
+   endif
+      
+return
+;=======================================	
+
+;=======================================
+;max . Works for positive numbers only
+;stack :
+; max2 max1 (top)
+max:
+  =max1
+  =max2
+  if max1 max2 lt not ;max1 >= max2
+  then
+      max1
+  else max2
+  endif
+return
+
+;==========================================
+;min. stack:
+; min2 min1 (top)
+min:
+ =min1
+ =min2
+ if min1 min2 lt not ;min1>=min2
+ then 
+	min2
+ else min1
+ endif
+return
+;================================================
+
+;===============================
+;======begin ISR section
+ISR TIMER
+if direction down eq
+then ;downward direction
+	if line1y1 479 lt ;line1y1<479
+	then
+		line1y1 1 add =line1y1
+		line1y2 1 sub =line1y2
+		;white =line1color
+		line1color 0 line1y1 639 line1y2 vga_line
+	else ;line1y1
+		up =direction
+		gray5 =line1color
+	endif
+else ;upward direction
+	if line1y1 0 gt
+	then
+		line1y1 1 sub =line1y1
+		line1y2 1 add =line1y2
+		line1color 0 line1y1 639 line1y2 vga_line
+	else; end of upward direction
+		down =direction
+		gray3 =line1color
+	endif
+endif
+endISR
+;=============
+;===========Key[1] ISR
+ISR KEY1
+    ;line1y1 10 add =line1y1
+    ;line1y2 10 sub =line1y2
+    red =line1color
+    ;line1color 0 line1y1 639 line1y2 vga_line
+    ;dup drop
+endISR
+;===========
+;===========Key[2] ISR
+ISR KEY2
+    ;line1y1 10 add =line1y1
+    ;line1y2 10 sub =line1y2
+    yellow =line1color
+    ;line1color 0 line1y1 639 line1y2 vga_line
+   ; dup drop
+endISR
+;=============
+;=============
+ISR KEY3
+    ;line1y1 10 add =line1y1
+    ;line1y2 10 sub =line1y2
+    green =line1color
+    ;line1color 0 line1y1 639 line1y2 vga_line
+    ;dup drop
+endISR
+;==========
+;==========
+;ISR UNUSED
+;endISR
+;==========
+
+;================================================================
+;End Of Code
+;================================================================

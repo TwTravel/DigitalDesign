@@ -1,0 +1,78 @@
+
+<html>
+<head>
+<title>ee576 Lab 2</title>
+</head>
+
+<body>
+<h2>
+EE 576: Laboratory 2 </h2> 
+<h2> Implement your ECE475 cpu. </h2>
+<p>
+<b> Introduction. </b>
+
+<p> In this assignment you will implement a RISC cpu. You can use any reasonable RISC ISA and datapath you want. You can start from scratch, use your EC475 design, go to <a href="../../../../../../www.opencores.org/browse.cgi/by_category@filter1=status_stable&filter2=language_verilog">opencores.com</a> or <a href="../../../../../../www.fpgacpu.org/links.html">fpgacpu.com</a>, or any of many <a href="../../../../../../python.ecs.umass.edu/~ece354/resources.html">course sites</a>. You can use the Kraken design on my <a href="../../../../../../instruct1.cit.cornell.edu/courses/ece576/DE2/index.html">DE2 page</a> as an example, but you cannot use it directly for this lab. You cannot use the NiosII design software. You need to code it yourself inVerilog. 
+<p> <b> Procedures:</b>  
+<ol>
+  <li>  You must handle the boards only on on the ESD mat. These boards are expensive and you must be careful of them. 
+  <li>Make sure the Altera DE2 board is connected to power and to the PC as specified 
+    in the evaluation board description. Turn on the power supply with the red switch 
+    on the board. Make sure the toggle switch on the left edge of the board marked (<code>Run/Prog</code>) is in the <code>Run</code> position and <em>leave it there at all times</em>.
+The FPGA will program in the <code>Run</code> position. Putting the switch in the <code>Prog</code> position writes your design to flash memory, which you do not want to do.
+  <li>The <a href="../../DE2/DE2_TOP.v">default top level module</a> for the DE2 defines all of the logical i/o signals. 
+  <li>You can define the mapping from logical signal to FPGA pins (<em>pin assignment</em> in QuartusII) for all the pins at once by importing <a href="../../DE2/DE2_pin_assignments.csv">this file</a> using the menu item <code>Assignments... Import Assignments...</code> and specifying the file name. There is no need to define pins one-by-one.   
+<li>The 7-segment displays can be run with a module shown near the end of a <a href="../../../../../../instruct1.cit.cornell.edu/courses/ece576/DE2/DE2_example1a.v">Verilog design</a> from the <a href="../../../../../../instruct1.cit.cornell.edu/courses/ece576/DE2/index.html">DE2 page</a>. 
+<li>The Kraken example on the <a href="../../../../../../instruct1.cit.cornell.edu/courses/ece576/DE2/index.html">DE2 page</a> shows how to instantiate RAM on the FPGA so that M4K RAM blocks are used. 
+<li>The Altera <a href="../../../../../../altera.com/literature/hb/qts/qts_qii51007.pdf">HDL style manual</a> page 6-23 shows how to infer ROM.
+</ol>
+<p>You may want to use the QuartusII SignalTap tool to verify your design. Here are the steps that seem to be necssary to get SignalTap working.</p>
+<ol>
+  <li>Choose menu <code>Tools&gt;SignalTap</code></li>
+  <li>In the main SignalTap window, click <code>Hardware Setup...</code> (in the upper rigtht corner) <br>
+  and in the dialog box choose the hardware (USB-Blaster)</li>
+  <li>Choose menu <code>Edit&gt;AddNodes...
+    </code>
+    <ol>
+      <li>Choose the appropriate <code>Filter</code> to simplify the list of nodes, the press <code>List</code></li>
+      <li>Highlight nodes and move to right-hand list using <strong><code>&gt;</code></strong> button </li>
+      <li>Click <code>OK</code> to get back to main SignalTap window </li>
+    </ol>
+  </li>
+  <li>In the main SignalTap window, click the <code>Clock ...</code> button  and choose the clock signal as in AddNodes</li>
+  <li>In the node panel of the main window, set up trigger conditions.</li>
+  <li>Compile and then load the design onto the FPGA</li>
+  <li> In the main SignalTap window, toggle the <code>Data/Setup</code> button</li>
+  <li> Choose menu <code>Processing &gt;Run Analysis</code> </li>
+</ol>
+<hr>
+<b> Assignment </b> 
+<ul>
+  <li> You will design the system in Verilog and compile it to the FPGA using QuartusII. Don't use schematic entry or VHDL. The Verilog code should be written at the level of registers, multiplexers, and ALU, so that if you have a <a href="../../../../../../instruct1.cit.cornell.edu/courses/ece576/DE2/DataPath.png">data path</a> diagram, there is a direct relationship between buses you have drawn and wires defined in the Verilog.</li>
+  <li>You will implement a RISC cpu, then run assembly code on it. </li>
+  <li>The cpu must be compute-universal. </li>
+  <li>Minimally the asm code must contain nested loops and execute the following pseudocode:<br>
+    <pre>
+ A: load immediate a register Rx with the constant 1
+    load immediate a register Ry with the constant 4
+ B: subtract Ry-Rx and store in Ry
+    if Ry is not zero, branch to B
+    load a RAM location, M, into Rz
+    add 1 to Rz
+    store Rz back to M
+    unconditional branch to A </pre>
+<li>Your implementation needs to have enough output to the LEDs and/or 7-seg displays that you can determine the state of the machine. Perhaps putting the program counters, data bus, and memory address bus on the 7-seg displays would be sufficient. </li>
+  <li>You can use FPGA on-chip memory or SRAM. You can use FPGA ROM or RAM for the assembler code. If you use RAM, you will need a method to load the program into memory. </li>
+  <li>You should use KEY0 as the cpu reset and KEY3 as the cpu clock for single-step testing. <br>
+  </li>
+  <br>
+  Be prepared to demo your design to your TA in lab.</li>
+</ul>
+<p> Your written lab report should include: 
+<ul>
+  <li>An RTL (register transfer level) data path of your design.   
+  <li>A timing diagram for the interaction of memory and the cpu <li> A heavily commented listing of your Verilog design. 
+</ul>
+<hr>
+<small> <font size="-1">Copyright Cornell University July 2006</font></small> 
+</body> </html>
+

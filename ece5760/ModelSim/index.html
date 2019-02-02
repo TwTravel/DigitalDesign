@@ -1,0 +1,89 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>modelSim</title>
+</head>
+
+<body>
+<h2 align="center">Using ModelSim<br />
+  ECE 5760 Cornell</h2>
+<p>Although ModelSim is integrated into Quartus (<a href="../StudentWork/Julie_wang/ModelSimLecture/ModelSimLecture.html">See doc by Julie Wang</a>), I found it easier to use it stand-alone. <br />
+An example follows, but there is no guarantee that my way of running ModelSim is even close to optimal. <br />
+The Device Under Test (DUT) in the example is a direct digital synthesis sine wave generator, as given below.</p>
+<pre>//////////////////////////////////////////////////
+////////////	Direct Digital Synth	//////////////
+//////////////////////////////////////////////////
+// Input is an increment, phase and a clock
+// output is a sine wave
+// Output frequency = increment * clock_rate / accumulator_bit_length
+// Here accumulator_bit_length is 32 bits
+// Phase is measured in samples out of 256/cycle. e.g. 64 input is 90 degrees
+
+module DDS (clock, reset, increment, phase, sine_out);
+input clock, reset;
+input [31:0] increment ;
+input [7:0]  phase;
+output wire signed [15:0] sine_out;
+reg [31:0]	accumulator;
+
+always@(posedge clock) begin
+	if (reset) accumulator <= 0;
+	// increment phase accumulator
+	else accumulator <= accumulator + increment  ;
+end
+
+// link the accumulator to the sine lookup table
+sync_rom sineTable(clock, accumulator[31:24]+phase, sine_out);
+
+endmodule</pre>
+<p>The <a href="testbench.v">testbench source</a> defines a clock and input values to the DUT, as well as the sine wave table module,  in 2's complement, 16 bit format. <br />
+The full synthesizable verilog for DE2 is example 1 (third design) on the <a href="../DE2/index.html">DE2 hardware page</a>. </p>
+<p>To simulate the DUT:</p>
+<ol>
+  <li>Make a folder and put the source in the folder</li>
+  <li>Start ModelSim and start a new project using <code>File...New...project</code></li>
+  <li>In the dialog box sepecify the name and project location and press OK</li>
+  <li>In the next popup window, <code>Add existing File</code>, and select <code>testbench.v</code></li>
+  <li>Compile using <code>Compile...Compile All.</code> You should see message <code># Compile of testbench.v was successful.</code></li>
+  <li>Chose <code>Simulate...Start Simulation</code> and in the dialog box navigate to <code>work...testbench.v</code></li>
+  <li>You should see the testbench signal names in a panel. Select them all and choose <code>Add....To Wave...Selected Signals</code></li>
+  <li>Choose <code>Simulate...Run...Run 100</code>. You should see waveforms in the right panel.</li>
+  <li>Right-click the name of the signal <code>testbench_out</code> and choose <code>Format...Analog(automatic)</code></li>
+  <li>You should see the DDS sine wave. Scroll to the beginning of the waveforms (t=0), you should see a reset pulse lasting two <code>clk_50</code> cycles.</li>
+</ol>
+<p>The following images shows the modelsim  interface after the 10 steps above.  (click to enlarge)<br />
+<a href="ModSim_pgm.PNG"><img src="ModSim_pgm.PNG" width="941" height="518" alt="pgm interface" /></a></p>
+<p>The following image shows the modelsim wave interface (click to enlarge)<br />
+  <a href="ModSim_interface.PNG"><img src="ModSim_interface.PNG" width="946" height="467" alt="interface" /></a></p>
+<p>The wave viewer zoomed in. Notice that the testbench_out signal is undefined before the reset pulse (yellow cursor line)<br />
+because the acculumator signal has not been initialized yet. Running the cursor over the waveforms reads out the value in the Msg panel.<br />
+<img src="ModSim_wave.PNG" width="948" height="661" alt="zoomed wave" /></p>
+<p>Clicking on the DUT icon in the left panel shows more signals that you can display. Right-click on <code>accumulator</code> and choose <code>Add....To Wave...Selected Signals</code>. Now in the wave panel, right-click on the name <code>accumulator</code> and choose <code>Radix...Unsigned</code>. Then right-click again and choose <code>Format...Analog(custom)</code> and set the limits for a 32 bit signal. The following image shows the new accumulator phase waveform. The <code>index</code> wave was also set to <code>Radix...Hexadecimal</code>.<br />
+<img src="Add_accum.PNG" width="970" height="532" alt="accumulator" /></p>
+<p><strong>Exporting data from ModelSim</strong></p>
+<p>1. From the ModelSim console window, select &quot;View&quot; -&gt; &quot;List&quot;. A  separate List window will pop up. <br />
+  It may be handy to undock the list window.
+  <br /> 
+2. Go to the waveform view, and select the signals you want to save as  data.  <br />
+3. Drag and drop the signals into the &quot;List&quot; window, opened in step 1. <br />
+4. The left row will be shown as time, the right row as signal status  at that time. <br />
+5. From the List window, chose &quot;File&quot; -&gt; &quot;Write List&quot; -&gt; &quot;Tabular&quot; to  save data.<br />
+6. You may need to change data formats: <br />
+To convert data type of exported signal in Modelsim: 1) View-&gt;Signal Properties 2) Change type under 'Radix' box </p>
+<div><br /> 
+The saved data can now be opened in programs like Microsoft Excel.</div>
+<p>In the image below, the <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">sine_out</span> signal was dragged to the List.<br />
+  <img src="ModSim_Export.PNG" width="1310" height="1017" alt=""/><br />
+</p>
+<hr />
+<p><a href="Using_ModelSim.pdf">Getting started with ModelSim</a></p>
+<p><a href="../../../../../www.altera.com/support/examples/modelsim/exm-modelsim.html">ModelSim Simulation Design Examples</a></p>
+<hr />
+<p>&nbsp;</p>
+<p>Copyright Cornell University 
+  <!-- #BeginDate format:Am1 -->April 27, 2017<!-- #EndDate -->
+</p>
+<p>&nbsp;</p>
+</body>
+</html>

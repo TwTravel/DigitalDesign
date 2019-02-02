@@ -1,0 +1,62 @@
+<title>ECE 576 - SimpleGPU</title>
+
+<head><style>
+a:link {color: #6666CC; text-decoration: overline; }     /* unvisited link */
+a:visited {color: #666666; text-decoration: overline; }  /* visited link */
+a:hover {color: #222222; text-decoration: underline; }   /* mouse over link */
+a:active {color: #5555FF; text-decoration: overline; }   /* selected link */ 
+</style></head>
+
+<body bgcolor="#DDDDDD">
+
+<table style="border-width: 15pt; border-collapse: separate; " ><tr><td colspan=2>
+
+<table width=759><tr><td align=center style="border: 1px solid black; padding: 1em; background-color: white;">
+<b><big><big><big>SimpleGPU</big>
+<br>ECE 576 - Fall 2007</big>
+<br>John Sicilia (jas328) & Austin Lu (asl45)
+</td></tr></table>
+
+</td></tr>
+<tr><td width=150 valign=top>
+<table width=150><tr><td valign=top style="border: 1px solid black; padding: 1em; background-color: white; height=700;"> 
+<p><a href="index.htm">Home</a>
+<p><a href="intro.htm">Introduction</a>
+<p><a href="sdesign.htm">Software Design</a>
+<p><a href="hdesign.htm">Hardware Design</a>
+<p><a href="results.htm">Results</a>
+<p><a href="issues.htm">Issues</a>
+<p><a href="conclusion.htm">Conclusion</a>
+<p><a href="pics.htm">More Pictures</a>
+<br><br><br><br><br><br><br>
+</td></tr></table>
+
+</td><td valign=top>
+<table width=600 ><tr><td style="border: 1px solid black; padding: 1em; background-color: white;">
+<b><big><big>Issues</big></big></b><br><br>
+
+
+
+
+<p>We use a lot of multiplies, which determined how fast we could clock the pipeline. This was our basis for coming out with the pipeline scheme, in order to minimize the number of sequential multiplies that had to be performed in one iteration.
+
+<p>We started by doing graphics processing work during vertical and horizontal syncs, which produced less than spectacular results. Our solution to this was to run the graphics processing work all the time, and buffer it instead of writing directly to SRAM. By doing this, we were able to increase our running time tenfold, because we did not have to run on the 10% of the VGA clock that was during a cync.
+
+<p>A problem that we ran into early on was that we found we were not able to draw diagonal lines: all of our images were block and consisted only of vertical and horizontal lines. By tracing back to the root of the problem, we were able to tell that it was because we were only dealing with integer math. Since we could not change this fact (without implementing fixed point in the middle of a system that had no other need for it), we had to change an inequality. Our original verilog performed the following computation:
+<p><center><img src="images/inpolygon1.gif"></center>
+<p>But the divide in this statement often returned a number less than one, which we could not deal with. Our goal then became to get rid of the divide. By modifying the original equation, we were able to come up with this:
+<p><center><img src="images/inpolygon2.gif"></center>
+<p>Unforunately, there needed to be two cases since we are potentially multiplying by a negative number, but it worked. We still had our more step that we needed to work out, however. Since we were dealing with negative numbers, our straight comparators were not going to work. So, instead, we performed a quick MUX that xor'd the top bits of each number. If the xor was zero, then the comparison went through normally. If the xor was 1, one number was positive and one was negative, so no real comparator is needed.
+
+<p>The signed multiply of the depth turned out to be critical - we were originally using an unsigned multiply. Although most of our work was dealing with unsigned numbers, when we had to calculate the Z-buffer, we were using the A, B, and C constants of the plane. These numbers could easily be negative, and in fact often were. By using an unsigned multiply instead of a signed one, our results were skewed and often incorrect.
+
+<p>This error presented itself as an inability to draw a gradient in one direction. When sloping upward, our B was positive, so our multiplication worked correctly and everything seemed fine. When sloping downward, however, we would see negative numbers which manifested themselves in our coloring scheme at the time as a block of a non-gradiented block. 
+
+<p>By altering our multiply to be signed, we encountered a second, more insidious error. Like any good engineers, we minimized the size of our registers so that they would be able to hold just enough data without wasting bits. Unfortunately, after converting certain elements to signed wires, this meant that numbers greater than 512 in our 10-bit numbers were viewed as negative. In order to correct this, we increased the size of our registers by one. 
+
+<p>Our scheme and polygon detection units required that our vertices by listed in counter-clockwise in a normal coordinate system, or clockwise in the y-reversed system found on monitors. However, we found that not only did you have to pass polygons counter-clockwise, you had to pass in the top-left most point first. If the top left point was not passed first, a line from the bottom-right-most point would be drawn to the end of the screen. Luckily, inputting vertices in this manner is not a big change to our project, and clipping retains the top-left most point.
+
+<p> Late in the project, we found that the direction the viewer faced would also impact whether a polygon was being sent to the hardware clockwise or counterclockwise. As a result, we were forced to strictly enforce the rule that polygons being sent to hardware had their vertices in a clockwise manner. We wrote code that would ensure that the polygon would be sent clockwise in our VGA setup despite a viewer's orientation.
+
+</td></tr></table>
+</td></tr></table>

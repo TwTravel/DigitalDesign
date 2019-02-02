@@ -1,0 +1,94 @@
+
+<html>
+<head>
+<title>ee576 Lab 0</title>
+</head>
+
+<body>
+<h2>
+EE 576: Laboratory 0 </h2> 
+<h2> Introduction to the hardware and software.</h2>
+<p>
+<b> Introduction. </b>
+
+<p> In this assignment you will build a circuit which reads some switches and produces a <a href="../../../../../../www.hit.bme.hu/people/papay/sci/DDS/products.htm">direct digital synthesis</a> (<a href="../../../../../../www.geocities.com/CapeCanaveral/5611/dds.html">DDS</a>) sine wave. 
+<p> <b> Procedures:</b>  
+<ol>
+  <li>  You must handle the boards only on on the ESD mat. These boards are expensive and you must be careful of them. 
+  <li>Make sure the Altera DE2 board is connected to power and to the PC as specified 
+    in the  <a href="../../DE2/tut_initialDE2.pdf">board description</a>. Turn on the power supply with the red switch 
+    on the board. Make sure the toggle switch on the left edge of the board marked (<code>Run/Prog</code>) is in the <code>Run</code> position and <em>leave it there at all times</em>.
+The FPGA will program in the <code>Run</code> position. Putting the switch in the <code>Prog</code> position writes your design to flash memory, which you do not want to do.
+  <li>The <a href="../../DE2/DE2_TOP.v">default top level module</a> for the DE2 defines all of the logical i/o signals from the FPGA.  A <a href="../../DE2/DE2_TOPjsc59.v">cleaned up version</a> of the top module
+was written by Jordan  Crittenden (2008). 
+  <li>You can define the mapping from logical signal to FPGA pins (<em>pin assignment</em> in QuartusII) for all the pins at once by importing <a href="../../DE2/DE2_pin_assignments.csv">this file</a> using the menu item <code>Assignments... Import Assignments...</code> and specifying the file name. There is no need to define pins one-by-one. And a note about pin assignments:<br>
+  <pre>Here is the reason why PIN_AE24 will not assign. The physical pin on
+the cyclone chip corresponding to PIN_AE24 is a dual-purpose pin. Quartus 
+must be told to use this as regular i/o (instead of a programming pin) 
+after programming.
+Solution:
+In quartus go to--
+Assignments >> Device...
+Device and Pin Options...
+Dual-Purpose Pins (tab)
+choose: "Use as regular i/o" for entry: nCEO
+Solution was adapted from here:
+http://forum.eaw.com.cn/thread/7617/1
+Tony Tsang</pre>  
+  <li>Read the Altera <a href="../../Verilog/tut_quartus_intro_verilog.pdf">tutorial</a> on using Verilog with QuartusII.
+<li>You may want to use the QuartusII SignalTap tool to verify your design. Here are the steps that seem to be necssary to get SignalTap working. For more information, read the Altera <a href="../../Verilog/tut_signaltapII_verilogDE2.pdf">tutorial</a> on using SignalTap, an on chip logic analyzer. 
+  <ol>
+    <li>Choose menu <code>Tools&gt;SignalTap</code></li>
+    <li>In the main SignalTap window, click <code>Hardware Setup...</code> (in the upper rigtht corner) <br>
+    and in the dialog box choose the hardware (USB-Blaster)</li>
+    <li>Choose menu <code>Edit&gt;AddNodes... </code>
+        <ol>
+          <li>Choose the appropriate <code>Filter</code> to simplify the list of nodes, the press <code>List</code></li>
+          <li>Highlight nodes and move to right-hand list using <strong><code>&gt;</code></strong> button </li>
+          <li>Click <code>OK</code> to get back to main SignalTap window </li>
+        </ol>
+    </li>
+    <li>In the main SignalTap window, click the <code>Clock ...</code> button and choose the clock signal as in AddNodes</li>
+    <li>In the node panel of the main window, set up trigger conditions.</li>
+    <li>Compile and then load the design onto the FPGA</li>
+    <li> In the main SignalTap window, toggle the <code>Data/Setup</code> button</li>
+    <li> Choose menu <code>Processing &gt;Run Analysis</code> </li>
+  </ol>
+<li><img src="VGAsocket.png" align="left">The <a href="../../DE2_Datasheets/VGA%20DAC/ADV7123_a.pdf">VGA output</a> can operate as a 50 MHz D/A converter if you set the <code>vga_blanking</code> and <code>vga_sync</code> i/o signals high. You also need to supply a clock to <code>VGA_CLK</code>. Output the sine wave through the VGA red channel. The <a href="../../../../../../instruct1.cit.cornell.edu/courses/ece576/NiosII_C/TimerSINE.v">verilog design</a> for another example contains a DDS unit and a lookup table. The connector pinout is shown with the view of the socket looking at the edge of the board. If you accidentally ground one of the RGB outputs, it will <font color="#FF0000"><strong>instantly destroy</strong></font> the output driver on the DE2. 
+A safe approach is to use one of the screws at the corner of the DE2 as ground for the scope. <br clear="left">
+<li>You will need to generate a table containing 10-bit approxmations of a sine wave. You can precompute them and build the Verilog table in matlab using the following program, if you need 256 samples/cycle. 
+  <pre>%generate a sine table for Verilog ROM 
+x = 1:256;
+% Sin : scale to 10-bits and offset 9-bits
+y = fix(512 + 511*sin(2*pi*(x-1)/256)); 
+for i=x
+    fprintf('\t\t\t8''h%02x: sine = 10''h%03x ;\n', x(i)-1 ,y(i))    
+end</pre> 
+<li>When you come to lab, you should have  a clean draft of the Verilog code required for the assignment.
+</ol>
+<hr>
+<b> Assignment </b> 
+<ul>
+  <li> You will design the system in Verilog and compile it to the FPGA using QuartusII. Don't use schematic entry or VHDL. Do not build a general purpose CPU for this lab.</li>
+  <li>Build a circuit to produce a DDS  sine/triangle wave at 50 MHz sample rate then output it through the red channel of the VGA connector.</li>
+  <li>If KEY2 is not pressed, the ouput is a sine wave. If it is pressed, the output is a triangle wave.  </li>
+  <li>You should be able to enter the desired frequency in Hz using  SW[17:0] and KEY3. When pressed, KEY3 will multiply the frequency by 256. As an example, setting only SW7 to the up position, and releasing KEY3, should produce 128 Hz. Setting only SW7 to the up position, and pressing KEY3, should produce 128*256=32768 Hz. </li>
+  <li>Your implementation should have 256 sine samples/cycle at low frequencies. </li>
+  <li>The frequency of the sine wave should be correct to within the accuracy of the scope.</li>
+  <li>Plot sine amplitude versus frequency from zero to 1/2 the Nyquist frequency. </li>
+  <li>According to the <a href="../../DE2_Datasheets/VGA%20DAC/ADV7123_a.pdf">VGA DAC datasheet</a>, The DAC is much faster than 50 MHz (the fastest input clock to the FPGA). Use the Megafunction manager (<code>Tools...Megafunctions</code>) to build a phase-locked-loop to increase the DDS clock frequency. How fast can you go before the timing constraints of the FPGA are no longer met? </li>
+</ul>
+<p>Be prepared to demo your design  to your TA in lab and verify that the frequency is correct to the accuracy of the scope. Demo the system using the highest reliable clock frequency.</p>
+<p> Your written lab report should include: 
+
+<ul>
+  <li>An RTL (register transfer level) block diagran of your design. 
+  <li> Other design aspects of the assignment.   
+  <li>Why does the amplitude of the sine wave drop off near the Nyquist frequency?
+  <li>What is the maximum PLL-generated clock frequency you can use to run the DDS and DAC? 
+  <li> A heavily commented listing of your Verilog design. 
+</ul>
+<hr>
+<small> <font size="-1">Copyright Cornell University May 2008</font></small> 
+</body> </html>
+

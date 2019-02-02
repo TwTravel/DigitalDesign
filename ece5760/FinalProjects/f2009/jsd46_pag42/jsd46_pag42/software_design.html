@@ -1,0 +1,56 @@
+<link rel="stylesheet" type="text/css" href="web.css" />
+<head> 
+	<title>Video Production Module for Altera DE2 Board</title> 
+</head> 
+
+<body>
+<h1 align="center">Video Production Module for Altera DE2 Board</h1>
+<center><img src="Images/titlepic.jpg" width=600 height=400></center>
+<p align="center">James Du (jsd46)<br>Peter Greczner (pag42)<br></p>
+
+<table width=100%<tr><td width="10"></td><td>
+<ul id="navlist">
+	<li><a href="index.html">Introduction</a></li>
+	<li><a href="high_level_design.html">High Level Design</a></li>
+	<li><a href="hardware_design.html">Hardware Design</a></li>
+	<li><a href="software_design.html">Software Design</a></li>
+	<li><a href="results.html">Results of Design</a></li>
+	<li><a href="conclusion.html">Conslusions</a></li>
+	<li><a href="appendix.html">Appendix</a></li>
+	<li class="last"><a href="references.html">References</a></li>
+</ul>
+</td></tr>
+</table>
+
+<h2>Software Design</h2>
+<table width=100%>
+	<tr>
+		<td width="10"></td>
+		<td>
+			In order to send an image to the FPGA we had to design software to run on a PC.  Initial prototype of the software was developed in MATLAB.  However when we increased the baud rate substantially we noticed that the execution time offered almost zero increase and we thus believed that MATLAB was limiting our peak performance.  This caused us to switch into developing a C executable.
+			<br><br>
+			While we developed all the MATLAB serial communication code ourselves we had to research and find source files for reading a bitmap image in C and for writing to a serial port in C.  We have referenced the sources for these in the appendix.  The actual executable that sends the data and implements these functions were written by us and the source code is included for both C and MATLAB.
+			<br><br>
+			Because the MATLAB code is more easily debuggable since you can step through it as opposed to creating an executable if you were to recreate this project we suggest you start with MATLAB as opposed to the C programs.
+			<br><br>
+			The way this software works is that you specify a bitmap image which you would like to send (either 640x480 or 320x240) and then the program packages the data appropriately, opens a serial communication, and sends the data to the FPGA for it to read.  The user is responsible for making sure that the FPGA is in the right kind of data reading method (one of the five methods mentioned above).
+		</td>
+	</tr>
+</table>
+<br><br>
+
+<table width=100%<tr><td width="10"></td><td>
+<ul id="navlist">
+	<li><a href="index.html">Introduction</a></li>
+	<li><a href="high_level_design.html">High Level Design</a></li>
+	<li><a href="hardware_design.html">Hardware Design</a></li>
+	<li><a href="software_design.html">Software Design</a></li>
+	<li><a href="results.html">Results of Design</a></li>
+	<li><a href="conclusion.html">Conslusions</a></li>
+	<li><a href="appendix.html">Appendix</a></li>
+	<li class="last"><a href="references.html">References</a></li>
+</ul>
+</td></tr>
+</table>
+
+</body>

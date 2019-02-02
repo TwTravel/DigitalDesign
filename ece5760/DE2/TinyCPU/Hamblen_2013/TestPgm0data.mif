@@ -1,0 +1,13 @@
+DEPTH = 256;
+WIDTH = 16;
+  
+ADDRESS_RADIX = HEX;
+DATA_RADIX = HEX;
+   
+CONTENT
+BEGIN
+[00..FF]	:	0000;
+00	:	0000;	% initA  % 
+01	:	0001;	% incr  % 
+02	:	0000;	% outval  % 
+END ;	

@@ -1,0 +1,68 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Number representation</TITLE>
+<META NAME="description" CONTENT="Number representation">
+<META NAME="keywords" CONTENT="576_report05">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="576_report05.css">
+
+<LINK REL="next" HREF="node9.html">
+<LINK REL="previous" HREF="node7.html">
+<LINK REL="up" HREF="node7.html">
+<LINK REL="next" HREF="node9.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation"><!--Navigation Panel-->
+<A NAME="tex2html116"
+  HREF="node9.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="next.png"></A> 
+<A NAME="tex2html114"
+  HREF="node7.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="up.png"></A> 
+<A NAME="tex2html108"
+  HREF="node7.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="prev.png"></A>   
+<BR>
+<B> Next:</B> <A NAME="tex2html117"
+  HREF="node9.html">Function tables</A>
+<B> Up:</B> <A NAME="tex2html115"
+  HREF="node7.html">Implementation Details</A>
+<B> Previous:</B> <A NAME="tex2html109"
+  HREF="node7.html">Implementation Details</A>
+<BR>
+<BR></DIV>
+<!--End of Navigation Panel-->
+
+<H2><A NAME="SECTION00041000000000000000">
+Number representation</A>
+</H2>
+<P>
+<BIG CLASS="LARGE">The number representation we chose was the 18-bit (or 16-bit, depending on the part of the meta-pipeline) fixed point.
+Originally we attempted to implemented a simpler version of IEEE floating point specification (IEEE754) - specifically without infinity and NaN support - so that number conversions from software on the NIOS II could be as easy as a cast in C.
+However, the idea was scrapped in the interests of time, since a prior lab in the class already introduced us to the 18-bit fixed point format.
+</BIG>
+<P>
+<BR><HR>
+<ADDRESS>
+
+2007-12-02
+</ADDRESS>
+</BODY>
+</HTML>

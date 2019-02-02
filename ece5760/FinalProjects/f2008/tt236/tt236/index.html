@@ -1,0 +1,157 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" /><title>Brute Force Search of a DES Keyspace</title>
+
+<meta name="keywords" content="" />
+<meta name="description" content="" />
+<link href="default.css" rel="stylesheet" type="text/css" />
+<meta http-equiv="CONTENT-TYPE" content="text/html; charset=utf-8" />
+<meta name="GENERATOR" content="OpenOffice.org 2.4 (Linux)" />
+<style type="text/css">
+<!--
+@page { size: 8.5in 11in; margin: 0.79in }
+P { margin-bottom: 0.08in }
+--></style>
+<meta http-equiv="CONTENT-TYPE" content="text/html; charset=utf-8" />
+<meta name="GENERATOR" content="OpenOffice.org 2.4 (Linux)" />
+<style type="text/css">
+<!--
+@page { size: 8.5in 11in; margin: 0.79in }
+P { margin-bottom: 0.08in }
+--></style>
+<meta http-equiv="CONTENT-TYPE" content="text/html; charset=utf-8" />
+<meta name="GENERATOR" content="OpenOffice.org 2.4 (Linux)" />
+<style type="text/css">
+<!--
+@page { size: 8.5in 11in; margin: 0.79in }
+P { margin-bottom: 0.08in }
+-->
+</style><!-- Design by Free CSS Templates http://www.freecsstemplates.org Released for free under a Creative Commons Attribution 2.5 License Title : StandardIssue Version : 1.0 Released : 20070723 Description: A two-column, fixed-width and lightweight template ideal for 1024x768 resolutions. Suitable for blogs and small websites. -->
+<meta http-equiv="CONTENT-TYPE" content="text/html; charset=utf-8" />
+<meta name="GENERATOR" content="OpenOffice.org 2.4 (Linux)" />
+<style type="text/css">
+<!--
+@page { size: 8.5in 11in; margin: 0.79in }
+P { margin-bottom: 0.08in }
+-->
+</style>
+<meta http-equiv="CONTENT-TYPE" content="text/html; charset=utf-8" />
+<meta name="GENERATOR" content="OpenOffice.org 2.4 (Linux)" />
+<style type="text/css">
+<!--
+@page { size: 8.5in 11in; margin: 0.79in }
+P { margin-bottom: 0.08in }
+-->
+</style>
+</head>
+<body>
+<div id="header">
+<div id="logo" style="width: 850px;">
+<h1><small><small>Brute
+Force Search of a DES Keyspace</small></small></h1>
+<h2>Defeating LM Hashes Using <span style="color: rgb(255, 102, 102);">[</span>Red<span style="color: rgb(255, 102, 102);">]</span></h2>
+Tony Tsang &nbsp;&nbsp; tt236 at cornell.edu &nbsp;
+&nbsp;Cornell University<br />
+</div>
+<div><br />
+<div style="text-align: right;">
+<div style="text-align: right;" id="menu">
+<ul>
+<li class="active"><a href="index.html">
+intro</a></li>
+<li><a href="high_level_design.html">high level
+design</a></li>
+<li><a href="hardware_design.html">hardware design</a></li>
+<li><a href="results.html">results</a></li>
+<li><a href="conclusion.html">conclusion </a></li>
+<li><a href="code.html">code</a></li>
+<li><a href="final_remarks.html">final remarks</a></li>
+<li><a href="references.html">references</a></li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div style="text-align: center;"><img src="images/both_machines.JPG" /></div>
+<br />
+<br />
+<br />
+<br />
+<div id="page"><big>Introduction</big><big><br />
+<br />
+</big>
+<p style="margin-bottom: 0in;"><big>For this project
+I used the Verilog
+hardware description language to design a brute force DES key cracker
+nicknamed <font color="#ff3366">[</font><font color="#000000">R</font>ed<font color="#ff3366">]</font>
+to search the abbreviated keyspace of the LM algorithm. The search is
+done by hardware running on a Altera Cyclone II FPGA containing
+33,216 logic elements (LEs). The final design runs on a DE2
+development and education board as a self contained entity. Users
+control the device by interacting with four pushbuttons and a toggle
+switch. Information is displayed on the LCD. </big></p>
+<br />
+<div style="text-align: center;"><img src="images/windows_login.png" alt="description of the photo" /></div>
+<br />
+<br />
+<p style="margin-bottom: 0in;"><big>The Lan Manager
+hash or LM hash is one
+of the formats Microsoft Windows used, prior to Windows Vista, to
+store user passwords fewer than 15 characters in length.[1] I came
+across LM and NTLM-method hashes without knowing what they were back
+when I was a student at Chelsea Vocational High School in New York
+City. I was part of an informal club that met in the morning. We
+worked on computers mostly to enjoy Mr. Ford and the company of
+peers. One day I was confronted with a computer we did not have the
+password to. A couple of seconds on Google and I knew that we could
+use a program that manipulated the SAM Database in Windows to reset
+the password.[2] Before doing that, I must have tried a version of
+pwdump[3], which printed something like this on the screen:</big></p>
+<p style="margin-left: 0.81in; margin-bottom: 0in;"><big><font face="Courier New, monospace"><font size="1"><big>Administrator:500:NO
+PASSWORD*********************:NO PASSWORD*********************:::</big></font></font></big></p>
+<p style="margin-left: 0.81in; margin-bottom: 0in;"><big><font face="Courier New, monospace"><font size="1"><big>Guest:501:NO
+PASSWORD*********************:NO PASSWORD*********************:::</big></font></font></big></p>
+<p style="margin-left: 0.81in; margin-bottom: 0in;"><big><font face="Courier New, monospace"><font size="1"><big>HelpAssistant:1000:49B8CFC443F90E8B0F2FA540967D4738:A9E42EEFDF04B62AAF0E85386C06CDCA:::</big></font></font></big></p>
+<p style="margin-left: 0.81in; margin-bottom: 0in;"><big><font face="Courier New, monospace"><font size="1"><big>SUPPORT_388945a0:1002:NO
+PASSWORD*********************:58A7C3CB9564DAC1D1D538EEE9F0BB5E:::</big></font></font></big></p>
+<p style="margin-left: 0.81in; margin-bottom: 0in;"><big><font face="Courier New, monospace"><font size="1"><big>tony:1003:BED45CEAB653D37CAAD3B435B51404EE:90934199CDA1DEDAC480198503B77732:::</big></font></font></big></p>
+<p style="margin-bottom: 0in;"><big><br />
+</big></p>
+<p style="margin-bottom: 0in;"><big>The program
+extracted the User Account,
+LM and NTLM hashes from the Windows target. That day we opted to
+reset the password rather than discover what it was. It is well known
+in present day that programs such as L0phtcrack, ophcrack, Cain
+&amp;
+Abel, John the Ripper and others, can operate on these hashes and
+perform rainbow table and brute-force attacks to recover the original
+password in plain text and with ease. ophcrack is available in the
+form of a LiveCD. </big></p>
+<p style="margin-bottom: 0in;"><big><br />
+</big></p>
+<p style="margin-bottom: 0in;"><big>The shortcomings
+of the LM hash method
+and my prior encounter with it made for the perfect project. Further
+reassurance came from the fact that such a project would not be
+groundbreaking work. Many have demonstrated the ability to perform an
+exhaustively search on Data Encryption Standard (DES), the underlying
+encryption algorithm used in LM hashing. The COPACOBANA machine built
+by the Universities of Bochum and Kiel, Germany, can search the
+entire keyspace in 6.4 days on average using low-cost FPGAs.[4] It
+is not possible for <font color="#ff3366">[</font><font color="#000000">R</font>ed<font color="#ff3366">]</font>
+to search all 2^56 keys. Luckily, the LM keyspace is only a small
+fraction that represents 0.01% of the entire DES keyspace. <font color="#ff3366">[</font><font color="#000000">R</font>ed<font color="#ff3366">]
+</font>can search this space in no more than 2500 minutes by
+checking
+50 million hashes per second running on a 27 MHz clock. It is
+possible that <font color="#ff3366">[</font><font color="#000000">R</font>ed<font color="#ff3366">]</font>
+can finish in less than 1000 minutes if the theoretical 120 million
+hashes per second can be achieved by increasing the internal clock of
+the DES units to 100 MHz.</big></p>
+<br />
+<br />
+</div>
+<div style="text-align: right; height: 100px;" id="page">
+<a href="high_level_design.html">high level design
+</a></div>
+</body></html>

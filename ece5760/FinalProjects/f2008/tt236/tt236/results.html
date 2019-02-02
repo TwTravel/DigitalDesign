@@ -1,0 +1,202 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" /><title>Brute Force Search of a DES Keyspace</title>
+
+<meta name="keywords" content="" />
+<meta name="description" content="" />
+<link href="default.css" rel="stylesheet" type="text/css" />
+<meta http-equiv="CONTENT-TYPE" content="text/html; charset=utf-8" />
+<meta name="GENERATOR" content="OpenOffice.org 2.4 (Linux)" />
+<style type="text/css">
+<!--
+@page { size: 8.5in 11in; margin: 0.79in }
+P { margin-bottom: 0.08in }
+--></style>
+<meta http-equiv="CONTENT-TYPE" content="text/html; charset=utf-8" />
+<meta name="GENERATOR" content="OpenOffice.org 2.4 (Linux)" />
+<style type="text/css">
+<!--
+@page { size: 8.5in 11in; margin: 0.79in }
+P { margin-bottom: 0.08in }
+--></style>
+<meta http-equiv="CONTENT-TYPE" content="text/html; charset=utf-8" />
+<meta name="GENERATOR" content="OpenOffice.org 2.4 (Linux)" />
+<style type="text/css">
+<!--
+@page { size: 8.5in 11in; margin: 0.79in }
+P { margin-bottom: 0.08in }
+-->
+</style><!-- Design by Free CSS Templates http://www.freecsstemplates.org Released for free under a Creative Commons Attribution 2.5 License Title : StandardIssue Version : 1.0 Released : 20070723 Description: A two-column, fixed-width and lightweight template ideal for 1024x768 resolutions. Suitable for blogs and small websites. -->
+<meta http-equiv="CONTENT-TYPE" content="text/html; charset=utf-8" />
+<meta name="GENERATOR" content="OpenOffice.org 2.4 (Linux)" />
+<style type="text/css">
+<!--
+@page { size: 8.5in 11in; margin: 0.79in }
+P { margin-bottom: 0.08in }
+-->
+</style>
+<meta http-equiv="CONTENT-TYPE" content="text/html; charset=utf-8" />
+<meta name="GENERATOR" content="OpenOffice.org 2.4 (Linux)" />
+<style type="text/css">
+<!--
+@page { size: 8.5in 11in; margin: 0.79in }
+P { margin-bottom: 0.08in }
+-->
+</style></head>
+<body>
+<div id="header">
+<div id="logo" style="width: 850px;">
+<h1><small><small>Brute
+Force Search of a DES Keyspace</small></small></h1>
+<h2>Defeating LM Hashes Using <span style="color: rgb(255, 102, 102);">[</span>Red<span style="color: rgb(255, 102, 102);">]</span></h2>
+Tony Tsang &nbsp;&nbsp; tt236 at cornell.edu &nbsp;
+&nbsp;Cornell University<br />
+</div>
+<div><br />
+<div style="text-align: right;">
+<div style="text-align: right;" id="menu">
+<ul>
+<li><a href="index.html">
+intro</a></li>
+<li><a href="high_level_design.html">high level
+design</a></li>
+<li><a href="hardware_design.html">hardware design</a></li>
+<li class="active"><a href="results.html">results</a></li>
+<li><a href="conclusion.html">conclusion </a></li>
+<li><a href="code.html">code</a></li>
+<li><a href="final_remarks.html">final remarks</a></li>
+<li><a href="references.html">reference</a></li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div id="page"><big>Results</big>
+<p style="margin-bottom: 0in;"></p>
+<br />
+<br />
+<p style="margin-bottom: 0in;"><big><font color="#ff3366">[</font><font color="#000000">Red</font><font color="#ff3366">]
+</font><font color="#000000">worked the very first
+time I compiled
+the entire project. This was a very surprising result. All other
+projects I had worked on for this class were developed and verified
+by recompiling and testing on hardware. This project was developed
+and verified entirely using Quartus' timing simulator and then
+tested. It would not have been possible to debug this project
+entirely on hardware due to its size and complexity. </font>
+</big></p>
+<p style="margin-bottom: 0in;"><big><br />
+</big></p>
+<p style="margin-bottom: 0in;"><big><font color="#000000">For convenience,
+all modules were connected to a 27 MHz clock. My testing shows that a
+search rate of 50 million keys per second (k/s) was achieved on the
+very first try. This result is also supported by simulation which
+puts the rate at 60 million k/s. </font>
+</big></p>
+<p style="margin-bottom: 0in;"><big><br />
+</big></p>
+<p style="margin-bottom: 0in;"><big><font color="#000000">Tests were
+carried out using the LM hash of “ECE5760CORNELL”, which is </font>EBCE96A9426BAD0CC3E06CC5D05AE857</big><big><font color="#000000">.<small> </small>The string
+“CORNELL” is the 1.31E12<sup>th</sup> key to be searched.
+The search
+finished in 446 minutes, which dictates a rate of 50E6 k/s. “ECE5760”
+is the 2.96E12<sup>th</sup> key to be search. It was
+estimated to finish in
+1008 minutes. </font><font color="#ff3366">[</font><font color="#000000">Red</font><font color="#ff3366">]
+</font><font color="#000000">found the key in 1007
+minutes. The
+design is very predictable in this sense.</font></big></p>
+<br />
+<br />
+<div style="text-align: left;"><img src="images/cornell_found.JPG" width="425" /><img src="images/ece5760_running.JPG" width="425" /></div>
+<br />
+<br />
+<p style="margin-bottom: 0in;"><font color="#000000"><big>Further
+analysis
+of simulation data shows that connecting everything to a 27MHz clock
+puts the search rate at the lower bound.</big></font></p>
+<p style="margin-bottom: 0in;"><font color="#000000">
+</font></p>
+<br />
+<br />
+<div style="text-align: left;"><img src="images/corners.png" width="850" /></div>
+<br />
+<p style="margin-bottom: 0in;"><big>The right half
+of the above diagram
+shows a plot of the rate versus internal clock if DES and
+key_gen40 did not depend on each other. These numbers are for 40 DES
+units in parallel. DES is able to achieve a hash rate of 60E6 k/s at
+27 MHz and 200E6 k/s at the maximum clock rate of 100 MHz. key_gen40
+can generate 95E6 k/s at 27 MHz and 120E6 k/s at the maximum 33 MHz.</big></p>
+<p style="margin-bottom: 0in;"><big><br />
+</big></p>
+<p style="margin-bottom: 0in;"><big>We can plot the
+corner configurations
+of the two units. If DES is set to run at 100 MHz, the search rate
+will always be limited by the key generator. If DES is set to 27 MHz,
+DES itself is limiting the rate. Looking back at the test results,
+clocking everything at 27 MHz is the slow, slow corner. DES limits
+the rate to 60E6 k/s. The best configuration would be to clock the
+DES at 100 MHz and key_gen40 at 33 MHz to achieve the theoretical
+120E6 k/s.</big></p>
+<p style="margin-bottom: 0in;"><big><br />
+</big></p>
+<p style="margin-bottom: 0in;"><big><font color="#ff3366">[</font><font color="#000000">Red</font><font color="#ff3366">]
+</font><font color="#000000">fills the entire FPGA.
+At 50E6 k/s,
+</font><font color="#ff3366">[</font><font color="#000000">Red</font><font color="#ff3366">]
+</font><font color="#000000">searches the entire
+keyspace in 42
+hours. Two 7 character hashes were tried, one took 7.5 hours and the
+other took 17 hours. Strings of 6 characters take a maximum of 35
+minutes to find. Anything less than 5 characters become a trivial,
+returning a result immediately. </font>
+</big></p>
+<p style="margin-bottom: 0in;"><big><br />
+</big></p>
+<p style="margin-bottom: 0in;"><big><font color="#000000">It is postulate
+that </font><font color="#ff3366">[</font><font color="#000000">Red</font><font color="#ff3366">]
+</font><font color="#000000">can run at 100E6 k/s.
+At this rate, the
+keyspace would be searched in 20 hours.</font></big></p>
+<br />
+<br />
+<big>Videos</big><br />
+<br />
+User Interface Part 1<br />
+<br />
+<center><OBJECT  ><PARAM name="movie" value="MPFLVPlayer.swf" /><PARAM name="allowFullScreen" value="true" /><PARAM name="FlashVars" value="fn=../../../../../../../../www.youtube.com/watch@v=kh2PwUCR7A8&flvskin=MPFLVSkin.swf" /><EMBED src="MPFLVPlayer.swf"   type="application/x-shockwave-flash" allowFullScreen="true" FlashVars="fn=../../../../../../../../www.youtube.com/watch@v=kh2PwUCR7A8&flvskin=MPFLVSkin.swf"></EMBED></OBJECT>/>
+<br />
+<br />
+User Interface Part 2<br />
+<br />
+<center><OBJECT  ><PARAM name="movie" value="MPFLVPlayer.swf" /><PARAM name="allowFullScreen" value="true" /><PARAM name="FlashVars" value="fn=../../../../../../../../www.youtube.com/watch@v=uEXoloZczD4&flvskin=MPFLVSkin.swf" /><EMBED src="MPFLVPlayer.swf"   type="application/x-shockwave-flash" allowFullScreen="true" FlashVars="fn=../../../../../../../../www.youtube.com/watch@v=uEXoloZczD4&flvskin=MPFLVSkin.swf"></EMBED></OBJECT>/>
+<br />
+<br />
+<br />
+Breaking a 14 Character Password Part 1<br />
+<br />
+<center><OBJECT  ><PARAM name="movie" value="MPFLVPlayer.swf" /><PARAM name="allowFullScreen" value="true" /><PARAM name="FlashVars" value="fn=../../../../../../../../www.youtube.com/watch@v=FhrplzKtstg&flvskin=MPFLVSkin.swf" /><EMBED src="MPFLVPlayer.swf"   type="application/x-shockwave-flash" allowFullScreen="true" FlashVars="fn=../../../../../../../../www.youtube.com/watch@v=FhrplzKtstg&flvskin=MPFLVSkin.swf"></EMBED></OBJECT>/>
+<br />
+<br />
+<br />
+Breaking a 14 Character Password Part 2<br />
+<br />
+<center><OBJECT  ><PARAM name="movie" value="MPFLVPlayer.swf" /><PARAM name="allowFullScreen" value="true" /><PARAM name="FlashVars" value="fn=../../../../../../../../www.youtube.com/watch@v=4hEevgfvqw0&flvskin=MPFLVSkin.swf" /><EMBED src="MPFLVPlayer.swf"   type="application/x-shockwave-flash" allowFullScreen="true" FlashVars="fn=../../../../../../../../www.youtube.com/watch@v=4hEevgfvqw0&flvskin=MPFLVSkin.swf"></EMBED></OBJECT>/>
+<br />
+<br />
+<br />
+Real Time Demonstration Part 1<br />
+<br />
+<center><OBJECT  ><PARAM name="movie" value="MPFLVPlayer.swf" /><PARAM name="allowFullScreen" value="true" /><PARAM name="FlashVars" value="fn=../../../../../../../../www.youtube.com/watch@v=mAs8l1MBYFM&flvskin=MPFLVSkin.swf" /><EMBED src="MPFLVPlayer.swf"   type="application/x-shockwave-flash" allowFullScreen="true" FlashVars="fn=../../../../../../../../www.youtube.com/watch@v=mAs8l1MBYFM&flvskin=MPFLVSkin.swf"></EMBED></OBJECT>/>
+<br />
+<br />
+<br />
+Real Time Demonstration Part 2<br />
+<br />
+<center><OBJECT  ><PARAM name="movie" value="MPFLVPlayer.swf" /><PARAM name="allowFullScreen" value="true" /><PARAM name="FlashVars" value="fn=../../../../../../../../www.youtube.com/watch@v=FTA62HeP6uE&flvskin=MPFLVSkin.swf" /><EMBED src="MPFLVPlayer.swf"   type="application/x-shockwave-flash" allowFullScreen="true" FlashVars="fn=../../../../../../../../www.youtube.com/watch@v=FTA62HeP6uE&flvskin=MPFLVSkin.swf"></EMBED></OBJECT>><br />
+</div>
+<div style="text-align: right; height: 100px;" id="page">
+<a href="conclusion.html">conclusion
+</a></div>
+</body></html>

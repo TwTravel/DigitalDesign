@@ -1,0 +1,582 @@
+<html>
+<head>
+<title>All Digital FPGA Based Lock-in Amplifier</title>
+</head>
+
+<body bgcolor="#EEEEDD">
+
+<table cellpadding="0" cellspacing="0" style="width: 1000px; height: 50px; background-color:#CCCCBB" >
+<tr>
+<td width="140" align="center" valign="middle">
+<a href="#intro">Introduction
+</a></td>
+<td width="140" align="center" valign="middle">
+<a href="#design">
+High Level Design
+</a>
+</td>
+<td width="200" align="center" valign="middle">
+<a href="#hardware">Hardware/Software Design
+</a>
+</td>
+<td width="120" align="center" valign="middle">
+<a href="#results">Results
+</a>
+</td>
+<td width="140" align="center" valign="middle">
+<a href="#conclusions">Conclusions
+</a>
+<td width="140" align="center" valign="middle">
+<a href="#source"> Source Code and References</a>
+</td>
+</tr>
+
+</table>
+
+<br>
+
+<font size="6">
+All Digital FPGA Based Lock-in Amplifier
+</font>
+<br>
+Tristan Rocheleau <br>
+tor2@cornell.edu <br>
+ECE 576 Final Project <br>
+Fall 2008 <br>
+
+
+
+
+
+<br>
+<font size=5><b><a name="intro">Introduction:</a></b></font><br>
+&nbsp;&nbsp; &nbsp;This project implements a lockin amplifier using an
+all-digital architecture on an FPGA.&nbsp;&nbsp; Historically, lockin amplifiers
+were constructed of&nbsp; precision analog components, filters, mixers,
+etc....&nbsp; A well designed lockin of this natures can preform beautifully,
+but requires high quality, expensive components and careful engineering.&nbsp;
+By implementing all the signal path components in digital form on an FPGA a
+number of advantages are realized.&nbsp; First, using digital multipliers, ideal
+digital mixers and filters can be created.&nbsp; This removes any possibility of
+added noise after digitization as well as reducing complexity.&nbsp; Secondly,
+if sufficient precision is used in all calculations, the linear response range
+of each digitized component can be arbitrarily large, again making the
+engineering easier.&nbsp; Finally, the simplicity of having almost all
+components on a single chip, could greatly decrease cost.&nbsp; In addition the
+modular nature and reprogramability of FPGA logic could allow lockin amplifiers
+to be easily implemented into other designs.<br>
+&nbsp;&nbsp;&nbsp; For these reasons, combined with the belief that creating a
+lockin from scratch would be an excellent educational endeavor, an FPGA lockin
+was designed and built.&nbsp; This report details the design and construction of
+the lockin along with results and testing of the final product.<br>
+<b><br>
+<br>
+Brief Overview of Lockins:<br>
+</b><b>&nbsp;&nbsp; &nbsp;</b>At its heart, a lockin amplifier consists simply
+of a mixer followed by a low pass filter.&nbsp; By applying a reference sine
+wave sign<img alt=""> wave signal to one port of the mixer, and the signal to be
+measured to the other, sum and difference frequencies are generated at the
+output.&nbsp; The low pass filter then filters out all but the difference
+frequencies below a certain cutoff.&nbsp; This output signal then contains
+spectral information of the original signal in narrow band around the reference
+frequency.&nbsp; By adjusting the filter cutoff and reference frequency, signals
+of arbitrary bandwidth and frequency can be measured.<br>
+&nbsp;&nbsp;&nbsp; The lockin measurement scheme has a number of
+advantages.&nbsp; The primary one in most measurement schemes is that of
+increased signal to noise vs a broadband measurement, such as would be made with
+an oscilloscope.&nbsp; This can be understood by considering the mixer + low
+pass filter as a variable, narrow bandwidth band pass filter.&nbsp; Assuming
+noise sources are broad-band, the amount of actual noise captured in the
+measurement is proportional to the bandwidth.&nbsp; &nbsp; If the signal of
+interest is at a well known frequency, the low pass filter can be configured to
+a minimum bandwidth, thus providing a potential increase in signal to noise of
+many magnitudes.&nbsp;<br>
+&nbsp;&nbsp;&nbsp; As an additional feature, the signal output of the low pass
+filter is dependant the relative phases of the reference and signal.&nbsp; As
+such, the lockin not only measures magnitude but also phase of a signal.&nbsp;
+As a practical matter, most lockin systems actually use two sets of mixers and
+filters to allow the measurement of both quadratures of signal simultaneously.<br>
+&nbsp;&nbsp;&nbsp; The final oft-quoted feature of lockin amplifiers is their
+ability to track a signal that varies in frequency over time.&nbsp; So long as
+the reference frequency is somehow locked to the signal frequency, the lockin
+will accurately measure the signal regardless of frequency changes.&nbsp; This
+is the origin of the term "lockin".<br>
+<br>
+<br>
+<font size=5><b><a name="design">High Level Design:</a></b></font><br>
+&nbsp;&nbsp;&nbsp; The lockin designed here follows the general picture
+described above, with a few practical complications.&nbsp; A high level
+schematic of the lockin amplifier can be seen in figure 1.<br>
+<div id=s7it style="PADDING:1em 0pt; TEXT-ALIGN:left">
+  <div id=uv-l style="PADDING:1em 0pt; TEXT-ALIGN:left">
+    <div id=chzo style="PADDING:1em 0pt; TEXT-ALIGN:left">
+      <div id=t4ba style="PADDING:1em 0pt; TEXT-ALIGN:left">
+        <img src=lockin_final_report_images/dd6n9cm9_61gsng2vgj_b.jpg style="WIDTH:1440px; HEIGHT:543px">
+      </div>
+      Figure 1.&nbsp; Schematic diagram of the lockin amplifier.&nbsp;<br>
+    </div>
+  </div>
+  <br>
+  &nbsp;&nbsp;&nbsp; The analog signal was acquired using an A/D converter and
+  fed to a pair of mixers which mix with a pair of quadrature reference
+  signals.&nbsp; The reference signals can be generated by a fixed set frequency
+  onboard direct digital synthesis unit, or derived from an external reference.
+  &nbsp; The external reference signal is also A/D sampled, and then converted
+  to a pulse train which feeds the reference of an add digital phase locked
+  loop(ADPLL).&nbsp; This then generates the output quadrature sine waves.&nbsp;
+  Once mixed down, the signals are fed through programmable digital filters and
+  are then measured and routed by a NIOS II processor.&nbsp; The signal outputs
+  can be directly routed to analog output ports as well as displayed.&nbsp;<br>
+  &nbsp;&nbsp;&nbsp; For simplicity, both design and conceptual, the low pass
+  filters were implemented via a single pole IIR filter configured to emulate an
+  analog RC filter.&nbsp; This design allowed implementation using minimal
+  system resources as well as minimal complexity, while also allowing easy
+  on-the-fly calculation of filter parameters when changing settings.&nbsp; The
+  parameters could be generated by the NIOS from a user selected time
+  constant.&nbsp; The single pole filter was implemented with two multipliers
+  with filter output given by:<br>
+  <br>
+  out = a0 * in + b1 * out_previous.<br>
+  <br>
+  Time constant was selected by tuning a0 and b1 according to:<br>
+  b1 = e^(-1/d)<br>
+  a0 = 1 - a0<br>
+  Where d is the time required to decay to 1/e in number of clock ticks.&nbsp;<br>
+  &nbsp;&nbsp;&nbsp; In order to allow maximal flexibility of the device, a NIOS
+  II processor was also implemented to control the signal path.&nbsp; Although
+  not explicitly shown in the figure, the NIOS acts as a high level control
+  system, switching signals from the the lockin components to the output.&nbsp;
+  In this fashion, the output DACs can be used to output signals from any part
+  of the signal path including the reference sources, giving the advantage of
+  maximal flexibility as well as a useful tool in debugging.&nbsp; In addition,
+  the NIOS can be used to control filter operation/decay time.<br>
+  &nbsp;&nbsp; &nbsp;Implementing these components in FPGA allows all operations
+  after A/D sampling to be done digitally at high speed.&nbsp; The target
+  platform for this project was the Altera DE-2 board with a Cyclone II FPGA,
+  speed grade 6, with 35K logic elements.&nbsp; The lockin design should fit
+  easily within this chip and looking up the speed specs for this speed grade
+  gives an advertised 18 x 18 bit multiplication of over 200MHz.&nbsp; This type
+  of clock speed is probably not attainable for the system a whole, but clocking
+  at 50MHz should be entirely stable.&nbsp; As a reasonable expectation, input
+  signal sine waves operating at frequencies of up to one or two MHz should be
+  easily achievable at these clock rates.<br>
+  <br>
+  <b>User Interface:</b><br>
+  &nbsp;&nbsp;&nbsp; For basic lockin functionality, a number of settings must
+  be entered and displayed by the user.&nbsp; Control of the reference, whether
+  external or an internally set frequency, as well filter bandwidth are
+  essential.&nbsp; In addition control of the output signals along with the
+  ability to display information about current measured values is useful.&nbsp;
+  To this end, it was decided to generate a video display output from a NIOS II
+  processor.&nbsp; The NIOS II processor provided plenty of processing power to
+  generate an output display as well as handle user input and control elements
+  of the lockin signal path.&nbsp;<br>
+  <br>
+  <br>
+  <b><font size=5><a name="hardware">Hardware implementation</a></font><br>
+  overview:</b><br>
+  &nbsp;&nbsp;&nbsp; The entirety of the digital components of this project were
+  implemented on a Terasic DE-2 board with an Altera Cyclone II FPGA.&nbsp; The
+  DE-2 board provided the majority of the hardware components needed, such as
+  the basic FPGA support circuity(power supply, programming, etc), as well
+  switches and buttons for user input along with a VGA output port.&nbsp; The
+  only real lack of this board for a lockin is the absence of a high speed A/D
+  converters.&nbsp; A number of A/D options were considered for the project,
+  mostly based on a homebuilt add-on board, but it was decided in the end to use
+  a Terasic P0003_GPIO high speed digital acquisition daughterboard.&nbsp;<br>
+  &nbsp;&nbsp;&nbsp; The Terasic product was chosen primarily due to it's
+  convenience, but also had a quite high sampling rate.&nbsp; The board is
+  designed to interface with the DE-2 board and includes two ports of 100MS/s 14
+  bit DAC outputs and 2 ports of 65MS/s 14 bit A/D input.&nbsp; This was deemed
+  entirely sufficient for a design goal of 1MHZ input bandwidth and gave a good
+  option for either high frequency reference outputs or low frequency output
+  signals.&nbsp;<br>
+  &nbsp;&nbsp;&nbsp; Unfortunately, as discussed in more detail later, the
+  Terasic board failed to meet expectations.&nbsp; Of critical importance for
+  the intended application, both the input and output ports on the board were
+  coupled via transformers which had an effective cut-off of ~100KHz.&nbsp; For
+  input signals this simply limited the range of measurement to signals above
+  100KHz -- an annoyance but still functional.&nbsp; In order to output the low
+  frequency or DC measured signals, however, the output ports simply do not
+  work.&nbsp;<br>
+  &nbsp;&nbsp;&nbsp; To get around this problem, two DAC ports of the VGA output
+  chip on the DE-2 main board were used.&nbsp; The VGA interface featured 3
+  10-bit DACs rated at up to 100MS/s and allowing DC outputs.&nbsp; While
+  slightly low in resolution, these ports fit the output needs well.&nbsp;
+  Unfortunately, the use of two of the VGA DACs precluded the output of a VGA
+  video, a necessary component of the user interface.&nbsp; To get around this
+  issue, it was decided to use the third VGA output DAC to generate an NTSC
+  signal for display on a standard TV.&nbsp; The resolution of this display is
+  certainly lower, but was acceptable.<br>
+</div>
+<br>
+<br>
+<b>Hardware details:<br>
+</b>&nbsp;&nbsp;&nbsp; In designing the digital hardware, there were several
+non-trivial components.&nbsp; As laid out in the overview above, these consisted
+of an ADPLL, low pass filters, a video generator, the reference signal
+zero-crossing detector, as well as various interconnect logic.&nbsp; Each is
+described in detail below:<br>
+<br>
+Zero-Crossing Detector:<br>
+&nbsp;&nbsp;&nbsp; The reference zero-crossing detector was probably the
+simplest component.&nbsp; It simply took the digitized reference input, and
+waited for zero crossing.&nbsp; In order to prevent noise on the signal
+receptively triggering the crossing detect, both positive and negative
+hysteresis was added.&nbsp; This required the signal to reach a certain
+magnitude before a zero crossing would be triggered.&nbsp; The output was always
+triggered at the zero crossing, not at a higher or lower hysteresis value,
+however, to prevent any phase shift.&nbsp; This hysteresis value was
+semi-arbitrarily set to ~0.2V.<br>
+<br>
+ADPLL:<br>
+&nbsp;&nbsp;&nbsp; In order to lock to an externally generated reference signal
+a phase locked loop was needed.&nbsp; In keeping with the all digital design
+methodology of the project, this was implemented as an all digital phase locked
+loop(ADPLL) which as input took a digitized data stream of the reference signal
+and as output gave a pair of locked quadrature sine waves.&nbsp; A schematically
+diagram of the chosen topology is shown in figure 2:<br>
+<br>
+<br>
+<div id=dz1y style="PADDING:1em 0pt; TEXT-ALIGN:left">
+  <img src=lockin_final_report_images/dd6n9cm9_46g22jrmd8_b.jpg style="WIDTH:1165px; HEIGHT:403px">
+</div>
+figure 2.&nbsp; ADPLL.<br>
+<br>
+&nbsp;&nbsp;&nbsp; As with any PLL, this ADPLL consisted of a phase comparator,
+a loop filter, and a programmable oscillator.&nbsp; The phase comparator in this
+case was functionally equivalent to the standard dual edge-triggered flip-flop
+design used in analog charge pump PLLs.&nbsp; The output of the phase comparator
+is a pair of signals, one indicating a lead in the local oscillator pulse edge,
+the other a lag.&nbsp; These signals were fed to the loop filter which consisted
+of a digital counter implementing an integral response which was combined with a
+straight proportional gain response.&nbsp; Each unit was fed by the 100MHz
+system clock.&nbsp; For each clock tick that the lead signal was high, the
+integral counter was incremented by a value; for each clock tick the lag signal
+was high it was decremented.&nbsp; Similarly, whenever the lead signal was high
+a positive value was output from the proportional unit, while for a lag signal a
+negative output was induced.&nbsp; The outputs were then summed and fed to the
+local oscillator.<br>
+&nbsp;&nbsp;&nbsp; The programmable oscillator in this case consisted of a high
+accuracy direct digital synthesis(DDS) module.&nbsp; Frequency was set by a 40
+bit fixed point input in 24.16 format(this was overkill, by the way).&nbsp; The
+input was fed by the output of the loop filter which then adjusted
+frequency.&nbsp; The DDS unit then output a pair of quadrature sine waves in 18
+bit resolution which were used for the mixers.&nbsp; In addition, a digital
+square wave of the same frequency was output and used to feed the phase
+comparator.&nbsp;<br>
+&nbsp;&nbsp;&nbsp; As a final feature, a simple lock detector was also
+implemented.&nbsp; This was not neccessary for the rest of the system, but
+seemed like a good idea for completeness's sake.&nbsp; This was done by
+implementing a pair of counters at the rise of the reference signal which
+counted till the reference went low for one or the DDS output for the
+other.&nbsp; By outputting a signal when the values were within a certain
+fractional range of each other, a simple lock signal was generated.&nbsp;
+Further using this signal to trigger a counter and then requiring the counter
+reach a certain value(255 in this case) provided a simple but seemingly
+functional lock detect.&nbsp;<br>
+<br>
+Low Pass Filter:<br>
+&nbsp;&nbsp;&nbsp; Low pass filters on the output of the quadrature mixers were
+implemented by a simple single pole IIR filter and were designed to emulate
+simple analog RC filters with an adjustable time constant.&nbsp; Implementation
+of this was done using two multipliers to multiply the two filter parameters
+against the input and previous output signal, respectively.&nbsp; The outputs
+were then summed, and stored in an output register which also previous output to
+the filter.<br>
+<br>
+NTSC Video Output:<br>
+&nbsp;&nbsp;&nbsp; To generate a useful user interface, a video output was
+needed from the single remaining VGA DAC.&nbsp; As such, it was decided to
+generate an NTSC composite video signal for display on a television.&nbsp; In
+order to generate the signal, an accurate timing sync timing system had to be
+designed, along with coordinate generation and actual video signal output during
+the correct portions of the video scan.<br>
+&nbsp;&nbsp;&nbsp; For an NTSC signal, a single analog output output signal
+encoded with video data as well as synchronization pulses is used to directly
+control the TV image scan.&nbsp; Figure 3 shows timing information for the NTSC
+signal.&nbsp; During the display period, signal intensity is encoded directly by
+signal voltage. while color is encoded by a sine wave overlay signal.&nbsp; For
+the lockin output, only text information was needed, so a luminosity encoded
+output(no colour) was sufficient.&nbsp; The generation of this timing
+information and luminosity signals were done with straightforward timing and
+comparator logic.<br>
+<br>
+<div id=xr3: style="PADDING:1em 0pt; TEXT-ALIGN:left">
+  <img src=lockin_final_report_images/dd6n9cm9_47dfkn33hp_b.gif style="WIDTH:524px; HEIGHT:420px">
+</div>
+Figure 3.&nbsp; NTSC Video timing information<br>
+Source: http://www.williamson-labs.com/480_tvc.htm<br>
+<br>
+&nbsp;&nbsp;&nbsp; Horizontal resolution and retrace are both controlled by this
+timing information.&nbsp; In order to control the vertical retrace additional
+synchronization signals are needed every ~260 scan lines.&nbsp; Figure 4. shows
+a more complete entire screen timing information, including the vertical sync
+pulses.&nbsp; The full NTSC specification calls for 525 total interlaced line
+per screen, of which only 485 are visible.&nbsp; Interlacing is accomplished by
+starting dithering each new frame by half a horizontal sweep.&nbsp; In the
+interest of simplicity, as well as due to lack of a need for greater resolution,
+the NTSC generator in this project only generated a visible resolution of 240
+lines.&nbsp; This was accomplished by simply generating the vertical retrace
+without the half sweep dithering, effectively generating a half vertical
+resolution, non-interlaced image.&nbsp;<br>
+<div id=x:4j style="PADDING:1em 0pt; TEXT-ALIGN:left">
+  <img src=lockin_final_report_images/dd6n9cm9_57g5fbgscm_b.gif style="WIDTH:1000px; HEIGHT:482px"><br>
+  Figure 4.&nbsp; Full NTSC timing inforation<br>
+  Source: http://www.williamson-labs.com/480_tv.htm<br>
+</div>
+<br>
+&nbsp;&nbsp;&nbsp; The actual user interface consisted of a text display
+controlled by the NIOS II processor.&nbsp; A diagram of text generation system
+is seen in figure 5.&nbsp; The text was generated by a simple character
+generator which as input took x and y coordinates and an ascii character.&nbsp;
+For the ascii font, a modified version of the font provided on the CD accompanying [7].
+The ascii was fed via a text buffer implemented as dual port ram.&nbsp; This
+allowed a dedicated port for access by the character generator when needed for
+display, while also allowing transparent writing by the NIOS.&nbsp; The
+character ram was memory mapped directly into the NIOS address space via an
+Avalon switch fabric connection, thus further further simplifying software
+development by allowing direct memory access to the ram.  As an additional feature, a blinking cursor was implemented to provide a visual feedback as to the currently selected setting to be modified.<br>
+<div id=gyvd style="PADDING:1em 0pt; TEXT-ALIGN:left">
+  <div id=ez5q style="PADDING:1em 0pt; TEXT-ALIGN:left">
+    <img src=lockin_final_report_images/dd6n9cm9_49f876g7gr_b.jpg style="WIDTH:1248px; HEIGHT:485px"><br>
+	Figure 5.&nbsp; Text generation video system<br>
+  </div>
+  <br>
+</div>
+<br>
+<b>Software Design:</b><br>
+&nbsp;&nbsp;&nbsp; Software was written for the NIOS II processor in c code
+using the NIOS II C IDE provided by Altera.&nbsp; The software was primarily to
+implement the user interface as well as control the filters and operating mode
+of the lockin.&nbsp; The interface consisted of a text display with various
+changeable settings as well as continually updated outputs of the locking.&nbsp;
+By reading in the measured values of the two quadratures of the locking, the
+NIOS could both display these values on-screen, as well as calculate derivative
+quantities.&nbsp; Useful information that was chosen for display was the total
+response of the lockin(R) as well as the measured phase angle.&nbsp; These
+values were easily calculated as:<br>
+R^2 = X^2 + Y^2<br>
+Theta = Atan(X/Y)<br>
+Where X and Y are the measured values of the two quadratures.&nbsp; In order
+that these values be calculated without slowing down other processing, floating
+point hardware was also included in the NIOS design.&nbsp; In all likelyhood,
+this was entirely unnecessary as the only speed requirement be that the output
+values update at a reasonable human timescale for display.&nbsp;<br>
+&nbsp;&nbsp;&nbsp; The NIOS II was programmed to loop through these
+calculations, updating output values on every loop, while also keeping track of
+user input provided by three on-board pushbuttons as well as the 18 toggle
+switches.&nbsp; Two of the buttons were used to navigate a simple setting
+selection system, while the third was used to either toggle settings, or to
+write an input number to a NIOS variable from the toggle switches.&nbsp;<br>
+&nbsp;<br>
+<br>
+<b><font size=5><a name="results">Results and testing:</a></font><br>
+&nbsp;&nbsp;&nbsp; </b>After lengthy debugging and tweaking the lockin was
+deemed generally functional.&nbsp; A number of tests, mostly qualitative in
+nature, were preformed and are described below.&nbsp; In general, performance
+was good, with speedy response and accuracy to within ~1% as determined by
+comparison with signal output levels from a test source.&nbsp; The user input
+was a little clunky, having to use the on board switches, but generally worked
+well.&nbsp; the video out, while low resolution, was entirely&nbsp;
+sufficient.&nbsp; An example image of the interface while measuring a low
+amplitude signal is shown in figure 6.&nbsp; Due to slight inconsistency between
+TV's, the left couple pixels are cut off, but in general the image is
+clear.&nbsp;<br>
+<div id=olww style="PADDING:1em 0pt; TEXT-ALIGN:left">
+  <img height=511 src=lockin_final_report_images/dd6n9cm9_58g3zkv7hb_b.jpg width=679><br>
+  Figure 6.&nbsp; Picture of user interface in action.  The moire pattern is an artifact of the picture, not the display.<br>
+</div>
+<br>
+<br>
+&nbsp;&nbsp;&nbsp; As a preliminary test, the ADPLL performance was
+examined.&nbsp; Several important parameters were noted, particularly settling
+time, frequency range of reliable operation, and output jitter.&nbsp; While no
+thorough quantitative analysis of the loop filter function performance was made,
+a significant amount of parameter space was explored while trying to find
+optimal performance.&nbsp; PLL performance was highly dependant on the relative
+constants of gain and integration, with an increase in either allowing for
+sometimes faster locking but at the cost of increased jitter or
+oscillations.&nbsp; In the final version, these parameters were set to give a
+reasonable compromise between settling time and operation frequency range.&nbsp;<br>
+&nbsp;&nbsp;&nbsp; With the final values, the PLL performance seemed quiet
+good.&nbsp; The PLL reliably locked within ~&lt;1s for any frequency between the
+lowest operating frequency of 100KHz and 1MHz.&nbsp;&nbsp; Above 1MHz the PLL
+could still lock till ~5Mhz, but occasionally had trouble locking in a timely
+fashion.&nbsp; An example wavefrom of the PLL locked to an irregular input
+function can be seen in figure 7.&nbsp;<br>
+<div id=u_h4 style="PADDING:1em 0pt; TEXT-ALIGN:left">
+  <img height=511 src=lockin_final_report_images/dd6n9cm9_52dzzvqff9_b.png width=679>
+</div>
+figure 7.&nbsp; ADPLL output locked to an irregular reference waveform.<br>
+<br>
+&nbsp;&nbsp;&nbsp; Once locked, the PLL output appeared very stable and was
+easily able to follow slow changes in frequency on order of at least
+10KHz/s.&nbsp; Based upon observation of the set frequency displayed in the user
+interface, the output frequency appeared to be stable to within less than
+1Hz.&nbsp; In addition, the PLL had no trouble locking to any reasonably shaped
+periodic waveform.&nbsp;<br>
+<br>
+&nbsp;&nbsp;&nbsp; The Mixers were tested by inputting various signal inputs and
+reference frequencies.&nbsp; Performance was found to be exactly as expected,
+with the multiplied signal being output with sum and difference
+components.&nbsp; The filters were then tested by comparing input to filter with
+the output.&nbsp; Once properly debugged the filters worked without issue,
+smoothing input signals in what qualitatively seemed reasonable.&nbsp; The time
+constant was measured by applying a step change in signal and observing response
+rate and was found to be what it should be based on programed filter
+constants.&nbsp;<br>
+&nbsp;&nbsp;&nbsp;&nbsp;<br>
+<div id=ohdd style="PADDING:1em 0pt; TEXT-ALIGN:left">
+  <div id=tjk3 style="PADDING:1em 0pt; TEXT-ALIGN:left">
+    <img height=511 src=lockin_final_report_images/dd6n9cm9_53cj3s6dcf_b.png width=679>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <img height=511 src=lockin_final_report_images/dd6n9cm9_54c4r7jcct_b.png width=679><br>
+  </div>
+  <div id=tjk3 style="PADDING:1em 0pt; TEXT-ALIGN:left">
+    Figure 8.&nbsp; Output of mixers vs. output of filter for a square wave
+    signal input.&nbsp; Left trace is direct mixer output, right is output after
+    filtering.&nbsp; Yellow trace is outputs, green is reference signal.&nbsp;<br>
+  </div>
+</div>
+<br>
+&nbsp;&nbsp;&nbsp; Additional testing was done by measuring signals very
+slightly detuned from the reference frequency and observing slow oscillation of
+the output.&nbsp; In addition identical frequency signal and reference were
+measured while adjusting phase shift of the signal and determining that the
+output levels shifted quadrature as expected.&nbsp; The lockin behaved perfectly
+in all these respects.&nbsp;<br>
+<br><b>
+Limitations on performance:</b><br>
+&nbsp;&nbsp;&nbsp; As mentioned earlier, a major limitation on the lockin was
+the input transformers on the A/D board.&nbsp; The high cutoff of these
+transformers limited operation to around 100KHz and above.&nbsp; Figure 9 below
+shows an input square wave at 300KHz after sampling with the A/D board.<br>
+<div id=s6et style="PADDING:1em 0pt; TEXT-ALIGN:left">
+  <img height=511 src=lockin_final_report_images/dd6n9cm9_51cdvbsjhq_b.png width=679>
+</div>
+Figure 9.&nbsp; 300KHz square wave after sampling through input
+transformer.&nbsp;<br>
+<br>
+&nbsp;&nbsp;&nbsp; In addition to this limitation, there seemed to be a certain
+degree of coupling between the input ports of the A/D board, as well as a
+definite degree of crosstalk on the output ports of the DAC.&nbsp; This produced
+an increased amount of noise on the input signal, as well as noise on the analog
+output.&nbsp; The input noise produced a small, non-zero measured signal output
+even with no signal input while the output noise simply reduced fidelity of the
+analog out.&nbsp;<br>
+&nbsp;&nbsp;&nbsp; An addition major limitation of this design in terms of an
+actual useful measurement device is the lack of a preamplifier stage.&nbsp; As
+lockins are typically used as precision measurement tools, having a low noise
+input with adjustable gain is essential.&nbsp; While performance was acceptable
+for large input signals, smaller signals are easily drowned out.&nbsp; An input
+amplifier would also reduce the issue of crosstalk in the input A/D
+converters.&nbsp;<br>
+<br>
+<br>
+<b><font size=5><a name="conclusions">Conclusions:</a></font></b><br>
+&nbsp;&nbsp;&nbsp; In general, the lockin fulfilled all the expectations for
+functionality.&nbsp; The limited frequency operation range and input signal
+fidelity was disappointing, but not surprising given the analog hardware
+used.&nbsp; All in all, it was an interesting and extremely educational project,
+but the previously mentioned limitations prevent it from being truly useful in a
+scientific setting as currently designed.&nbsp;<br>
+&nbsp;&nbsp;&nbsp; As a revised version, a few modifications would greatly
+improve the quality of the device.&nbsp; In terms of the FPGA logic, the major
+area for improvement would be in the ADPLL.&nbsp; While performance was
+reasonable here, more care in the design of the loop filter would undoubtedly
+increase performance greatly.&nbsp; The implementation of the filter in all
+digital logic gives hugely interesting possibilities for highly non-linear
+feedback, possibly surpassing analog PLLs.&nbsp; Other than the ADPLL, the
+remaining digital logic seemed well suited for the device, with the possible
+exception of the user interface which was slightly clunky, although more of a
+function of limited input devices on the DE-2 board than anything logic design
+related.&nbsp; The use of a mouse and keyboard interface or application specific
+button arrays might make use much simpler.&nbsp;<br>
+&nbsp;&nbsp;&nbsp; The main region for improvement would definitely be in the
+analog components.&nbsp; Replacing the Terasic A/D board with something that was
+better shielded and offered lower frequency, ideally DC, operation would be a
+great boon.&nbsp; In addition, higher precision and quality DAC outputs would
+allow for higher grade analog outputs.&nbsp;<br>
+&nbsp;&nbsp;&nbsp; Briefly analyzing rough costs associated with this form of
+lockin device yields tantalizing results.&nbsp; The current design when compiled
+and fitted into the Cyclone II FPGA used ~11K&nbsp; logic elements.&nbsp; Given
+that this includes a&nbsp; full featured 32 bit processor with instruction
+cache, full floating point hardware, as well as a number of other entirely
+non-space-optimized components, it seems reasonable that the entire design could
+be fit within a 8K or even 5K device, costing a mere ~$30.&nbsp; Combine this
+with high precision, moderately low speed A/D and D/A converters which cost ~$10
+each.&nbsp; Adding the costs of a low noise amplifier and it seems that you
+could&nbsp; achieve a very competitive instrument working up to ~200KHz for
+under $100.&nbsp; Of course there would be significantly further hardware
+development from the project described here to reach this goal.&nbsp;<br>
+&nbsp;&nbsp;&nbsp; In conclusion, the lockin device described here was a
+success, if somewhat limited by the hardware used.&nbsp; Building upon the basic
+device with better, customized hardware could yield a device suitable for for
+high quality measurements.&nbsp; Despite the need for better engineering of the
+analog components here, the mostly digital design would still seem to be simpler
+to engineer than an all analog device and offers tantalizing
+possibilities.&nbsp;<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+<br>
+
+
+<b><a name="source">
+Source Code:<br>
+</a>
+</b>
+<br>
+
+
+Top level verilog module: <br>
+<a href="lockin_amp.v">lockin_amp.v</a><br>
+<br>
+
+Support modules: <br>
+<a href="ref_digital_PLL.v">ref_digital_PLL.v</a><br>
+<a href="zero_crossing_detector.v">zero_crossing_detector.v</a><br>
+<a href="exponential_decay_filter.v">exponential_decay_filter.v</a><br>
+<a href="character_generator.v">character_generator.v</a><br>
+<a href="DDS_signal_generator.v">DDS_signal_generator.v</a><br>
+<a href="ntsc_disp_generator.v">ntsc_disp_generator.v</a><br>
+<br>
+
+SOPC builder file: <br>
+<a href="control_nios.sopc">control_nios.sopc</a><br>
+<br>
+
+
+User interface NIOS code: <br>
+<a href="lockin.c">lockin.c</a><br>
+
+
+
+<br>
+<br>
+<br>
+<b>
+References:<br>
+</b>
+[1]&nbsp;&nbsp;&nbsp; Stanford Research Systems application note #3.&nbsp;
+http://www.thinksrs.com/downloads/PDFs/ApplicationNotes/AboutLIAs.pdf<br>
+[2]&nbsp;&nbsp;&nbsp; http://www.terasic.com&nbsp; --&nbsp; Information of the
+A/D board as well as downloads of the data sheets.<br>
+[3]&nbsp;&nbsp;&nbsp; Very useful video tutorials and information:&nbsp;
+http://www.williamson-labs.com/480_tv.htm<br>
+[4]&nbsp;&nbsp;&nbsp; An excellent article on simple NTSC generation in a
+microcontroller:&nbsp; <i>AVR Video Generator —Teaching Programming and
+Graphics</i>, Circuit Cellar Magazine #150, pp 40-44, Jan 2003<br>
+[5]&nbsp;&nbsp;&nbsp; www.altera.com.&nbsp;<br>
+[6]&nbsp;&nbsp;&nbsp;Dale Grover and John R. Deller, Digital Signal Processing and the microcontroller , Prentice-Hall/Motorola University Press 1999
+[7]&nbsp;&nbsp;&nbsp;JO Hamblen, TS Hall and MD Furman, Rapid protoyping of digital systems, SPOC edition , Springer 2008
+<br>
+
+
+</body>
+</html>
+
+

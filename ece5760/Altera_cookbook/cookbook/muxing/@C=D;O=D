@@ -1,0 +1,32 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+ <head>
+  <title>Index of /land/courses/ece5760/Altera_cookbook/cookbook/muxing</title>
+ </head>
+ <body>
+<h1>Index of /land/courses/ece5760/Altera_cookbook/cookbook/muxing</h1>
+  <table>
+   <tr><th valign="top"><img src="../../../../../../icons/blank.gif" alt="[ICO]"></th><th><a href="@C=N;O=A">Name</a></th><th><a href="@C=M;O=A">Last modified</a></th><th><a href="@C=S;O=A">Size</a></th><th><a href="@C=D;O=A">Description</a></th></tr>
+   <tr><th colspan="5"><hr></th></tr>
+<tr><td valign="top"><img src="../../../../../../icons/back.gif" alt="[PARENTDIR]"></td><td><a href="../default.htm">Parent Directory</a>       </td><td>&nbsp;</td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="twenty_to_five_tb.sv">twenty_to_five_tb.sv</a>   </td><td align="right">2015-03-26 09:43  </td><td align="right">3.1K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="twenty_to_five.v">twenty_to_five.v</a>       </td><td align="right">2015-03-26 09:43  </td><td align="right">2.5K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="twenty_to_eight_tb.sv">twenty_to_eight_tb.sv</a>  </td><td align="right">2015-03-26 09:43  </td><td align="right">3.1K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="twenty_to_eight.v">twenty_to_eight.v</a>      </td><td align="right">2015-03-26 09:43  </td><td align="right">3.1K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="simple_mux.v">simple_mux.v</a>           </td><td align="right">2015-03-26 09:43  </td><td align="right">1.6K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="shift_tb.v">shift_tb.v</a>             </td><td align="right">2015-03-26 09:43  </td><td align="right">2.5K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="rotate_internal.v">rotate_internal.v</a>      </td><td align="right">2015-03-26 09:43  </td><td align="right">3.4K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="priority_mux_tb.v">priority_mux_tb.v</a>      </td><td align="right">2015-03-26 09:43  </td><td align="right">2.1K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="priority_mux.v">priority_mux.v</a>         </td><td align="right">2015-03-26 09:43  </td><td align="right">3.4K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="pipelined_word_mux_tb.v">pipelined_word_mux_tb.v</a></td><td align="right">2015-03-26 09:43  </td><td align="right">3.3K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="pipelined_word_mux.v">pipelined_word_mux.v</a>   </td><td align="right">2015-03-26 09:43  </td><td align="right">5.4K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="log2.inc">log2.inc</a>               </td><td align="right">2015-03-26 09:43  </td><td align="right">1.9K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="five_to_twenty.v">five_to_twenty.v</a>       </td><td align="right">2015-03-26 09:43  </td><td align="right">2.2K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="eight_to_twenty.v">eight_to_twenty.v</a>      </td><td align="right">2015-03-26 09:43  </td><td align="right">3.0K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="eight_to_one_tb.v">eight_to_one_tb.v</a>      </td><td align="right">2015-03-26 09:43  </td><td align="right">2.0K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="eight_to_one.v">eight_to_one.v</a>         </td><td align="right">2015-03-26 09:43  </td><td align="right">3.9K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="bus_mux.v">bus_mux.v</a>              </td><td align="right">2015-03-26 09:43  </td><td align="right">2.0K</td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../../icons/text.gif" alt="[TXT]"></td><td><a href="barrel_shift.v">barrel_shift.v</a>         </td><td align="right">2015-03-26 09:43  </td><td align="right">2.4K</td><td>&nbsp;</td></tr>
+   <tr><th colspan="5"><hr></th></tr>
+</table>
+</body></html>

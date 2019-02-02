@@ -1,0 +1,83 @@
+<html>
+<head>
+<title>ECE 5760: Graphics Processing Unit</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<style type="text/css">
+<!--
+
+a:link {  color: #FFFFFF; text-decoration: none}
+
+a:visited {  text-decoration: none; color: #FFCC66}
+
+a:hover {  color: #99CCFF; text-decoration: underline}
+body {  font-family: "Arial", "Helvetica", "sans-serif"}
+.style2 {font-size: 36px}
+.style3 {font-family: Arial, Helvetica, sans-serif}
+.style6 {font-size: 14px}
+
+-->
+</style>
+</head>
+
+<body bgcolor="#FFFFFF" link="#FFFFFF">
+<table background="image/top.gif" width="700" border="0" cellspacing="0" cellpadding="0" height="75" align="center" > 
+<tr background="image/top.gif"> <td colspan="2"><span class="style2">ECE 5760: Graphics Processing Unit<FONT FACE="Tahoma">
+  </FONT><FONT FACE="Tahoma"></FONT></span></td>
+</tr> 
+</table><table width="700" border="0" cellspacing="0" cellpadding="0" height="20" align="center"> 
+<tr bgcolor="#000000"> <td BGCOLOR="#336666"> <div align="center"> 
+  <font color="#FFFFFF" face="Tahoma">|</font><font face="Tahoma"> <font color="#FFFFFF"><a href="introduction.htm">Introduction</a>  |</font> <font color="#FFFFFF"><a href="highleveldesign.htm">High Level Design</a> </font> <font color="#FFFFFF">|</font> <font color="#FFFFFF"><a href="hardwaredesign.html">Hardware Design</a> </font> <font color="#FFFFFF">| <a href="results.htm">Results</a> | <a href="conclusion.htm">Conclusion</a> | <a href="appendix.htm">Appendix</a> | </font></font></div></td></tr> </table><table width="700" border="0" cellspacing="0" cellpadding="0" height="13" background="image/top1.gif" align="center"> 
+<tr> <td><FONT FACE="Tahoma"><img src="image/pixel.gif" width="1" height="1"></FONT></td></tr> 
+</table><FONT FACE="Tahoma"><br> </FONT><table width="700" border="0" cellspacing="0" cellpadding="0" align="center"> 
+<tr> <td width="245" height="642" valign="top"> <table width="215" border="0" cellspacing="0" cellpadding="0"> 
+<tr> <td colspan="3" height="28" background="image/menuup.gif"> <div align="center"><FONT COLOR="#FFFFFF" FACE="Tahoma"><b>
+  Links</b></FONT></div></td></tr> <tr> <td width="9" height="76" background="image/menuleft.gif">&nbsp;</td>
+  <td width="194" height="76"> 
+<FONT FACE="Tahoma"><img src="image/dot.gif" width="65" height="18"> <a href="../../../../../../../../instruct1.cit.cornell.edu/Courses/ece576/default.htm"><font color=#000000>ECE 5760</font></a> <br> 
+<img height=18 src="image/dot.gif" width=65> <a href="../../../../../../../../www.cs.cornell.edu/courses/cs465/2007fa/default.htm"><font color=#000000>CS 465 </font></a><br>  
+<img height=18 src="image/dot.gif" width=65> <a href="../../../../../../../../www.terasic.com.tw/cgi-bin/page/archive.pl@Language=English&CategoryNo=39&No="><font color=#000000>Terasic </font></a><br></FONT></td>
+  <td width="12" height="76" background="image/menuright.gif">&nbsp;</td></tr> 
+<tr> <td colspan="3" height="28" background="image/menudown.gif">&nbsp;</td></tr> </table><FONT FACE="Tahoma"><br> 
+</FONT><table width="215" border="0" cellspacing="0" cellpadding="0"> <tr> <td colspan="3" height="28" background="image/menuup.gif"> 
+<div align="center"><b><font face="Tahoma" color="#FFFFFF">Authors</font></b></div></td></tr> 
+<tr> <td width="9" height="137" background="image/menuleft.gif">&nbsp;</td>
+<td width="194" height="137"><p align="center" class="style3">Amit Penmetcha (ap328)</p>
+  <p align="center">Shane J. Pryor (sjp45) </p></td>
+<td width="12" height="137" background="image/menuright.gif">&nbsp;</td></tr> 
+<tr> <td colspan="3" height="28" background="image/menudown.gif">&nbsp;</td></tr> </table></td><td width="455" valign="top"> 
+<table width="455" border="0" cellspacing="0" cellpadding="0" background="image/longmenu.gif" height="34"> 
+<tr> <td><strong><font face="Tahoma">Conclusion</font></strong></td>
+</tr> </table><p class="style6"><em><strong>Expectations</strong></em>: <br><br>
+Overall our design almost met our expectations. We can render complex objects that consist of hundreds of triangles and rotate the object in almost real 
+time. We had hoped to be able to render these objects at about 5 frames per second, but it is slightly slower than that (couple frames a second or so). 
+We originally wanted to be able to render objects made of thousands of triangles, but there was not enough physical space on the DE2 board to do this and 
+draw in real time. We would have had to use the Flash, SD Card, or SDRAM, all of which introduce additional latency. We ran out of a significant amount of 
+space in the SRAM, logical elements, and M4K blocks since we chose to use a higher color depth and more accurate z-buffer. Also using look up tables for 
+vertices, colors, normal information, etc took up a great deal of the memory bits and logical elements, preventing us from putting larger images on the 
+DE2 board. Using the floating point hardware allowed us to do complex calculations quickly with precision, but it used additional logical elements that 
+prevented us from storing more object data. We would not have done anything significantly different, but we would have added additional features if time permitted.
+ Something we had thought about implementing would have been antialiasing, which averages out the color data on adjacent pixels to get smoothed out borders along the object, 
+similar to interpolated shading.
+<p class="style6"><em><strong>Evolution</strong></em>: <br>
+<p class="style6">This project went through many phases until we decided on a final idea that was implemented. First, we tried to implement a ray tracer 
+  using parallel Nios II processors. This approach was very, very slow. A general purpose CPU is not specialized for what we need. Once we decided on the dedicated graphics hardware
+  to do everything, we implemented several approaches that are no longer used. The shading for our project was originally flat shading, one color per triangle.
+  We were not satisfied with this approach, so we then switched to the interpolating Gouraud shading. This changed the construction of our pipeline to do the 
+  shading at the end with the z-buffer on a per pixel approach, rather than in parallel with the transform. We felt that adding the additional RAM to provide us more
+  space for the z-buffer and color depth was a good trick. We realized this about halfway through the project. The final stages involved adding the camera
+  and debugging. The camera made all of our LUTs much larger than they initially were, giving us much larger compile times for debugging. Because of this compile 
+  time, which ranged anywhere from 20 minutes to 2 hours and 30 minutes, it became difficult to work out the last few bugs in the pipeline. It also made us
+  rewrite a good bit of the Java code to include the new coordinates in each respective file. 
+<br>
+<em><strong>Intellectual Property: </strong></em><br><br>
+<p class="style6">The only code we used was the original top level module and VGA controller for the DE2 board, that Terrasic provided, Professor Bruce Land's floating point hardware, and we used .msh and .obj files that other people had created and uploaded onto the internet for public use. We implememted various algorithms we had learned from a CS graphics class in order to incorporate various features. </p>
+</td>
+</tr> </table><FONT FACE="Tahoma"><br> </FONT><table width="700" border="0" cellspacing="0" cellpadding="0" align="center"> 
+<tr> <td> <div align="left"></div><DIV ALIGN="CENTER"></DIV>
+<TABLE WIDTH="700" BORDER="0" CELLSPACING="0" CELLPADDING="0" HEIGHT="20" ALIGN="center"> 
+<TR BGCOLOR="#000000"> <TD BGCOLOR="#336666">&nbsp;</TD></TR> </TABLE></td></tr> 
+</table><FONT FACE="Tahoma"></FONT> 
+</body>
+</html>
+
+			<center>&nbsp;</center><br><br>

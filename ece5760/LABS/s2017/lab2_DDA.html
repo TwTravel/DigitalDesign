@@ -1,0 +1,109 @@
+
+<html>
+<head>
+<title>ece5760 Lab 2</title>
+<style type="text/css">
+.red {color: #F00;
+}
+</style>
+</head>
+
+<body>
+<h2> ECE 5760: Laboratory 2 </h2> 
+<h2> Hardware ODE solver with HPS control. </h2>
+
+<b> Introduction. </b> 
+<p> For this exercise, you will simulate an analog system using a Digital Differential Analyzer (DDA) and control the function of the circuit with the HPS. The positions of the two particles will be plotted as a function of time on the VGA display. You can consider the DDA as a special purpose, reconfigurable, coprocessor controlled by the HPS. The DDA you write will be a bus-slave of the HPS, and bus-master of the VGA.
+<b><hr>
+Procedure:</b> 
+<p> Read the <a href="../../DDA/index.htm">DDA page</a>. After reading the page down through <em>Second order system</em>, the integrator code that you want to use is taken from <em>Second order system with modularized integrator and NiosII cpu</em> at the <em>end</em> of the page. Note that you will NOT be using a NiosII controller as shown in the example, but rather the HPS. All you need to pull from the example is <a href="lab2_DDA_snippet.txt"><strong>this  code snippet</strong></a>.
+
+  <br>
+  The physical system you will simulate is the <a href="../../../../../../kaharris.org/teaching/216/Lectures/lec26/lec26.pdf">coupled, spring-mass system</a> shown below (<a href="../../../../../../https@www.youtube.com/watch@v=YOOP2QxvMkM">video</a>) <br>
+  The image is modified from a paper by Alex Gagen and Sean Larson. <br>
+<img src="springmass.png" width="502" height="224">
+<p>The differential equations for this system are:
+<p><code>m(d<sup>2</sup>x<sub>1</sub>/dt<sup>2</sup>)  + k<sub>1</sub>(x<sub>1</sub>) &minus; k<sub>mid</sub>(x<sub>2</sub> &minus; x<sub>1</sub>) + D<sub>1</sub>(dx<sub>1</sub>/dt) = 0 <br>
+m(d<sup>2</sup>x<sub>2</sub>/dt<sup>2</sup>) - k<sub>2</sub>(x<sub>2</sub>) + k<sub>mid</sub>(x<sub>2</sub> &minus; x<sub>1</sub>) + D<sub>2</sub>(dx<sub>2</sub>/dt) = 0
+</code>
+<p> The<code> k's</code> are spring constants, <code>m</code> the mass, and <code>D's</code> the damping coefficients. The outputs are x<sub>1</sub> and x<sub>2</sub> which will depend on position and velocity initial condtions, as well as the equation constants.
+  
+  A matlab <a href="lab2_osc/Osc_driver.m">code</a> and <a href="lab2_osc/osc_fun.m">function</a> provides a high accuracy reference solution, to which you may compare your solutions (but see also code below).  The image below is a typical output from the matlab program. <br>
+  Note that the matlab code includes cubic force terms for the springs:<br>
+  <code>spring_force1 = k1 * ((x(1)-left_wall) + k13*(x(1)-left_wall)^3)</code><br>
+You will have to add one such term (<code>k13</code>) in the assignment below.<br>
+  <img src="lab2_osc/matlab_output.png" width="889" height="320" alt="matlab example"><br>
+But in general the solutions are  linear combinations of symmetric and antisymmetric solutions. The anti-symmetric solution corresponds to masses moving in exactly the same directions at all times, so that the center spring stays at its rest length,<code> R</code>. If the two outer springs have equal <code>k</code> and rest length<code> L</code>, then at rest, <code>k*L=k<sub>mid</sub>*R</code> and<code> 2*L+R=2</code>. For example, if <code>k<sub>mid</sub>=k</code> then the distance betweent the two masses can stay at separation <code>0.67</code> indefinitely (first image below). If the two masses are started at symmetric positions (relative to zero), then they move in opposite directions at all times (second image).<br>
+<img src="lab2_osc/matlab_antisym.png" width="364" height="228" alt="antisymmetric">
+<img src="lab2_osc/matlab_sym.png" width="376" height="228" alt="symmetric">
+<p>-- <strong>Development process for this exercise</strong>
+<ol>
+  <li>Start by simulating in Matlab!
+    The previous matlab program uses the high performance ode45 solver. On the FPGA you are going to be using simple Euler integration. This <a href="Osc_Euler_v2.m">matlab program</a> is coded to use Euler integration so that you can directly compare the the FPGA solution. The undamped solution is unstable, so a little damping is added. Make sure that for the constants and initial conditions that you choose that NO state variable  goes outside the range 
+  <code>(+/-1</code>). In the image below, positions and velocities stay in range.<br>
+  <a href="lab2_matlab_sim.png"><img src="lab2_matlab_sim.png" width="634" height="310" alt=""/></a> </li>
+  <li>Next <a href="../../ModelSim/index.html">simulate your verilog in Modelsim</a> until you get the same result as you did in matlab. You will need to write a testbench which sets the same  constants and initial conditions as in the matlab code (see below). You can also estimate how to set up the VGA drawing state machine from the simulation. For example, how many compute cycles should there be per plotted point. </li>
+  <li>When the compute module works, and you know the plot interval, you are ready to write the VGA bus-master state machine. Hard-code (or switch set) constants so that you do not need the HPS input, Use a pushbutton to reset the computation and display the one fixed solution. Conversion from  floating constants to 2:16 fixed point Verilog format is given below as a C snippet, where b is a float and C prints the Verilog 2:16 constant
+    <pre>if b>=0
+        printf(&quot;(18'sd%d), \n&quot;, (int)(2^16*b) ) ;
+    else
+        printf(&quot;(-18'sd%d), \n&quot;,  (int)(-2^16*b) );
+    end </pre>
+  </li>
+  <li>Simulate the solver with the VGA bus-master state machine. The output of the state machine will be VGA addresses (x-y position) and colors. The testbench code can generate the Vsync and Hsync signals and bus ACK. Do not put your code on the FPGA until the simulation works.</li>
+  <li>Connect your solver and VGA state machine to an EBAB interface and test on the FPGA.</li>
+  <li>When the hard-coded version plots with a VGA bus-master, build the bus-slaves necessary to control reset function and set constants from the HPS, then start on the command software for console control. I suggest a simple command interpreter to enter the three spring constants, four initial conditions, start/stop, cubic enable, and reset. Remember that a parallel I/O port (PIO) which provides data <em>from</em> the HPS <em>to</em> the FPGA is an <strong><em>output</em></strong>! To get the PIO datasheet, right-click the module name and in the pop-up menu, select <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">details&gt;datasheet</span>. Some other modules require that you follow the path <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">details&gt;open_component_folder </span>to get the datasheet.</li>
+</ol>
+<p><strong>--FPGA and HPS:</strong></p>
+<ol>
+  <li><a href="../../DE1_SOC/External_Bus_to_Avalon_Bridge.pdf">External Bus to Avalon Bridge</a> (external master)</li>
+  <li><a href="../../DE1_SOC/Parallel_Port.pdf">PIO</a> bus-slave (see also <a href="../../DE1_SOC/HPS_peripherials/Qsys_index.html">Qsys design page</a>)</li>
+  <li><a href="../../DE1_SOC/HPS_peripherials/Bus_master_slave_index.html">Using external buses</a></li>
+</ol>
+<p><a href="../../StudentWork/Spring_mass/20160304_104159.mp4">Example from 2016</a> by Tahmid Mahbub, Manish Patel, Matt Filipek
+<hr>
+<b> Assignment</b>
+<ol>
+  <li>  Build a DDA which simulates a coupled spring-mass system as described above.<br>
+    -- The DDA will need to be connected to one or more Avalon Bus-Slaves for control by the HPS (see below)
+    <br>
+    -- Choose the spring constants, masses, and time step so that the natural frequencies of the system are around 500 Hz. <br>
+  -- Scale the amplitude so that the integrators stay in range <code>(+/-1</code>).<br>
+  -- Scale time so that the spring constants 
+   stay in range <code>(+/-1</code>).<br>
+  -- You can set the mass to a constant <code>m=1</code> .
+  <li>Monitor the two position variables using a VGA output of x<sub>1</sub> and x<sub>2</sub> versus time. <br>
+    -- Build a Avalon BusMaster to write the VGA screen plot of the two positions generated by the DDA. 
+      <br>
+      (The output of the DDA is not feed back to the HPS)
+    <br>
+    -- 
+    The display should look much like the matlab plot above.<br>
+    -- Scale the display so that the amplitude range takes up about one half of the VGA vertical resolution.<br>
+    -- The horiziontal VGA coordinate should be in a small multiple of the time step, so as to show a few cycles.<br>
+    -- The display should be erased when a new simulation starts. It should freeze
+  when the simulation stops.
+  <li> Use a HPS C program to allow an operator to use a serial console to:<br>
+    -- Set the four initial conditions of the simulation.<br>
+    -- Set the three linear spring constants.
+    <br>
+    -- Start/Stop the simulation.<br>
+    -- Turn on/off a cubic spring term for spring 1 scaled so thta the cubic force  is about the same as the linear term.
+</ol>
+    
+<p>Be prepared to demo your design to your TA in lab. You will be expected to show:<br>
+-- Set arbitrrary initial conditions and all three spring constants<br>
+-- 
+Symmetric and antisymmetric modes with and without the cubic spring term.<code> </code></p>
+<p> Your written lab report should include: 
+<ul>
+  <li>Mathematical considerations (type of integrator, error expected/measured, approximations) 
+  <li>Video screen shots of the VGA -- video emailed to TAs<li>How you implemented the  DDA circuits. 
+  <li> A heavily commented listing of your Verilog design and GCC  code.  
+</ul>
+<hr>
+<br>
+<small> <font size="-1">Copyright Cornell University </font></small> 
+<!-- #BeginDate format:Am1 -->March 7, 2017<!-- #EndDate -->
+</body> </html>
+

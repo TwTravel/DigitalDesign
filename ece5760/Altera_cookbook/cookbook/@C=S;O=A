@@ -1,0 +1,34 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+ <head>
+  <title>Index of /land/courses/ece5760/Altera_cookbook/cookbook</title>
+ </head>
+ <body>
+<h1>Index of /land/courses/ece5760/Altera_cookbook/cookbook</h1>
+  <table>
+   <tr><th valign="top"><img src="../../../../../icons/blank.gif" alt="[ICO]"></th><th><a href="@C=N;O=A">Name</a></th><th><a href="@C=M;O=A">Last modified</a></th><th><a href="@C=S;O=D">Size</a></th><th><a href="@C=D;O=A">Description</a></th></tr>
+   <tr><th colspan="5"><hr></th></tr>
+<tr><td valign="top"><img src="../../../../../icons/back.gif" alt="[PARENTDIR]"></td><td><a href="../default.htm">Parent Directory</a>       </td><td>&nbsp;</td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../icons/folder.gif" alt="[DIR]"></td><td><a href="arbitration/default.htm">arbitration/</a>           </td><td align="right">2015-03-26 09:44  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../icons/folder.gif" alt="[DIR]"></td><td><a href="arithmetic/default.htm">arithmetic/</a>            </td><td align="right">2015-03-26 09:44  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../icons/folder.gif" alt="[DIR]"></td><td><a href="communication/default.htm">communication/</a>         </td><td align="right">2015-03-26 09:44  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../icons/folder.gif" alt="[DIR]"></td><td><a href="compare/default.htm">compare/</a>               </td><td align="right">2015-03-26 09:44  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../icons/folder.gif" alt="[DIR]"></td><td><a href="counter/default.htm">counter/</a>               </td><td align="right">2015-03-26 09:44  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../icons/folder.gif" alt="[DIR]"></td><td><a href="crc/default.htm">crc/</a>                   </td><td align="right">2015-03-26 09:44  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../icons/folder.gif" alt="[DIR]"></td><td><a href="crypto/default.htm">crypto/</a>                </td><td align="right">2015-03-26 09:44  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../icons/folder.gif" alt="[DIR]"></td><td><a href="debug/default.htm">debug/</a>                 </td><td align="right">2015-03-26 09:44  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../icons/folder.gif" alt="[DIR]"></td><td><a href="ecc/default.htm">ecc/</a>                   </td><td align="right">2015-03-26 09:44  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../icons/folder.gif" alt="[DIR]"></td><td><a href="ethernet_fec/default.htm">ethernet_fec/</a>          </td><td align="right">2015-03-26 09:44  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../icons/folder.gif" alt="[DIR]"></td><td><a href="float/default.htm">float/</a>                 </td><td align="right">2015-03-26 09:44  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../icons/folder.gif" alt="[DIR]"></td><td><a href="interlaken_lane/default.htm">interlaken_lane/</a>       </td><td align="right">2015-03-26 09:44  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../icons/folder.gif" alt="[DIR]"></td><td><a href="muxing/default.htm">muxing/</a>                </td><td align="right">2015-03-26 09:44  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../icons/folder.gif" alt="[DIR]"></td><td><a href="random/default.htm">random/</a>                </td><td align="right">2015-03-26 09:44  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../icons/folder.gif" alt="[DIR]"></td><td><a href="storage/default.htm">storage/</a>               </td><td align="right">2015-03-26 09:44  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../icons/folder.gif" alt="[DIR]"></td><td><a href="synchronization/default.htm">synchronization/</a>       </td><td align="right">2015-03-26 09:44  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../icons/folder.gif" alt="[DIR]"></td><td><a href="translation/default.htm">translation/</a>           </td><td align="right">2015-03-26 09:44  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../icons/folder.gif" alt="[DIR]"></td><td><a href="utility/default.htm">utility/</a>               </td><td align="right">2015-03-26 09:44  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../icons/folder.gif" alt="[DIR]"></td><td><a href="video/default.htm">video/</a>                 </td><td align="right">2015-03-26 09:44  </td><td align="right">  - </td><td>&nbsp;</td></tr>
+<tr><td valign="top"><img src="../../../../../icons/layout.gif" alt="[   ]"></td><td><a href="stx_cookbook.pdf">stx_cookbook.pdf</a>       </td><td align="right">2015-03-26 09:43  </td><td align="right">2.9M</td><td>&nbsp;</td></tr>
+   <tr><th colspan="5"><hr></th></tr>
+</table>
+</body></html>

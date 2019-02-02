@@ -1,0 +1,754 @@
+<html>
+<head>
+<title>STB25 YDZ2 Ray Tracer</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<style type="text/css">
+<!--
+
+a:link {  color: #FFFFFF; text-decoration: none}
+
+a:visited {  text-decoration: none; color: #FFCC66}
+
+a:hover {  color: #99CCFF; text-decoration: underline}
+body {  font-family: "Arial", "Helvetica", "sans-serif"}
+.titles {  font-family: "Geneva", "Arial", "Helvetica", "san-serif"; font-size: 16px; font-weight: bold; color: #000000; text-decoration: underline}
+.text {  font-family: "Arial", "Helvetica", "sans-serif"; font-size: 14px}
+.code {  font-family: "Courier New", Courier, mono; font-size: 14px}
+-->
+</style>
+</head>
+
+<body bgcolor="#FFFFFF" link="#FFFFFF">
+<table background="image/top.gif" width="700" border="0" cellspacing="0" cellpadding="0" height="75" align="center" >
+<tr background="image/top.gif"> <td colspan="2">
+      <p><FONT FACE="Tahoma" SIZE="6"> FPGA Ray Tracer</FONT><br>
+      <font face="Tahoma" size="3">Scott Bingham / Donald Zhang</font></p>
+</td></tr>
+</table><table width="700" border="0" cellspacing="0" cellpadding="0" height="20" align="center">
+<tr bgcolor="#000000"> <td BGCOLOR="#336666"> <div align="center">
+  <font color="#FFFFFF" face="Tahoma">|</font><font face="Tahoma">
+  <a href="index.html">Introduction</a> <font color="#FFFFFF">|</font>
+<a href="high.html">High Level Design</a> <font color="#FFFFFF">|</font>
+ <a href="pd_design.html">Program/Hardware Design</a>  <font color="#FFFFFF">|</font>
+<a href="results.html">Results</a> <font color="#FFFFFF">|
+<a href="conclusion.html">Conclusion</a> <font color="#FFFFFF">|
+<a href="appendix.html">Appendix</a> |</font></font></font></div></td></tr> </table>
+<table width="700" border="0" cellspacing="0" cellpadding="0" height="13" background="image/top1.gif" align="center">
+
+<tr> <td><FONT FACE="Tahoma"><img src="image/pixel.gif" width="1" height="1"></FONT></td></tr>
+</table><FONT FACE="Tahoma"><br> </FONT>
+<table width="700" border="0" cellspacing="0" cellpadding="0" align="center">
+<tr> 
+    
+    <td width="677" valign="top"> 
+      <table width="456" border="0" cellspacing="0" cellpadding="0" background="image/longmenu.gif" height="34">
+        <tr> 
+          <td><b><font face="Tahoma">Results</font></b></td>
+        </tr> </table>
+      
+		 
+      <p><span class="titles">Design Difficulties</span><br>
+        <span class="text">Our biggest design challenge turned out to be signed 
+        arithmetic. We found that we had to explicitly manage the signs of operands 
+        in multiplications by making both operands positive, multiplying, and 
+        then fixing the resultant's sign if necessary. Also, we found that the 
+        arithmetic shift operator '&gt;&gt;&gt;' didn't always work as expected. 
+        Compile times at the end of the project were approaching half an hour 
+        which made debugging very difficult. Meeting the clock cycle timing requirements 
+        while trying to pack as many calculations as possible into a given state 
+        was also tricky at times. Debugging on a per pixel basis was also impossible 
+        once a large number of spheres, shadows, and reflections were added so 
+        we had to rely on mostly the VGA output to see if our changes were correct. 
+        Also, occasionally toggling one of the input switches, the state machine 
+        would jump to a state that it was never designed to reach. To solve this, 
+        we simply made any unused state return to the initial state for the ray.</span></p>
+      <p class="text">On the software side one of the biggest problems is timing 
+        and handshaking between the hardware and software. Problems include assigning 
+        the spheres data to the wrong sphere registers, or cutting off the first 
+        or the last sphere due to timing problem. These problems are all fixed 
+        when we handed over the control of the interface to the software. The 
+        software would tell the hardware when the data is valid and which sphere 
+        register it should be storing the data to. </p>
+      <p class="text"><span class="titles">Statistical Analysis of Ray Tracer</span><br>
+        This section presents some of the performance stats of our ray tracer. 
+        A total of 17 scenes were drawn to show the speed of the ray tracers in 
+        term of rays per second and frames per second. These 17 scenes include 
+        four configurations for four different scenes which all have resolution 
+        512x480, and a best case performance (a low resolution scene 320X240 with 
+        no features turned on). Also note that the following time does not include 
+        the time the hardware waits for the software to sends the sphere list. 
+      </p>
+      <table align=center class=MsoNormalTable border=1 cellspacing=1 cellpadding=1 width=682
+ style='width:6.0in;margin-left:5.4pt;border-collapse:collapse;mso-padding-alt:
+ 0in 5.4pt 0in 5.4pt'>
+        <tr style='mso-yfti-irow:0;height:12.75pt'> 
+          <td width=108 nowrap valign=bottom style='width:58.0pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal><span style='font-size:10.0pt;font-family:Arial'><o:p>&nbsp;</o:p></span></p>
+          </td>
+          <td width=96 nowrap valign=bottom style='width:104.0pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal><span style='font-size:10.0pt;font-family:Arial'><o:p>&nbsp;</o:p></span></p>
+          </td>
+          <td width=74 nowrap valign=bottom style='width:51.7pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal><span style='font-size:10.0pt;font-family:Arial'>Rays 
+              per frame<o:p></o:p></span></p>
+          </td>
+          <td width=117 nowrap valign=bottom style='width:101.75pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal><span style='font-size:10.0pt;font-family:Arial'>cycles 
+              (25MHz)/frame<o:p></o:p></span></p>
+          </td>
+          <td width=65 nowrap valign=bottom style='width:51.8pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal><span style='font-size:10.0pt;font-family:Arial'>rays/sec<o:p></o:p></span></p>
+          </td>
+          <td width=83 nowrap valign=bottom style='width:64.75pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal><span style='font-size:10.0pt;font-family:Arial'>frames/sec<o:p></o:p></span></p>
+          </td>
+        </tr>
+        <tr style='mso-yfti-irow:1;height:12.75pt'> 
+          <td width=108 nowrap valign=bottom style='width:58.0pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal><span style='font-size:10.0pt;font-family:Arial'>Image 
+              1<o:p></o:p></span></p>
+          </td>
+          <td width=96 nowrap valign=bottom style='width:104.0pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal><span style='font-size:10.0pt;font-family:Arial'>simple<o:p></o:p></span></p>
+          </td>
+          <td width=74 nowrap valign=bottom style='width:51.7pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>277,814<o:p></o:p></span></p>
+          </td>
+          <td width=117 nowrap valign=bottom style='width:101.75pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>12,662,119<o:p></o:p></span></p>
+          </td>
+          <td width=65 nowrap valign=bottom style='width:51.8pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>548,514<o:p></o:p></span></p>
+          </td>
+          <td width=83 nowrap valign=bottom style='width:64.75pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>1.974<o:p></o:p></span></p>
+          </td>
+        </tr>
+        <tr style='mso-yfti-irow:2;height:12.75pt'> 
+          <td width=108 nowrap valign=bottom style='width:58.0pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal><span style='font-size:10.0pt;font-family:Arial'>8 
+              Spheres<o:p></o:p></span></p>
+          </td>
+          <td width=96 nowrap valign=bottom style='width:104.0pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal><span style='font-size:10.0pt;font-family:Arial'>full 
+              reflection<o:p></o:p></span></p>
+          </td>
+          <td width=74 nowrap valign=bottom style='width:51.7pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>310,175<o:p></o:p></span></p>
+          </td>
+          <td width=117 nowrap valign=bottom style='width:101.75pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>14,003,794<o:p></o:p></span></p>
+          </td>
+          <td width=65 nowrap valign=bottom style='width:51.8pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>553,734<o:p></o:p></span></p>
+          </td>
+          <td width=83 nowrap valign=bottom style='width:64.75pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>1.785<o:p></o:p></span></p>
+          </td>
+        </tr>
+        <tr style='mso-yfti-irow:3;height:12.75pt'> 
+          <td width=108 nowrap valign=bottom style='width:58.0pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal><span style='font-size:10.0pt;font-family:Arial'>no 
+              plane<o:p></o:p></span></p>
+          </td>
+          <td width=96 nowrap valign=bottom style='width:104.0pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal><span style='font-size:10.0pt;font-family:Arial'>full 
+              anti aliasing<o:p></o:p></span></p>
+          </td>
+          <td width=74 nowrap valign=bottom style='width:51.7pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>2,500,295<o:p></o:p></span></p>
+          </td>
+          <td width=117 nowrap valign=bottom style='width:101.75pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>113,981,083<o:p></o:p></span></p>
+          </td>
+          <td width=65 nowrap valign=bottom style='width:51.8pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>548,401<o:p></o:p></span></p>
+          </td>
+          <td width=83 nowrap valign=bottom style='width:64.75pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>0.219<o:p></o:p></span></p>
+          </td>
+        </tr>
+        <tr style='mso-yfti-irow:4;height:12.75pt'> 
+          <td width=108 nowrap valign=bottom style='width:58.0pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal><span style='font-size:10.0pt;font-family:Arial'><o:p>&nbsp;</o:p></span></p>
+          </td>
+          <td width=96 nowrap valign=bottom style='width:104.0pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal><span style='font-size:10.0pt;font-family:Arial'>full 
+              AA + reflection<o:p></o:p></span></p>
+          </td>
+          <td width=74 nowrap valign=bottom style='width:51.7pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>2,792,565<o:p></o:p></span></p>
+          </td>
+          <td width=117 nowrap valign=bottom style='width:101.75pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>126,094,828<o:p></o:p></span></p>
+          </td>
+          <td width=65 nowrap valign=bottom style='width:51.8pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>553,664<o:p></o:p></span></p>
+          </td>
+          <td width=83 nowrap valign=bottom style='width:64.75pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>0.198<o:p></o:p></span></p>
+          </td>
+        </tr>
+        <tr style='mso-yfti-irow:5;height:12.75pt'> 
+          <td width=108 nowrap valign=bottom style='width:58.0pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal><span style='font-size:10.0pt;font-family:Arial'>Image 
+              1<o:p></o:p></span></p>
+          </td>
+          <td width=96 nowrap valign=bottom style='width:104.0pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal><span style='font-size:10.0pt;font-family:Arial'>simple<o:p></o:p></span></p>
+          </td>
+          <td width=74 nowrap valign=bottom style='width:51.7pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>490,699<o:p></o:p></span></p>
+          </td>
+          <td width=117 nowrap valign=bottom style='width:101.75pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>22,300,008<o:p></o:p></span></p>
+          </td>
+          <td width=65 nowrap valign=bottom style='width:51.8pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>550,111<o:p></o:p></span></p>
+          </td>
+          <td width=83 nowrap valign=bottom style='width:64.75pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>1.121<o:p></o:p></span></p>
+          </td>
+        </tr>
+        <tr style='mso-yfti-irow:6;height:12.75pt'> 
+          <td width=108 nowrap valign=bottom style='width:58.0pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal><span style='font-size:10.0pt;font-family:Arial'>8 
+              Spheres<o:p></o:p></span></p>
+          </td>
+          <td width=96 nowrap valign=bottom style='width:104.0pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal><span style='font-size:10.0pt;font-family:Arial'>full 
+              reflection<o:p></o:p></span></p>
+          </td>
+          <td width=74 nowrap valign=bottom style='width:51.7pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>1,802,813<o:p></o:p></span></p>
+          </td>
+          <td width=117 nowrap valign=bottom style='width:101.75pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>78,305,473<o:p></o:p></span></p>
+          </td>
+          <td width=65 nowrap valign=bottom style='width:51.8pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>575,571<o:p></o:p></span></p>
+          </td>
+          <td width=83 nowrap valign=bottom style='width:64.75pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>0.319<o:p></o:p></span></p>
+          </td>
+        </tr>
+        <tr style='mso-yfti-irow:7;height:12.75pt'> 
+          <td width=108 nowrap valign=bottom style='width:58.0pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal><span style='font-size:10.0pt;font-family:Arial'>4 
+              planes<o:p></o:p></span></p>
+          </td>
+          <td width=96 nowrap valign=bottom style='width:104.0pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal><span style='font-size:10.0pt;font-family:Arial'>full 
+              anti aliasing<o:p></o:p></span></p>
+          </td>
+          <td width=74 nowrap valign=bottom style='width:51.7pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>4,413,303<o:p></o:p></span></p>
+          </td>
+          <td width=117 nowrap valign=bottom style='width:101.75pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>200,596,329<o:p></o:p></span></p>
+          </td>
+          <td width=65 nowrap valign=bottom style='width:51.8pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>550,023<o:p></o:p></span></p>
+          </td>
+          <td width=83 nowrap valign=bottom style='width:64.75pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>0.125<o:p></o:p></span></p>
+          </td>
+        </tr>
+        <tr style='mso-yfti-irow:8;height:12.75pt'> 
+          <td width=108 nowrap valign=bottom style='width:58.0pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal><span style='font-size:10.0pt;font-family:Arial'><o:p>&nbsp;</o:p></span></p>
+          </td>
+          <td width=96 nowrap valign=bottom style='width:104.0pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal><span style='font-size:10.0pt;font-family:Arial'>full 
+              AA + reflection<o:p></o:p></span></p>
+          </td>
+          <td width=74 nowrap valign=bottom style='width:51.7pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>16,213,574<o:p></o:p></span></p>
+          </td>
+          <td width=117 nowrap valign=bottom style='width:101.75pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>704,338,405<o:p></o:p></span></p>
+          </td>
+          <td width=65 nowrap valign=bottom style='width:51.8pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>575,489<o:p></o:p></span></p>
+          </td>
+          <td width=83 nowrap valign=bottom style='width:64.75pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>0.035<o:p></o:p></span></p>
+          </td>
+        </tr>
+        <tr style='mso-yfti-irow:9;height:12.75pt'> 
+          <td width=108 nowrap valign=bottom style='width:58.0pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal><span style='font-size:10.0pt;font-family:Arial'>Image 
+              2<o:p></o:p></span></p>
+          </td>
+          <td width=96 nowrap valign=bottom style='width:104.0pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal><span style='font-size:10.0pt;font-family:Arial'>simple<o:p></o:p></span></p>
+          </td>
+          <td width=74 nowrap valign=bottom style='width:51.7pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>353,528<o:p></o:p></span></p>
+          </td>
+          <td width=117 nowrap valign=bottom style='width:101.75pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>22,544,244<o:p></o:p></span></p>
+          </td>
+          <td width=65 nowrap valign=bottom style='width:51.8pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>392,038<o:p></o:p></span></p>
+          </td>
+          <td width=83 nowrap valign=bottom style='width:64.75pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>1.109<o:p></o:p></span></p>
+          </td>
+        </tr>
+        <tr style='mso-yfti-irow:10;height:12.75pt'> 
+          <td width=108 nowrap valign=bottom style='width:58.0pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal><span style='font-size:10.0pt;font-family:Arial'>13 
+              Spheres<o:p></o:p></span></p>
+          </td>
+          <td width=96 nowrap valign=bottom style='width:104.0pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal><span style='font-size:10.0pt;font-family:Arial'>full 
+              reflection<o:p></o:p></span></p>
+          </td>
+          <td width=74 nowrap valign=bottom style='width:51.7pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>547,627<o:p></o:p></span></p>
+          </td>
+          <td width=117 nowrap valign=bottom style='width:101.75pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>33,850,568<o:p></o:p></span></p>
+          </td>
+          <td width=65 nowrap valign=bottom style='width:51.8pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>404,444<o:p></o:p></span></p>
+          </td>
+          <td width=83 nowrap valign=bottom style='width:64.75pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>0.739<o:p></o:p></span></p>
+          </td>
+        </tr>
+        <tr style='mso-yfti-irow:11;height:12.75pt'> 
+          <td width=108 nowrap valign=bottom style='width:58.0pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal><span style='font-size:10.0pt;font-family:Arial'>no 
+              planes<o:p></o:p></span></p>
+          </td>
+          <td width=96 nowrap valign=bottom style='width:104.0pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal><span style='font-size:10.0pt;font-family:Arial'>full 
+              anti aliasing<o:p></o:p></span></p>
+          </td>
+          <td width=74 nowrap valign=bottom style='width:51.7pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>3,182,440<o:p></o:p></span></p>
+          </td>
+          <td width=117 nowrap valign=bottom style='width:101.75pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>203,017,700<o:p></o:p></span></p>
+          </td>
+          <td width=65 nowrap valign=bottom style='width:51.8pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>391,892<o:p></o:p></span></p>
+          </td>
+          <td width=83 nowrap valign=bottom style='width:64.75pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>0.123<o:p></o:p></span></p>
+          </td>
+        </tr>
+        <tr style='mso-yfti-irow:12;height:12.75pt'> 
+          <td width=108 nowrap valign=bottom style='width:58.0pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal><span style='font-size:10.0pt;font-family:Arial'><o:p>&nbsp;</o:p></span></p>
+          </td>
+          <td width=96 nowrap valign=bottom style='width:104.0pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal><span style='font-size:10.0pt;font-family:Arial'>full 
+              AA + reflection<o:p></o:p></span></p>
+          </td>
+          <td width=74 nowrap valign=bottom style='width:51.7pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>4,929,447<o:p></o:p></span></p>
+          </td>
+          <td width=117 nowrap valign=bottom style='width:101.75pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>304,791,218<o:p></o:p></span></p>
+          </td>
+          <td width=65 nowrap valign=bottom style='width:51.8pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>404,330<o:p></o:p></span></p>
+          </td>
+          <td width=83 nowrap valign=bottom style='width:64.75pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>0.082<o:p></o:p></span></p>
+          </td>
+        </tr>
+        <tr style='mso-yfti-irow:13;height:12.75pt'> 
+          <td width=108 nowrap valign=bottom style='width:58.0pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal><span style='font-size:10.0pt;font-family:Arial'>Image 
+              2<o:p></o:p></span></p>
+          </td>
+          <td width=96 nowrap valign=bottom style='width:104.0pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal><span style='font-size:10.0pt;font-family:Arial'>simple<o:p></o:p></span></p>
+          </td>
+          <td width=74 nowrap valign=bottom style='width:51.7pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>492,358<o:p></o:p></span></p>
+          </td>
+          <td width=117 nowrap valign=bottom style='width:101.75pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>28,868,738<o:p></o:p></span></p>
+          </td>
+          <td width=65 nowrap valign=bottom style='width:51.8pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>426,376<o:p></o:p></span></p>
+          </td>
+          <td width=83 nowrap valign=bottom style='width:64.75pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>0.866<o:p></o:p></span></p>
+          </td>
+        </tr>
+        <tr style='mso-yfti-irow:14;height:12.75pt'> 
+          <td width=108 nowrap valign=bottom style='width:58.0pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal><span style='font-size:10.0pt;font-family:Arial'>13 
+              Spheres<o:p></o:p></span></p>
+          </td>
+          <td width=96 nowrap valign=bottom style='width:104.0pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal><span style='font-size:10.0pt;font-family:Arial'>full 
+              reflection<o:p></o:p></span></p>
+          </td>
+          <td width=74 nowrap valign=bottom style='width:51.7pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>1,804,498<o:p></o:p></span></p>
+          </td>
+          <td width=117 nowrap valign=bottom style='width:101.75pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>102,301,169<o:p></o:p></span></p>
+          </td>
+          <td width=65 nowrap valign=bottom style='width:51.8pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>440,977<o:p></o:p></span></p>
+          </td>
+          <td width=83 nowrap valign=bottom style='width:64.75pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>0.244<o:p></o:p></span></p>
+          </td>
+        </tr>
+        <tr style='mso-yfti-irow:15;height:12.75pt'> 
+          <td width=108 nowrap valign=bottom style='width:58.0pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal><span style='font-size:10.0pt;font-family:Arial'>4 
+              planes<o:p></o:p></span></p>
+          </td>
+          <td width=96 nowrap valign=bottom style='width:104.0pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal><span style='font-size:10.0pt;font-family:Arial'>full 
+              anti aliasing<o:p></o:p></span></p>
+          </td>
+          <td width=74 nowrap valign=bottom style='width:51.7pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>4,428,189<o:p></o:p></span></p>
+          </td>
+          <td width=117 nowrap valign=bottom style='width:101.75pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>259,797,987<o:p></o:p></span></p>
+          </td>
+          <td width=65 nowrap valign=bottom style='width:51.8pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>426,118<o:p></o:p></span></p>
+          </td>
+          <td width=83 nowrap valign=bottom style='width:64.75pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>0.096<o:p></o:p></span></p>
+          </td>
+        </tr>
+        <tr style='mso-yfti-irow:16;height:12.75pt'> 
+          <td width=108 nowrap valign=bottom style='width:58.0pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal><span style='font-size:10.0pt;font-family:Arial'><o:p>&nbsp;</o:p></span></p>
+          </td>
+          <td width=96 nowrap valign=bottom style='width:104.0pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal><span style='font-size:10.0pt;font-family:Arial'>full 
+              AA + reflection<o:p></o:p></span></p>
+          </td>
+          <td width=74 nowrap valign=bottom style='width:51.7pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>16,225,005<o:p></o:p></span></p>
+          </td>
+          <td width=117 nowrap valign=bottom style='width:101.75pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>920,108,168<o:p></o:p></span></p>
+          </td>
+          <td width=65 nowrap valign=bottom style='width:51.8pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>440,845<o:p></o:p></span></p>
+          </td>
+          <td width=83 nowrap valign=bottom style='width:64.75pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>0.027<o:p></o:p></span></p>
+          </td>
+        </tr>
+        <tr style='mso-yfti-irow:17;mso-yfti-lastrow:yes;height:12.75pt'> 
+          <td width=108 nowrap valign=bottom style='width:58.0pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal><span style='font-size:10.0pt;font-family:Arial'>best 
+              case<o:p></o:p></span></p>
+          </td>
+          <td width=96 nowrap valign=bottom style='width:104.0pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal><span style='font-size:10.0pt;font-family:Arial'><o:p>&nbsp;</o:p></span></p>
+          </td>
+          <td width=74 nowrap valign=bottom style='width:51.7pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>108,422<o:p></o:p></span></p>
+          </td>
+          <td width=117 nowrap valign=bottom style='width:101.75pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>4,678,168<o:p></o:p></span></p>
+          </td>
+          <td width=65 nowrap valign=bottom style='width:51.8pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>579,404<o:p></o:p></span></p>
+          </td>
+          <td width=83 nowrap valign=bottom style='width:64.75pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt' class="text"> 
+            <p class=MsoNormal align=right style='text-align:right'><span
+  style='font-size:10.0pt;font-family:Arial'>5.344<o:p></o:p></span></p>
+          </td>
+        </tr>
+      </table>
+      <p align=center><font size="-1">Table 2</font></p>
+      <p class="text" align=center><img  alt="Figure12" src="image/ray/image024.gif" width="293" height="214"> 
+        <img  alt="Figure12" src="image/ray/image026.gif" width="289" height="211"> 
+      </p>
+      <p class="text" align=center><font size="-1">Figure 12</font></p>
+      <p class="text" ><br>
+        The number of rays per second varied between 440,000 to 540,000 depending 
+        on the specific scene. As expected the number of spheres and planes both 
+        have a big impact on the performance of the ray tracer. Certain relationship 
+        can be observed from the above graphs. The number of rays per second is 
+        more effected by the number of spheres and planes, and less by what features 
+        are turned on. On the other hand the frames per second is mostly effected 
+        by what features are turned on. For the same scene when both 8 times anti-aliasing 
+        and 3 levels of reflection are turned on, the frame rate can have as much 
+        as 30 times decrease from the standard case. </p>
+      <p><span class="titles">Hardware Usage</span><br>
+        <span class="text">In the end we had to limit our design due to limited 
+        number of logic elements available to us on the DE2 board. The NIOS II 
+        CPU uses about 1400-1800 LEs, which leaves us with 33216 LEs for the ray 
+        tracer hardware. We had to shrink the size of the number of spheres that 
+        can be drawn down to 4 so our design can fit on the FPGA. Below is some 
+        stats from the compliation report of our final design.</span></p>
+      <table align=center class=MsoNormalTable border=1 cellspacing=1 cellpadding=1 width=254
+ style='width:190.65pt;margin-left:5.4pt;border-collapse:collapse;mso-padding-alt:
+ 0in 5.4pt 0in 5.4pt'>
+        <tr style='mso-yfti-irow:0;height:12.75pt'> 
+          <td width=137 nowrap valign=bottom style='width:102.8pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt'> 
+            <p class=MsoNormal><span style='font-size:10.0pt;font-family:Arial'>Family<o:p></o:p></span></p>
+          </td>
+          <td width=117 nowrap valign=bottom style='width:87.85pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt'> 
+            <p class=MsoNormal><span style='font-size:10.0pt;font-family:Arial'>Cyclone 
+              II<o:p></o:p></span></p>
+          </td>
+        </tr>
+        <tr style='mso-yfti-irow:1;height:12.75pt'> 
+          <td width=137 nowrap valign=bottom style='width:102.8pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt'> 
+            <p class=MsoNormal><span style='font-size:10.0pt;font-family:Arial'>Device<o:p></o:p></span></p>
+          </td>
+          <td width=117 nowrap valign=bottom style='width:87.85pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt'> 
+            <p class=MsoNormal><span style='font-size:10.0pt;font-family:Arial'>EP2C35F672C6<o:p></o:p></span></p>
+          </td>
+        </tr>
+        <tr style='mso-yfti-irow:2;height:12.75pt'> 
+          <td width=137 nowrap valign=bottom style='width:102.8pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt'> 
+            <p class=MsoNormal><span style='font-size:10.0pt;font-family:Arial'>Total 
+              Logic Elements<o:p></o:p></span></p>
+          </td>
+          <td width=117 nowrap valign=bottom style='width:87.85pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt'> 
+            <p class=MsoNormal><span style='font-size:10.0pt;font-family:Arial'>32529/33216 
+              (98%)<o:p></o:p></span></p>
+          </td>
+        </tr>
+        <tr style='mso-yfti-irow:3;height:12.75pt'> 
+          <td width=137 nowrap valign=bottom style='width:102.8pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt'> 
+            <p class=MsoNormal><span class=SpellE><span style='font-size:10.0pt;
+  font-family:Arial'>Total</span></span><span style='font-size:10.0pt;
+  font-family:Arial'> registers<o:p></o:p></span></p>
+          </td>
+          <td width=117 nowrap valign=bottom style='width:87.85pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt'> 
+            <p class=MsoNormal style='margin-right:20.0pt'><span style='font-size:10.0pt;
+  font-family:Arial'>6348<o:p></o:p></span></p>
+          </td>
+        </tr>
+        <tr style='mso-yfti-irow:4;height:12.75pt'> 
+          <td width=137 nowrap valign=bottom style='width:102.8pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt'> 
+            <p class=MsoNormal><span style='font-size:10.0pt;font-family:Arial'>Total 
+              memory bits<o:p></o:p></span></p>
+          </td>
+          <td width=117 nowrap valign=bottom style='width:87.85pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt'> 
+            <p class=MsoNormal><span style='font-size:10.0pt;font-family:Arial'>94688 
+              (20%)<o:p></o:p></span></p>
+          </td>
+        </tr>
+        <tr style='mso-yfti-irow:5;mso-yfti-lastrow:yes;height:12.75pt'> 
+          <td width=137 nowrap valign=bottom style='width:102.8pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt'> 
+            <p class=MsoNormal><span style='font-size:10.0pt;font-family:Arial'>Total 
+              PLL<o:p></o:p></span></p>
+          </td>
+          <td width=117 nowrap valign=bottom style='width:87.85pt;padding:0in 5.4pt 0in 5.4pt;
+  height:12.75pt'> 
+            <p class=MsoNormal><span style='font-size:10.0pt;font-family:Arial'>2/4 
+              (50%)<o:p></o:p></span></p>
+          </td>
+        </tr>
+      </table>
+      <p align=center><font size="-1">Table 3</font></p>
+      </td></tr>
+  </TABLE>
+
+
+
+<FONT FACE="Tahoma"></FONT>
+<center>&nbsp;</center><br><br></body>
+</html>
+
+                        

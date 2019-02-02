@@ -1,0 +1,1041 @@
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+
+
+
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+
+
+<!--
+
+	This document provides the basis of a semantically structured web page 
+
+	authored in XHTML 1.0 Transitional using established Cornell University
+
+	naming conventions.
+
+-->
+
+
+
+<head>
+
+	<title>Game of Life Music Synthesizern</title>
+
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+
+	<meta http-equiv="Content-Language" content="en-us" />
+
+	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+
+<!--
+
+	All layout and formatting should be controlled through Cascading Stylesheets (CSS).
+
+	The following link tag should appear in the head of every page in the website. see
+
+	styles/screen.css.
+
+-->
+
+	<link rel="stylesheet" type="text/css" media="screen" href="styles/screen.css" />
+
+</head>
+
+
+
+
+
+
+
+<body class="twocolumn">
+
+
+
+<!--
+
+	The following link provides a way for people using text-based browsers and
+
+	screen readers to skip over repetitive navigation elements so that they can 
+
+	get directly to the content. It is hidden from general users through CSS.
+
+-->
+
+
+
+<div id="skipnav">
+
+	<a href="#content">Skip to main content</a>
+
+</div>
+
+
+
+<hr />
+
+
+
+<!-- The following div contains the Cornell University logo with unit signature -->
+
+<div id="cu-identity">
+
+	<div id="cu-logo">
+
+		<a id="insignia-link" href="../../../../../../../../www.cornell.edu/default.htm"><img src="images/unit_signature.gif" alt="Cornell University" width="416" height="88" border="0" /></a>
+
+		<div id="unit-signature-links">
+
+			<a id="cornell-link" href="../../../../../../../../www.cornell.edu/default.htm">Cornell University</a>
+
+			<a id="unit-link2" href="../../../../../../../../www.ece.cornell.edu/default.htm">School of Electrical and Computer Engineering</a>
+
+		</div>
+
+	</div>
+
+
+
+	<!-- 
+
+		The search-form div contains a form that allows the user to search 
+
+		either pages or people within cornell.edu directly from the banner.
+
+	-->
+
+
+
+	<div id="search-form">
+
+		<form action="http://www.cornell.edu/search/" method="get" enctype="application/x-www-form-urlencoded">
+
+			<div id="search-input">
+
+				<label for="search-form-query">SEARCH:</label>
+
+				<input type="text" id="search-form-query" name="q" value="" size="20" />
+
+				<input type="submit" id="search-form-submit" name="submit" value="go" />
+
+			</div>
+
+
+
+			<div id="search-filters">
+
+					<input type="radio" id="search-filters1" name="tab" value="" checked="checked" />
+
+					<label for="search-filters1">Pages</label>	
+
+					<input type="radio" id="search-filters2" name="tab" value="people" />
+
+					<label for="search-filters2">People</label>
+
+					<a href="../../../../../../../../www.cornell.edu/search/default.htm">more options</a>
+
+			</div>	
+
+		</form>
+
+	</div>
+
+	<!--
+
+		The search-navigation div contains links that allow the user to search
+
+		either the unit website or all of cornell.edu.
+
+		These links will be displayed in the unit signature banner and will
+
+		be aligned with the right edge of the page.
+
+	<div id="search-navigation">
+
+		<ul>
+
+			<li><a href="#">Search Unit Name</a></li>
+
+
+			<li><a href="http://www.cornell.edu/search/">Search Cornell</a></li>
+
+		</ul>
+
+	</div>
+
+	-->
+
+</div>
+
+
+
+<!-- The header div contains the main identity and main navigation for the site -->
+
+<div id="header">	
+
+	<!--
+
+		The navigation div contains the site's main navigation. These
+
+		links will be displayed in a horizontal, gray navigation bar 
+
+		under the unit signature banner.
+
+	-->	
+
+	<div id="navigation">
+
+		<ul>
+
+		</ul>
+
+	</div>
+
+	<hr />
+
+	<!-- 
+
+		The identity div contains the name of a main site section
+
+	-->
+
+	<div id="identity">
+
+	<h1 align="center"><strong>Game of Life Music Synthesizer</strong> </h1>
+
+	<h3 align="center"> By Lucas Ackerman (lba36) and Weiqing Li (wl336)</h3>
+
+	</div>
+
+</div>
+
+
+
+<hr />
+
+
+
+<div id="wrap">
+
+<!-- The content div contains the main content of the page -->
+
+<div id="content">
+
+	<!--
+
+		The section-navigation div contains the second level of site navigation.
+
+		These links appear at the top of the left sidebar of the two-column page.
+
+	-->
+
+
+
+	<div id="section-navigation">
+
+		<ul>
+
+			<li><a href="#intro">Introduction</a></li>
+
+			<li><a href="#high_level_design">High Level Design</a></li>
+ 
+ 			<li><a href="#hardware_design">Hardware Design</a></li>
+
+			<li><a href="#software_design">Software Design</a></li>
+
+            <li><a href="#testing">Testing & Debug</a></li>
+
+            <li><a href="#results">Results</a></li>
+
+            <li><a href="#conclusions">Conclusions</a></li>
+
+            <li><a href="#appendix">Appendix</a></li>
+
+	  </ul>
+
+	</div>
+
+
+
+	<hr />
+
+	
+
+	<!--
+
+		The main div contains the main contents of the page. It will be displayed
+
+		as the wide right column with the beige background.
+
+	-->
+
+
+
+	<div id="main">
+<!-- ******************** INTRODUCTION ******************** -->
+    <a name="intro"></a>
+    <h2>Introduction</h2>
+    <p align="justify">
+    Our ECE 5760 project was aimed at combining Conway's Game of Life with music. The idea was to display the evolving states of the Game of Life and meaningfully map these states to an audio signal in real time. The motivation originally came from <a href="../../../../../../../../lab.andre-michelle.com/tonematrix"> tone-matrix synthesizers</a>, which allows users to dynamically affect the synthesis of an audio signal by clicking individual "cells" on the screen. We thought that combining this idea with a cellular automaton, which automatically evolves to change its state from one time step to the next, could make for an interesting music generator. Moreover, we believed that implementating this system on an FPGA presented the unique opportunity to tightly couple direct digital audio synthesis with the video signals controlling the automaton.
+    </p>
+    <div align="center" class="photo-large"><img src="images/team1.JPG" alt="" width="244"  height = "182"/>
+	<img src="images/team.JPG" alt="" width="250"  height = "182"/>
+    <p class="caption">Luke and Weiqing with the Game of Life Music Synthesizer</p> </div> 
+    <p align="justify">
+    Our final implementation consisted of a VGA for displaying the cellular automaton, a keyboard for user controls, a pair of speakers for outputing the audio signal and an Altera DE2 Development Board (which contained a Cyclone II FPGA). The interface allowed the user to modify the automaton directly, either by drawing individual cells, dropping in pre-defined objects (i.e. glider) or changing the rate of evolution. Through the keyboard, the user was also able to control the generation of audio by enabling "scan bars" and/or picking preset tone mappings (described in detail later).
+    </p>
+    
+ <!-- EMBEDDED GAME OF LIFE  -->
+ <p align="justify">
+ A example of Conway's Game of Life implemented in Flash (borrowed from<a href=" ../../../../../../../../www.kenomaerz.de/de/programmierung/game-of-life.html"> www.kenomaerz.de</a>) is provided below for the reader's reference.
+ </p>
+ <object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" codebase="../../../../../../../../download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=6,0,40,0" width="500" height="380"><param name="width" value="500" /><param name="height" value="380" /><param name="src" value="../../../../../../../../www.kenomaerz.de/images/stories/gameoflife/gol.swf" /><embed type="application/x-shockwave-flash" width="500" height="380" src="../../../../../../../../www.kenomaerz.de/images/stories/gameoflife/gol.swf"></embed></object><p>
+ <div><p class="caption">Example of Conway's Game of Life in Flash - borrowed from <a href=" ../../../../../../../../www.kenomaerz.de/de/programmierung/game-of-life.html"> www.kenomaerz.de</a></p> </div> 	
+
+<!-- ******************** HIGH-LEVEL DESIGN ******************** -->
+    <a name="high_level_design"></a>
+    <h2>High Level Design</h2>
+    <p align="justify"> 
+	The following subsections detail the rationale behind our project, our logical structure of the design, hardware/software tradeoffs and other useful background information. 
+    </p>
+	<h4>Rationale & Sources for Idea</h4>
+    <p align="justify">
+    As mentioned in the introduction, our initial motivation for the project came from the tone-matrix musical generation tools that have become very popular on the internet. After talking with Bruce about the idea, he suggested that the project might be more interesting and better exploit the FPGA hardware if we were to replace the tone-matrix with a cellular automaton which evolved automatically in time. We liked this idea and thought that it would also offer an opportunity to combine concepts used from <a href="../../../../LABS/f2011/lab1.html">Lab 1</a> and <a href="../../../../LABS/f2011/lab2.html">Lab 3</a>
+    </p>
+    <p align="justify">
+    After doing some more research, we found that this idea had actually been explored in a variety of past projects. The ones that most influenced our ideas and final product were <a href="../../../../../../../../www.glitchds.com/default.htm">GlitchDS</a>, <a href="../../../../../../../../tones.wolfram.com/default.htm">WolframTones</a> and <a href="../../../../../../../../grantmuller.com/projects/game-of-life/default.htm">Grant Muller's Game of Life MIDI Sequencer</a>. Each of these implementations used an automaton (either Conway's Game of Life or a Wolfram 1D automaton) to produce different sounds. We were particularly inspired by the GlitchDS which produced very "futuristic" and unique audio. 
+    </p>
+    <p align="justify">
+    Therefore starting out, we intended to instantiate the Game of Life and synthesize our own tones (ideally unlike the common instruments) based on the cellular arrangement at any given point in time. We decided from the outset that it would be difficult to predict how different audio mappings would sound without testing them first. For example it wasn't immediately apparent whether some sort of direct mapping (i.e. based on the number or arrangement of cells) would produce music that was more interesting than say using the current state as some sort of probabalistic measure. Therefore we strove to make an interface that would be conducive to easily re-mapping the tones. 
+    </p>
+    
+    <h4>Background Math</h4>
+    <h4><i>Game of Life</i></h4>
+	<p align="justify">	
+    Conway's Game of Life is a mathematical 2-dimensional cellular automaton, which evolves over time based on its past states (as can be seen in the flash version above). There are only four main rules: 
+    </p>
+	<ul>
+      <li>Any live cell with fewer than two live neighbours dies</li>
+      <li>Any live cell with fewer than two live neighbours dies</li>
+      <li>Any live cell with more than three live neighbours dies</li>
+      <li>Any dead cell with exactly three live neighbours becomes a live cell</li>
+    </ul>
+    <p align="justify">	
+    With these four simple rules (and extremely basic mathematics), many interesting visual structures can be created starting from a variety of intial conditions (i.e. gliders, oscillators, etc). A few examples are presented below for reference (taken from <a href="../../../../../../../../en.wikipedia.org/default.htm">Wikipedia.org</a>): 
+
+<div align="center" class="photo-small"><img src="images/oscillator.gif" alt="" width="100"  height = "100"/>&nbsp;<img src="images/toad.gif" alt="" width="100"  height = "100"/>&nbsp;<img src="images/glider.gif" alt="" width="100"  height = "100"/>
+<p class="caption">From Left to Right: Simple Oscilator, "Toad" Oscillator, "Glider". <a href="../../../../../../../../en.wikipedia.org/wiki/Conway's_Game_of_Life">(Source:http://en.wikipedia.org/wiki/Conway's_Game_of_Life)</a>  </p></div>
+    </p>
+    <p align="justify">	
+    <h4><i>Direct Digital Synthesis</i></h4>
+    </p>
+    <p align="justify">	
+    A Direct Digital Synthesizer (DDS) is a type of frequency synthesizer used for creating arbitrary waveforms from a single, fixed-frequency reference clock. In our project, we use this kind of synthesizer to synthesize the tone we want to play in real time. We experimented with a few different direct digital synthesis techniques, however they all relied on the same basic principles. The following is a basic diagram of a standard DDS:    
+    </p>
+	<div align="center" class="photo-small"><a class="without_u" href="images/dds_basic.PNG"><img src="images/dds_basic.PNG" alt="" width="513"  height = "254"/></a>
+    <p class="caption">Direct Digital Synthesis Block Diagram</p> </div> 
+	<p align="justify">
+	The <i>Frequency Control Register</i> and the <i>NCO</i> part outputs a Pulse-Code Modulation (PCM), Pulse-Width Modulation (PWM) or Pulse Density Modulation (PDM) digital signal. For this project, we implemented these modules using Finite State Machines (FSM) on the FPGA (described in detail later). The <i>Reference Oscillator</i> provides clock for synchronizing the whole synthesizer. We used onboard 27Mhz and 50Mhz crystal and the Phase-Locked Loop (PLL) in FPGA to get the desired clock. Since the output now is digital signal, a <i>Digital to Analog Converter</i> (DAC) is here to convert the output signal into analog domain. We have a Wolfson WM8731 DAC with built in <i>Low-Pass Filter</i> (LPF) to do the job of the last two blocks.
+	</p>
+	
+    <h4>Logical Structure</h4>
+    <p align="justify">
+    A high-level view of our system is presented below:
+	</p>
+	<div align="center" class="photo-small"><a class="without_u" href="images/logical_structure.PNG"><img src="images/logical_structure.PNG" alt="" width="505"  height = "250"/></a>
+    <p class="caption">High-Level View showing Logical Structure</p> </div> 
+	<p align="justify">
+	Our goal from the outset was to design a system that allowed a user to interact with Conway's Game of Life in a way much like the flash-version included above. Additionally, we wanted the user to easily be able to manipulate both the automaton and its mapping to audio in order to produce an interesting musical signal which could be played with basic speakers. As can be seen above, all of the control logic (both hardware and software) was imlpemented on the Altera DE2 Development Board. An external VGA monitor allowed the user to see the automaton as it evolved and manipulate it with ease via a simple keyboard interface. Finally a pair of basic speakers were attached in order for the music to be played in real-time, as the automaton evolved.
+	</p>
+	<p align="justify">
+	The hardware synthesized on the FPGA itself was broken into three logical pieces: automaton generation, audio synthesis and the user interface. The automton generation hardware simply calculated the next state of the Game Of Life given its current state, and updated all cell values in memory. Additionally, this hardware supported adding objects or even individual cells to the screen when the game was "paused". The audio synthesis hardware, as mentioned earlier, simply created multiple tones based on state information from the cellular automaton and routed them to the audio codec for playback on external speakers. Finally, the user interface consisted of many small hardware modules, the most significant of which was the NIOS processor. All of the key presses on the keyboard were routed to the NIOS which then drove the appropriate control lines for each of the affected hardware modules. Each of these pieces of our design is described in more detail later on in the report. An image of our setup is provided below:
+	</p>
+	<div align="center" class="photo-small"><a class="without_u" href="images/setup.jpg"><img src="images/setup.jpg" alt="" width="500"  height = "333"/></a>
+    <p class="caption">Conway's Game of Life Music Generator: Hardware Setup</p> </div> 
+	
+    <h4>Hardware & Software Tradeoffs</h4>
+    <p align="justify">
+    One of the main hardware tradeoffs that we made in designing our final system involved how to display user interface features without significantly reducing bandwidth to memory. More specifically, we originally considered storing both the automaton state information and user interface features (i.e. cursor, scan bars, etc) in memory, however we were concerned about dividing read/write access in time between the VGA controller, automaton state machine and the user interface control blocks. To avoid this problem, we made a major tradeoff by choosing not store any of the user interface features in memory, but rather multiplex the signal to the VGA controller in order to determine whether a pixel should come from memory (i.e. the automaton) or from one of the user interface generation blocks. 
+    </p>
+	<p align="justify">
+    A second major tradeoff that we made involved choosing to use the NIOS for interpreting the signals from the keyboard as opposed to a hardware state machine. Initially, we included the NIOS in our design because we saw it as a simple way to centralize control of all the other hardware blocks. Moreover, we thought that it might be interesting for the NIOS to manage an independed user interface (i.e. sidebar) stored in the SRAM. The goal was to divide the screen into portions loaded from SRAM and portions loaded from M4K blocks. However, later on in the design process we decided it would be best for the fullscreen to be used in displaying the automaton, meaning the the NIOS's role in our design became limited to solely interpreting the keyboard signals. This simple task could have be implemented in hardware, however keeping it in software meant that changes to controls or varying basic timing parameters (i.e. the evolution rate of the automaton) involved only modifying a small base of C-code (which had a much shorter compile time than the FPGA design). Moreover, keeping the NIOS software in the design offered an additional avenue for debugging problems (i.e. we could leverage the built-in serial communication). 
+    </p>
+	<p align="justify">
+	The final major hardware tradeoff we made was choosing to use direct digital synthesis methods instead of another kind of instrumental-modeling to produce our musical tones. We thought from the outset that with all of the overheads required for generating the automaton and user interface, we would have very little physical space available on the FPGA for a more complex synthesis method (i.e. nodal drum synthesis as in <a href="../../../../LABS/f2011/lab2.html">Lab 3</a>). We also believed, that a simple, non-instrumental, tone synthesis would allow for a greater variety of tones and a more unique type of music. In retrospect, this hardware tradeoff was probably unjustified as our final design used under 30% of the total board resources. Moreover it allowed user to switch between tone generation modes to find what they found the most interesting. 
+	</p>
+    <h4>Standards, Copyrights & Patents</h4>
+    <p align="justify">
+    Our project makes use of the common VGA Protocol and PS2 hardware interface. We also used code generated by Altera's software and from a previous 5760 project. See <a href="#ipconsid">Intellectual Property Considerations</a> in our Conclusion section for more specific details.
+    </p>
+                
+<!-- ******************** HARDWARE DESIGN ******************** -->
+    <a name="hardware_design"></a>
+    <h2>Hardware Design</h2>
+    <p align="justify">
+    A high-level illustration of our hardware design and organization is presented below:
+    </p>
+    <div align="center" class="photo-small"><a class="without_u" href="images/hardwareHighLevel.PNG"><img src="images/hardwareHighLevel.PNG" alt="" width="510"  height = "250"/></a>
+    <p class="caption">High-Level Organization of Hardware</p> </div> 
+   	<p align="justify">
+    Starting on the left-hand side of the diagram above, we see that the  <i>GOLStateMachine</i> is responsible for updating the M4K Memory with the new states of the cellular atomaton, using control signals from the <i>NIOS</i>. These cells are then read out to the <i>VGAController</i>, however the signal is first piped through a series of mostly combinational blocks. The first of these is the <i>MakeCursor</i> block which adds a cursor to the video stream based on position data from the <i>NIOS</i>. After the cursor is added, the signal is run through the <i>Draw Interface</i> block which adds borders and any other interface features. Finally, the signal enters a series of 3 <i>DrawScanBar</i> modules, which place a scan bar at a location partially controlled by input from the <i>NIOS</i>. After all of these objects have been added to the video stream the VGA controller ouputs the corresponding pixels to the VGA interface. It's important to note, that all of the visual elements used in our project, excluding the automaton itself, are combinationally added to the video. Our main reasoning for this is that we wanted to avoid the complexity associated with mixing the automaton state data with other unrelated objects (like the scan bars). While this may have contributed to intermittent jitter problems (discussed later), in the end there were no observable video artifacts.	
+    </p>
+	<p align="justify">
+	In addition to this video chain, our final design also consisted of a <i>KeyboardController</i> (pictured at the top) which was responsible for interpreting signals sent from a keyboard for user control. The NIOS processor accepted these signals and was responsible for updating the relevant hardware blocks (i.e. changing the speed in the <i>GOLStateMachine</i>). Finally the four blocks shown at the bottom of the diagram show the hardware responsible for creating the audio signal. <i>PlayRowSound</i> took each of the scan bar positions as input, and signaled the <i>DDS</i> module to play a tone corresponding to the number of cells in that row (based on user selectable mapping). Each of the 3 corresponding <i>DDS</i> modules then took this information and synthesized the sound in real time using a fixed sine table (instantiated as a ROM). The audio from each of these <i>DDS</i> modules was then summed together and sent to the audio codec which passed it out via the 3.5mm jack on the DE2 board to a pair of speakers. 
+	</p>
+	<p align="justify">
+	The following sub-sections will describe each of these hardware elements in more detail. 
+	</p>
+	<h4>GOL State Machine</h4>
+    <p align="justify">
+	The diagram below depicts the state-machine used for updating the automaton:
+    </p>
+	<div align="center" class="photo-small"><a class="without_u" href="images/golSM.PNG"><img src="images/golSM.PNG" alt="" width="510"  height = "200"/></a>
+	<p class="caption">Game of Life State Machine</p> </div> 
+	<p align="justify">
+	Beginning on the left-hand side, the state machine sits in the <i>reset</i> state while KEY0 on the DE2 board is pressed. In this state all registers (i.e. counters) are reinitialized and the screen is populated with a few demonstration objects to make the start-up more interesting. From here the state machine moves directly into the <i>init</i> state which similarly initializes a few other values that allow the state machine to read from memory on the next cycle. In the <i>read</i> state an entire line (or row) of the automaton is read out of memory one at a time. Once the End Of Line (EOL) is reached, the state machine moves into the <i>update</i> state where each cell in the "current line" is update one at a time based on its total number of neighbors. Finally, once the line has been completely updated the state machine moves into the <i>write</i> state which writes back the oldest line to memory. The process is then repeated beginning with the reading of a new line out of memory. Once the End Of Screen (EOS) is reached, the hardware moves into the <i>done</i> state where it waits for a pre-defined amount of time (set by the user) using a simple counter. Once the counter runs down, the calculation of the next state of the screen is initiated by returning to the <i>read</i> state.
+	</p>
+	<p align="justify">
+	The read/update/write process is difficult to visualize, so diagram below is provided to illustrate this sequence:
+	</p>
+	<div align="center" class="photo-small"><a class="without_u" href="images/golUpdate.PNG"><img src="images/golUpdate.PNG" alt="" width="512"  height = "361"/></a>
+	<p class="caption">Game of Life Cell Update</p> </div> 
+	<p align="justify">
+	In the diagram above, the red cell is the current cell being updated. Each of the green cells is one of its neighbors, meaning that the new state (alive or dead) can be calculated as follows:
+	</p>
+	<div align="center" class="photo-small"><img src="images/newcellEqn.PNG" alt="" width="512"  height = "27"/>
+	<p class="caption">New Cell Update Equation</p> </div>
+	<p align="justify">
+	In otherwords, if the cell is currently alive and has more than 3 or less than 2 neighbors it dies (by overcrowding or loneliness respectively), otherwise if it was previously dead and has exactly 3 neighbors it comes alive (as if by reproduction). This new value for cell(i,j) is placed into the holding register array shown at the bottom of the diagram. Once the entire line has been indexed through, "new line 0" is written back to memory, line 1 becomes line 0 and line 2 becomes line 1. The next line is read out of memory (in its entirety) and stored into the line 2 register array. The process is then repeated until the last line is reached (N). 
+	</p>
+	<p align="justify">
+	It's important to note that the <i>done</i> state shown in the state machine diagram above actually serves two purposes: to add a waiting period between consecutive states of the automaton and to allow the use to add cells (or clusters of cells) to the screen if the game is paused. Therefore, in actual implementation, the <i>done</i> state actually incorporates another drawing state machine. This state machine is shown below:
+	</p>
+	<div align="center" class="photo-small"><a class="without_u" href="images/drawSM.PNG"><img src="images/drawSM.PNG" alt="" width="511"  height = "194"/></a>
+	<p class="caption">Draw State Machine</p> </div>
+    <p align="justify">
+	The state machine begins in the <i>done</i> state where it waits for a new user selected object (which is sent from the keyboard via the NIOS processor). Once a new object is received, the state machine transitions into <i>draw</i> where it then moves into a unique state corresponding to the object requested by the user. For example, if the user wants to draw a "glider" the state machine would then move into a glider-state where it draws the pixels that make up the glider one at a time. Once the number of pixels drawn = the number of pixels assigned (i.e. the number of total pixels that make up the glider) it has completed and therefore returns to the done state. 
+	</p>
+	<p align="justify">
+	In order to draw "ECE 5760" and other objects that consisted of a large number of pixels, we used a simple MATLAB script (included with our code listing within the folder named "MATLAB Generated") that would output Verilog code which when placed inside of the Draw State Machine, would draw the object. We first began by drawing the object of interest in a matrix with Microsoft Excel, and then imported the matrix to MATLAB. The script would then index through all of the cells in the matrix and write a file with the necessary lines of code to draw that object. While a very simple solution, it was important as writing this code by hand would have been extremely tedious and time consuming (the code for drawing "ECE 5760 on the screen alone is 1096 lines).
+	</p>
+	<div align="center" class="photo-small"><a class="without_u" href="images/ece1.jpg"><img src="images/ece1.jpg" alt="" width="500"  height = "333"/></a>
+	<p class="caption">"ECE 5760" drawn with cells in Conway's Game of Life</p> </div>
+	<h4>Make Cursor, Draw Interface & Draw Scan Bars</h4>
+    <p align="justify">
+	As desribed earlier, the logic for drawing everything except for the automaton was placed in line with the automaton output so as to isolate the data. The structure for the <i>MakeCursor</i>, <i>DrawInterface</i> and <i>DrawScanBars</i> modules were all very similar and usually were composed of a few combinational lines that triggered of off the VGA controller position lines. An example of the general structure implemented is illustrated below: 
+	</p> 
+	<div align="center" class="photo-small"><a class="without_u" href="images/combEqn.PNG"><img src="images/combEqn.PNG" alt="" width="512"  height = "33"/></a>
+	<p class="caption">Example of Combinational Logic for Drawing UI</p> </div>
+	<p align="justify">
+	The equation above shows the basic combinational logic used to determine any given pixel value. By chaining this logic together, we can effectively modify the screen to show anything that we want without having to store the pixel value in memory. For example, in the case of the cursor, the <i>DrawCursor</i> module accepts a position and uses that as the condition shown in the equation above. If the VGA controller is currently requesting a pixel for a location where the user's cursor is supposed to be placed, the module will drive the VGA color lines with the appropriate values for the cursor, otherwise it will supply the automaton data from memory. 
+	</p>
+	<h4>Keyboard Controller</h4>
+    <p align="justify">
+	We chose to use an external PS2 keyboard for controlling the Game of Life and associated audio. To do this we borrowed a portion of <a class="without_u" href="../../../f2010/ss868/ss868/index.html">Skyler Schneider's</a> source code from last year's 5760 class. His code sets a signal high when a new keyboard "event" (i.e. a key press) is ready for reading. At this point we wrote an interface that would clock the event into a register for the NIOS to read. Once the NIOS had properly read the event it would set another signal high signifying that it was finished with the event and it could be cleared from the registers. This process is illustrated in the timing diagram below:
+	</p>
+	<div align="center" class="photo-small"><a class="without_u" href="images/PS2timing.PNG"><img src="images/PS2timing.PNG" alt="" width="511"  height = "299"/></a>
+	<p class="caption">Illustration of Keyboard Controller/NIOS Timing</p> </div>
+	<p align="justify">
+	Looking at the timing diagram above, we see that <i>eventReady</i> is set high by the keyboard controller at time t=a. At this time a new value is availabled on the <i>eventType</i> bus that comes out of the keyboard controller. Our instantiated hardware then stores this value into the <i>newEvent</i> register (which serves as a buffer in the case that the NIOS isn't able to read the event by the time that the keyboard controller de-asserts the <i>eventType</i> line. Then at t=b, our hardware sets <i>newEventRead</i> high, signaling to the NIOS that a keyboard event is available for processing. Finally, at t=c the NIOS process sets the <i>evenHasBeenRead</i> line high, signaling to the hardware that it has processed the keyboard stroke and the buffer can be cleared in preparation for the next keyboard stroke. 
+	</p>
+	<h4>NIOS Processor</h4>
+    <p align="justify">
+	When we began the project, we anticipated using the NIOS processor to control different parts of the user interface and essentially coordinate communication between hardware modules. We also saw the NIOS as offering an easy terminal interface for debugging. However, as our design evolved, we decided to use the entire screen for the automaton and simply place all the user control options on the keyboard. As a result, the NIOS became solely responsible for taking the new keyboard events (as discussed in the previous section) from the keyboard controller and driving the appropriate control signals. Once such example is the cursor position on the screen. When the user press one of the arrow keys, the event is transferred to the NIOS where the corresponding x,y position variables are updated. These variables are tied to PIO ports which in turn drive the <i>MakeCursor</i> module to update the position of the cursor on the screen. A list of keyboard keys and their corresponding actions are provided in the table below:
+	</p>
+<table width="500px" border="1" align="center" cellpadding="1" cellspacing="0">
+        <tfoot>
+        </tfoot>
+        <tbody>
+          <tr class="row1">
+            <td width="25%" ><strong>Key Pressed</strong></td>
+            <td width="75%"><strong>Action</strong></td>
+          </tr>
+          <tr class="row2">
+            <td>Space</td>
+            <td>Pause the Game of Life</td>
+          </tr>
+          <tr class="row1">
+            <td>Backspace</td>
+            <td>Clear all cells (must be paused)</td>
+          </tr>
+          <tr class="row2">
+            <td>Page Up</td>
+            <td>Speed up the evolution rate</td>
+          </tr>
+          <tr class="row1">
+            <td>Page Down</td>
+            <td>Slow down the evolution rate</td>
+          </tr>
+          <tr class="row2">
+            <td>Arrow Keys</td>
+            <td>Move cursor</td>
+          </tr>
+		  <tr class="row1">
+            <td>A, W, S, Z</td>
+            <td>Move cursor but in larger steps</td>
+          </tr>
+          <tr class="row2">
+            <td>F1</td>
+            <td>Enable scan bar 0. Pressing it twice more incrementally decreases scan speed (third press disables it)</td>
+          </tr>
+          <tr class="row1">
+            <td>F2</td>
+            <td>Same as F1 for scan bar 1</td>
+          </tr>
+        </tbody>
+          <tr class="row2">
+            <td>1</td>
+            <td>Toggle scan bar 0 between 2 octaves</td>
+          </tr>
+		  <tr class="row1">
+            <td>2</td>
+            <td>Same as pressing '1' but for scan bar 1</td>
+          </tr>
+		  <tr class="row2">
+            <td>3</td>
+            <td>Same as pressing '1' but for scan bar 2</td>
+          </tr>
+		  <tr class="row1">
+            <td>F3</td>
+            <td>Same as F1 for scan bar 2</td>
+          </tr>
+          <tr class="row2">
+            <td>g</td>
+            <td>Draw a glider (if paused)</td>
+          </tr>
+          <tr class="row1">
+            <td>o</td>
+            <td>Draw small oscillator (if paused)</td>
+          </tr>
+		 <tr class="row2">
+            <td>l</td>
+            <td>Draw large oscillator (if paused)</td>
+          </tr>
+          <tr class="row1">
+            <td>e</td>
+            <td>Draw exploder (if paused)</td>
+          </tr>
+		  <tr class="row2">
+            <td>p</td>
+            <td>Draw glider gun (if paused)</td>
+          </tr>
+		  <tr class="row1">
+            <td>d</td>
+            <td>Draw a single cell (if paused)</td>
+          </tr>
+		  <tr class="row2">
+            <td>r</td>
+            <td>Fill screen with randomly generated cells (if paused)</td>
+          </tr>
+		  <tr class="row1">
+            <td>c</td>
+            <td>Draw chaotic structure (if paused)</td>
+          </tr>
+		  <tr class="row2">
+            <td>x</td>
+            <td>Draw x on the screen (if paused)</td>
+          </tr>
+          <tr class="row1">
+            <td>0 (numpad)</td>
+            <td>Number of cells alive in row determines tone (higher tone = more cells)</td>
+          </tr>
+          <tr class="row2">
+            <td>1 (numpad)</td>
+            <td>Low-order bits of number of cells determines tone</td>
+          </tr>
+          <tr class="row1">
+            <td>2 (numpad)</td>
+            <td>Number of cells alive in row determines probability a tone is played corresponding to the low-order bits</td>
+          </tr>
+          <tr class="row2">
+            <td>3 (numpad)</td>
+            <td>Freezes all scan bars in place and plays tones with same mapping as pressing key 2</td>
+          </tr>
+          <tr class="row1">
+            <td>4 (numpad)</td>
+            <td>Freezes all scan bars in place and plays tones with same mapping as pressing key 1</td>
+          </tr>
+          <tr class="row2">
+            <td>Home</td>
+            <td>Resets all scan bars and evolution speed of the automaton</td>
+          </tr>
+          <tr class="row1">
+            <td>`/~</td>
+            <td>Draws "ECE 5760" on the screen with cells (if paused)</td>
+          </tr>
+        </tbody>
+      </table>
+	  
+	<h4>M4K Memory and Video Mapping</h4>
+    <p align="justify">
+	For our project, we chose to use a 32KB single-bit addressable M4K memory module. In order to present the automaton in such a way that the user could discriminate individual cells, we needed to develop a scheme that would efficiently map our current state (stored in M4K blocks) to the VGA address space. The image below shows our general approach: 
+	</p>  
+	<div align="center" class="photo-small"><a class="without_u" href="images/m4kmap.PNG"><img src="images/m4kmap.PNG" alt="" width="512"  height = "320"/></a>
+	<p class="caption">M4K Memory Pixel Mapping</p> </div>
+	<p align="justify">
+	Our general approach was to simply coarsen the pixel mapping. In order words, a signal cell mapped to a 4x4 block of pixels on the screen (meaning we can a maximum resolution of 160x120). However, it's important to note that when the VGA actually read this data out, it only mapped the cell to pixels with lower order bits less the '11' (3). This last set of pixels was left black in order to provide visible spacing between the cells edges. We found that this simply strategy was more than sufficient to allow the user to make out individual cells on the screen. The assignment statement below demonstrates how we did this in hardware:
+	</p>
+	<div align="center" class="photo-small"><a class="without_u" href="images/vgaAssign.PNG"><img src="images/vgaAssign.PNG" alt="" width="512"  height = "29"/></a>
+	<p class="caption">VGA Memory Assignment Statement</p> </div>
+	<p align="justify">
+	It should be noted that in our actual implementation, we triggerd off of VGA_X[1:0]=="2'b01" for drawing the vertical portion of the cell borders. We found that because of the pipelined nature of the M4K memory and the negative-edge clocking that we used for the VGA controller, this was necessary in order to obtain the structure described here. 
+	</p>
+	
+	<h4>DDS Module</h4>
+    <p align="justify">
+	The first basic sound synthesis technique that we implemented was a simple single tone sine wave generation with a ramping function to make the sound less harsh. 
+	</p>
+	<div align="center" class="photo-small"><a class="without_u" href="images/simpledds.PNG"><img src="images/simpledds.PNG" alt="" width="404"  height = "43"/></a>
+	<p class="caption">Simple Pure Tone DDS: Equation</p> </div>
+	<p align="justify">
+	It's important to note that without basic ramping, playing the tone will cause unpleasant "clicking" noises on the speakers as you're effectivelly applying any impulse signal to which the hardware responds. This method is easy to implement, so we used it for testing earlier on in our design. The state machine we use to implement this technique is shown below:
+	</p>
+	<div align="center" class="photo-small"><a class="without_u" href="images/simpleddsSM.PNG"><img src="images/simpleddsSM.PNG" alt="" width="495"  height = "269"/></a>
+	<p class="caption">Simple Pure Tone DDS: State Machine</p> </div>
+	<p align="justify">
+	In 'calc' state, t and  ramp(t) and are updated with a fixed increment and sin(wp*t) is looked up from a sine table. It then goes to the 'pause' state to wait for the audio_CLK and store the output to output buffer for the I2C interface to read. Once a new audio clock cycle has begun, the state machine returns to the 'calc' state. When a note finishes playing, the state machine will go to 'done' state to wait for the next note to play (as signaled from the PlayRowSound Module).The theoretical waveform produced by using this technique is shown below:
+	</p>
+	<div align="center" class="photo-small"><a class="without_u" href="images/simpleddsWF.PNG"><img src="images/simpleddsWF.PNG" alt="" width="510"  height = "426"/></a>
+	<p class="caption">Simple Pure Tone DDS: Theoretical Waveform</p> </div>
+	<p align="justify">
+	However, as we discovered, a pure tone does not sound very interesting and a simple ramping function is inadequate. Our second idea was to use a square wave, saw tooth wave or pulse wave, which are rich in harmonics and pass it through a digital low pass filter to do some wave shaping before being enveloped. The following is a block diagram illustrates the implementation:
+	<div align="center" class="photo-small"><a class="without_u" href="images/SQddsWF.PNG"><img src="images/SQddsWF.PNG" alt="" width="511"  height = "86"/></a>
+	<p class="caption">Square/Saw Tooth, Pulse Wave DDS: Block Diagram</p> </div>
+	<p align="justify">
+	Again, after trying this technique we found that the tones were still a bit too harsh to be considered "musical". Our third and final implementation used a sine wave modulated with another sine wave:
+	</p>
+	<div align="center" class="photo-small"><a class="without_u" href="images/smsDDSeqn.PNG"><img src="images/smsDDSeqn.PNG" alt="" width="444"  height = "40"/></a>
+	<p class="caption">Sine Wave modulated with another Sine Wave: Equation</p> </div>
+	<p align="justify">
+	We chose this synthesis method since it can be easily implemented based on the basic DDS module we have. In addition, it proves to have richer, lower harmonics. Moreover, it is easy to change harmonic components by changing the modulation frequency. The state machine used for synthesizing these tones is presented below:
+	</p>
+	<div align="center" class="photo-small"><a class="without_u" href="images/smsDDSsm.PNG"><img src="images/smsDDSsm.PNG" alt="" width="510"  height = "192"/></a>
+	<p class="caption">Sine Wave modulated with another Sine Wave: State Machine</p> </div>
+	<p align="justify">
+	Basically it is not so much different from the previous technique. It has one more state since for this synthesizer, we need to look up the sine table twice, so 'calc1' is added for the second look up of the sine table. The plots below show the theoretical results of using this technique:
+	</p>
+	<div align="center" class="photo-small"><a class="without_u" href="images/smsDDSwf.PNG"><img src="images/smsDDSwf.PNG" alt="" width="512"  height = "402"/></a>
+	<p class="caption">Sine Wave modulated with another Sine Wave: Waveform</p> </div>
+	<p align="justify">
+	We can see that the FM wave is rich in lower order harmonics. The harmonic component can be easily changed by tweaking the modulation term.
+	</p>
+	<h4>Envelope Function</h4>
+    <p align="justify">
+	The basic envelop function that we originally used looks like the following graph:
+	</p>
+	<div align="center" class="photo-small"><a class="without_u" href="images/envWF.PNG"><img src="images/envWF.PNG" alt="" width="512"  height = "280"/></a>
+	<p class="caption">Sine Wave modulated with another Sine Wave: Waveform</p> </div>
+	<p align="justify">
+	It is just a simple ramp up and ramp down. This removes the harshness in just playing a pure tone but still sounds a little bit dull.The actual envelop function we decided to use is much more complicated. It has an attach stage which ramps up very quickly. Then, it falls back a little bit is the dip stage. After that, it holds the strength for a period of time and decays away. By modifying the parameter of each stage, we can get tones varies from organ like sound to very techno sound:
+	</p>
+	<div align="center" class="photo-small"><a class="without_u" href="images/env2WF.PNG"><img src="images/env2WF.PNG" alt="" width="512"  height = "290"/></a>
+	<p class="caption">Sine Wave modulated with another Sine Wave: Waveform</p> </div>
+	<p align="justify">
+	</p>
+	<h4>Tone Choice</h4>
+    <p align="justify">
+	For the tones to be interesting, we needed to find a set of tones that will sound harmonic when played together. We do not need a lot of tones but we want the tones to cover a relatively wide frequency range. So we did not use a traditional major or minor tone set; instead, we chose a pentatonic scale for two octaves. A pentatonic scale is a musical scale with five notes per octave in contrast to a heptatonic (seven note) scale such as the major scale and minor scale. Thus, we have ten tones in all. We also prepared two sets of tones, namely, pentatonic major and pentatonic minor (which can be toggled between using designated keys).
+	</p>
+	<h4>Tone Mapping</h4>
+    <p align="justify">
+	Now we have the DDS module that can produce a set of pentatonic tones, we need to somehow map the game of life pattern to music. The first interesting scheme that we came up with (with Bruce's help) is see the Game of Life as a big state transition matrix. Each tone will represent a state in a state vector. The tone will be played according to the state probability. Just as in a Markov chain:
+	</p>
+	<div align="center" class="photo-small"><a class="without_u" href="images/markovEqn.PNG"><img src="images/markovEqn.PNG" alt="" width="339"  height = "53"/></a>
+	<p class="caption">Sine Wave modulated with another Sine Wave: Waveform</p> </div>
+	<p align="justify">
+	In the end, we did not use this mapping because it is not very direct and thus not that interesting for the user to watch. Our final implementation of tone mapping used a scan bar that scans at 3 different speeds through the screen. When the scan bar hits a new line, a note will be played. The tone and length of the note is determined by the cell count and speed of the scan bar. Each of the schemes tried is described below.
+	</p>
+	<h4>First Try (Mode 0)</h4>
+    <p align="justify">
+	The first try was to directly map the number of the live cell in a row to the tone that is played.  For example, if we have 15 cells in a row and have 4 tones, when 0-3 cells are alive, tone1 is played; when 4-7 cells are alive, tone2 is played and so on. This is an easy and straight forward mapping, but has its own problems such as when the screen is densly populated, the tone diversity is low.
+	</p>
+	<h4>Mode 1</h4>
+    <p align="justify">
+	Due to the nature of game of life, we usually do not have many cells in a row, so the higher order tones will seldom be played. To address this problem, we remapped the tones using the lower order bits. So if we have the same situation of the 15 cells a row and 4 tones, the mapping will look like the following:
+	</p>
+	<table width="500px" border="1" align="center" cellpadding="1" cellspacing="0">
+        <tfoot>
+        </tfoot>
+        <tbody>
+          <tr class="row1">
+            <td width="20%" ><strong>Cell Count</strong></td>
+            <td width="10%">0</td>
+			<td width="10%">1</td>
+			<td width="10%">2</td>
+			<td width="10%">3</td>
+			<td width="10%">4</td>
+			<td width="10%">5</td>
+			<td width="10%">6</td>
+          </tr>
+		  <tr class="row2">
+            <td width="20%" ><strong>Tone No.</strong></td>
+            <td width="10%">1</td>
+			<td width="10%">2</td>
+			<td width="10%">3</td>
+			<td width="10%">4</td>
+			<td width="10%">1</td>
+			<td width="10%">2</td>
+			<td width="10%">3</td>
+          </tr>
+		 </tbody>
+	</table>
+	<p align="justify">
+	This mapping ensures more evenly distributed mapping of the tones so all tones will be played with relatively equal chance.
+	</p>
+	<h4>Mode 2</h4>
+    <p align="justify">
+	This mode is same as Mode 1 in tone mapping but we added some randomness to tone playing (i.e. the tone isn't always played when a scan bar hits a new line of cells).  The probability a tone is played is determined by the live cell count over total cell count. So this adds more randomness to the mapping. The mode sound most interesting when there are more live cells.
+	</p>
+	<h4>Mode 3</h4>
+    <p align="justify">
+	In this mode, the scan bar is fixed at one position. The length of the tone and the speed of playing are still determined by the speed of the scan bar if it is moving. The tone mapping is same as mode 1. Similar to mode 2, there is randomness in whether the note is going to be played using the same scheme.
+	</p>
+	<h4>Mode 4</h4>
+    <p align="justify">
+	Mode 4 is same as Mode 3 but does not have the randomness, so a note will always be played. Interestingly, just fixing the bar and letting the evolving of Game of Life evolve to determine the tone sounds most interesting.
+	</p>
+	
+<!-- ******************** SOFTWARE DESIGN ******************** -->
+    <a name="software_design"></a>
+    <h2>Software Design</h2>
+    <p align="justify">
+	As mentioned earlier, initially we had intended to use the NIOS to control a separate user interface on the screen (possibly run out of SRAM), however as our design progressed we decided that the UI wasn't necessary or particularly useful. That being the case, we decided to keep the NIOS but just to use it for processing keyboard input and sending appropriate control signals to other hardware modules. Using the NIOS for this task gave us added flexibility in designing and testing, as we could quickly modify different timing parameters and key mappings (without needing to re-compile the entire hardware design). An image showing all of the NIOS PIO used to interface with other custom hardware modules is shown below:
+    </p>
+	<div align="center" class="photo-small"><a class="without_u" href="images/nios.PNG"><img src="images/nios.PNG" alt="" width="512"  height = "235"/></a>
+	<p class="caption">NIOS I/O</p> </div>
+	<p align="justify">
+	The main two signals that the NIOS takes in are the <i>newEvent</i> and </i>new_event_ready</i> which are used to process the keyboard signals (as described in the previous section). Once a new key press is read, the value is passed into a switch statement which decodes the event type and sets the corresponding signals. For example, if the user pressed one of the arrow keys, the software would update either the <i>cur_x</i> or <i>cur_y</i> signal which would then be used by the hardware to move the cursor position on the screen. The purpose for each of the PIO outputs from the NIOS is summarized in the table below:
+	</p>
+	<table width="500px" border="1" align="center" cellpadding="1" cellspacing="0">
+        <tfoot>
+        </tfoot>
+        <tbody>
+          <tr class="row1">
+            <td width="30%" ><strong>Signal</strong></td>
+            <td width="70%"><strong>Description</strong></td>
+          </tr>
+          <tr class="row2">
+            <td>[9:0] cur_x, cur_y</td>
+            <td>Determine the cursor positon on the screen</td>
+          </tr>
+          <tr class="row1">
+            <td>play</td>
+            <td>Plays/Pauses the evolution of the automaton</td>
+          </tr>
+          <tr class="row2">
+            <td>[23:0] period_gol</td>
+            <td>Sets the speed of evolution of the automaton</td>
+          </tr>
+          <tr class="row1">
+            <td>[3:0] obj</td>
+            <td>Encodes new object is to be drawn (i.e. glider)</td>
+          </tr>
+          <tr class="row2">
+            <td>en0,en1,en2</td>
+            <td>Enables for up to 3 scan bars</td>
+          </tr>
+          <tr class="row1">
+            <td>s0,s1,s2</td>
+            <td>Speed control for up to 3 scan bars</td>
+          </tr>
+		  <tr class="row2">
+            <td>event_has_been_read</td>
+            <td>Notifies keyboard controller that key press was read</td>
+          </tr>
+        </tbody>
+      </table>
+
+
+<!-- ******************** TESTING & DEBUG ******************** -->
+    <div align="justify"><a name="testing"></a></div>
+    <h2 align="justify">Testing & Debug</h2>
+	<h4 align="justify">VGA Image Jitter</h4>
+	<p align="justify">
+	One of the main problems that we encountered during debugging was an intermitent jittering and tearing of the image. The problem appeared to increase in severity (i.e. magnitude of the jitter) when more "live" cells were present on the screen, although it is acknowledged that having more cells on the screen could have simply made the problem more visible. The problem seemed to appear and re-appear even after changing lines of code that were unrelated to creating the image. For this reason, we believed that the problem was rooted in the place and route performed by the compiler. More specifically, we thought that sometimes the VGA controller was placed and routed in such a way that it didn't meet its critical timing deadlines for VGA monitor. About halfway through the project, we discovered that changing the clocking on the M4K memory (which was read by the VGA controller) from negative edge triggered to positive edge triggered seemed to resolve the problem. However, after another week or so of testing and development the problem seemed to re-appear. Again we tried switching the clocking back to the negative edge and the problem disappeared. From ths point forward, we didn't see any evidence of the jitter problem even as we continually re-compiled our design. In the future, this problem could probably be permanently fixed by using the Chip-Planner tool built into Quartus to fix the VGA Controller in a position that will minimize propogation delays along routes. 
+	</p>
+	<h4 align="justify">NIOS</h4>
+	<p align="justify">
+	Earlier in our testing, we found that sometimes after we re-compiled the entire design, the NIOS processor wouldn't respond to keyboard input and in fact would occasionally send (what appeared to be) random characters to the JTAG terminal. With Bruce and Darbin's help, we discovered that Quartus was missing the timing constraints file (a critical warning which we had naively been ignoring). After we generated this file and re-compiled, the problem disappeared. 
+	</p>
+	<h4 align="justify">Downloading the Design with the Altera Monitor</h4>
+	<p align="justify">	
+	At points in our project, the Altera monitor would successfully download the design onto the FPGA, however when we tried to load code onto the processor, it would error saying that not processors were detected. The only way we found to resolve this issue was to close the program, reopen, load the "time_limited_sof" onto the board and then load the full version again. After this precise sequence the Altera Monitor would successfully find the processor and load our code. 
+	</p>
+	<h4 align="justify">Monitor Dependent Timing</h4>
+	<p align="justify">	
+	Another problem we noticed throughout the project was that different VGA monitors displayed our UI and Automonaton better than others. More specifically, we noticed shifting of the image (not to be confused with jitter or tearing) on some monitors but not on others. Simply using the auto-set feature or repositioning the image manually sometimes resolved the problem, however often times it wouldn't. For example, on some monitors the vertical borders would be displayed so far apart that both could not simultaneously fit on the screen. This problem could be resolved by tweaking the addressing so as to tune the system for the monitor, however we never found a solution that worked equally well on all monitors. 
+	</p>
+<!-- ******************** RESULTS ******************** -->
+    <div align="justify"><a name="results"></a></div>
+	<h2 align="justify">Results</h2>
+    <p align="justify">
+	Our final design successfully displayed Conway's Game of Life on a VGA screen, allowed the user to add, draw and remove objects on the paused screen, add up to 3 scan bars which produced musical tones as they hit each line of cells and choose among 5 tone mappings to produce differents types of music. 
+    </p>
+	<h4 align="justify">Speed of Execution & Accuracy</h4> 
+    <p align="justify">
+	The automaton was displayed without glitching and the evolution rate could be increased passed what was perceptable to the eye. Other than the intermittent glitching problems, which were not present in the final version of our design, we didn't discover any accuracy problems.
+    </p>
+	<h4 align="justify">Safety</h4>
+    <p align="justify">
+	To our knowledge, our project doesn't pose any safety concerns. The DE2 boards and accessory hardware was always handled with care and kept on the ESD mats.
+    </p>
+	<h4 align="justify">Usability</h4>
+    <p align="justify">
+	Our simple keyboard interface made interacting with and controlling both the automaton and music generation very simple and intuitive.
+    </p>
+	<h4 align="justify">Interference</h4>
+    <p align="justify">
+	Our design did not make use of any external transmitters or other devices that produced substantial radiation. We are not aware of any interface issues created by our design. 
+    </p>
+	<h4 align="justify">Sample Ouput </h4>
+	<p align="justify">
+	The videos below demonstrate some of our projects features:
+	</p>
+	<p align="justify">
+	<OBJECT width="560" height="315"  ><PARAM name="movie" value="MPFLVPlayer.swf" /><PARAM name="allowFullScreen" value="true" /><PARAM name="FlashVars" value="fn=../../../../../../../../www.youtube.com/watch@v=zbVOK2GLV-E@rel=0&flvskin=MPFLVSkin.swf" /><EMBED src="MPFLVPlayer.swf"  width="560" height="315"  type="application/x-shockwave-flash" allowFullScreen="true" FlashVars="fn=../../../../../../../../www.youtube.com/watch@v=zbVOK2GLV-E@rel=0&flvskin=MPFLVSkin.swf"></EMBED></OBJECT>dth="560" height="315" src="http://www.youtube.com/embed/-45dBrN81kg?rel=0" frameborder="0" allowfullscreen></iframe>
+	</p>
+    <p align="justify">
+	Our design was capable of filling the screen with random cells when the user pressed the "r" key (while paused): 	
+    </p>
+	<div align="center" class="photo-small"><a class="without_u" href="images/random.jpg"><img src="images/random.jpg" alt="" width="500"  height = "333"/></a>
+	<p class="caption">Game of Life with the "world" populated by randomly generated cells</p> </div>
+	<p align="justify">
+	Once populated with cells, up to 3 scan bars could be added to the screen, each producing independent notes:
+	</p>
+	<div align="center" class="photo-small"><a class="without_u" href="images/scan.jpg"><img src="images/scan.jpg" alt="" width="500"  height = "333"/></a>
+	<p class="caption">Shows 3 scan bars moving across the image to produce music</p> </div>
+	<p align="justify">
+	The user is able to add a variety of objects to the screen (while paused). An example of 2 glider guns is shown below:
+	</p>
+	<div align="center" class="photo-small"><a class="without_u" href="images/gg.jpg"><img src="images/gg.jpg" alt="" width="500"  height = "333"/></a>
+	<p class="caption">An example of two glider guns</p> </div>
+	<p align="justify">
+	One particularly interesting pattern was formed by dropping in an "x" on the screen (by hitting the "x" key). A few steps of it's evolution are shown below:
+	</p>
+	<div align="center" class="photo-small"><a class="without_u" href="images/x1.jpg"><img src="images/x1.jpg" alt="" width="500"  height = "333"/></a></div> </br>
+	<div align="center" class="photo-small"><a class="without_u" href="images/x2.jpg"><img src="images/x2.jpg" alt="" width="100"  height = "66"/></a><a class="without_u" href="images/x3.jpg"><img src="images/x3.jpg" alt="" width="100"  height = "66"/></a><a class="without_u" href="images/x4.jpg"><img src="images/x4.jpg" alt="" width="100"  height = "66"/></a><a class="without_u" href="images/x5.jpg"><img src="images/x5.jpg" alt="" width="100"  height = "66"/></a>
+	<p class="caption">Evolution of a simple 'x' pattern</p> </div>
+	<p align="justify">
+	</p>
+	<p align="justify">
+	The ECE 5760 pattern and its interesting evolution:
+	</p>
+	<div align="center" class="photo-small"><a class="without_u" href="images/ece1.jpg"><img src="images/ece1.jpg" alt="" width="500"  height = "333"/></a></div></br>
+	<div align="center" class="photo-small"><a class="without_u" href="images/ece2.jpg"><img src="images/ece2.jpg" alt="" width="100"  height = "66"/></a><a class="without_u" href="images/ece3.jpg"><img src="images/ece3.jpg" alt="" width="100"  height = "66"/></a><a class="without_u" href="images/ece4.jpg"><img src="images/ece4.jpg" alt="" width="100"  height = "66"/></a><a class="without_u" href="images/ece5.jpg"><img src="images/ece5.jpg" alt="" width="100"  height = "66"/></a><a class="without_u" href="images/ece6.jpg"><img src="images/ece6.jpg" alt="" width="100"  height = "66"/></a>
+	<p class="caption">Evolution of ECE 5760 pattern</p> </div>
+	<p align="justify">
+	</p>
+	<p align="justify">
+	A set of "exploders" and their evolution:
+	</p>
+	<div align="center" class="photo-small"><a class="without_u" href="images/e1.jpg"><img src="images/e1.jpg" alt="" width="500"  height = "333"/></a></div></br>
+	<div align="center" class="photo-small"><a class="without_u" href="images/e2.jpg"><img src="images/e2.jpg" alt="" width="100"  height = "66"/></a><a class="without_u" href="images/e3.jpg"><img src="images/e3.jpg" alt="" width="100"  height = "66"/></a><a class="without_u" href="images/e4.jpg"><img src="images/e4.jpg" alt="" width="100"  height = "66"/></a><a class="without_u" href="images/e5.jpg"><img src="images/e5.jpg" alt="" width="100"  height = "66"/></a><a class="without_u" href="images/e6.jpg"><img src="images/e6.jpg" alt="" width="100"  height = "66"/></a>
+	<p class="caption">Evolution of exploders</p> </div>
+	<p align="justify">
+	</p>
+	<p align="justify">
+	Below shows a sample FM tone produced by our DDS module and its FFT:
+	</p>
+	<div align="center" class="photo-small"><a class="without_u" href="images/tone.BMP"><img src="images/tone.BMP" alt="" width="250"  height = "166"/></a>&nbsp;&nbsp;<a class="without_u" href="images/tonefft.BMP"><img src="images/tonefft.BMP" alt="" width="250"  height = "166"/></a>
+	<p class="caption">Sample FM tone (left) from our DDS module and its FFT (right)</p> </div>
+<!-- ******************** CONCLUSIONS ******************** -->
+    <div align="justify"><a name="conclusions"></a></div>
+    <h2 align="justify">Conclusions</h2>
+	<p align="justify">
+	Our final design met most of our initial expectations for the project. We implemented Conway's Game of Life and gave the user a few options for producing "music" from it. In addition, we had enough time to add features that make the Game of Life itself more fun and amusing to play with (i.e. the ability to drop in predefined objects or even speed up the evolution to see the steady state of any given pattern). The design didn't have any major bugs that we were aware of and was generally easy to control and produced a wide range of "music" depending on the mapping and initial conditions.
+	</p>
+	<p align="justify">
+	Given more time, we likely would have investigated more mapping schemes and or tone generation methods. More specifically, we think it would have been very insteresting to produce 
+	</p>
+	
+	<a name="ipconsid"></a>
+    <h4 align="justify">Intellectual Property Considerations</h4>
+    <p align="justify">
+	In our final design we used a NIOS microprocessor, which was generated using Alter's SOPC Builder system along with the Altera Monitor. Additionally, we made use of the Megawizard functionality built-in to Altera's Quartus software package for instantiated our main video memory and PLL's (used for generating clock signals to the audio codec and VGA controller). Finally we used the VGA controller and Keyboard controller modules developed by <a href="../../../f2010/ss868/ss868/index.html">Skyler Schneider</a>, a previous 5760 student.
+    </p>
+    
+    
+    <h4 align="justify">Acknowledgements</h4>
+    <p align="justify">
+	We'd like to thank Bruce for helping us to develop this idea and turn it into an interesting 5760 project, and both Bruce and Darbin for assisting us with debugging (in particular with our video jitter problems). In addition, we'd like to thank Altera for providing the DE2 boards.
+    </p>
+
+
+
+<!-- ******************** APPENDIX ******************** -->
+    <a name="appendix"></a>
+    <h2>Appendix</h2>
+	
+	<h4>Division of Work:</h4>
+
+      <table width="407px" border="1" align="center" cellpadding="1" cellspacing="0">
+        <tfoot>
+        </tfoot>
+        <tbody>
+          <tr class="row1">
+            <td width="50%" ><strong>Task</strong></td>
+            <td width="50%"><strong>Person Responsible</strong></td>
+          </tr>
+          <tr class="row2">
+            <td>Game of Life State Machine</td>
+            <td>Luke</td>
+          </tr>
+          <tr class="row1">
+            <td>NIOS/Software</td>
+            <td>Luke</td>
+          </tr>
+          <tr class="row2">
+            <td>User Interface Modules</td>
+            <td>Luke</td>
+          </tr>
+          <tr class="row1">
+            <td>Tone Mapping Module</td>
+            <td>Luke & Weiqing</td>
+          </tr>
+          <tr class="row2">
+            <td>DDS Module</td>
+            <td>Weiqing</td>
+          </tr>
+          <tr class="row1">
+            <td>Website Design</td>
+            <td>Luke</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <p>&nbsp;</p>
+    
+    <h4>Code Listing:</h4>
+    <p align="justify">
+    Our code is available as a zip file <a href="gol_music.zip">here</a>.
+    </p>	
+
+	<h4>References</h4>
+    <p align="justify">
+	<ul>
+	<li><a href="../../../f2010/ss868/ss868/index.html">Falling Sand Game - Skyler Schneider</a></li>
+	<li><a href="../../../../LABS/f2011/lab1.html">ECE 5760 Lab 1</a></li>
+	<li><a href="../../../../../../../../www.altera.com/default.htm">Altera</a></li>
+	<li><a href="../../../../../../../../en.wikipedia.org/wiki/Conway's_Game_of_Life">Wikipedia</a></li>
+	<li><a href="../../../../../../../../www.kenomaerz.de/de/programmierung/game-of-life.html">Game of Life - Flash Version</a></li>
+	<li><a href="../../../../../../../../tones.wolfram.com/about/default.htm">Wolfram Tones</a></li>
+	<li><a href="../../../../../../../../www.glitchds.com/default.htm">GlitchDS</a></li>
+	<li><a href="../../../../../../../../grantmuller.com/projects/game-of-life/default.htm">Grant Muller's Game of Life MIDI Sequencer</a></li>
+	<li><a href="../../../../../../../../courses.cit.cornell.edu/eceprojectsland/STUDENTPROJ/2002to2003/lil2/default.htm">Hamster MIDI Project - Levy Lorenzo</a></li>
+	
+	</ul>
+	</p>
+
+
+</div>
+
+
+
+	
+
+
+
+	<hr />
+
+
+
+	
+
+
+
+	<!--
+
+		The contents of the secondary div are displayed in the left column sidebar
+
+		below the secondary navigation. Each group of secondary content should be 
+
+		organized in a secondary-section div, which will pad the content from the 
+
+		edges of the sidebar and separate it from other content.
+
+	-->
+
+
+
+	<div id="secondary">
+
+		<div class="secondary-section">
+
+			<h2>Contact Information</h2>
+
+			<p> Lucas Ackerman<br /> 
+
+		    <a href="mailto:lba36@cornell.edu">lba36@cornell.edu</a></p>
+
+            <p>Weiqing Li<br />
+
+            <a href="mailto:wl336@cornell.edu">wl336@cornell.edu</a></p>
+
+		</div>
+
+
+
+		<div class="secondary-section">
+
+			<h2>Related Resources</h2>
+
+			<ul>
+
+				<li><a href="../../../../../../../../www.cornell.edu/default.htm">Cornell University</a></li>
+
+				<li><a href="../../../../../../../../www.engineering.cornell.edu/default.htm">College of Engineering</a></li>
+
+				<li><a href="../../../../../../../../www.ece.cornell.edu/default.htm">School of Electrical and Computer Engineering</a></li>
+
+				<li><a href="../../../../default.htm">ECE 5760 Course Page</a></li>
+
+			</ul>
+
+		</div>
+
+	</div>
+
+
+
+</div>
+
+</div>
+
+<hr />
+
+<div id="footer">
+
+
+
+<!-- The footer-content div contains the Cornell University copyright -->
+
+
+
+<div id="footer-content">
+
+
+
+	&copy;2010 <a href="../../../../../../../../www.cornell.edu/default.htm">Cornell University</a>
+
+
+
+</div>
+
+
+
+</div>
+
+
+
+
+
+</body>
+
+</html>

@@ -1,0 +1,223 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<!--
+	This document provides the basis of a semantically structured web page 
+	authored in XHTML 1.0 Transitional using established Cornell University
+	naming conventions.
+-->
+
+<head>
+	<title>Fractal Landscape - Rohan and Tejas</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+	<meta http-equiv="Content-Language" content="en-us" />
+	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+	
+<!--
+	All layout and formatting should be controlled through Cascading Stylesheets (CSS).
+	The following link tag should appear in the head of every page in the website. see
+	styles/screen.css.
+-->
+	<link rel="stylesheet" type="text/css" media="screen" href="styles/screen.css" />
+</head>
+
+<body class="twocolumn">
+
+<!--
+	The following link provides a way for people using text-based browsers and
+	screen readers to skip over repetitive navigation elements so that they can 
+	get directly to the content. It is hidden from general users through CSS.
+-->
+<div id="skipnav">
+	<a href="#content">Skip to main content</a>
+</div>
+
+<hr />
+
+<!-- The following div contains the Cornell University logo with unit signature -->
+<div id="cu-identity">
+	<div id="cu-logo">
+		<a id="insignia-link" href="../../../../../../../../www.cornell.edu/default.htm"><img src="images/unit_signature_unstyled.gif" alt="Cornell University" width="416" height="88" border="0" /></a>
+		<div id="unit-signature-links">
+			<a id="cornell-link" href="../../../../../../../../www.cornell.edu/default.htm">Cornell University</a>
+			<a id="unit-link1" href="../../../../../../../../www.ece.cornell.edu/default.htm">Cornell ECE 1</a>
+			<a id="unit-link2" href="../../../../../../../../instruct1.cit.cornell.edu/Courses/ece576/default.htm">ECE 5760</a>
+		</div>
+	</div>
+	
+	<!-- 
+		The search-form div contains a form that allows the user to search 
+		either pages or people within cornell.edu directly from the banner.
+	-->
+	<div id="search-form">
+		<form action="http://www.cornell.edu/search/" method="get" enctype="application/x-www-form-urlencoded">
+			<div id="search-input">
+				<label for="search-form-query">SEARCH CORNELL:</label>
+				<input type="text" id="search-form-query" name="q" value="" size="20" />
+				<input type="submit" id="search-form-submit" name="submit" value="go" />
+			</div>
+
+			<div id="search-filters">
+					<input type="radio" id="search-filters1" name="tab" value="" checked="checked" />
+					<label for="search-filters1">Pages</label>
+				
+					<input type="radio" id="search-filters2" name="tab" value="people" />
+					<label for="search-filters2">People</label>
+					
+					<a href="../../../../../../../../www.cornell.edu/search/default.htm">more options</a>
+			</div>	
+		</form>
+	</div>
+	
+	<!-- 
+		The search-form div contains a form that allows the user to search 
+		either the unit website or all of cornell.edu directly from the banner.
+	<div id="search-form">
+		<form action="#" method="post" enctype="application/x-www-form-urlencoded">
+			<div id="search-input">
+				<label for="search-form-query">SEARCH:</label>
+				<input type="text" id="search-form-query" name="query" value="" size="20" />
+				<input type="submit" id="search-form-submit" name="submit" value="go" />
+			</div>
+
+			<div id="search-filters">
+					<input type="radio" id="search-filters1" name="target" value="unit" checked="checked" />
+					<label for="search-filters1">Unit name</label>
+				
+					<input type="radio" id="search-filters2" name="target" value="cornell" />
+					<label for="search-filters2">Cornell</label>
+					
+					<a href="#">more options</a>
+			</div>	
+		</form>
+	</div>
+	-->
+	
+	<!--
+		The search-navigation div contains links that allow the user to search
+		either the unit website or all of cornell.edu.
+		These links will be displayed in the unit signature banner and will
+		be aligned with the right edge of the page.
+	<div id="search-navigation">
+		<ul>
+			<li><a href="#">Search Unit Name</a></li>
+			<li><a href="http://www.cornell.edu/search/">Search Cornell</a></li>
+		</ul>
+	</div>
+	-->
+</div>
+
+<!-- The header div contains the main identity and main navigation for the site -->
+<div id="header">	
+	<!--
+		The navigation div contains the site's main navigation. These
+		links will be displayed in a horizontal, gray navigation bar 
+		under the unit signature banner.
+	-->	
+	<div id="navigation">
+		<ul>
+			<li><a href="index.html">Home</a></li>
+			<li><a href="hldesign.html">High Level Design</a></li>
+			<li><a href="hwdesign.html">Hardware Design</a></li>		
+			<li><a href="results.html">Results and Analysis</a></li>		
+			<li><a href="conclusion.html">Conclusion and Appendices</a></li>		
+			
+			<!-- More navigation as needed
+			<li><a href="#">Navigation 6</a></li>
+			-->
+						
+		</ul>
+	</div>
+	
+	<hr />
+	
+	<!-- 
+		The identity div contains the name of a main site section
+	-->
+	<div id="identity">
+		<h1 align="center">Fractal Landscape Generation</h1>
+	</div>
+</div>
+
+<hr />
+
+<div id="wrap">
+
+<!-- The content div contains the main content of the page -->
+<div id="content">
+
+	<!--
+		The section-navigation div contains the second level of site navigation.
+		These links appear at the top of the left sidebar of the two-column page.
+	-->
+	<div id="section-navigation">
+		<ul>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+			<li></li>
+		</ul>
+	</div>
+	
+	<hr />
+
+	<!--
+		The main div contains the main contents of the page. It will be displayed
+		as the wide right column with the beige background.
+	-->
+	<div id="main">
+		<h2>Introduction</h2>
+		<p align="justify">The purpose of this project is to randomly generate a  2D fractal landscape and create a 3D projected image of the landscape.  To implement this, we used the Diamond-Square Algorithm, which is commonly used  to create height maps in computers. We implemented the diamond square algorithm  in verilog for 8 iterations. This would generate a 2 D height map of a fractal  landscape. We then added a Gaussian blur algorithm to make the height map more  realistic. Finally we added an algorithm to create a 3D projected view from  the 2D height map using an orthographic projection. The algorithm scans through  angles from 0 to 90 degrees at custom time intervals and displays the orthographic  projections at each angle.	</p>
+	</div>
+	
+	<hr />
+	
+	<!--
+		The contents of the secondary div are displayed in the left column sidebar
+		below the secondary navigation. Each group of secondary content should be 
+		organized in a secondary-section div, which will pad the content from the 
+		edges of the sidebar and separate it from other content.
+	-->
+	<div id="secondary">
+		<div class="secondary-section">
+			<h2>More Information</h2>
+			<p>ECE 5760 is the most awesome course ever !</p>
+		</div>
+		
+		<div class="secondary-section">
+			<h2>Related Links</h2>
+			<ul>
+				<li><a href="../../../../../../../../instruct1.cit.cornell.edu/Courses/ece576/default.htm">ECE 5760 Home Page</a></li>
+			</ul>
+		</div>
+		
+		<!--
+			A secondary-photo div contains an image that is as wide as the sidebar 
+			(200px) and a caption paragraph. Note that the secondary-photo should
+			not be within a secondary-section div.
+		-->
+		<div class="secondary-photo"></div>
+		
+		<div class="secondary-photo">
+		  <p class="caption">Rohan Sharma (rs423@cornell.edu)</p>
+          <p class="caption">Tejas Sapre (tss64@cornell.edu)</p>
+          <p class="caption">&nbsp;</p>
+          <p class="caption">&nbsp;</p>
+        </div>
+	</div>
+</div>
+</div>
+
+<hr />
+
+<div id="footer">
+<!-- The footer-content div contains the Cornell University copyright -->
+<div id="footer-content">
+	&copy;2010 <a href="../../../../../../../../www.cornell.edu/default.htm">Cornell University</a>
+</div>
+</div>
+
+</body>
+</html>

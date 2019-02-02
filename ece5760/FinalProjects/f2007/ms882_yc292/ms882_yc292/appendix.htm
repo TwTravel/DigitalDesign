@@ -1,0 +1,108 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Language" content="en-au">
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<title>Appendix</title>
+<script language="JavaScript">
+<!--
+function FP_swapImg() {//v1.0
+ var doc=document,args=arguments,elm,n; doc.$imgSwaps=new Array(); for(n=2; n<args.length;
+ n+=2) { elm=FP_getObjectByID(args[n]); if(elm) { doc.$imgSwaps[doc.$imgSwaps.length]=elm;
+ elm.$src=elm.src; elm.src=args[n+1]; } }
+}
+
+function FP_preloadImgs() {//v1.0
+ var d=document,a=arguments; if(!d.FP_imgs) d.FP_imgs=new Array();
+ for(var i=0; i<a.length; i++) { d.FP_imgs[i]=new Image; d.FP_imgs[i].src=a[i]; }
+}
+
+function FP_getObjectByID(id,o) {//v1.0
+ var c,el,els,f,m,n; if(!o)o=document; if(o.getElementById) el=o.getElementById(id);
+ else if(o.layers) c=o.layers; else if(o.all) el=o.all[id]; if(el) return el;
+ if(o.id==id || o.name==id) return o; if(o.childNodes) c=o.childNodes; if(c)
+ for(n=0; n<c.length; n++) { el=FP_getObjectByID(id,c[n]); if(el) return el; }
+ f=o.forms; if(f) for(n=0; n<f.length; n++) { els=f[n].elements;
+ for(m=0; m<els.length; m++){ el=FP_getObjectByID(id,els[n]); if(el) return el; } }
+ return null;
+}
+// -->
+</script>
+</head>
+
+<body onload="FP_preloadImgs(/*url*/'button2.jpg', /*url*/'button3.jpg', /*url*/'button5.jpg', /*url*/'button6.jpg', /*url*/'button8.jpg', /*url*/'button9.jpg', /*url*/'buttonB.jpg', /*url*/'buttonC.jpg', /*url*/'buttonE.jpg', /*url*/'buttonF.jpg', /*url*/'button22.jpg', /*url*/'button23.jpg')" background="yello002.gif">
+
+<div style="position: absolute; width: 1060px; height: 489px; z-index: 2; left: 102px; top: 188px" id="layer2">
+	<h3><font face="Tahoma" color="#FF3300">Appendix</font></h3>
+	<hr color="#FF3300">
+	<p class="MsoNormal" style="text-align: justify"><font face="Tahoma"><b>
+	Acknowledgements </b></font></p>
+	<p class="MsoNormal" style="text-align: justify"><font face="Tahoma">We got 
+	the idea of this game from a Chinese Website (link is provided in the 
+	reference section). We don’t know who the creator of this game is but we 
+	would like to thank him/her for his/her great idea. We would like to thank 
+	Terasic for providing us the basic VGA Controller which we modified for our 
+	Game. We would also like to thank Altera for providing us the Paint Brush 
+	Example.&nbsp; </font></p>
+	<p class="MsoNormal" style="text-align: justify"><font face="Tahoma"><b>
+	References</b></font></p>
+	<ol>
+		<li>
+		<p class="MsoNormal" style="text-align: justify"><font face="Tahoma">
+		<a style="color: blue; text-decoration: underline; text-underline: single" href="../../../../../../../../www.iqplay.net/system/modules/net.iqplay.modules.game.flash/run@vf=_2Fswf_2F001_2F061210_2Fdxccs.swf&t=_25E5_25A4_25A7_25E5_25B0_258F_25E4_25B8_25B2_25E4_25B8_25B2_25E7_2583_25A7">
+		http://www.iqplay.net/system/modules/net.iqplay.modules.game.flash/run?vf=/swf/001/061210/dxccs.swf&amp;t=&#22823;&#23567;&#20018;&#20018;&#28903;</a></font></li>
+		<li>
+		<p class="MsoNormal" style="text-align: justify"><font face="Tahoma">
+		<a style="color: blue; text-decoration: underline; text-underline: single" href="../../../../../../../../www.terasic.com.tw/default.htm">
+		http://www.terasic.com.tw</a></font></li>
+		<li>
+		<p class="MsoNormal" style="text-align: justify"><font face="Tahoma">
+		<a style="color: blue; text-decoration: underline; text-underline: single" href="../../../../../../../../www.altera.com/default.htm">
+		www.altera.com</a></font></li>
+	</ol>
+	<p><b><font face="Tahoma">MATLAB Files</font></b></p>
+	<ol>
+		<li><font face="Tahoma">
+		<a href="appendix_files/matlab/figure_trans.m.txt">figure_trans.m</a></font></li>
+		<li><font face="Tahoma"><a href="appendix_files/matlab/img_trans.m.txt">
+		img_trans.m</a></font></li>
+		<li><font face="Tahoma">
+		<a href="appendix_files/matlab/number_trans.m.txt">number_trans.m</a></font></li>
+	</ol>
+	<p><b><font face="Tahoma">C Files</font></b></p>
+	<ol>
+		<li><font face="Tahoma"><a href="appendix_files/cfiles/final_project.c">
+		final_project.c</a></font></li>
+		<li><font face="Tahoma"><a href="appendix_files/cfiles/MOUSE.C">MOUSE.C</a></font></li>
+		<li><font face="Tahoma"><a href="appendix_files/cfiles/PTD.C">PTD.C</a></font></li>
+		<li><font face="Tahoma"><a href="appendix_files/cfiles/write_sram.c">
+		write_sram.c</a></font></li>
+		<li><font face="Tahoma"><a href="appendix_files/cfiles/VGA_Param.h">
+		VGA_Param.h</a></font></li>
+	</ol>
+	<p><b><font face="Tahoma">VERILOG Files</font></b></p>
+<ol>
+	<li><font face="Tahoma">
+	<a href="appendix_files/verilog/DE2_NIOS_HOST_MOUSE_VGA.v.txt">
+	DE2_NIOS_HOST_MOUSE_VGA.v</a></font></li>
+	<li><font face="Tahoma">
+	<a href="appendix_files/verilog/VGA_Controller.v.txt">VGA_Controller.v</a></font></li>
+	<li><font face="Tahoma"><a href="appendix_files/verilog/w_sram.v.txt">
+	w_sram.v</a></font></li>
+</ol>
+	<p>&nbsp;</p>
+	<p>&nbsp;</div>
+
+<div style="position: absolute; width: 1055px; height: 186px; z-index: 1; left: 104px; top: 1px; background-image: url('orange-block.jpg'); background-position:     center; " id="layer1">
+	<h1 align="center"><font face="Tahoma" size="5" color="#FF3300">FPGA BBQ Stick</font></h1>
+	<h1 align="center"><font face="Tahoma" size="4" color="#FF3300">Muhammad Bilal Shahid &amp; 
+	Yang-Ching Cheng</font></h1>
+	<hr color="#FF3300">
+	<h2 align="center"><a href="index.htm">
+	<img border="0" id="img18" src="button1.jpg" height="25" width="160" alt="Introduction" onmouseover="FP_swapImg(1,0,/*id*/'img18',/*url*/'button2.jpg')" onmouseout="FP_swapImg(0,0,/*id*/'img18',/*url*/'button1.jpg')" onmousedown="FP_swapImg(1,0,/*id*/'img18',/*url*/'button3.jpg')" onmouseup="FP_swapImg(0,0,/*id*/'img18',/*url*/'button2.jpg')" fp-style="fp-btn: Soft Rectangle 3; fp-proportional: 0" fp-title="Introduction"></a><a href="high_level_design.htm"><img border="0" id="img19" src="button4.jpg" height="25" width="160" alt="High Level  Design" fp-style="fp-btn: Soft Rectangle 3; fp-proportional: 0" fp-title="High Level  Design" onmouseover="FP_swapImg(1,0,/*id*/'img19',/*url*/'button5.jpg')" onmouseout="FP_swapImg(0,0,/*id*/'img19',/*url*/'button4.jpg')" onmousedown="FP_swapImg(1,0,/*id*/'img19',/*url*/'button6.jpg')" onmouseup="FP_swapImg(0,0,/*id*/'img19',/*url*/'button5.jpg')"></a><a href="program_hardware_design.htm"><img border="0" id="img20" src="button7.jpg" height="25" width="160" alt="Program/Hardware Design" fp-style="fp-btn: Soft Rectangle 3; fp-proportional: 0" fp-title="Program/Hardware Design" onmouseover="FP_swapImg(1,0,/*id*/'img20',/*url*/'button8.jpg')" onmouseout="FP_swapImg(0,0,/*id*/'img20',/*url*/'button7.jpg')" onmousedown="FP_swapImg(1,0,/*id*/'img20',/*url*/'button9.jpg')" onmouseup="FP_swapImg(0,0,/*id*/'img20',/*url*/'button8.jpg')"></a><a href="results_and_conclusion.htm"><img border="0" id="img21" src="buttonA.jpg" height="25" width="160" alt="Results &amp; Conclusion" fp-style="fp-btn: Soft Rectangle 3; fp-proportional: 0" fp-title="Results &amp; Conclusion" onmouseover="FP_swapImg(1,0,/*id*/'img21',/*url*/'buttonB.jpg')" onmouseout="FP_swapImg(0,0,/*id*/'img21',/*url*/'buttonA.jpg')" onmousedown="FP_swapImg(1,0,/*id*/'img21',/*url*/'buttonC.jpg')" onmouseup="FP_swapImg(0,0,/*id*/'img21',/*url*/'buttonB.jpg')"></a><a href="ticks_and_inventions.htm"><img border="0" id="img22" src="buttonD.jpg" height="25" width="160" alt="Tricks &amp; Inventions" onmouseover="FP_swapImg(1,0,/*id*/'img22',/*url*/'buttonE.jpg')" onmouseout="FP_swapImg(0,0,/*id*/'img22',/*url*/'buttonD.jpg')" onmousedown="FP_swapImg(1,0,/*id*/'img22',/*url*/'buttonF.jpg')" onmouseup="FP_swapImg(0,0,/*id*/'img22',/*url*/'buttonE.jpg')" fp-style="fp-btn: Soft Rectangle 3; fp-proportional: 0" fp-title="Tricks &amp; Inventions"></a><a href="appendix.htm"><img border="0" id="img23" src="button24.jpg" height="25" width="160" alt="Appendix" onmouseover="FP_swapImg(1,0,/*id*/'img23',/*url*/'button22.jpg')" onmouseout="FP_swapImg(0,0,/*id*/'img23',/*url*/'button24.jpg')" onmousedown="FP_swapImg(1,0,/*id*/'img23',/*url*/'button23.jpg')" onmouseup="FP_swapImg(0,0,/*id*/'img23',/*url*/'button22.jpg')" fp-style="fp-btn: Soft Rectangle 3; fp-proportional: 0" fp-title="Appendix"></a></h2>
+	<hr color="#FF3300">
+	</div>
+
+</body>
+
+</html>

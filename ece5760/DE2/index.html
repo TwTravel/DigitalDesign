@@ -1,0 +1,262 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>DE2 hardware and  processors</title>
+<style type="text/css">
+<!--
+.style1 {font-weight: bold}
+-->
+</style>
+</head>
+
+<body>
+<h2 align="center">DE2 hardware and processor examples<br>
+ECE 576 Cornell University </h2>
+ <p><br>
+   <strong>List of projects included on this page:</strong></p>
+ <ol>
+   <li>DDS example to audio codec</li>
+   <li>A tiny, single accumulator, CPU, the uP3</li>
+   <li>Simple FPGA i/o</li>
+   <li>External SRAM interface</li>
+   <li>RS232 transmitter interface</li>
+   <li>Kraken 16-bit cpu </li>
+ </ol>
+  <hr>
+<ol>
+  <li><strong>Direct Digital Synthesis of a sine wave and Linear feedback shift register white noise</strong><br>
+    DDS running at audio clock rate is connected to the audio codec DAC channels. <a href="DDS_Example/sine_wave.v">Code</a>. <a href="DDS_Example/Simple_Sine_Wave.qar">Quartus Archive</a>.  The output frequency is set as<br>
+    <code>F = (SW*(2^14))*(audio clock rate)/(2^32) = SW*(audio clock rate)*(2^-18) =  SW*46000*(2^-18)</code><br>
+    The 2^14 is an scale factor to put the frequency into the audio range. The 2^32 results from using a 32 bit accumulator.
+     <br>
+    A <a href="DDS_Example/sine_wave_and_noise.v">second design</a> adds low pass filtered white noise to one channel. <code>SW[0]</code> DOWN outputs noise and <code>SW[0]</code> UP outputs quadrature sine wave.<br>
+  A <a href="DDS_Example/sine_wave_module.v">third design</a> modularizes the DDS (and adds phase control) and noise generators (and enables gain/cutoff setting on noise). <br>
+  A <a href="DDS_Example/sine_wave_decay.v">fourth design</a> combines two DDS modules, with added exponential atttack/decay, to form an FM audio synth channel. <br>  
+    <br>
+  </li>
+  <li> <span class="style1">A tiny CPU the uP3 (Hamblen, <em>Rapid prototyping of digital systems--SOPC Edition </em>, chapter 9, Springer 2008) <br>
+    </span> This CPU is very simple and easy to play with. The CPU is only 130 lines of Verilog, including comments. It is  a simple, one accumulator, cpu which could be hacked for parallel processing since it requires only one or two M4k blocks for data/program and uses only about one hundred logic elements. I took the <a href="TinyCPU/DE2_TOP.v">original design</a> from Hamblen's book and converted it from a 3-5 cycle machine to a single cycle machine running at 80 MHz. The conversion steps will be outlined below. To actually be useable, you would need to add a few i/o ports, and more instructions. The M4k block mif files are loaded with the machine code and initial data. <br>
+    <br>
+    <span class="style1">Multistate version (from Hamblen): </span><br>
+    The original design version exposes internal cpu busses for debugging, but a usable version would not (see modified version below).  The assembler <a href="TinyCPU/TestPgm.asm">test program</a> uses the output port to count on 4 digits of the hex LED display on the DE2 board. The <a href="TinyCPU/TinyASM.m">actual assembler</a> was written in matlab. The assembler input file and the resulting <a href="TinyCPU/TestPgm.mif">mif file</a> is shown below. The first two digits of the memory content is the opcode (e.g. at location <code>00</code> the <code>LOAD</code> is <code>02</code>) the second two digits is the address (hex <code>10</code>) to be loaded into the accumulator. The entire project (including mif file) is <a href="TinyCPU/HamblenCh9.zip">here</a>. Adding a PLL to speed up CLOCK_50 allows the uP3 to run at 150 MHz with no timing errors reported. Running at 200 MHz caused the timing analyser to report errors, but the cpu still ran. Running at 250 MHz caused the  cpu to fail. A <a href="TinyCPU/TwoCPUs/DE2_MODuP3.v">slightly modifed version</a> has two cpus instantiated, running two  different assembler codes (for <a href="TinyCPU/TwoCPUs/TestPgm0.asm">cpu0</a> and <a href="TinyCPU/TwoCPUs/TestPgm1.asm">cpu1</a>). The <code>cpu1</code> code increments the hex display 4 times as fast as the code for <code>cpu0</code>.The mif file names for the two separate program memory contents are specified at the top level using a separate <code>defparam</code> module as shown below. The entire project is zipped <a href="TinyCPU/TwoCPUs/HamblenCh9.zip">here</a>. <br>
+<pre>module annotate;
+defparam
+	DE2_TOP.cpu0.altsyncram_component.init_file = "TestPgm0.mif",
+	DE2_TOP.cpu1.altsyncram_component.init_file = "TestPgm1.mif";
+endmodule</pre>
+Another <a href="s2013/pmd68_ecs227_hl577/pmd68_ecs227_hl577/index.html">slightly modifed version</a> has three cpus instantiated, running three different assembler codes. The <code>cpu1</code> code increments the hex display 4 times as fast as the code for <code>cpu0</code>. The <code>cpu2</code> runs a copy of the same code as<code> cpu0,</code> but uses one bit if its output to alternatively hold each of the other two processors in reset, so that the two cpu counts alternate as shown in the <a href="TinyCPU/MOV05455.MPG">video</a>. <br>
+    <table width="90%"  border="1">
+      <tr>
+        <th width="43%" scope="col">assembler source </th>
+        <th width="57%" scope="col">resulting MIF file </th>
+      </tr>
+      <tr>
+        <th scope="row"><div align="left">
+          <pre>;define section
+define
+ 	LEDs 00
+
+; data section
+data 16	; base address
+	; name length value(optional)
+ 	initA	1 
+ 	incr 	1	1
+ 	outval 	1 
+
+;code section
+code
+; label opcode	address
+init:	load 	initA
+loop:	add 	incr
+     	jneg 	skip
+     	jump 	loop
+skip:	load 	outval
+     	add 	incr
+     	out 	LEDs
+     	store 	outval
+     	jump 	init</pre>
+        </div>
+        </th>
+        <td><div align="left">
+          <pre>DEPTH = 256;
+WIDTH = 16;
+  
+ADDRESS_RADIX = HEX;
+DATA_RADIX = HEX;
+   
+CONTENT
+BEGIN
+[00..FF]	:	0000;
+00	:	0210;	% init load initA % 
+01	:	0011;	% loop add incr % 
+02	:	0404;	%  jneg skip % 
+03	:	0301;	%  jump loop % 
+04	:	0212;	% skip load outval % 
+05	:	0011;	%  add incr % 
+06	:	0500;	%  out LEDs % 
+07	:	0112;	%  store outval % 
+08	:	0300;	%  jump init % 
+10	:	0000;	% initA  % 
+11	:	0001;	% incr  % 
+12	:	0000;	% outval  % 
+END ;	
+          </pre>
+        </div></td>
+      </tr>
+    </table>
+    <br>
+    <strong>Three state version:</strong><br>
+    Rearranging the machine for three states (fetch-decode-execute) starts with
+    triggering the state machine on the negative edge of the clock to cause the M4K write to be synchronous with the state machine. The negative edge trigger made it possible to fold the three write-memory states in the original design into one execution state, plus clearing the write-enable in the next fetch state. Memory was split into program and data (<em>Harvard architecture</em>) so that there could be simultaneous data and program accesses as the design migrated to single cycle. Also, all logic was made nonblocking and synchronous. The <a href="TinyCPU/Hamblen_2013/DE2_MODuP3_April_2013_split_mem_3state.v">design</a> (with two cpus defined) required that the <a href="TinyCPU/Hamblen_2013/TinyASM_split_mem.m">assembler</a> be rewritten to split memory. The two test programs (<a href="TinyCPU/Hamblen_2013/TestPgm0.asm">TestPgm0.asm</a> and <a href="TinyCPU/Hamblen_2013/TestPgm1.asm">TestPgm1.asm</a>) generate 4 files: <a href="TinyCPU/Hamblen_2013/TestPgm0.mif">TestPgm0.mif</a>, <a href="TinyCPU/Hamblen_2013/TestPgm1.mif">TestPgm1.mif</a>, <a href="TinyCPU/Hamblen_2013/TestPgm0data.mif">TestPgm0data.mif</a>, <a href="TinyCPU/Hamblen_2013/TestPgm1data.mif">TestPgm1data.mif</a>. <a href="TinyCPU/Hamblen_2013/Hamblen_3_state_archive.qar">Project archive</a>.<br>
+    <br>
+    <strong>Two state version:</strong><br>
+    The
+    optimization for two states (fetch-execute) eliminated the copy operation from the program counter to a program address register and folded the decode steps into the fetch. The <a href="TinyCPU/Hamblen_2013/DE2_MODuP3_April_2013_split_mem_2state.v">design</a> (with two cpus defined) required  the same <a href="TinyCPU/Hamblen_2013/TinyASM_split_mem.m">assembler</a> as the three state machine.. <br>
+    <br>
+    <strong>Single state version</strong>:<br>
+    The
+    overlapped fetch/execute version requires that the first instruction executed is a <code>nop</code> while the actual first instruction is fetched. Also, after a branch, a <code>nop</code> bubble needs to be executed to allow time for the next instruction to be fetched from the new location. Some care must be taken determining the opcode and program counter so that they are corrrectly pipelined. Also, for correct operation, the reset was made synchronous. The clock is set to 75 MHz. The <a href="TinyCPU/Hamblen_2013/DE2_MODuP3_April_2013_split_mem_1state.v">design</a> (with two cpus defined) required  the same <a href="TinyCPU/Hamblen_2013/TinyASM_split_mem.m">assembler</a> as the three state machine. <a href="TinyCPU/Hamblen_2013/Hamblen_1_state_archive.qar">Project archive</a>.<br>
+  </li>
+  <br>
+  <hr>
+  <br>
+   
+  <li><strong>RS232 transmitter interface</strong><br>
+    This <a href="RS232/DE2_TOP.v">test module</a> (<a href="RS232/RS232_project.qar">project archive</a>) implements a simple interface to the DE2 serial transmitter for sending data to a PC over the RS232 interface. The transmit module has been tested to send up to 10000 characters/second at 115200 baud.  The baud rate and character rate may be set independently. When data is written to the transmit module, a strobe line needs to be set for one cycle of the 50 MHz clock. The <em>idle</em> output from the module may be used to synchronize data transmission, but in this example is not used.<br>
+  <br>
+    In this version, a <a href="RS232/serial_hex_module.v">module</a> (<a href="RS232/RS232_16bit_module_project.qar">project archive</a>) was created which takes a 16-bit number as input, formats it in hexadecimal, and sends it to RS232, with a <code>&lt;crlf&gt;</code> at the end.  For each 16-bit input, a total of six characters are sent to the uart. This format can be read in matlab using this <a href="RS232/serial_hex_1.m">short progam</a>.<br>
+  <br>
+  </li>
+  <li><strong>External SRAM interface<br>
+    </strong> This <a href="DE2_SRAM1.v">example</a> exercises external <a href="../../../../../users.ece.gatech.edu/~hamblen/DE2/Datasheets/Memory/61LV25616.pdf">61LV25616</a> SRAM by:
+    <ul>
+      <li>Generating an address based on a 4-bit counter incremented by KEY0, and zero extended to 18 bits. The memory address is displayed on HEX4 and on the green LEDs. </li>
+      <li>Using SWITCH[15:0] as data to written to SRAM.</li>
+      <li>Using KEY[1] as write-enable. Note that write-enable is active-low, which corresponds to a pressed button.</li>
+      <li>Displaying the memory bus (read or write) on the red LEDs and on the 7-segment displays HEX[3:0]. </li>
+      <li>The bidirectional bus is configured with the statement below which floats the bus on a read operation and drives it on a write. <em>Note that on Altera CycloneII devices only FPGA I/O pins can be actual tristate devices. </em>If you specify internal tristates, they are instantiated as multiplexers. <br>
+       <code>assign SRAM_DQ = (KEY[1]? 16'hzzzz : SW[15:0]); </code></li>
+    </ul>
+    <br>
+  </li>
+  <li><strong>FPGA I/O</strong><br>
+    This <a href="DE2_example1.v">simple example</a> defines:
+  <ul>
+    <li>A 40-bit counter incremented by CLOCK_50. The upper 18 bits of the counter are copied to the red LEDs. This counter is reset by pushbutton KEY3. </li>
+    <li>A two digit  7-seg display on HEX1-HEX0 decoded from 8 bits of the  40-bit counter. </li>
+    <li>A 4-bit counter which is incremented by pushbutton KEY0. </li>
+    <li>A static display of <code>&quot;CU EE</code>&quot; on HEX7-HEX4.</li>
+    <li>All of the DE2 FPGA input/outputs. </li>
+    <li>A <a href="DE2_example1a.v">modifed version</a> factors out the hexidecimal display into a module and displays the 4-bit counter on HEX3. </li>
+  </ul>
+    The example was built mostly to understand the FPGA I/O pin assignments and the compilation/synthesis procedure. The whole QuartusII project is <a href="DE2_firstProjectV1.zip">zipped here</a>. <br>
+  <br>
+  </li>
+  <li><span class="style1"><a href="../../../../../mos.stanford.edu/ee272/proj00/kraken/index.html">Kraken</a> 16-bit cpu<br>
+    </span> <a href="DE2_TOPkrakenV1.v">This example</a> is a simple 16 instruction <a href="../CPUs/Kraken.html">ISA</a> cpu with LED and switch i/o. The <a href="DataPath.png">implemented datapath</a> and <a href="Timing.png">timing diagram</a> are useful to understand the Verilog.  There is a <a href="Kraken1.jpg">picture</a> of the board displaying instruction address <code>PC=02</code> which contains <code>16'h8104</code>, which is the instruction <code>LI r1,4</code> (load-immediate register1 with value 4). This cpu is mostly intended for me to teach myself Verilog in an Altera context. <br>
+    Features include:
+    <ul>
+      <li>Program storage in external, unclocked, static RAM. This has the advantage of not losing state every time the FPGA is reloaded. Programs are loaded the old-fashioned way, by toggling them in from  switches during system reset.</li>
+      <br>
+      <li>Programmer interface:
+        <ul>
+          <li>SW16  forces reset when on. PC is set to zero on KEY3 clock </li>
+          <li>HEX[3:0] 4 digit 7-seg display  shows instructions if SW17=0 or data memory output if SW17=1</li>
+          <li>SW[15:0] is used for input: instructions if SW17=0 or data bus if SW17=1</li>
+          <li>HEX[7:6] 2 digit 7-seg display shows PC </li>
+          <li>KEY3 is ~clock. This is used to run the cpu, to force a reset if SW16 is on, or to read data memory. </li>
+          <li>KEY2 is write-enable in reset mode: instructions if SW17=0 or data  if SW17=1</li>
+          <li> KEY1 is inc/dec snoop address and KEY0 is snoop address clock. These keys can be used to manipulate the current address to instruction memory while adding/modifiing a program. They can also be used to read out a specific data address by setting the address, then toggling the clock (KEY3). </li>
+          <li>HEX[5:4] 2 digit 7-seg display shows the snoop address set by KEY0/1: instruction memory if SW17=0 or data memory if SW17=1</li>
+          <li>green LED 7 is Fetch/Execute with Fetch=on</li>
+          <li>green LED 0 is data memory write_enable </li>
+        </ul>
+        <br>
+      </li>
+      <li>Registers and data-RAM specified according the Altera HDL style manual, so as to infer efficient M4K blocks during synthesis.<br>
+        <br>
+        Two port, single read, single write RAM:
+        <pre>
+// data memory: 
+// single read and write
+// taken from Altera HDL style manual page 6-17
+// Synchronous RAM with Read-Through-Write Behavior
+// and modified for 16 bit access
+// of 256 words
+module ram_infer (q, a, d, we, clk);
+output  [15:0] q;
+input [15:0] d;
+input [7:0] a;
+input we, clk;
+reg [7:0] read_add;
+reg [15:0] mem [255:0];
+	always @ (posedge clk) begin
+	if (we) mem[a] <= d;
+	read_add <= a;
+	end
+	assign q = mem[read_add];
+endmodule </pre>
+        Three port, dual-read, single write RAM (for registers)
+        <pre>
+// 16x16 register array
+// with dual-read + write
+// taken from Altera HDL style manual page 6-20
+// modified for synchronous RAM with Read-Through-Write Behavior
+// and modified for 16 bit access
+// of 16 words
+module dual_ram_infer (q, q2, write_address, read_address, read_address2, d, we, clk);
+output  [15:0] q;
+output  [15:0] q2;
+input [15:0] d;
+input [3:0] write_address;
+input [3:0] read_address;
+input [3:0] read_address2;
+input we, clk;
+reg [3:0] a1, a2;
+reg [15:0] mem [15:0];
+always @ (posedge clk) begin
+	if (we) mem[write_address] <= d;
+	a1 <= read_address;
+	a2 <= read_address2;
+end
+assign q = mem[a1];
+assign q2 = mem[a2];
+endmodule</pre>
+      </li>
+      <li>Total resource use is about 1% of the DE2 FGPA (EP2C35F) logic elements and about 1% of onboard RAM. the cpu is mostly meant to be single-stepped to play with registers and memory. </li>
+    </ul>
+  <br>
+    Program:<br>
+    <pre>
+   assembler        instruction memory
+   LI r0, 1         8001 ;need to NOP first inst out of reset
+   LI r0, 1         8001
+   LI r1, 4         8104
+   SUB r1 ,r1, r0   1110
+   BNZ r1, -1       C1FF ;PC update timing implies that this jump is to the SUB
+   JMP -3           E0Fd ;This jump is to the second LI</pre>
+    A short <a href="MOV04317.MPG">mpeg</a> of this program executing. The finger entering the frame from the lower right is running the clock. The blinking green LED is illuminated during the FETCH state. The left-most 2 digit 7-seg display is showing the PC. The 4 digit 7-seg display is showing the instruction being fetched/executed. The program loops through the subtract 4 times, then jumps back, reloads the counters and down-counts again. <br>
+    <span class="style1"><br>
+    </span> A possible variant is a simple cpu with i/o ports and a small <a href="Kraken2/Kraken2isa.html">ISA</a> aimed at DSP. The <a href="Kraken2/Kraken2TimingDataFlow.pdf">implemented datapath and timing diagram </a>are useful to understand the Verilog.<br>
+  <br>
+    Features might include:
+    <ul>
+      <li>Program storage in one M4k block. This design is meant for <em>small</em> applications. </li>
+      <li>Data storage is 18-bit words in one M4k block. This design is meant for <em>small</em> applications.</li>
+      <li>Multiply instruction compatable with the number system described on the <a href="fpgaDSP.html">DSP</a> page. </li>
+    </ul>
+  </li>
+</ol>
+   
+<hr>
+   <p><strong>References
+</strong></p>
+   <p>JO Hamblen, TS Hall and MD Furman, <em>Rapid protoyping of digital systems</em>, Springer 2005 </p>
+   <p>JO Hamblen, TS Hall and MD Furman, <em>Rapid protoyping of digital systems: SOPC edition </em>, Springer 2008</p>
+   <p>Nakano, K.;    Ito, Y., <em>Processor, Assembler, and Compiler Design Education Using an FPGA</em>, Parallel and Distributed Systems, 2008. ICPADS '08. 14th IEEE International Conference on; 8-10 Dec. 2008 pages: 723 - 728 </p>
+   <p>Nakano, K.;    Kawakami, K.;    Shigemoto, K.;    Kamada, Y.;    Ito, Y. <em>A Tiny Processing System for Education and Small Embedded Systems on the FPGAs</em>, Embedded and Ubiquitous Computing, 2008. EUC '08. IEEE/IFIP International Conference, Dec. 2008 pages: 472 - 479 </p>
+   <p>&nbsp;</p>
+</body>
+</html>

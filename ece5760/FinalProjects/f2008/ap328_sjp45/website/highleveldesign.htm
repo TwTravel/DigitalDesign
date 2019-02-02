@@ -1,0 +1,128 @@
+<html>
+<head>
+<title>ECE 5760: Graphics Processing Unit</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<style type="text/css">
+<!--
+
+a:link {  color: #0000ff; text-decoration: none}
+
+a:visited {  text-decoration: none; color: #FF8000}
+
+a:hover {  color: #99CCFF; text-decoration: underline}
+body {  font-family: "Arial", "Helvetica", "sans-serif"}
+.style2 {font-size: 36px}
+.style3 {font-family: Arial, Helvetica, sans-serif}
+.style7 {font-size: 14px}
+.style10 {
+	font-size: 14px;
+	font-weight: bold;
+	font-style: italic;
+}
+
+-->
+</style>
+</head>
+
+<body bgcolor="#FFFFFF" link="#FFFFFF">
+<table background="image/top.gif" width="700" border="0" cellspacing="0" cellpadding="0" height="75" align="center" > 
+<tr background="image/top.gif"> <td colspan="2"><span class="style2">ECE 5760: Graphics Processing Unit<FONT FACE="Tahoma">
+  </FONT><FONT FACE="Tahoma"></FONT></span></td>
+</tr> 
+</table><table width="700" border="0" cellspacing="0" cellpadding="0" height="20" align="center"> 
+<tr bgcolor="#000000"> <td BGCOLOR="#336666"> <div align="center"> 
+  <font color="#FFFFFF" face="Tahoma">|</font><font face="Tahoma"> <font color="#FFFFFF"><a href="introduction.htm">Introduction</a>  |</font> <font color="#FFFFFF"><a href="highleveldesign.htm">High Level Design</a> </font> <font color="#FFFFFF">|</font> <font color="#FFFFFF"><a href="hardwaredesign.html">Hardware Design</a> </font> <font color="#FFFFFF">| <a href="results.htm">Results</a> | <a href="conclusion.htm">Conclusion</a> | <a href="appendix.htm">Appendix</a> | </font></font></div></td></tr> </table><table width="700" border="0" cellspacing="0" cellpadding="0" height="13" background="image/top1.gif" align="center"> 
+<tr> <td><FONT FACE="Tahoma"><img src="image/pixel.gif" width="1" height="1"></FONT></td></tr> 
+</table><FONT FACE="Tahoma"><br> </FONT><table width="707" border="0" cellspacing="0" cellpadding="0" align="center"> 
+<tr> <td valign="top" width="245"> <table width="215" border="0" cellspacing="0" cellpadding="0"> 
+<tr> <td colspan="3" height="28" background="image/menuup.gif"> <div align="center"><FONT COLOR="#FFFFFF" FACE="Tahoma"><b>
+  Links</b></FONT></div></td></tr> <tr> <td width="9" height="76" background="image/menuleft.gif">&nbsp;</td>
+  <td width="194" height="76"> 
+<FONT FACE="Tahoma"><img src="image/dot.gif" width="65" height="18"> <a href="../../../../../../../../instruct1.cit.cornell.edu/Courses/ece576/default.htm"><font color=#000000>ECE 5760</font></a> <br> 
+<img height=18 src="image/dot.gif" width=65> <a href="../../../../../../../../www.cs.cornell.edu/courses/cs465/2007fa/default.htm"><font color=#000000>CS 465 </font></a><br> 
+<img height=18 src="image/dot.gif" width=65> <a href="../../../../../../../../www.terasic.com.tw/cgi-bin/page/archive.pl@Language=English&CategoryNo=39&No="><font color=#000000>Terasic </font></a><br></FONT></td>
+  <td width="12" height="76" background="image/menuright.gif">&nbsp;</td></tr> 
+<tr> <td colspan="3" height="28" background="image/menudown.gif">&nbsp;</td></tr> </table><FONT FACE="Tahoma"><br> 
+</FONT><table width="215" border="0" cellspacing="0" cellpadding="0"> <tr> <td colspan="3" height="28" background="image/menuup.gif"> 
+<div align="center"><b><font face="Tahoma" color="#FFFFFF">Authors</font></b></div></td></tr> 
+<tr> <td width="9" height="137" background="image/menuleft.gif">&nbsp;</td>
+<td width="194" height="137"><p align="center" class="style3">Amit Penmetcha (ap328)</p>
+  <p align="center">Shane J. Pryor (sjp45) </p></td>
+<td width="12" height="137" background="image/menuright.gif">&nbsp;</td></tr> 
+<tr> <td colspan="3" height="28" background="image/menudown.gif">&nbsp;</td></tr> </table></td><td width="462" valign="top"> 
+<table width="455" border="0" cellspacing="0" cellpadding="0" background="image/longmenu.gif" height="34"> 
+<tr> <td><b><font face="Tahoma">High Level Design </font></b></td>
+</tr> </table>
+<p class="style10">Background:</p>
+<p class="style7">A Hardware Graphics Pipeline operates in the following manner: </p>
+<p> <span class="style7"><img width="451" height="338" src="highleveldesign_clip_image002.gif"> </span></p>
+<p class="style7">*Note: Slide taken from CS 465 Lecture, Fall 2007 </p>
+<p class="style7">The key parts to this pipeline are the transformation, rasterizing, shading, and buffering. The transformation is merely computing the 
+screen coordinates for each object (pixel x, pixel y) based on the real world coordinates. The rasterizer and shader determine the color value each 
+pixel contains. The z-buffer determines what color should actually be displayed at each pixel based upon which part of the object is in the front.</p>
+<p class="style7">Transformation / Camera View: <br>
+  In order to have a movable camera, so that we could rotate objects, we had to implement some variables. The first represents the eye, which is the 
+position from where the scene is viewed. The second represents the gaze vector which travels from where the eye is in the direction it is looking. The 
+last vector is the view up vector. This vector points in the up direction of our 3D coordinate system. In the case of the system we implemented, the up 
+vector points in the positive y direction. These vectors are used to provide a new coordinate system where the eye is the origin. We use the Mv matrix to 
+transform the vertices on the object to the u-v-w basis coordinate system. The matrix computation is shown below:
+</p>
+<p> <span class="style7"><img width="379" height="104" src="highleveldesign_clip_image002_0000.gif"> </span></p>
+<p class="style7">The w vector points in the opposite direction from the gaze direction of the camera. That is, negative values of w indicate a point is 
+in the side of the world the user can see. The u vector points to the right and is orthogonal to the w vector. The v vector is the cross product of these 
+two vectors and points upward from the plane they lie in. Once we matrix multiply Mv to the real-world coordinates to get the transformed coordinates, we 
+then must transform these new coordinates to fit on the screen properly. This involves doing a windowing transform to fit the real world coordinates into 
+the screen at a particular ratio. That is, for each unit in the u, v, and w directions, we specify the number of pixels on the screen this corresponds to. 
+The scene is then flattened to fit on the screen in this manner. Instead of doing a full matrix multiplication for this part, we do a multiply and add to 
+get the screen coordinates as this eliminates unnecessary calculations. The multiply multiplies by the number of pixels per unit, then the addition offsets 
+from the middle of the screen.<br><br>Transforming the normals is done by using the upper-left 3x3 matrix of m and multiplying by each normal.  For these vectors, the coordinate system matters, but not the relative position of the eye because normals specify a direction.</p>
+<p class="style7"><em>Rasterizing/Shading: </em></p>
+<p class="style7">We chose to use the Gouraud Method of rendering a triangle, as it allows us to use interpolated shading on the triangle. The details of 
+the algorithm will be discussed in the hardware design section, but the background math will be explained here. This method computes the Barycentric 
+coordinates for each screen coordinate (i.e. pixel). Any triangle can be described by three vertices that are not co-linear, which means any point within 
+the triangle can be described as a weighted sum of the three vertices. If the sum can be represented by &lambda;1v1 + &lambda;2v2 + &lambda;3v3, then each 
+coordinate can be represented by the following two equations: </p>
+<p class="style7"><img width="172" height="36" src="highleveldesign_clip_image002.jpg" alt="\begin{matrix} x = \lambda_{1} x_{1} +  \lambda_{2} x_{2} +  
+\lambda_{3} x_{3} \\ y = \lambda_{1} y_{1} +  \lambda_{2} y_{2} +  \lambda_{3} y_{3} \\ \end{matrix} \,"></p>
+<p class="style7">To determine if the coordinate is in the triangle, the lambdas have to be greater than zero. If the pixel is within the triangle, then 
+the color is determined by interpolating between the three vertex colors using these same Barycentric coordinates. Solving this is discussed in further 
+detail in the hardware design. </p>
+<p><em>Z-Buffer: </em></p>
+<p class="style7">After adjusting the color based on the light source, the data enters the z-buffer stage. This is the final part of the graphics pipeline. 
+Each pixel has color data store for the object with the closest z value that is in front of the viewer. Each newly computed data is compared to what is 
+stored in the z-buffer. If it is closer it replaces the previous value, otherwise it is discarded.</p>
+<p><em>Java Software: </em></p>
+<p class="style7">All of the vertex, normal, color, and face data is read into the pipeline from look-up tables (LUTs). These LUTs are different for 
+each object to be rendered as the geometry for each object is different. To generate these, we wrote a few Java programs which read in the values from 
+.msh and .obj files obtained through CS 465 and <a href = "../../../../../../../../www.turbosquid.com/default.htm">turbo squid</a>. This program would read the data in from these 
+files and output two Verilog (.v) files that could be copied and pasted into the project directory. <br><br>The first verilog file output is the face.v 
+file. It contained the Face LUT, which stored the information for the face - the indices of the vertices in that face and some constant values associated 
+with that face for rasterizing computations. More on these constants will be described in the section on Rasterizing in the Hardware Design part of this 
+webpage. <br><br>The second file is the vertex.v file.  It contains all the relevant vertex information.  This includes the position of the vertex, the 
+color of the vertex, and the normal of the shape at the vertex position.  There are three copies of the data for three LUTs.  This is so that vertex data for all three vertices can be read out on one cycle. This data is then passed to the transforms to put the vertex and normal data into the eye-space coordinates. <br><br>The final Java program outputs the camera.v file. The camera file outputs the u, v, and w basis vectors given one of eight position inputs. This LUT saves doing the calculations for u, v, and w in the hardware, but limits the number of camera positions to a relatively small finite number. Changing the Java file allows for fewer or more camera angles.  However, making more camera angles significantly makes the face.v and vertex.v files larger. We found eight to be a decent number to render up to 1000 triangles. The number of triangles that can be rendered becomes significantly smaller with larger camera angles past this point.</p>
+<p class="style7"><em><strong>Logical Structure:</strong></em> </p>
+<p class="style7">The graphics pipeline runs completely in hardware. We generated various look up tables that contain information on the normals, vertices, 
+faces, etc, which are used to do calculations. They use up a signifcant portion of the logical elements. The graphics pipeline, which is discussed in the 
+hardware section, computes which triangles should be seen under the current camera angle and stores the calculated color value in the SRAM and the Z 
+coordinate in a dual port ROM made out of M4K blocks. The VGA controller then reads these values out of the SRAM and displays them on the VGA.</p>
+<p class="style7"><em><strong>Hardware/Software Tradeoffs:</strong></em> <br><br>
+  As mentioned, rendering objects in hardware is faster since it can take advantage of parallelism, calculations are quicker, and there is a smaller 
+latency in transmitting data. However, it is more difficult to implement the various algorithms in hardware, the precision is not as accurate because 
+we do not take advantage of math routines already written for us, and there is a limit on the amount of hardware that can be used. <br>
+  <br>
+  <em><b>IEEE Standard:</b></em> <br><br>
+  We used a variant of the IEEE floating point standard for this project. We still have a sign bit but use 9 bits for the Mantissa and 8 bits for the 
+exponent in order to use Professor Land's floating point hardware. This floating point hardware does not take into consideration rounding or any special 
+cases built into the normal IEEE format, such as infinity and NaN representations.</p>
+<p align="right"><FONT FACE="Tahoma"><a href="#"><font color="#0000CC"> 
+</font></a> </FONT></p>
+<p align="right"><FONT FACE="Tahoma"> </FONT></p></td>
+</tr> </table><FONT FACE="Tahoma"><br> </FONT><table width="700" border="0" cellspacing="0" cellpadding="0" align="center"> 
+<tr> <td> <div align="left"></div><DIV ALIGN="CENTER"></DIV>
+<TABLE WIDTH="700" BORDER="0" CELLSPACING="0" CELLPADDING="0" HEIGHT="20" ALIGN="center"> 
+<TR BGCOLOR="#000000"> <TD BGCOLOR="#336666">&nbsp;</TD></TR> </TABLE></td></tr> 
+</table><FONT FACE="Tahoma"></FONT> 
+</body>
+</html>
+
+			<center>&nbsp;</center><br><br>

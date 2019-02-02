@@ -1,0 +1,104 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>SDC files</title>
+</head>
+
+<body>
+<h3 align="center">TimeQuest and the<br />
+  Synopsis Design Constraint (sdc) File<br />
+  ece5760 Cornell</h3>
+<p>The <a href="../../../../../https@www.altera.com/content/dam/altera-www/global/en_US/pdfs/literature/wp/wp-tmqst.pdf">TimeQuest timing analyser</a> is Quartus Prime's timing verification tool. <br />
+  TimeQuest requires information about connections and devices from <a href="../../../../../www.vlsi-expert.com/2011/02/synopsys-design-constraints-sdc-basics.html">Synopsis Design Constraint</a>  (sdc) file.<br />
+Chapter 6 and 7 in <a href="../../../../../https@www.altera.com/en_US/pdfs/literature/hb/qts/qts-qps-5v3.pdf">Quartus Prime Standard Edition Handbook Volume 3: Verification</a> explains the types of analysis that TimeQuest runs. <br />
+The <a href="../../../../../https@www.altera.com/content/dam/altera-www/global/en_US/pdfs/literature/manual/mnl_sdctmq.pdf">SDC and TimeQuest API Reference Manual</a> has the full file syntax for a sdc file.<br />
+This <a href="../../../../../www.k5so.com/TimingClosureFieldGuide.pdf">A STANDARDIZED PROCEDURE FOR CLOSING TIMING ON  OpenHPSDR FPGA FIRMWARE DESIGNS</a>  seems good. (<a href="../../../../../www.alterawiki.com/wiki/TimeQuest_User_Guide">another version</a>).<br />
+Shows how to set up a minimal sdc file.</p>
+<p>Examples of sdc files for the DE1-SoC.<br />
+<a href="../../../../../https@github.com/skelleher/fpga/blob/master/DE1-SoC/DE1_SOC.sdc">Example from UofW</a><strong>, </strong><a href="../../../../../https@github.com/skelleher/fpga/blob/master/DE1-SoC/DE1_SOC.sdc">Another example</a>, <a href="../../../../../https@github.com/bsteinsbo/DE1-SoC-Sound/blob/master/DE1_SOC_Linux_Audio/DE1_SOC_Linux_Audio.sdc">audio example</a>, <a href="../../../../../https@www.youtube.com/watch@v=b4STwjT_g1g">video</a>, and <a href="../../../../../https@www.altera.com/support/support-resources/design-examples/design-software/timequest/exm-tq-basic-sdc-template.html">Altera</a></p>
+<p><strong>Small example</strong></p>
+<p>For the example project<code> DE1-SoC_v.5.0.1_HWrevF_SystemCD\Demonstrations\FPGA\my_first_fpga</code><br />
+  which is a simple counter the <a href="my_first_fpga_old.sdc">sdc file</a> is<br />
+  <code>create_clock -name &quot;CLOCK_50&quot; -period 20.000ns [get_ports {CLOCK_50}]<br />
+  derive_pll_clocks<br />
+  derive_clock_uncertainty</code><br />
+  which leaves the i/o ports unconstrained but passes all other timing.
+This seems to be about the minimum file.   <br />
+  Deleting this file and having TimeQuest build a new file by</p>
+<ol>
+  <li>Run Analysis</li>
+  <li>Run Fitter</li>
+  <li>In Tools&gt;TimeQuest&gt;Tasks pane, following the steps below appears to<br />
+    write an sdc file which includes clocks and PLLs.
+      <ol>
+      <li>Right-click <code>Create Timing Netlist</code> and click <code>start</code></li>
+      <li>Right-click <code>Read sdc file</code> and click <code>start</code></li>
+      <li>Right-click <code>Update Timing Netlist</code> and click <code>start</code></li>
+      <li>Right-click <code>Write sdc File</code>  and click <code>start</code><br />
+  </li>
+    </ol>
+  </li>
+</ol>
+<p>This <a href="my_first_fpga.out.sdc">new sdc file</a> contains more specific information about the clocks, and a bunch of unpopulated header suggestions.</p>
+<p><a href="../../../../../https@class.ee.washington.edu/271/peckol/doc/DE1-SoC-Board-Tutorials/ModelsimTutorials/ModelSimTutorialCode/DE1_SoC.sdc"></a></p>
+<p><strong>Nios system</strong></p>
+<p>The example project <code>DE1-SoC_v.5.0.1_HWrevF_SystemCD\Demonstrations\FPGA\\DE1_SoC_SDRAM_Nios_Test</code><br />
+ships with a simple <a href="DE1_SoC_SDRAM_Nios_Test.sdc">sdc file</a>, again defining the clocks. TimeQuest analysis fails Multicorner timing analysis using this sdc file. <br />
+Performing the steps above for TimeQuest gives a new <a href="DE1_SoC_SDRAM_Nios_Test.out.sdc">sdc file</a>. After substituting the new file (Assignments&gt;Settings&gt;TimeQuest) for the old, Recompiling shows that TimeQuest now passes everything, except for the unconstrained i/o paths. Generating the sdc file in TimeQuest appears to pick up the specific PLL settings and  Quartus settings.</p>
+<p>&nbsp; </p>
+<hr />
+<p>From <a href="../../../../../https@www.altera.com/support/support-resources/design-examples/design-software/timequest/exm-tq-basic-sdc-template.html">Altera</a>:<br />
+See also <a href="../../../../../https@documentation.altera.com/#/00014470-AA$AA00055540">Timing Constraints</a> </p>
+<div>
+  <div>
+    <div>
+      <div>
+        <div>
+          <div>
+            <div>
+              <h3>TimeQuest Example: Basic SDC Example</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div> </div>
+<div>
+  <div>
+    <div>
+      <div>
+        <div></div>
+        <div>
+          <div>
+            <div>
+              <p>set_input_delay -clock clk -max 3 [all_inputs]</p>
+              <p>set_input_delay -clock clk -min 2 [all_inputs]The Synopsys Design   Constraint (SDC) format provides a simple and easy method to constrain   the simplest to the most complex designs. The following example provides   the simplest SDC file content that constrains all clock (ports and   pins), input I/O paths, and output I/O paths for a design. You can use   the SDC file below as a template for any design. However, each design   should contain a customized SDC file that individually constrains all   clocks, input ports, and output ports.</p>
+              <p><strong># Constrain clock port clk with a 10-ns requirement</strong></p>
+              <p>create_clock -period 10 [get_ports clk]</p>
+              <p><strong># Automatically apply a generate clock on the output of phase-locked loops (PLLs) <br />
+                # This command can be safely left in the SDC even if no PLLs exist in the design</strong></p>
+              <p>derive_pll_clocks</p>
+              <p><strong># Constrain the input I/O path</strong></p>
+              <p>set_input_delay -clock clk -max 3 [all_inputs]<br />
+              set_input_delay -clock clk -min 2 [all_inputs]</p>
+              <p><strong># Constrain the output I/O path</strong></p>
+              <p>set_output_delay -clock clk -max 3 [all_inputs]<br />
+              set_output_delay -clock clk -min 2 [all_inputs]</p>
+              <h3>&nbsp;</h3>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<hr />
+<p><a href="../../../../../ftp@ftp.altera.com/up/pub/Altera_Material/15.1/Tutorials/Verilog/Timequest.pdf">Using TimeQuest Timing Analyzer</a> (Quartus Prime)</p>
+<p><a href="../../../../../https@www.altera.com/en_US/pdfs/literature/hb/qts/qts-qps-5v3.pdf">Quartus Prime Standard Edition Handbook Volume 3: Verification</a> Chapters 6 and 7</p>
+<p><a href="../../../../../https@www.altera.com/en_US/pdfs/literature/hb/qts/qts-qps-handbook.pdf">Quartus Prime Standard Edition Handbook Volume 1: Design and Synthesis</a></p>
+<p>&nbsp;</p>
+</body>
+</html>

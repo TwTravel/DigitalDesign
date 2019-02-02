@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?><altera_monitor_program_project version="1.0">
+    <architecture>Nios II</architecture>
+    <system>
+        <system_info filepath="true">DE2-115_Media_Computer/verilog/nios_system.sopcinfo</system_info>
+        <system_sof filepath="true">DE2-115_Media_Computer/verilog/DE2_115_Media_Computer.sof</system_sof>
+        <system_jdi filepath="true"/>
+        <cable>USB-Blaster [USB-0]</cable>
+        <processor>CPU</processor>
+        <reset_processor_during_load>true</reset_processor_during_load>
+        <terminal>JTAG_UART</terminal>
+    </system>
+    <program>
+        <type>Program with Device Driver Support</type>
+        <source_files>
+            <source_file filepath="true">DE2-115_Media_Computer/app_software_HAL/media_graphics_HAL/media_graphics_HAL.c</source_file>
+        </source_files>
+        <options>
+            <bsp_settings_tcl_script filepath="true"/>
+        </options>
+    </program>
+</altera_monitor_program_project>

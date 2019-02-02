@@ -1,0 +1,916 @@
+<html>
+<head>
+<title>STB25 YDZ2 Ray Tracer</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<style type="text/css">
+<!--
+
+a:link {  color: #FFFFFF; text-decoration: none}
+
+a:visited {  text-decoration: none; color: #FFCC66}
+
+a:hover {  color: #99CCFF; text-decoration: underline}
+body {  font-family: "Arial", "Helvetica", "sans-serif"}
+.titles {  font-family: "Geneva", "Arial", "Helvetica", "san-serif"; font-size: 16px; font-weight: bold; color: #000000; text-decoration: underline}
+.text {  font-family: "Arial", "Helvetica", "sans-serif"; font-size: 14px}
+.code {  font-family: "Courier New", Courier, mono; font-size: 14px}
+-->
+</style>
+</head>
+
+<body bgcolor="#FFFFFF" link="#FFFFFF">
+<table background="image/top.gif" width="700" border="0" cellspacing="0" cellpadding="0" height="75" align="center" >
+<tr background="image/top.gif"> <td colspan="2">
+      <p><FONT FACE="Tahoma" SIZE="6"> FPGA Ray Tracer</FONT><br>
+      <font face="Tahoma" size="3">Scott Bingham / Donald Zhang</font></p>
+</td></tr>
+</table><table width="700" border="0" cellspacing="0" cellpadding="0" height="20" align="center">
+<tr bgcolor="#000000"> <td BGCOLOR="#336666"> <div align="center">
+  <font color="#FFFFFF" face="Tahoma">|</font><font face="Tahoma">
+  <a href="index.html">Introduction</a> <font color="#FFFFFF">|</font>
+<a href="high.html">High Level Design</a> <font color="#FFFFFF">|</font>
+ <a href="pd_design.html">Program/Hardware Design</a>  <font color="#FFFFFF">|</font>
+<a href="results.html">Results</a> <font color="#FFFFFF">|
+<a href="conclusion.html">Conclusion</a> <font color="#FFFFFF">|
+<a href="appendix.html">Appendix</a> |</font></font></font></div></td></tr> </table>
+<table width="700" border="0" cellspacing="0" cellpadding="0" height="13" background="image/top1.gif" align="center">
+
+<tr> <td><FONT FACE="Tahoma"><img src="image/pixel.gif" width="1" height="1"></FONT></td></tr>
+</table><FONT FACE="Tahoma"><br> </FONT>
+<table width="700" border="0" cellspacing="0" cellpadding="0" align="center">
+<tr> 
+    
+    <td width="677" valign="top"> 
+      <table width="456" border="0" cellspacing="0" cellpadding="0" background="image/longmenu.gif" height="34">
+        <tr> 
+          <td><b><font face="Tahoma">Program/Hardware Design</font></b></td>
+        </tr> </table> 
+      <p class="titles">Ray Tracer Hardware</p>
+      <p class="text">The ray tracing hardware consisted of a large state machine 
+        responsible for calculating the color of all the pixels. It wrote these 
+        results to a write buffer which coordinated with the VGA controller to 
+        access SRAM. The VGA controller read the screen values from SRAM and sent 
+        them to the VGA DAC along with the necessary clock and synch signals. 
+        The ray tracing hardware interfaced with the NIOSII CPU through the sphere 
+        table and one state in the state machine in which it read values from 
+        the CPU. All input switches and pushbuttons were used up to configure 
+        the hardware and move the origin/light source/screen position. </p>
+      <p><span class="titles">State Machine</span><br>
+        <span class="text">The detailed state machine is shown below in <b>figure 
+        8</b>. The main idea of the state machine is to implement the ray tracing 
+        math previously discussed. We start with initializing many state variables 
+        and the vector direction at reset. Also at reset, the option to render 
+        or not to render planes is made. The initial ray is normalized over several 
+        cycles, which requires a magnitude calculation, a square root, and a division. 
+        Then for each sphere, it is checked whether the ray origin is inside a 
+        sphere. If it is, then the pixel is drawn black and we can move on to 
+        the next one. Otherwise, we check that a sphere is in front of the ray 
+        and whether or not it intersects. </span></p>
+      <p class="text">If an initial ray does not intersect with any sphere, it 
+        would then be checked with the plane list. The same is true for a reflection 
+        ray. Shadow rays, however, do not consider planes for reasons stated earlier. 
+        Also, if a shadow ray intersects with any sphere closer than the light 
+        source, a shadow is cast on the origin of the shadow ray. Because we are 
+        concerned with the closest intersection, we still must check every sphere 
+        after an intersection is detected, so the closest distance and its intersection 
+        point are stored until all spheres have been checked. The alternative 
+        to checking every sphere is to sort the sphere list, thereby making the 
+        closest intersection the first one. However, this doesn't work for reflection 
+        rays which go through the same states as initial rays and so we check 
+        all spheres. Shadow ray's can stop once a single intersection has been 
+        found and so typically take less time. Also we impose the limitation that 
+        the light source itself does not cast shadows. Although the light source 
+        is a single point in space, we draw it as a small, &quot;pure&quot; white 
+        sphere to make it more convincing. The light source also does not reflect 
+        any light although it appears in the reflections on other spheres and 
+        planes. </p>
+      <p class="text">To create a reflection vector we must know the normal to 
+        the intersection point on the sphere. For planes, this is trivial as it 
+        is already stored in the plane table. The direction of the sphere normal 
+        is easy to get, however it takes many cycles to again normalize it. Once 
+        we have the normal and the direction of a shadow vector, we take the dot 
+        product and scale the color of the intersection accordingly. This creates 
+        realistic shadows that are brighter when the light vector coincides with 
+        the normal. We store the inverse of the radius in the sphere table to 
+        make normalization slightly faster by doing a multiply instead of divide. 
+        Once we have the normal, we have part of the reflection vector calculations 
+        done. At this point we need to check whether or not we want to launch 
+        a reflection, based on the number of reflections so far and the weight 
+        of the reflection. The weight of each object intersected with thus far 
+        is multiplied together so that less light reaches the eye from further 
+        intersections. If there is to be a reflection vector, the color produced 
+        from the previous ray is stored and any reflection color is added on top 
+        of that when the reflection ray completes. We check for saturation on 
+        any given color and so adding more of that color to the pixel does not 
+        help. This gives the realistic effect that you see reflections better 
+        on dark, shiny objects. Anti-alias sub-pixel rays are stored in a special 
+        buffer until all the rays for that pixel have been calculated, and then 
+        they are combined.</p>
+      <p><span class="text">Planes are checked in a similar way to spheres but 
+        with more restrictions as discussed previously. These are for performance 
+        reasons and the fact that we will only use planes as bounding mirrored 
+        surfaces in our scenes. The closest plane intersection is calculated when 
+        intersecting with planes as with spheres, but there are typically much 
+        fewer planes than spheres in the scenes. Normalizing the normal is not 
+        necessary as it has already been done (similar to the way radius parameters 
+        are precalculated and stored in the sphere table). We can apply a checkerboard 
+        pattern to planes by simply checking the intersection coordinates in two 
+        axes and looking the value of a certain bit, depending on how wide you 
+        want the checkers. We can also impose boundaries on how far planes extend 
+        by disregarding hits that intersect outside of the bounds.</span><br>
+      </p>
+     <center> <img border=1 src="image/ray/figure9.JPG"></center>
+		  
+      <p class="text" align=center><font size="-1">Figure 8</font></p>
+      <p class="titles">Anti-Aliasing</p>
+      <p class="titles" align=center><img border=1 alt="Figure9 A&B" src="image/ray/figure10.JPG"></p>
+      <p class="text" align=center><font size="-1">Figure 9 (A left, B right)</font></p>
+      <p class="text">Jaggies appear in images rendered on a computer screen due 
+        to the finite pixilation/quantization used. No matter how much we increase 
+        the resolution, the jaggies will never disappear, only get smaller. The 
+        solution is to super-sample the image and average the color among adjacent 
+        rays. Our anti-aliasing implementation has the option to do either 8x 
+        or 4x anti-aliasing. For 8x anti-aliasing, nine rays are shot per pixel 
+        and the resulting color from each is summed using the weightings in<b> 
+        figure 9-A</b>. 4x anti-aliasing uses the weightings in <b>figure 9-B</b>. 
+        The colors of each sub-pixel were stored in an alias buffer until all 
+        sub-pixel colors had been determined. We used these weightings for several 
+        reasons: equal weightings blurred the image too much, Prof. Land suggested 
+        these weights and that they were more realistic, each is a fraction that 
+        can be resolved by shifts, and the sum of all the weights equals one. 
+        Each sub-pixel was +1/2, 0, or -1/2 from the center pixel in the X and 
+        Y directions. The effects of anti-aliasing are clear in <b>figure 10</b>. 
+        The top image (a) has no anti-aliasing or reflections. The next image 
+        (b) has 4x anti-aliasing, followed by 8x anti-aliasing (c), followed by 
+        1 (d), 2 (e), and 3 (f) levels of reflections without anti-aliasing, followed 
+        by 3 levels of reflections and 8x anti-aliasing (g), and finally 3 levels 
+        of reflections, 8x anti-aliasing, and planes being rendered (h).</p>
+      <p class="text" align=center><img border=1 alt="Figure10" src="image/ray/progression2.jpg" width="700" height="932"></p>
+      <p class="text" align=center><font size="-1">Figure 10</font></p>
+      <p class="text" align=left><span class="titles">Write Buffer</span><br>
+        In previous labs that used VGA output, the execution of our state machine 
+        was tied to the blanking signal from the VGA controller; that is, the 
+        state machine only ran while the VGA controller was synching. This was 
+        to avoid trying to write to SRAM while the VGA controller was reading 
+        from it. However, this was overly restrictive. Only writing to memory 
+        had to wait on the VGA controller. To decouple the execution of the ray 
+        tracer from writing to memory, we implemented a 64-entry circular FIFO 
+        buffer to store information to be written to the SRAM. This enabled the 
+        ray tracer to always run full speed. We experimentally determined 64-entries 
+        to be the optimal size. Thirty-two entries were too few and using a power 
+        of two allows the head and tail pointers to naturally loop around to the 
+        beginning of the circular buffer when they overflow. The buffer stored 
+        both the 18-bit SRAM address and the 16-bit data to be written and was 
+        indexed by 6-bit head and tail pointers. The tail pointer advanced whenever 
+        it did not point to the same entry as the head pointer and wrote the entry 
+        it was pointing to back to memory. The speedup provided by using this 
+        method was significant.</p>
+      <p><span class="titles">Square Root <sup>[2]</sup></span><br>
+        <span class="text">Because we were initially unsure how the MegaFunction 
+        square root module would work, we implemented one we found on the internet 
+        for fixed point numbers and modified it to work with our 12.12 representation. 
+        In retrospect, this was probably not the ideal solution as it takes approximately 
+        four cycles to complete. However, it was too difficult to verify another 
+        square root implementation once we had devoted resources to interfacing 
+        with the one we implemented.<br>
+        The C code we transformed into Verilog and modularized to do multiple 
+        iterations per cycle is included in the Verilog file for the square root 
+        module. The square root module we implemented used an edge triggered start 
+        signal to begin calculations. When the correct number of iterations for 
+        the number of sub-modules had completed, the result was placed on the 
+        outputs and a done signal was raised. The hardware spun on the done signal 
+        from the square root module and then reset it once it had read the results.</span></p>
+      
+      <p><span class="titles">VGA/SRAM</span><br>
+        <span class="text">The VGA controller was responsible for fetching pixels 
+        to draw on the screen from SRAM, producing synchronization signals, and 
+        creating the front and back porches required for VGA displays. We implemented 
+        both 320x240 and 512x480 (really 640x480 with part of the screen black) 
+        resolutions. The VGA controller has two counters, one for horizontal pixels 
+        and one for vertical lines. A line is drawn according to the timings in 
+        the table above. First a synch signal (active low) is produced, after 
+        the counter reaches a certain value, the synch returns high and the back 
+        porch begins. Once the back porch is completed, the VGA controller uses 
+        the horizontal and vertical counters to produce coordinates for the current 
+        pixel being drawn. These coordinates are used as an address for memory. 
+        Once the visible resolution is completed, the front porch begins. Following 
+        the front porch, the process repeats with a synch signal. The color output 
+        is grounded from the start of the front porch until the end of the back 
+        porch. Similar actions are taken by the vertical line counter, except 
+        the clock is the end of a line rather than a pixel. Output is grounded 
+        during porches and synching. While the VGA controller was synching, the 
+        write buffer was free to write to SRAM at a pixel per cycle.</span></p>
+      <p><span class="text">The coordinates produced by the VGA controller were 
+        used to access memory at the word level; we used the lower 9 bits from 
+        each the X and Y coordinates to index SRAM. This limited our resolution 
+        to 512 pixels wide but made indexing easy. We simply blacked the right 
+        part of the screen when the X count exceeded 511 (0-511 visible) and disregarded 
+        whatever data was being read from SRAM. If we didn't do this, the left 
+        part of the screen was duplicated on the right side when the coordinates 
+        rapped around (x &gt; 511). Because SRAM holds 16 bit words, we used 1 
+        bit to indicate a pixel was the light source, and 5 to represent each 
+        the red, blue, and green content of a pixel. When read back from SRAM, 
+        these RGB values were used as the upper 5 bits of the 10bit RGB lines 
+        going to the DAC. If the pixel being drawn was part of the light source, 
+        the lower bits were set high to allow us to produce &quot;pure&quot; white; 
+        otherwise, they were left as 0 because they are mostly insignificant in 
+        the overall color and not worth using another word in SRAM for which would 
+        require prefetching values. Representing each color in 5 bits, however, 
+        lead to some quantization of color, which is most clearly visible in the 
+        Lambertian shading where there are small concentric rings of a shade of 
+        the sphere color before jumping to the next slightly different shade, 
+        rather than being a smooth gradient. </span><br>
+      </p>
+      <p><span class="titles">Inputs</span><br>
+       <center>
+        <table class=MsoTableGrid border=1 cellspacing=0 cellpadding=0
+ style='border-collapse:collapse;border:none;mso-border-alt:solid windowtext .5pt;
+ mso-yfti-tbllook:480;mso-padding-alt:0in 5.4pt 0in 5.4pt;mso-border-insideh:
+ .5pt solid windowtext;mso-border-insidev:.5pt solid windowtext' width="654" height="318">
+          <tr style='mso-yfti-irow:0'> 
+            <td width=82 valign=top style='width:.7in;border:solid windowtext 1.0pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal><b style='mso-bidi-font-weight:normal'>Input<o:p></o:p></b></p>
+            </td>
+            <td width=222 valign=top style='width:117.0pt;border:solid windowtext 1.0pt;
+  border-left:none;mso-border-left-alt:solid windowtext .5pt;mso-border-alt:
+  solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal><b style='mso-bidi-font-weight:normal'>Function<o:p></o:p></b></p>
+            </td>
+            <td width=132 valign=top style='width:99.0pt;border:solid windowtext 1.0pt;
+  border-left:none;mso-border-left-alt:solid windowtext .5pt;mso-border-alt:
+  solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal><b style='mso-bidi-font-weight:normal'>Input<o:p></o:p></b></p>
+            </td>
+            <td width=208 valign=top style='width:1.75in;border:solid windowtext 1.0pt;
+  border-left:none;mso-border-left-alt:solid windowtext .5pt;mso-border-alt:
+  solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal><b style='mso-bidi-font-weight:normal'>Function<o:p></o:p></b></p>
+            </td>
+          </tr>
+          <tr style='mso-yfti-irow:1'> 
+            <td width=82 valign=top style='width:.7in;border:solid windowtext 1.0pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal>SW[17]</p>
+            </td>
+            <td width=222 valign=top style='width:117.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal>Light Source +X</p>
+            </td>
+            <td width=132 valign=top style='width:99.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal>SW[03]</p>
+            </td>
+            <td width=208 valign=top style='width:1.75in;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal>Reflection Select[1]</p>
+            </td>
+          </tr>
+          <tr style='mso-yfti-irow:2'> 
+            <td width=82 valign=top style='width:.7in;border:solid windowtext 1.0pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal>SW[16]</p>
+            </td>
+            <td width=222 valign=top style='width:117.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal>Light Source –X</p>
+            </td>
+            <td width=132 valign=top style='width:99.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal>SW[02]</p>
+            </td>
+            <td width=208 valign=top style='width:1.75in;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal>Reflection Select[0]</p>
+            </td>
+          </tr>
+          <tr style='mso-yfti-irow:3'> 
+            <td width=82 valign=top style='width:.7in;border:solid windowtext 1.0pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal>SW[15]</p>
+            </td>
+            <td width=222 valign=top style='width:117.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal>Light Source +Y</p>
+            </td>
+            <td width=132 valign=top style='width:99.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal>SW[01]</p>
+            </td>
+            <td width=208 valign=top style='width:1.75in;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal>Anti-alias x8</p>
+            </td>
+          </tr>
+          <tr style='mso-yfti-irow:4'> 
+            <td width=82 valign=top style='width:.7in;border:solid windowtext 1.0pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal>SW[14]</p>
+            </td>
+            <td width=222 valign=top style='width:117.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal>Light Source –Y</p>
+            </td>
+            <td width=132 valign=top style='width:99.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal>SW[00]</p>
+            </td>
+            <td width=208 valign=top style='width:1.75in;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal>Anti-alias x4</p>
+            </td>
+          </tr>
+          <tr style='mso-yfti-irow:5'> 
+            <td width=82 valign=top style='width:.7in;border:solid windowtext 1.0pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal>SW[13]</p>
+            </td>
+            <td width=222 valign=top style='width:117.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal>Light Source +Z</p>
+            </td>
+            <td width=132 valign=top style='width:99.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal>KEY[3]</p>
+            </td>
+            <td width=208 valign=top style='width:1.75in;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal>Reset</p>
+            </td>
+          </tr>
+          <tr style='mso-yfti-irow:6'> 
+            <td width=82 valign=top style='width:.7in;border:solid windowtext 1.0pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal>SW[12]</p>
+            </td>
+            <td width=222 valign=top style='width:117.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal>Light Source –Z</p>
+            </td>
+            <td width=132 valign=top style='width:99.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal>KEY[2]</p>
+            </td>
+            <td width=208 valign=top style='width:1.75in;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal>Render Planes</p>
+            </td>
+          </tr>
+          <tr style='mso-yfti-irow:7'> 
+            <td width=82 valign=top style='width:.7in;border:solid windowtext 1.0pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal>SW[11]</p>
+            </td>
+            <td width=222 valign=top style='width:117.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal>Origin +X</p>
+            </td>
+            <td width=132 valign=top style='width:99.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal>KEY[1]</p>
+            </td>
+            <td width=208 valign=top style='width:1.75in;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal>Telescope View</p>
+            </td>
+          </tr>
+          <tr style='mso-yfti-irow:8'> 
+            <td width=82 valign=top style='width:.7in;border:solid windowtext 1.0pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal>SW[10]</p>
+            </td>
+            <td width=222 valign=top style='width:117.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal>Origin –X</p>
+            </td>
+            <td width=132 valign=top style='width:99.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal>KEY[0]</p>
+            </td>
+            <td width=208 valign=top style='width:1.75in;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal>Widen View</p>
+            </td>
+          </tr>
+          <tr style='mso-yfti-irow:9'> 
+            <td width=82 valign=top style='width:.7in;border:solid windowtext 1.0pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal>SW[09]</p>
+            </td>
+            <td width=222 valign=top style='width:117.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal>Origin +Y</p>
+            </td>
+            <td width=132 valign=top style='width:99.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal>SW[17]&amp;SW[16]</p>
+            </td>
+            <td width=208 valign=top style='width:1.75in;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal style='margin-right:-5.4pt'>Rotate CCW around 
+                z</p>
+            </td>
+          </tr>
+          <tr style='mso-yfti-irow:10'> 
+            <td width=82 valign=top style='width:.7in;border:solid windowtext 1.0pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal>SW[08]</p>
+            </td>
+            <td width=222 valign=top style='width:117.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal>Origin –Y</p>
+            </td>
+            <td width=132 valign=top style='width:99.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal>SW[15]&amp;SW[14]</p>
+            </td>
+            <td width=208 valign=top style='width:1.75in;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal>Rotate CW around z</p>
+            </td>
+          </tr>
+          <tr style='mso-yfti-irow:11'> 
+            <td width=82 valign=top style='width:.7in;border:solid windowtext 1.0pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal>SW[07]</p>
+            </td>
+            <td width=222 valign=top style='width:117.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal>Origin +Z</p>
+            </td>
+            <td width=132 valign=top style='width:99.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal>SW[13]&amp;SW[12]</p>
+            </td>
+            <td width=208 valign=top style='width:1.75in;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal>Rotate CCW around x</p>
+            </td>
+          </tr>
+          <tr style='mso-yfti-irow:12'> 
+            <td width=82 valign=top style='width:.7in;border:solid windowtext 1.0pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal>SW[06]</p>
+            </td>
+            <td width=222 valign=top style='width:117.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal>Origin –Z</p>
+            </td>
+            <td width=132 valign=top style='width:99.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal>SW[11]&amp;SW[10]</p>
+            </td>
+            <td width=208 valign=top style='width:1.75in;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal>Rotate CW around x</p>
+            </td>
+          </tr>
+          <tr style='mso-yfti-irow:13'> 
+            <td width=82 valign=top style='width:.7in;border:solid windowtext 1.0pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal>SW[05]</p>
+            </td>
+            <td width=222 valign=top style='width:117.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal>Resolution Selection</p>
+            </td>
+            <td width=132 valign=top style='width:99.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal>SW[09]&amp;SW[08]</p>
+            </td>
+            <td width=208 valign=top style='width:1.75in;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal>Rotate CCW around y</p>
+            </td>
+          </tr>
+          <tr style='mso-yfti-irow:14;mso-yfti-lastrow:yes'> 
+            <td width=82 valign=top style='width:.7in;border:solid windowtext 1.0pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal>SW[04]</p>
+            </td>
+            <td width=222 valign=top style='width:117.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal>Scene Select-No CPU</p>
+            </td>
+            <td width=132 valign=top style='width:99.0pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal>SW[07]&amp;SW[06]</p>
+            </td>
+            <td width=208 valign=top style='width:1.75in;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt'> 
+              <p class=MsoNormal>Rotate CW around y</p>
+            </td>
+          </tr>
+        </table>
+        <p><font size="-1">Table 1</font></p>
+        </center>
+      <p><b style='mso-bidi-font-weight:normal'><span class="titles">Communication 
+        between NIOS II and FPGA<o:p></o:p></span><o:p></o:p></b></p>
+      <p class=MsoNormal><span class="text">The following wires are used to interface 
+        between the C code running on the NIOS II processor and the hardware in 
+        FPGA. </span></p>
+      <p class=MsoNormal style='margin-left:.25in;text-indent:-.25in;mso-text-indent-alt:
+-.25in;mso-list:l0 level1 lfo1;mso-list-change:\F0B7 "Scott Thomas Bingham" 20061207T0205;
+tab-stops:list .25in'> <span class="text">
+        <![if !supportLists]>
+        <span style='font-family:Symbol;
+mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
+style='mso-list:Ignore'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+        </span></span></span></span> <span class="text">
+        <![endif]>
+        <i style='mso-bidi-font-style:
+normal'>Sphere[</i><i style='mso-bidi-font-style:normal'>7:0](output)</i><span
+style='mso-spacerun:yes'>  </span>used to control the total number of spheres 
+        being drawn and the sphere number that is currently being drawn.<span
+style='mso-spacerun:yes'>  </span>The upper 4 bits are set by the software at 
+        initialization, which equals the number of spheres plus one light source.<span
+style='mso-spacerun:yes'>  </span>The lower 4 bits are set every time a new sphere 
+        is being sent to the FPGA.<span style='mso-spacerun:yes'>  </span>The 
+        state machine in the hardware uses the value of the lower 4 bits to set 
+        the index to the Spheres register.</span></p>
+      <p class=MsoNormal style='margin-left:.25in;text-indent:-.25in;mso-text-indent-alt:
+-.25in;mso-list:l0 level1 lfo1;mso-list-change:\F0B7 "Scott Thomas Bingham" 20061207T0205;
+tab-stops:list .25in'> <span class="text">
+        <![if !supportLists]>
+        <span style='font-family:Symbol;
+mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
+style='mso-list:Ignore'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+        </span></span></span></span> <span class="text">
+        <![endif]>
+        <i style='mso-bidi-font-style:
+normal'>Color[</i><i style='mso-bidi-font-style:normal'>15:0] (output)</i> <i style='mso-bidi-font-style:normal'><span style='mso-spacerun:yes'> </span></i>specifies 
+        the color of a sphere.<span style='mso-spacerun:yes'>  </span>The lower 
+        15 bits are allocated 5 bits each to color red, green and blue, while 
+        bit 16 represents whether if the sphere is a light source.<span style='mso-spacerun:yes'>  
+        </span>This configuration gives a good balance between range of color 
+        and amount of memory needed to store the color information.</span></p>
+      <p class=MsoNormal style='margin-left:.25in;text-indent:-.25in;mso-text-indent-alt:
+-.25in;mso-list:l0 level1 lfo1;mso-list-change:\F0B7 "Scott Thomas Bingham" 20061207T0205;
+tab-stops:list .25in'> <span class="text">
+        <![if !supportLists]>
+        <span style='font-family:Symbol;
+mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
+style='mso-list:Ignore'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+        </span></span></span></span> <span class="text">
+        <![endif]>
+        <i style='mso-bidi-font-style:normal'>X1[23:</i>0]<i
+style='mso-bidi-font-style:normal'> (output)</i><span
+style='mso-spacerun:yes'>   </span>the x location of the current sphere.<span
+style='mso-spacerun:yes'>  </span>All locations are represented in fixed point 
+        format, with 12 bits each for integer and decimal portions.<span
+style='mso-spacerun:yes'>  </span>On the software side the location needs to be 
+        multiplied by 4096 (2^12) so that the hardware will get the correct value.</span></p>
+      <p class=MsoNormal style='margin-left:.25in;text-indent:-.25in;mso-text-indent-alt:
+-.25in;mso-list:l0 level1 lfo1;mso-list-change:\F0B7 "Scott Thomas Bingham" 20061207T0205;
+tab-stops:list .25in'> <span class="text">
+        <![if !supportLists]>
+        <span style='font-family:Symbol;
+mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
+style='mso-list:Ignore'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+        </span></span></span></span> <span class="text">
+        <![endif]>
+        <i style='mso-bidi-font-style:
+normal'>Y1[</i><i style='mso-bidi-font-style:normal'>23:</i>0]<i
+style='mso-bidi-font-style:normal'> (output)</i><span
+style='mso-spacerun:yes'>   </span>the y location of the current sphere.</span></p>
+      <p class=MsoNormal style='margin-left:.25in;text-indent:-.25in;mso-text-indent-alt:
+-.25in;mso-list:l0 level1 lfo1;mso-list-change:\F0B7 "Scott Thomas Bingham" 20061207T0205;
+tab-stops:list .25in'> <span class="text">
+        <![if !supportLists]>
+        <span style='font-family:Symbol;
+mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
+style='mso-list:Ignore'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+        </span></span></span></span> <span class="text">
+        <![endif]>
+        <i style='mso-bidi-font-style:
+normal'>Z1[</i><i style='mso-bidi-font-style:normal'>23:</i>0]<i
+style='mso-bidi-font-style:normal'> (output)</i><span
+style='mso-spacerun:yes'>   </span>the z location of the current sphere.</span></p>
+      <p class=MsoNormal style='margin-left:.25in;text-indent:-.25in;mso-text-indent-alt:
+-.25in;mso-list:l0 level1 lfo1;mso-list-change:\F0B7 "Scott Thomas Bingham" 20061207T0205;
+tab-stops:list .25in'> <span class="text">
+        <![if !supportLists]>
+        <span style='font-family:Symbol;
+mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
+style='mso-list:Ignore'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+        </span></span></span></span> <span class="text">
+        <![endif]>
+        <i style='mso-bidi-font-style:
+normal'>Reflect[</i><i style='mso-bidi-font-style:normal'>11:</i>0]<i
+style='mso-bidi-font-style:normal'> (output)</i><span
+style='mso-spacerun:yes'>   </span>reflectivity of a sphere in a 12 bits integer.</span></p>
+      <p class=MsoNormal style='margin-left:.25in;text-indent:-.25in;mso-text-indent-alt:
+-.25in;mso-list:l0 level1 lfo1;mso-list-change:\F0B7 "Scott Thomas Bingham" 20061207T0205;
+tab-stops:list .25in'> <span class="text">
+        <![if !supportLists]>
+        <span style='font-family:Symbol;
+mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
+style='mso-list:Ignore'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+        </span></span></span></span> <span class="text">
+        <![endif]>
+        <i style='mso-bidi-font-style:
+normal'>Radius[</i><i style='mso-bidi-font-style:normal'>11:</i>0]<i
+style='mso-bidi-font-style:normal'> (output)</i><span
+style='mso-spacerun:yes'>   </span>radius of a sphere in a 12 bits integer.<span style='mso-spacerun:yes'>  
+        </span>This was originally designed to be 24 bits fixed point, which would 
+        make the radius squared value to be 48 bits, however the maxim width of<span
+style='mso-spacerun:yes'>  </span>PIO bus is only 32 bits.<span
+style='mso-spacerun:yes'>  </span>To simplify the interaction between NIOS II 
+        and the FPGA, only the integer portion of the radius is stored.<span
+style='mso-spacerun:yes'>  </span>The radius squared and inverse followed the 
+        same convention.</span></p>
+      <p class=MsoNormal style='margin-left:.25in;text-indent:-.25in;mso-text-indent-alt:
+-.25in;mso-list:l0 level1 lfo1;mso-list-change:\F0B7 "Scott Thomas Bingham" 20061207T0205;
+tab-stops:list .25in'> <span class="text">
+        <![if !supportLists]>
+        <span style='font-family:Symbol;
+mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
+style='mso-list:Ignore'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+        </span></span></span></span> <span class="text">
+        <![endif]>
+        <i style='mso-bidi-font-style:
+normal'>R2[</i><i style='mso-bidi-font-style:normal'>23:</i>0]<i
+style='mso-bidi-font-style:normal'> (output)</i><span
+style='mso-spacerun:yes'>   </span>radius squared of a sphere in a 24 bit integer.<span style='mso-spacerun:yes'>  
+        </span>By having the software calculate the radius square, it saves the 
+        hardware from doing it.<span
+style='mso-spacerun:yes'>  </span>If the radius stay constant, this value only 
+        needs to be calculated once in the init block in the software.</span></p>
+      <p class=MsoNormal style='margin-left:.25in;text-indent:-.25in;mso-text-indent-alt:
+-.25in;mso-list:l0 level1 lfo1;mso-list-change:\F0B7 "Scott Thomas Bingham" 20061207T0205;
+tab-stops:list .25in'> <span class="text">
+        <![if !supportLists]>
+        <span style='font-family:Symbol;
+mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
+style='mso-list:Ignore'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+        </span></span></span></span> <span class="text">
+        <![endif]>
+        <i style='mso-bidi-font-style:
+normal'>R_inv</i><i
+style='mso-bidi-font-style:normal'>[</i><i style='mso-bidi-font-style:
+normal'>11:</i>0]<i style='mso-bidi-font-style:normal'> (output)</i><span
+style='mso-spacerun:yes'>   </span>inverse of the radius of a sphere in 12 bit 
+        decimal point.<span style='mso-spacerun:yes'>  </span>This is also calculated 
+        in software for the same reason.<span style='mso-spacerun:yes'>  </span>It 
+        needs to be multiplied by 4096 (2^12) before sending to hardware for the 
+        correct value.</span></p>
+      <p class=MsoNormal style='margin-left:.25in;text-indent:-.25in;mso-text-indent-alt:
+-.25in;mso-list:l0 level1 lfo1;mso-list-change:\F0B7 "Scott Thomas Bingham" 20061207T0205;
+tab-stops:list .25in'> <span class="text">
+        <![if !supportLists]>
+        <span style='font-family:Symbol;
+mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
+style='mso-list:Ignore'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+        </span></span></span></span> <span class="text">
+        <![endif]>
+        <i style='mso-bidi-font-style:normal'>Valid (output)</i> <i style='mso-bidi-font-style:normal'><span
+style='mso-spacerun:yes'>  </span></i>Every time all the wires are set for a particular 
+        sphere, the software will turn on the valid signal telling the hardware 
+        the data on the buses is valid to read.<span
+style='mso-spacerun:yes'>  </span>The valid bit will remain high until the next 
+        sphere on the list is ready to be sent.<span style='mso-spacerun:yes'>  
+        </span>At that point the software will turn off valid bit and set the 
+        data.<span style='mso-spacerun:yes'>  </span></span></p>
+      <p class=MsoNormal style='margin-left:.25in;text-indent:-.25in;mso-text-indent-alt:
+-.25in;mso-list:l0 level1 lfo1;mso-list-change:\F0B7 "Scott Thomas Bingham" 20061207T0205;
+tab-stops:list .25in'> <span class="text">
+        <![if !supportLists]>
+        <span style='font-family:Symbol;
+mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
+style='mso-list:Ignore'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+        </span></span></span></span> <span class="text">
+        <![endif]>
+        <i
+style='mso-bidi-font-style:normal'>Rotz[</i><i style='mso-bidi-font-style:
+normal'>7:0] (input)<span style='mso-spacerun:yes'>  </span></i>sets the different 
+        mode for rotating all the spheres around the x, y, and z axis.<span
+style='mso-spacerun:yes'>  </span>This allows the hardware (DE2 board) to control 
+        how the scene is rotated around the origin, which gives the effect of 
+        rotating the camera view to show different scenes.</span></p>
+      <p class=MsoNormal style='margin-left:.25in;text-indent:-.25in;mso-text-indent-alt:
+-.25in;mso-list:l0 level1 lfo1;mso-list-change:\F0B7 "Scott Thomas Bingham" 20061207T0205;
+tab-stops:list .25in'> <span class="text"> 
+        <![if !supportLists]>
+        <span style='font-family:Symbol;
+mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
+style='mso-list:Ignore'>·<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+        </span></span></span></span> <span class="text"> 
+        <![endif]>
+        <i style='mso-bidi-font-style:normal'>Done (input)<span style='mso-spacerun:yes'>  
+        </span><span
+style='font-style:normal'>done</span></i> is asserted by the hardware at the beginning 
+        of state 1.<span style='mso-spacerun:yes'>  </span>State 1 is only entered 
+        either at reset or at the end of each frame. <span
+style='mso-spacerun:yes'> </span>Only when done is high will the software sends 
+        out the sphere information one by one.<span style='mso-spacerun:yes'>  
+        </span>As soon as the hardware gets all the updated sphere information 
+        it will move on to draw the frame.<span style='mso-spacerun:yes'>  </span>In 
+        the mean time the software will call motion and rotation functions to 
+        calculate the new locations of the spheres.<span style='mso-spacerun:yes'>  
+        </span>This is the fastest way software can provide the sphere data to 
+        the hardware, allowing the state machine to spend the minimum amount of 
+        time in state 1.<span
+style='mso-spacerun:yes'>  </span></span><span style="mso-spacerun:yes" class="text"></span></p>
+      <p align=center ><img alt="Figure11" border=1 src="image/ray/nios2.JPG" width="713" height="380"></p>
+      <p class=MsoNormal align=center><span class="text" ><font size="-1">Figure 
+        11 </font></span></p>
+      <p class=MsoNormal><b style='mso-bidi-font-weight:normal'><span class="titles">Software 
+        Overview<o:p></o:p></span><o:p></o:p></b></p>
+      <p class=MsoNormal><span class="text">The software running on the NIOS II 
+        has three main functions.<span style='mso-spacerun:yes'>  </span>It stores 
+        the list of spheres to the drawn on the screen.<span style='mso-spacerun:yes'>  
+        </span>Each sphere in the list contains information such as its location, 
+        color, velocity, radius, and reflectivity.<span style='mso-spacerun:yes'>  
+        </span>The original idea of implementing the NIOS II processor is simply 
+        to be able to store large number of spheres and polygons on the DRAM without 
+        writing a separate memory controller.<span style='mso-spacerun:yes'>  
+        </span>Putting the scene object list on the DRAM frees up the SRAM for 
+        the VGA memory.<span
+style='mso-spacerun:yes'>  </span>However as we soon discovered that at the current 
+        speed and number of logic elements available on the DE2 board, implementing 
+        a large number of spheres is simply not realistic.<span
+style='mso-spacerun:yes'>  </span>The frame rate decreases drastically with sphere 
+        numbers passing 10.<span style='mso-spacerun:yes'>  </span>Instead of 
+        being used as a sophiscated DRAM controller the NIOS II processor is used 
+        to implement motion and camera rotation in the scene, which are the two 
+        other main functions of the software.</span></p>
+      <p class=MsoNormal><span class="text"><o:p></o:p></span><span class="text">The 
+        motion function updates the current location for each sphere by its current 
+        velocity.<span style='mso-spacerun:yes'>  </span>It also performs boundary 
+        and collision detection with other spheres.<span
+style='mso-spacerun:yes'>  </span>The boundary detection is fairly straight forward.<span style='mso-spacerun:yes'>  
+        </span>Once a sphere’s new location (x, y, or z) is found to be outside 
+        of the predefined bounding box, the sphere’s velocity that is normal to 
+        the plane of the bounding box will be sign reversed.<span style='mso-spacerun:yes'>  
+        </span>This new velocity is used to calculate the next location for that 
+        sphere.<span style='mso-spacerun:yes'>  </span>To avoid capture of a wall, 
+        the sphere that has breached a boundary is always first reset to the boundary 
+        before the velocity is sign reversed.<span
+style='mso-spacerun:yes'>  </span></span></p>
+      <p class=MsoNormal><span class="text"><o:p></o:p></span><span class="text">The 
+        second feature of the motion function is collision detection with other 
+        spheres.<span style='mso-spacerun:yes'>  </span>A collision between two 
+        spheres happens when the distance between their centers is less that the 
+        sum of their radius.<span style='mso-spacerun:yes'>  </span>The direction 
+        of motion of the bounced sphere is going to be decided by the vector that 
+        is normal to both sphere’s surfaces and pass through the point of contact.<span style='mso-spacerun:yes'>  
+        </span>This normal is the line that connects the two spheres centers.<span style='mso-spacerun:yes'>  
+        </span>A 2-D sphere collision algorithm is used to expand to work on a 
+        3-D scale.<span
+style='mso-spacerun:yes'>  </span>The sphere collision detection becomes very 
+        computationally intensive as the number of spheres increases, since every 
+        sphere in the list has to check against every other spheres for a potnetial 
+        bounce.<span
+style='mso-spacerun:yes'>  </span></span></p>
+      <p class=MsoNormal><span class="text"><o:p></o:p></span><span class="text">Sometimes 
+        instead of bouncing off each other two spheres would capture each other.<span style='mso-spacerun:yes'>  
+        </span>This happens when two spheres don’t have enough velocity to escape 
+        each other after their initial collision, during this time it would mistakenly 
+        register a second collision, thus reversing the velocity vector so the 
+        two spheres would be going toward each other again.<span style='mso-spacerun:yes'>  
+        </span>The solution for this is to keep an individual counter for each 
+        sphere.<span
+style='mso-spacerun:yes'>  </span>Every time a collision occurs the counter is 
+        reset to its maxim value, and it is decremented once every time the motion 
+        function is called.<span style='mso-spacerun:yes'>  </span>Until the counter 
+        reaches zero again there will be no further collision detection for that 
+        sphere.<span style='mso-spacerun:yes'>  </span>The reset value for the 
+        counter is depended on the magnitude of the current velocity; the higher 
+        the velocity the smaller the counter reset value.<span style='mso-spacerun:yes'>  
+        </span></span></p>
+      <p class=MsoNormal><span class="text"><o:p></o:p>The rotation function rotates 
+        all the spheres in the list about x, y, or z axis by a fixed radians every 
+        frame.<span
+style='mso-spacerun:yes'>  </span>The rotation is always revolving around the 
+        center (0, 0, 0) in space.<span
+style='mso-spacerun:yes'>  </span>The direction of rotation is controlled by switches 
+        17 to 6 on the DE2 board, with each pair of two neighboring switches controlling 
+        one of the six possible rotation directions (x, y, z with clockwise and 
+        counter clockwise directions).<span style='mso-spacerun:yes'>  </span>Each 
+        rotation is simply a 3-D coordinates transformation with a fixed angle.<span style='mso-spacerun:yes'>  
+        </span></span></p>
+      <p class=MsoNormal><span class="text"><o:p></o:p>All the location calculations 
+        in software are done in floating point, and whenever the data is ready 
+        to be send to the hardware, the result is converted to integers by multiplying 
+        the correct two’s power.<span
+style='mso-spacerun:yes'> </span><o:p></o:p></span><o:p></o:p></p>
+      <p class=MsoNormal><b style='mso-bidi-font-weight:normal'><span class="titles">SOPC 
+        builder specs<o:p></o:p></span><o:p></o:p></b></p>
+      <p class=MsoNormal><span class="text">We used the highest level NIOS II/f 
+        CPU available to us to be able to send the sphere list as fast as possible.<span
+style='mso-spacerun:yes'>  </span>The CPU runs at 50Mhz, and has a 1KB instruction 
+        cache and 8KB data cache with a line size of 16 Bytes.<span style='mso-spacerun:yes'>  
+        </span>The data cache is big enough to hold all our sphere data so the 
+        CPU doesn’t have to go to DRAM all the time.<span style='mso-spacerun:yes'>  
+        </span>The CPU also has a floating point unit for the floating point calculations 
+        in the software.<span
+style='mso-spacerun:yes'>  </span>Logic elements were used for hardware multiply.<span style='mso-spacerun:yes'>  
+        </span>The performance of this processor is up to 51 DMIPS.<span style='mso-spacerun:yes'> </span></span></p>
+      </td></tr>
+  </TABLE>
+
+
+
+<FONT FACE="Tahoma"></FONT>
+<center>&nbsp;</center><br><br></body>
+</html>
+
+                        

@@ -1,0 +1,322 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>DDA</title>
+</head>
+
+<body>
+<h2>DDA on FPGA<br>
+A modern <em>Analog</em> Computer</h2>
+<p>The <a href="../../../../../en.wikipedia.org/wiki/Differential_Analyzer">Digital Differential Analyzer</a> (DDA)  is a device to directly compute the solution of differential equations. The DDA is a simulation of an <a href="../../../../../www.play-hookey.com/analog/default.htm">analog computer</a>, and  is inherently parallel in operation. It can be mapped easily into an FPGA by defining mathematical integrators, adders, multipliers and other operations, then wiring them together to produce the desired dynamics. The system described here has an maximum integrator update rate of higher than 50 MHz, so it is possible to accurately simulate audio-rate signals. </p>
+<p>For more background on analog computers see:</p>
+<ul>
+  <li><a href="../../../../../www.owlnet.rice.edu/~elec301/Projects99/anlgcomp/default.htm">Building an analog computer</a> (Rice) </li>
+  <li><a href="../../../../../www.vaxman.de/analog_computing/analog_computing.html">Analog Computing</a> (Vaxman)</li>
+  <li><a href="HbkOfAnalogComputation_5-71.pdf">Handbook of Analog Computation</a> (EAI)</li>
+  <li><a href="../../../../../www.adi.com/pdfs/Howe1June05.pdf">Fundamentals of the Analog Computer</a> (Howe)  </li>
+  <li><a href="../../../../../archive.computerhistory.org/resources/text/Systron_Donner/SystronDonner.3300.1968.102646232.pdf">Educational Analog Computer</a> (Systron-Donner)</li>
+  <li><a href="feshman_notebook.jpg">Page from my freshman Physics lab notebook</a> showing coupled oscillator analysis on analog computer</li>
+</ul>
+<p>On this page you can follow these links to examples of DDAs applied to linear and nonlinear systems:</p>
+<ul>
+  <li><a href="#SecondOrderImpulse">Second order system impulse response</a>
+  <li><a href="#SecondOrderDriven">Second order system driven</a>    
+  <li><a href="#SecondOrderHigh">Second order system with 27-bit resolution</a>   
+<li><a href="#SecondOrderNiosII">Second order system controlled by a NiosII cpu</a> 
+<li><a href="#SecondOrderFactored">Second order system with modularized integrator and NiosII cpu</a> 
+</ul>
+<p>A summary of the second order system controlled by NiosII appeared in Circuit Cellar Magazine (<a href="FPGAhybridBRL.pdf">manuscript</a>). </p>
+<hr>
+The general approach using DDAs will be to simulate a system of first-order differential equations, which can be nonlinear. Analog computers use operational amplifiers to do mathematical integration. We will use digital summers and registers. For any set of differential equations with state variables <code>v1</code> to <code>vm</code>: <code><br>
+  <br>
+dv1/dt = f1(t,v1,v2,v3,...vm) <br>
+dv2/dt = f2(t,v1,v2,v3,...vm)<br>
+dv3/dt = f3(t,v1,v2,v3,...vm)</code><br>
+...<br>
+<code>dvm/dt = fm(...) </code><br>
+<br>
+We will build the following circuitry to perform an Euler integration approximation to these equations in the form <br>
+<br>
+<code>v1(n+1) = v1(n) + dt*(f1(t,v1(n),v2(n),v3(n),...vm(n))<br>
+v2(n+1) = v2(n) + dt*(f2(t,v1(n),v2(n),v3(n),...vm(n))<br>
+v3(n+1) = v3(n) + dt*(f3(t,v1(n),v2(n),v3(n),...vm(n))<br>
+...<br>
+vm(n+1) = vm(n) + dt*(fm(...))</code><code><br> 
+  </code><br>
+  Where the variable values at time step <code>n</code> are updated to form the values at time step <code>n+1</code>. Each equation will require one integrator. The multiply may be replaced by a shift-right if <code>dt</code> is chosen to be a power of two. Most of the design complexity will be in calculating <code>F(t,V(n))</code>. <br>
+  <img src="AnalogSim2order/Integrator.png" width="554" height="219"> <br>
+</p>
+We also need a number representation. I chose 18-bit 2's complement with the binary point between bits 15 and 16 (with bit zero being the least significant). Bit 17 is the sign bit. The number range is thus <code>-2.0</code> to <code>+1.999985</code>. This range fits well with the Audio codec which requires 16-bit 2's complement for output to the DAC. Conversion from the 18-bit to 16-bit just requires truncating the least significant two bits ([1:0]). A few numbers are shown in the table below. Note that the underscore character in the hexidecimal form is allowed in verilog to improve readability. </li>
+
+<table width="27%"  border="1">
+      <tr>
+        <td width="35%" height="50"><div align="center"><strong>Decimal number </strong></div></td>
+        <td width="65%"><div align="center">
+            <p><strong>18-bit 2's comp<br>
+            </strong><strong>representation </strong></p>
+        </div></td>
+      </tr>
+      <tr>
+        <td><div align="center">1.0</div></td>
+        <td><div align="center">18'h1_0000</div></td>
+      </tr>
+      <tr>
+        <td><div align="center">0.5</div></td>
+        <td><div align="center">18'h0_8000</div></td>
+      </tr>
+      <tr>
+        <td><div align="center">0.25</div></td>
+        <td><div align="center">18'h0_4000</div></td>
+      </tr>
+      <tr>
+        <td><div align="center">0</div></td>
+        <td><div align="center">18'h0_0000</div></td>
+      </tr>
+      <tr>
+        <td><div align="center">-0.25</div></td>
+        <td><div align="center">18'h3_c000</div></td>
+      </tr>
+      <tr>
+        <td><div align="center">-0.5</div></td>
+        <td><div align="center">18'h3_8000</div></td>
+      </tr>
+      <tr>
+        <td><div align="center">-1.0</div></td>
+        <td><div align="center">18'h3_0000</div></td>
+      </tr>
+      <tr>
+        <td><div align="center">-1.5</div></td>
+        <td><div align="center">18'h2_8000</div></td>
+      </tr>
+      <tr>
+        <td><div align="center">-2.0</div></td>
+        <td><div align="center">18'h2_0000</div></td>
+      </tr>
+</table>
+
+<hr>
+<p><strong><a name="SecondOrderImpulse"></a>Second order system (<a href="../../../../../en.wikipedia.org/wiki/Harmonic_oscillator#Damped.2C_driven_harmonic_oscillator">damped spring-mass oscillator</a>):</strong><br>
+  As an example, consider the linear, second-order differential equation resulting from a damped spring-mass system:<br>
+  <br>
+  <code>d<sup>2</sup>x/dt<sup>2</sup> = -k/m*x-d/m*(dx/dt)<br>
+  <br>
+  </code>where k is the spring constant, d the damping coefficient, m the mass, and x the displacement. We will simulate this by converting the second-order system into a coupled first-order system. If we let <code>v1=x</code> and<code> v2=dx/dt</code> then the second order equation is equivalent to <br>
+  <br>
+  <code>dv1/dt = v2<br>
+  dv2/dt = -k/m*v1-d/m*v2<br>
+  <br>
+  </code>These equations can be solved by wiring together two integrators, two multipliers and an adder as shown below. In the past this would have been done by using operational amplifiers  to compute each mathematical operation. Each integrator must be supplied with an initial condition. <code><br>
+  <br>
+  </code><img src="AnalogSim2order/SecondOrder.png" width="434" height="133"><br>
+  <br>
+Converting this diagram to Verilog, the <a href="AnalogSim2order/DE2_Default.v">top-level module</a> verilog code defines the 18-bit, signed, state variables and a clock divider variable (<code>count</code>). The clocked section resets and updates the state variables. The combinatorial statements compute the Euler approximation to the <code>F(t,V(n))</code>. The separate multiply module ensures that the multiplies will be instantiated as hardware multipliers. The <a href="AnalogSim2order/AUDIO_DAC_ADC.v">Audio_DAC_ADC module</a> was modifed to allow either ADC-to-DAC passthru or to connect the computation output to the DAC, depending on the position of SW17. SW17 up connects the computation.</p>
+<pre>/state variables
+reg signed [17:0] v1, v2 ;
+wire signed [17:0] v1new, v2new ;
+//signed mult output
+wire signed [17:0] v1xK_M, v2xD_M ;
+// the clock divider
+reg [4:0] count;
+
+
+//Update state variables of simulation of spring- mass
+	always @ (posedge CLOCK_50) 
+	begin
+		count <= count + 1; 
+		if (KEY[3]==0) //reset
+		begin	
+			v1 <= 32'h10000 ; // 
+			v2 <= 32'h00000 ;
+			//count <= 0;
+		end
+		else if (count==0)
+		begin 
+			v1 <= v1new ;
+			v2 <= v2new ;
+		end
+	end
+	
+	// Compute new F(t,v) with dt = 2>>9
+	// v1(n+1) = v1(n) + dt*v2(n)
+	assign v1new = v1 + (v2>>>9);
+	// v2(n+1) = v2(n) + dt*(-k/m*v1(n) - d/m*v2(n))
+	signed_mult K_M(v1xK_M, v1, 18'h10000);
+	signed_mult D_M(v2xD_M, v2, 18'h00800);
+	assign v2new = v2 - ((v1xK_M + v2xD_M)>>>9);
+	
+module signed_mult (out, a, b);
+	output 		[17:0]	out;
+	input 	signed	[17:0] 	a;
+	input 	signed	[17:0] 	b;
+	wire	signed	[17:0]	out;
+	wire 	signed	[35:0]	mult_out;
+	assign mult_out = a * b;
+	assign out = {mult_out[35], mult_out[32:16]};
+endmodule</pre>
+    Time scaling the solution requires consideration of the value of <code>dt</code> and the update rate (<code>CLOCK_50/(clock divider)</code>) of the state variables. As shown in the code, the clock divider variable (<code>count</code>) is 5-bits wide, so it will overflow and cause an update every 32 <code>CLOCK_50</code> cycles. If the time step, dt=2<sup>-9</sup>, then 2<sup>9</sup> steps <em>must equal one time unit</em>. 2<sup>9</sup> steps at an update rate of 5*10<sup>7</sup>/32 yields a time unit of 0.328 mSec. A k/m=1 implies a period of 6.28 time units per cycle, so one cycle in this case would be 2.06 mSec. corresponding to 486 Hz. <br>
+    If the calculation is scaled in time to be in the audio range, then the audio DAC may be used to watch waveforms on an oscilloscope. For the damped spring-mass oscillator with a k/m=1, d/m=1/16, dt=2<sup>-8</sup>, and a clock rate of 5*10<sup>8</sup>/64 I got the figure below. The top trace is v1 and the bottom is v2. The frequency computed from the time scaling considerations is 486 Hz, while the measured was 475 Hz. Reducing <code>dt</code> to dt=2<sup>-9</sup> (see paragraph above) and the clock divider to 32 made the measured frequency 486, matching the computed value. The better match with smaller <code>dt</code> illustrates that the integration is approximate. <br>
+    <img src="AnalogSim2order/DampedSine.jpg" width="330" height="238"> <br>
+    The whole project is <a href="AnalogSim2order/AnalogSim.zip">zipped here</a>. The design consumed 2% of the logic resources of the FPGA, 1% of the memory, and 4 out of 70 9-bit multipliers. You could threfore expect to put up to 50 integrators and 35 multipilers in a bigger design.<br>
+    <br>
+    <strong><a name="SecondOrderDriven"></a>Driven second order system (IIR bandpass/lowpass filter) </strong><br>
+    Using a DDS system to drive the second order system with a sine wave yields a bandpass/lowpass filter depending on the damping coefficient. If the damping is small, the the system acts like a resonant filter. If the damping is 0.707, the system acts as a 2-pole Butterworth lowpass filter. The <a href="AnalogSimDriven2order/FilterSim.v">top-level module</a> was modified to include a DDS sinewave generator with a frequency set by pushbutton KEY0. The core update code is shown below. <br>
+    <pre>// dt = 2>>9
+// v1(n+1) = v1(n) + dt*v2(n)
+assign v1new = v1 + (v2>>>9)  ;
+// v2(n+1) = v2(n) + dt*(-k/m*v1(n) - d/m*v2(n))
+signed_mult K_M(v1xK_M, v1, 18'h1_0000);
+signed_mult D_M(v2xD_M, v2, 18'h0_0800); //light damping
+//scale the input so that it does not saturate at resonance
+signed_mult Sine_gain(Sinput,{sine_out[15],sine_out[15],sine_out}, 18'h0_4000);
+assign v2new = v2 - ((v1xK_M + v2xD_M )>>>9) + (Sinput>>>9) ; </pre>
+    <p>Two mpegs of the scope screen show the low-damping (band pass) case for <a href="AnalogSimDriven2order/MOV04720.MPG">fast</a> and <a href="AnalogSimDriven2order/MOV04721.MPG">slow</a> frequency steps. The top trace is the input, and the bottom is the filter output. A sudden increase in output is seen near the resonant frequency of 485 Hz. If you stop the video at a frequency below the resonant frequency, you will see that the input and output are in phase. Above the resonant frequency, the phase is 180 degrees. The whole project is <a href="AnalogSimDriven2order/AnalogSim.zip">zipped here</a>. <br>
+  </p>
+    <br>
+    <hr>
+    <strong><a name="SecondOrderHigh"></a>Second order system with higher Accuracy DDA.</strong><br>
+    For some dynamic systems, 18 bit accuracy is barely enough. Extending the accuracy to 27 bits seems to be a reasonable tradeoff between accuracy and the large increase in the number of required multipliers. The second order driven system increases from 6 multipliers to do 3 multiplies to 14 multipliers. Values for the 27-bit numbers with the binary-point between 24 and 23 are shown below. <br>
+    <table width="27%"  border="1">
+      <tr>
+        <td width="35%" height="50"><div align="center"><strong>Decimal number </strong></div></td>
+            <td width="65%"><div align="center">
+                <p><strong>27-bit 2's comp<br>
+                </strong><strong>representation </strong></p>
+            </div></td>
+      </tr>
+      <tr>
+        <td><div align="center">2.99999</div></td>
+            <td><div align="center">27'h2_FFFF_58</div></td>
+      </tr>
+      <tr>
+        <td><div align="center">2.0</div></td>
+            <td><div align="center">27'h2_0000_00</div></td>
+      </tr>
+      <tr>
+        <td><div align="center">1.0</div></td>
+            <td><div align="center">27'h1_0000_00</div></td>
+      </tr>
+      <tr>
+        <td><div align="center">0.5</div></td>
+            <td><div align="center">27'h0_8000_00</div></td>
+      </tr>
+      <tr>
+        <td><div align="center">0.25</div></td>
+            <td><div align="center">27'h0_4000_00</div></td>
+      </tr>
+      <tr>
+        <td><div align="center">0</div></td>
+            <td><div align="center">27'h0_0000_00</div></td>
+      </tr>
+      <tr>
+        <td><div align="center">-0.25</div></td>
+            <td><div align="center">27'h7_c000_00</div></td>
+      </tr>
+      <tr>
+        <td><div align="center">-0.5</div></td>
+            <td><div align="center">27'h7_8000_00</div></td>
+      </tr>
+      <tr>
+        <td><div align="center">-1.0</div></td>
+            <td><div align="center">27'h7_0000_00</div></td>
+      </tr>
+      <tr>
+        <td><div align="center">-1.5</div></td>
+            <td><div align="center">27'h6_8000_00</div></td>
+      </tr>
+      <tr>
+        <td><div align="center">-2.0</div></td>
+            <td><div align="center">27'h6_0000_00</div></td>
+      </tr>
+      <tr>
+        <td><div align="center">-3.0</div></td>
+            <td><div align="center">27'h5_0000_00</div></td>
+      </tr>
+      <tr>
+        <td><div align="center">-4.0</div></td>
+            <td><div align="center">27'h4_0000_00</div></td>
+      </tr>
+    </table>
+    <br>
+    The <a href="AnalogSimDriven27bit/FilterSim27bit.v">top-level module</a> and multiply routine (shown below) were modified to accomodate the larger bit representations. The project for the second order driven system is <a href="AnalogSimDriven27bit/AnalogSim.zip">zipped here</a>.
+    <pre>//////////////////////////////////////////////////
+//// signed mult of 3.24 format 2'comp////////////
+//////////////////////////////////////////////////
+module signed_mult (out, a, b);
+	output 		[26:0]	out;
+	input 	signed	[26:0] 	a;
+	input 	signed	[26:0] 	b;
+	wire	signed	[26:0]	out;
+	wire 	signed	[53:0]	mult_out;
+	assign mult_out = a * b;
+	assign out = {mult_out[53], mult_out[50:24]};
+endmodule</pre>
+    <hr>
+    <p><strong><a name="SecondOrderNiosII" id="SecondOrderNiosII"></a>Second order system controlled by NiosII.</strong><br>
+  It is often useful to be able to control an analog computer using a digital computer. Such a system is called a <a href="../../../../../en.wikipedia.org/wiki/Hybrid_computer">hybrid computer</a>. For example you might want to sequence through a set of input frequencies applied to the simulated system to build a Bode plot. A NiosII cpu was built on the FPGA with  ports to (1) control the DDS frequency, (2) control the gain of the sinewave applied to a second order system, (3) control the analog reset and start the simulation, (4) record the amplitude and phase shift of the system under test. The <a href="AnalogSimNiosII/FilterSimCPU.v">top-level verilog module</a> contains the DDA simulation of the second order system and the NiosII cpu. The <a href="AnalogSimNiosII/control.c">GCC program</a> running on the NiosII:</p>
+    <ol>
+      <li>Holds the DDA in reset, and initializes the test frequency</li>
+      <li> Releases the DDA reset and waits 10 cycles of the test frequency</li>
+      <li>Waits until the output phase and magnitude reach steady-state</li>
+      <li>Prints the phase and magnitude</li>
+      <li>Iincrements the frequency by a factor</li>
+      <li> Repeats the above steps for a number of frequencies</li>
+    </ol>
+    <p>An <a href="AnalogSimNiosII/MOV04791.MPG">mpeg</a> of the frequency scan shown on an oscilloscope shows the input on the top trace and output on the bottom trace. You can easily see the dramatic increase in amplitude near resonance. You can also detect the phase shift. The results printed by the NiosII are <a href="AnalogSimNiosII/SimData2.txt">available as text</a> for a  frequency sweep. The amplitude is in output/input ratio, phase is degrees. Note that the amplitude is not very accurate at low amplitudes because the input gain was not modulated, which causes quantization errors. The results  are combined into a magnitude and phase plot with <a href="AnalogSimNiosII/PlotSim.m">this matlab routine</a>. The vertical red line indicates the computed resonant frequency for the linear system. the red curves are the analytical solution of a second order system with the same natural frequency and damping. The phase should be -90 degrees at the red line.</p>
+	<p><img src="AnalogSimNiosII/SimPlot.png"> </p>
+	<p>The whole project is <a href="AnalogSimNiosII/AnalogSim.zip">zipped here</a>. </p>
+	<hr>
+	<p><a name="SecondOrderFactored"></a><strong>Second order system with modularized integrator</strong><br>
+    A clearer version of the above project can be made by factoring the integration code into a separate module. The <a href="AnalogSimNiosII/FilterSimCPUintegrator.v">top-level module</a> seems  more like wiring an analog computer. A bit of the top-level module shows the wiring. </p>
+	<pre>	// wire the integrators
+	// time step: dt = 2>>9
+	// v1(n+1) = v1(n) + dt*v2(n)
+	integrator int1(v1, v2, 0,9,AnalogClock,AnalogReset);
+	
+	// v2(n+1) = v2(n) + dt*(-k/m*v1(n) - d/m*v2(n))
+	signed_mult K_M(v1xK_M, v1, 18'h1_0000); //Mult by k/m
+	signed_mult D_M(v2xD_M, v2, 18'h0_0800); //Mult by d/m
+	//scale the input so that it does not saturate at resonance
+	signed_mult Sine_gain(Sinput,{sine_out[15],sine_out[15],sine_out}, {2'h0,Sgain});
+	integrator int2(v2, (-v1xK_M-v2xD_M+Sinput), 0,9,AnalogClock,AnalogReset);</pre>
+	The integrator module is
+	show below. The parameter order for the integrator is: state variable output, <code>F(t,V(n))</code> input, initial value input, <code>dt</code> represented as the number of shift right bits, clock and reset. The state variable takes on the initial value when the reset input is zero.
+	<pre>/////////////////////////////////////////////////
+//// integrator /////////////////////////////////
+/////////////////////////////////////////////////
+module integrator(out,funct,InitialOut,dt,clk,reset);
+	output [17:0] out; 				//the state variable V
+	input signed [17:0] funct;      //the dV/dt function
+	input [3:0] dt ;				// in units of SHIFT-right
+	input clk, reset;
+	input signed [17:0] InitialOut; //the initial state variable V
+	
+	wire signed	[17:0] out, v1new ;
+	reg signed	[17:0] v1 ;
+	
+	always @ (posedge clk) 
+	begin
+		if (reset==0) //reset	
+			v1 <= InitialOut ; // 
+		else 
+			v1 <= v1new ;	
+	end
+	assign v1new = v1 + (funct>>>dt) ;
+	assign out = v1 ;
+endmodule
+//////////////////////////////////////////////////</pre>
+The rest of the project, including the GCC code, is not changed from the project just above.
+<hr>
+    <p><strong>References</strong></p>
+    <ul>
+      <li> Ruben Guerrero-Rivera, et al<em>, Programmable Logic Construction Kits for Hyper-Real-Time Neuronal Modeling</em>, Neural Computation, Volume 18 , Issue 11 (November 2006) Pages: 2651 - 2679 </li>
+      <li>Eugene M. Izhikevich , Simple Model of Spiking Neurons, 
+        IEEE Transactions on Neural Networks (2003) 14:1569- 1572
+        <p>&nbsp;</p>
+      </li>
+    </ul>
+    <p>&nbsp;</p>
+    <p>&nbsp;</p>
+</body>
+</html>

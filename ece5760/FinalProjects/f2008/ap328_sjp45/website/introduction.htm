@@ -1,0 +1,68 @@
+<html>
+<head>
+<title>ECE 5760: Graphics Processing Unit</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<style type="text/css">
+<!--
+
+
+a:link {  color: #FFFFFF; text-decoration: none}
+
+a:visited {  text-decoration: none; color: #FFCC66}
+
+a:hover {  color: #99CCFF; text-decoration: underline}
+body {  font-family: "Arial", "Helvetica", "sans-serif"}
+.style2 {font-size: 36px}
+.style3 {font-family: Arial, Helvetica, sans-serif}
+.style5 {font-size: 14px}
+
+-->
+</style>
+</head>
+
+<body bgcolor="#FFFFFF" link="#FFFFFF" onload="disco()">
+<table background="image/top.gif" width="700" border="0" cellspacing="0" cellpadding="0" height="75" align="center" > 
+<tr background="image/top.gif"> <td colspan="2"><span class="style2">ECE 5760: Graphics Processing Unit<FONT FACE="Tahoma">
+  </FONT><FONT FACE="Tahoma"></FONT></span></td>
+</tr> 
+</table><table width="700" border="0" cellspacing="0" cellpadding="0" height="20" align="center"> 
+<tr bgcolor="#000000"> <td BGCOLOR="#336666"> <div align="center"> 
+  <font color="#FFFFFF" face="Tahoma">|</font><font face="Tahoma"> <font color="#FFFFFF"><a href="introduction.htm">Introduction</a>  |</font> <font color="#FFFFFF"><a href="highleveldesign.htm">High Level Design</a> </font> <font color="#FFFFFF">|</font> <font color="#FFFFFF"><a href="hardwaredesign.html">Hardware Design</a> </font> <font color="#FFFFFF">| <a href="results.htm">Results</a> | <a href="conclusion.htm">Conclusion</a> | <a href="appendix.htm">Appendix</a> | </font></font></div></td></tr> </table><table width="700" border="0" cellspacing="0" cellpadding="0" height="13" background="image/top1.gif" align="center"> 
+<tr> <td><FONT FACE="Tahoma"><img src="image/pixel.gif" width="1" height="1"></FONT></td></tr> 
+</table><FONT FACE="Tahoma"><br> </FONT><table width="700" border="0" cellspacing="0" cellpadding="0" align="center"> 
+<tr> <td valign="top" width="245"> <table width="215" border="0" cellspacing="0" cellpadding="0"> 
+<tr> <td colspan="3" height="28" background="image/menuup.gif"> <div align="center"><FONT COLOR="#FFFFFF" FACE="Tahoma"><b>
+  Links</b></FONT></div></td></tr> <tr> <td width="9" height="76" background="image/menuleft.gif">&nbsp;</td>
+  <td width="194" height="76"><p><img src="image/dot.gif" width="65" height="18"> <a href="../../../../../../../../instruct1.cit.cornell.edu/Courses/ece576/default.htm"><font color=#000000>ECE 5760</font></a><br> 
+        <img height=18 src="image/dot.gif" width="65"> <a href="../../../../../../../../www.cs.cornell.edu/courses/cs465/2007fa/default.htm"><font color=#000000>CS 465 </font></a><br> 
+        <img height=18 src="image/dot.gif" width="65"> <a href="../../../../../../../../www.terasic.com.tw/cgi-bin/page/archive.pl@Language=English&CategoryNo=39&No="><font color=#000000>Terasic</font></a></p>
+    </td>
+  <td width="12" height="76" background="image/menuright.gif">&nbsp;</td></tr> 
+<tr> <td colspan="3" height="28" background="image/menudown.gif">&nbsp;</td></tr> </table><FONT FACE="Tahoma"><br> 
+</FONT><table width="215" border="0" cellspacing="0" cellpadding="0"> <tr> <td colspan="3" height="28" background="image/menuup.gif"> 
+<div align="center"><b><font face="Tahoma" color="#FFFFFF">Authors</font></b></div></td></tr> 
+<tr> <td width="9" height="137" background="image/menuleft.gif">&nbsp;</td>
+<td width="194" height="137"><p align="center" class="style3">Amit Penmetcha (ap328)</p>
+  <p align="center">Shane J. Pryor (sjp45) </p></td>
+<td width="12" height="137" background="image/menuright.gif">&nbsp;</td></tr> 
+<tr> <td colspan="3" height="28" background="image/menudown.gif">&nbsp;</td></tr> </table></td><td width="455" valign="top"> 
+<table width="455" border="0" cellspacing="0" cellpadding="0" background="image/longmenu.gif" height="34"> 
+<tr> <td><b><font face="Tahoma">Introduction</font></b></td>
+</tr> </table><p class="style5">For our final project, we implemented a GPU (Graphics Processing Unit) that rendered triangle based models. Our goal was 
+to generate complex models with a movable camera. </p>
+<p class="style5">We wanted to be able to render complex images that consisted of hundreds to thousands of triangles. We wanted to apply interpolated 
+shading on the objects, so that they appeared more smooth and realisitc, and to have a camera that orbitted around the object, which allowed us to 
+look arond the object with a stationary light source. We chose to do this in hardware, because our initial implementation using running software on 
+the NIOS II processor was too slow. Implementing parallelism in hardware is also easier to do than in software, which allows for more efficiency. We 
+used Professor Land's floating point hardware, which allowed us to do calculations efficiency, which is essential to graphics. <FONT FACE="Tahoma"><a href="#"><font color="#0000CC"> 
+</font></a> </FONT></p>
+<p align="right"><FONT FACE="Tahoma"> </FONT></p></td>
+</tr> </table><FONT FACE="Tahoma"><br> </FONT><table width="700" border="0" cellspacing="0" cellpadding="0" align="center"> 
+<tr> <td> <div align="left"></div><DIV ALIGN="CENTER"></DIV>
+<TABLE WIDTH="700" BORDER="0" CELLSPACING="0" CELLPADDING="0" HEIGHT="20" ALIGN="center"> 
+<TR BGCOLOR="#000000"> <TD BGCOLOR="#336666">&nbsp;</TD></TR> </TABLE></td></tr> 
+</table><FONT FACE="Tahoma"></FONT> 
+</body>
+</html>
+
+			<center>&nbsp;</center><br><br>

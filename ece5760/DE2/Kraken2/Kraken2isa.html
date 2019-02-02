@@ -1,0 +1,260 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>kraken ISA</title>
+</head>
+
+<body>
+<p> </p>
+<center>
+  <h2 align="left">Kraken2 CPU ISA </h2>
+  <br>
+  <table width="71%"  border="1">
+    <tr>
+      <th width="14%" scope="col">Operation</th>
+      <th width="13%" scope="col"><p>opcode<br>
+        (17:12)
+      </p>
+      </th>
+      <th width="10%" scope="col">Dest<br>
+        Reg<br>
+        (11:8) </th>
+      <th width="13%" scope="col">Source Reg<br>
+        (7:4) </th>
+      <th width="12%" scope="col">Source Reg<br>
+        (3:0) </th>
+      <th width="38%" scope="col">effect</th>
+    </tr>
+    <tr>
+      <th scope="row">ADD </th>
+      <td><div align="center">0</div></td>
+      <td><div align="center">Rd </div></td>
+      <td><div align="center">Rs</div></td>
+      <td><div align="center">Rt</div></td>
+      <td><div align="center"><code>Rd &lt;  Rs + Rt </code></div></td>
+    </tr>
+    <tr>
+      <th scope="row"> SUB</th>
+      <td><div align="center">1</div></td>
+      <td><div align="center">Rd </div></td>
+      <td><div align="center">Rs</div></td>
+      <td><div align="center">Rt</div></td>
+      <td><div align="center"><code>Rd &lt; Rs - Rt </code></div></td>
+    </tr>
+    <tr>
+      <th scope="row"> AND </th>
+      <td><div align="center">2</div></td>
+      <td><div align="center">Rd </div></td>
+      <td><div align="center">Rs</div></td>
+      <td><div align="center">Rt</div></td>
+      <td><div align="center"><code>Rd &lt; Rs &amp; Rt </code></div></td>
+    </tr>
+    <tr>
+      <th scope="row"> OR</th>
+      <td><div align="center">3</div></td>
+      <td><div align="center">Rd </div></td>
+      <td><div align="center">Rs</div></td>
+      <td><div align="center">Rt</div></td>
+      <td><div align="center"><code>Rd &lt;  Rs | Rt </code></div></td>
+    </tr>
+    <tr>
+      <th scope="row"> XOR</th>
+      <td><div align="center">4</div></td>
+      <td><div align="center">Rd </div></td>
+      <td><div align="center">Rs</div></td>
+      <td><div align="center">Rt</div></td>
+      <td><div align="center"><code>Rd &lt; Rs ^ Rt </code></div></td>
+    </tr>
+    <tr>
+      <th scope="row"><p> NOT</p></th>
+      <td><div align="center">5</div></td>
+      <td><div align="center">Rd </div></td>
+      <td><div align="center">Rs</div></td>
+      <td><div align="center"></div></td>
+      <td><div align="center"><code>Rd &lt; ~Rs</code></div></td>
+    </tr>
+    <tr>
+      <th scope="row"><p> SR</p> </th>
+      <td><div align="center">6</div></td>
+      <td><div align="center">Rd </div></td>
+      <td><div align="center">Rs</div></td>
+      <td><div align="center"></div></td>
+      <td><div align="center"><code>Rd &lt; Rs &gt;&gt; 1 </code></div></td>
+    </tr>
+    <tr>
+      <th scope="row"><p> LIL </p></th>
+      <td><div align="center">7</div></td>
+      <td><div align="center">Rd</div></td>
+      <td><div align="center"> imm(8-bit) </div></td>
+      <td><div align="center"></div></td>
+      <td><div align="center"><code>Rd &lt; (10@0)#imm</code></div></td>
+    </tr>
+    <tr>
+      <th scope="row"><p> LIH</p></th>
+      <td><div align="center">8</div></td>
+      <td><div align="center">Rd</div></td>
+      <td><div align="center"> imm(8-bit) </div></td>
+      <td><div align="center"></div></td>
+      <td><div align="center"><code>Rd &lt; ((2@0)#imm#(8@0)) | Rd </code></div></td>
+    </tr>
+    <tr>
+      <th scope="row"> LWR</th>
+      <td><div align="center">9</div></td>
+      <td><div align="center">Rd</div></td>
+      <td><div align="center">Rs</div></td>
+      <td><div align="center"></div></td>
+      <td><div align="center"><code>Rd &lt; Mem[Rs] </code></div></td>
+    </tr>
+    <tr>
+      <th scope="row"><p> LWD</p></th>
+      <td><div align="center">a</div></td>
+      <td><div align="center">Rd</div></td>
+      <td><div align="center">addr(8-bit)</div></td>
+      <td><div align="center"></div></td>
+      <td><div align="center"><code>Rd &lt; Mem[addr] </code></div></td>
+    </tr>
+    <tr>
+      <th scope="row"><p> SWR</p></th>
+      <td><div align="center">b</div></td>
+      <td><div align="center">Rd</div></td>
+      <td><div align="center">Rs</div></td>
+      <td><div align="center"></div></td>
+      <td><div align="center"><code>Mem[Rs] &lt; Rd</code></div></td>
+    </tr>
+    <tr>
+      <th scope="row"><p> SWD</p></th>
+      <td><div align="center">c</div></td>
+      <td><div align="center">Rd</div></td>
+      <td><div align="center">addr(8-bit)</div></td>
+      <td><div align="center"></div></td>
+      <td><div align="center"><code>Mem[addr] &lt;- Rd </code></div></td>
+    </tr>
+    <tr>
+      <th scope="row"><p> BIZ</p></th>
+      <td><div align="center">d</div></td>
+      <td><div align="center">Rd</div></td>
+      <td><div align="center">addr(8-bit)</div></td>
+      <td><div align="center"></div></td>
+      <td><div align="center"><code>(Rd==0) -&gt; (PC &lt; addr) </code></div></td>
+    </tr>
+    <tr>
+      <th scope="row"> BNZ</th>
+      <td><div align="center">e</div></td>
+      <td><div align="center">Rd</div></td>
+      <td><div align="center">addr(8-bit)</div></td>
+      <td><div align="center"></div></td>
+      <td><div align="center"><code>(Rd!=0) -&gt; (PC &lt; addr)</code></div></td>
+    </tr>
+    <tr>
+      <th scope="row"> JAL</th>
+      <td><div align="center">f</div></td>
+      <td><div align="center">Rd</div></td>
+      <td><div align="center">addr(8-bit)</div></td>
+      <td><div align="center"></div></td>
+      <td><div align="center"><code>(Rd &lt; PC : PC &lt; addr) </code></div></td>
+    </tr>
+    <tr>
+      <th scope="row"><p> JR</p></th>
+      <td><div align="center">10</div></td>
+      <td><div align="center">Rd</div></td>
+      <td><div align="center"></div></td>
+      <td><div align="center"></div></td>
+      <td><div align="center"><code>PC &lt; Rd </code></div></td>
+    </tr>
+    <tr>
+      <th scope="row"> IN</th>
+      <td><div align="center">11</div></td>
+      <td><div align="center">Rd</div></td>
+      <td><div align="center">Rs</div></td>
+      <td><div align="center"></div></td>
+      <td><div align="center"><code>Rd &lt; (i/o register Rs) </code></div></td>
+    </tr>
+    <tr>
+      <th scope="row"><p> OUT</p></th>
+      <td><div align="center">12</div></td>
+      <td><div align="center">Rd</div></td>
+      <td><div align="center">Rs</div></td>
+      <td><div align="center"></div></td>
+      <td><div align="center"><code>(i/o register Rd) &lt; Rs</code></div></td>
+    </tr>
+    <tr>
+      <th scope="row"> MUL</th>
+      <td><div align="center">13</div></td>
+      <td><div align="center">Rd</div></td>
+      <td><div align="center">Rs</div></td>
+      <td><div align="center">Rt</div></td>
+      <td><div align="center"><code>Rd &lt; Rs * Rt (2:16 fractions) </code></div></td>
+    </tr>
+    <tr>
+      <th scope="row"><p> MULL</p></th>
+      <td><div align="center">14</div></td>
+      <td><div align="center">Rd</div></td>
+      <td><div align="center">Rs</div></td>
+      <td><div align="center">Rt</div></td>
+      <td><div align="center"><code>Rd &lt; low(Rs * Rt) (integer)</code></div></td>
+    </tr>
+    <tr>
+      <th height="57" scope="row"><p> MULH</p></th>
+      <td><div align="center">15</div></td>
+      <td><div align="center">Rd</div></td>
+      <td><div align="center">Rs</div></td>
+      <td><div align="center">Rt</div></td>
+      <td><div align="center"><code>Rd &lt; hi(Rs * Rt) (integer)</code></div></td>
+    </tr>
+  </table>
+  <p align="left"> Memory:<br>
+    16-word x 18-bit dual ported register file<br>
+     256 18-bit words of data<br>
+     256 18-bit instructions<br>
+    <br>
+  Implied instructions (if R0==0):</p>
+  <table width="50%"  border="1" align="left">
+    <tr>
+      <th width="34%" scope="col">Implied</th>
+      <th width="36%" scope="col">actual</th>
+      <th width="30%" scope="col">effect</th>
+    </tr>
+    <tr>
+      <th scope="row">CLR Rd</th>
+      <td><code>XOR Rd Rd Rd </code></td>
+      <td><code> Rd &lt; 0 </code></td>
+    </tr>
+    <tr>
+      <th scope="row">MOV Rd Rs</th>
+      <td><code> ADD Rd Rs R0</code></td>
+      <td><code>Rd &lt; Rs </code></td>
+    </tr>
+    <tr>
+      <th scope="row">NOP</th>
+      <td><code>ADD R0 R0 R0</code></td>
+      <td><code>none</code></td>
+    </tr>
+    <tr>
+      <th scope="row">JMP addr </th>
+      <td><code>BIZ R0 addr</code></td>
+      <td><code>PC &lt; addr </code></td>
+    </tr>
+    <tr>
+      <th scope="row">NEG Rd Rt </th>
+      <td><code>SUB R0 Rt </code></td>
+      <td><code>Rd &lt; -Rt </code></td>
+    </tr>
+    <tr>
+      <th scope="row">SL Rd Rs </th>
+      <td><code>ADD Rd Rs Rs</code></td>
+      <td><code>Rd &lt; Rs &lt;&lt; 1</code></td>
+    </tr>
+  </table>
+  <p align="left"><br>
+    <br>
+    <br>
+    <br>
+    <br>
+    <br>
+  </p>
+  <p align="left">&nbsp;</p>
+</center>
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>A sample target scripting language</TITLE>
+<META NAME="description" CONTENT="A sample target scripting language">
+<META NAME="keywords" CONTENT="576_report05">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="576_report05.css">
+
+<LINK REL="next" HREF="node13.html">
+<LINK REL="previous" HREF="node7.html">
+<LINK REL="up" HREF="576_report05.html">
+<LINK REL="next" HREF="node13.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation"><!--Navigation Panel-->
+<A NAME="tex2html154"
+  HREF="node13.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="next.png"></A> 
+<A NAME="tex2html152"
+  HREF="576_report05.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="up.png"></A> 
+<A NAME="tex2html146"
+  HREF="node11.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="prev.png"></A>   
+<BR>
+<B> Next:</B> <A NAME="tex2html155"
+  HREF="node13.html">Documentation</A>
+<B> Up:</B> <A NAME="tex2html153"
+  HREF="576_report05.html">576_report05</A>
+<B> Previous:</B> <A NAME="tex2html147"
+  HREF="node11.html">Testing and Verification</A>
+<BR>
+<BR></DIV>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION00050000000000000000">
+A sample target scripting language</A>
+</H1>
+<P>
+<BIG CLASS="LARGE">The graphics operation word format was inspired by a motion description language<A NAME="tex2html8"
+  HREF="footnode.html#foot159"><SUP><SPAN CLASS="arabic">8</SPAN></SUP></A>.
+If there were more time available, a NIOS II CPU would have been implemented in order to parse the input and write the opwords to the graphics unit.
+The hardware would handle the rest and display the result on VGA.
+</BIG>
+<P>
+<BIG CLASS="LARGE">The commands that would be immediately relevant in this circuit are described below:
+</BIG>
+<P>
+
+<UL>
+<LI><B><TT>square [dx dy dz [sx sy sz]]</TT></B> - Without the optional arguments denoted in square brackets, a square of unit size would be placed at the origin.
+(<TT>dx, dy, dz</TT>) denotes the center of the square in the global coordinate frame.
+(<TT>sx, sy, sz</TT>) denotes the scale of each dimension of the square, so any rectangular prism can be actuated.
+</LI>
+<LI><B><TT>circle [dx dy dz [sx sy]]</TT></B> - Similar to the <TT>square</TT> command, <TT>circle</TT> would generate a two-dimensional circle at the specified origin and scale, so ellipses can be realized.
+</LI>
+<LI><B><TT>vary knobname v0 v1 f0 f1</TT></B> - This command will vary any variable with same name as <TT>knobname</TT> in linear steps starting from frame number <TT>f0</TT> to frame number <TT>f1</TT> between values <TT>v0</TT> and <TT>v1</TT>.
+With proper support in the parser, the <TT>square</TT> and <TT>circle</TT> commands can be represented using knob values.
+For example, the hardware already has preliminary support for parametric values for any graphical transformation, so a command list such as <TT>square 0 k1 0</TT> and <TT>vary k1 0 10 0 10</TT> will display a square whose center moves from <SPAN CLASS="MATH"><IMG
+ WIDTH="54" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img10.png"
+ ALT="$ (0, 0, 0)$"></SPAN>
+ to <!-- MATH
+ $(0, 10, 0)$
+ -->
+<SPAN CLASS="MATH"><IMG
+ WIDTH="62" HEIGHT="32" ALIGN="MIDDLE" BORDER="0"
+ SRC="img11.png"
+ ALT="$ (0, 10, 0)$"></SPAN>
+ in 10 frames.
+</LI>
+</UL>
+<P>
+<BIG CLASS="LARGE">Many more scripting commands can be incorporated, including, but not limited to: specifying coordinate systems whose displacement (<TT>dx, dy, dz</TT>) is relative to that coordinate system; specifying a camera angle, which can also be controlled by knobs; and generating even more shapes, such as a sphere or torus with adjustable minor and major radii.
+</BIG>
+<P>
+
+<DIV CLASS="navigation"><HR>
+<!--Navigation Panel-->
+<A NAME="tex2html154"
+  HREF="node13.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="next.png"></A> 
+<A NAME="tex2html152"
+  HREF="576_report05.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="up.png"></A> 
+<A NAME="tex2html146"
+  HREF="node11.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="prev.png"></A>   
+<BR>
+<B> Next:</B> <A NAME="tex2html155"
+  HREF="node13.html">Documentation</A>
+<B> Up:</B> <A NAME="tex2html153"
+  HREF="576_report05.html">576_report05</A>
+<B> Previous:</B> <A NAME="tex2html147"
+  HREF="node11.html">Testing and Verification</A></DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+
+2007-12-02
+</ADDRESS>
+</BODY>
+</HTML>

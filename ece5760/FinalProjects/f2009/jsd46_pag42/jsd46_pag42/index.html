@@ -1,0 +1,55 @@
+<link rel="stylesheet" type="text/css" href="web.css" />
+<head> 
+	<title>Video Production Module for Altera DE2 Board</title> 
+</head> 
+
+<body>
+<h1 align="center">Video Production Module for Altera DE2 Board</h1>
+<center><img src="Images/titlepic.jpg" width=600 height=400></center>
+<p align="center">James Du (jsd46)<br>Peter Greczner (pag42)<br></p>
+
+<table width=100%<tr><td width="10"></td><td>
+<ul id="navlist">
+	<li><a href="index.html">Introduction</a></li>
+	<li><a href="high_level_design.html">High Level Design</a></li>
+	<li><a href="hardware_design.html">Hardware Design</a></li>
+	<li><a href="software_design.html">Software Design</a></li>
+	<li><a href="results.html">Results of Design</a></li>
+	<li><a href="conclusion.html">Conslusions</a></li>
+	<li><a href="appendix.html">Appendix</a></li>
+	<li class="last"><a href="references.html">References</a></li>
+</ul>
+</td></tr>
+</table>
+
+<h2>Introduction</h2>
+<table width=100%>
+	<tr>
+		<td width="10"></td>
+		<td>
+			This project implemented a simple video production unit which could provide green screen effects, title overlays, fades, and display background images.
+			<br><br>
+			In this project we turned a Altera Cyclone II FGPA into a simple video production unit with the help of a Sony Handycam and a PC for serial communication.  The main focus of the project is the ability to provide a green screen effect, most commonly seen with weather news.  We would extract the green regions of the video based on a threshold and display a background image, such as a weather map.  This image is able to be transferred to the FPGA over RS-232 serial communication in as fast as 1 second for a black and white image.  Other production effects including interfacing a PS/2 keyboard to write titles on top of the image, fade in and outs, and a reverse green screen method.  The output of the produced video image is displayed on a VGA compatible monitor at 640x480 resolution.
+			<br><br>
+			We chose to implement a simple video production module as our final project because we wanted to do something involving image processing in real time on a video stream.  A first thought was to improve on a real time edge detector that was done in a previous year, but instead we decided to try something new and the green screen effect seemed like a fun idea for a project, combined with that no project to date had created a RS-232 hardware interface.
+			<br><br>
+		</td>
+	</tr>
+</table>
+<br><br>
+
+<table width=100%<tr><td width="10"></td><td>
+<ul id="navlist">
+	<li><a href="index.html">Introduction</a></li>
+	<li><a href="high_level_design.html">High Level Design</a></li>
+	<li><a href="hardware_design.html">Hardware Design</a></li>
+	<li><a href="software_design.html">Software Design</a></li>
+	<li><a href="results.html">Results of Design</a></li>
+	<li><a href="conclusion.html">Conslusions</a></li>
+	<li><a href="appendix.html">Appendix</a></li>
+	<li class="last"><a href="references.html">References</a></li>
+</ul>
+</td></tr>
+</table>
+
+</body>

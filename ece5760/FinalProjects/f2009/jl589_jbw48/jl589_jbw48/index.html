@@ -1,0 +1,278 @@
+<h1><b><u>JPEG Compression and Ethernet Communication on an FPGA</u></b></h1>
+Jehhal Liu (jl589@cornell.edu)
+<br>John Wang (jbw48@cornell.edu)
+
+<h1>Contents</h1>
+<a href="#introduction">Introduction</a>
+<br><a href="#background">Background</a>
+<br><a href="#design">Design</a>
+<br><a href="#documentation">Documentation</a>
+<br><a href="#results">Results</a>
+<br><a href="#conclusion">Conclusion</a>
+<br><a href="#appendix">Appendix</a>
+
+<a name="introduction"></a>
+<h1>Introduction</h1>
+
+<p>In this lab, we implemented JPEG compression and UDP Ethernet transmission on an FPGA. The idea was to take a single greyscale frame from the input of a video camera, encode it using the JPEG standard, and transmit it to another device (such as a computer) via Ethernet, all in hardware. This project exploits the speed of specialized hardware over software, and presents strict scheduling and control logic for the heavily modularized design.
+ 
+<a name="background"></a>
+<h1>Background</h1>
+
+<p>The JPEG image compression standard is a lossy compression standard that uses the DCT transform and its associated properties to significantly reduce the number of bits used to represent an image. The encoding process involves many steps, which were broken down in our design as separable modules. Additionally, we incorporated ethernet and UDP communication implementations in our system. 
+
+<h3>Discrete Cosine Transform</h3>
+
+<p>The Discrete Cosine Transform (DCT) can represent a finite-length sequences of numbers as a summation of cosine terms of different frequencies, similar to how a Fourier transform represents periodic functions as a sum of sines at different frequencies. The DCT, and more specifically the DCT-II, is used for image compression because of its high energy compaction property. In short, most of the energy (or original information) can be compacted into a smaller number of bits. 
+
+<p>To perform the first step of JPEG compression, the image in question is first split into 8x8 blocks of pixels. A 2-dimensional DCT is then applied to each 8x8 block. The results of a 2-D DCT represent the spacial frequency information of the original block at discrete frequencies corresponding to the index into the matrix. After the transform, the top-left coefficient gives spacial DC information, while the bottom-right coefficient gives the highest spacial frequency (in both the horizontal and vertical direction) information. The spacial frequency representation is shown in the figure below.
+
+<p><img src="dct_basis_functions.jpg"></img>
+
+<p>Notice the upper-left elements have lower spacial frequency both in the horizontal and vertical directions, while the lower-right elements have higher frequencies. With a DCT, most of the original information can be reconstructed from the lower frequency coefficients (the ones closer to the top-left), because of the high-energy compaction in those coefficients. Additionally, the human visual system is less perceptive to errors in high-frequency spacial content. These two facts together mean that errors in the low-frequency coefficients will be significantly more noticeable to human beings than errors in the high-frequency elements. 
+
+<p>The 2-D DCT operation is separable, meaning it can be obtained by applying the 1-D DCT twice on the block being analyzed. The 1-D transform is performed first on each row of the block, then on the columns of the results of the row-wise transform. The 1-D DCT coefficients can be obtained using the following equation:
+
+<p><img src="dct_eqn.gif"></img>
+
+<p> where k is the index of the coefficient. For the case of JPEG transforms, N always equals 8, since the transforms are applied to 8x8 blocks of the image. 
+
+<h3>Quantization</h3>
+
+<p>Once the DCT is applied to the 8x8 block, a quantization factor is applied to the coefficients. This step, in short, discretizes the coefficients with step sizes related to the energy densities. Low-frequency coefficients are quantized with smaller step sizes, thus giving a smaller error than those quantized with larger step sizes. The low-frequency coefficients are quantized as such to reduce the likelihood of quantization errors. The higher frequencies are given larger step sizes thus reducing the accuracy in the less important elements. This is the lossy step in the compression process.  
+
+<p><img src="quant_matrix.gif"></img>
+
+<p>Though the JPEG compression standard does not specify a quantization matrix to use, this is one of the suggested matrices. To quantize the result of the 2-D DCT, the each coefficient is divided by the appropriate value from the matrix above and rounded to the nearest integer.
+
+<h3>Zig-Zag Sequencing</h3>
+<p>After quantization, the 2-D matrix is rearranged into a 1-D array. The elements are read in a fashion that gives the coefficients with high energy density first. The sequencing is done in a zig-zag method such that coefficients are arranged in an increasing spacial frequency order. Using this method, the more important coefficients appear earlier on in the series, while the less important ones appear later on. 
+
+<p><img src="zigzag.jpg"></img>
+
+<h3>Variable-Size, Run-Length Encoding</h3>
+
+<p>Given that high frequency coefficients were quantized using a larger step size, the likelihood that those coefficients are zero is much higher than for the low-frequency coefficients. This groups the candidates for zero-valued coefficients, allowing us to assume the possibility a series of zeros. 
+
+<p>The main source of compression for the JPEG standard is in the variable-size and run-length encoding. This step in the compression uses a combination of Huffman encoding and variable length encoding. Each non-zero coefficient is translated into a variable length bit-string, or code. The code contains information in both its number and its length (i.e. 0 is different from 00). 
+
+<p>As mentioned before, the zigzag organization increases the likelihood of consecutive zeros, especially near the end of the array. To avoid sending consecutive zeros, a run-length of preceding zeros is encoded into the translation of each non-zero coefficient. Every non-zero coefficient is encoded as the variable length code, and a "header" Huffman code that indicates the preceding zero-run, and the length of the VL code.
+
+The pixel translation tables and Huffman tables are shown 
+<a href="trans_tables.html">here</a>. These translation tables only apply to luminance values for an image. Since our system deals entirely with greyscale images. There is a different translation scheme for chrominance values that are used on color images. 
+
+<p>Since Huffman codes are uniquely identifiable regardless of length, the zero-run and size of a new non-zero value can always be identified without knowing the length. Then, using the size given by the Huffman, the following VL bits can be extracted and translated back to the appropriate non-zero coefficient. The VL codes are <i>not</i> uniquely identifiable unless the length of the code is known prior.
+
+<p><i>DC Versus AC</i>
+
+<p>The DC coefficient is encoded slightly differently from the AC coefficients. Since the DC coefficient will never have preceding zeros (the zeros do not carry over between blocks), the Huffman code reflects only the length of the VL code. 
+
+<p>The DC coefficient is also encoded in a differential encoding method. Since the DC value is basically the average of all pixels in the 8x8 block, DC coefficients among consecutive blocks will have a high likelihood of being similar (or the same). Instead of coding the absolute pixel value, the value is coded as the difference from the previous block's DC coefficient. For instance, if the first three consecutive blocks of the image had DC coefficients of 127, 127, and 128, respectively, the codes would be encoded as 127, 0, 1, respectively (the DC coefficient of the first block in the image is differentiated with 0, meaning its actual value is given). 
+
+<p><i>Zero-Runs and End-of-Block Indicators</i>
+
+<p>Note that the translation tables linked above do not have codes that accomodate zero-runs longer than 15. This is because after 15 zeros are encountered, a 15-run indicator is inserted instead of keeping track of longer streams. Any non-zero value with a preceding zero-run of more than 15 would be translated to this indicator, followed by the normal code where the zero-run is the number of zeros <i>after</i> the original 15. The indicator is shown in the table under the case for a zero-run of 15, and a VL size of zero. 
+
+<p>The end of each block indicated by the Huffman code 1010. This code is not used for any other translation possibility, so it is used to indicate to the decoder that the end of the block has been reached.
+
+<h3>Ethernet</h3>
+
+<p>In the Open System Interconnection Reference Model (OSI Model), Ethernet sits at the Link Layer and Physical Layer. At the Physical Layer, Ethernet describes how wires should interconnect. At the Link Layer, Ethernet specifies how an Ethernet frame should be formatted and how frames should be delivered. Delivery on Ethernet is best attempt only, meaning Ethernet attempts to deliver a message as best it can but cannot guarantee delivery.
+
+<p>Because Ethernet is inherently a broadcast protocol with potentially many devices connected to the same physical line, only one device may broadcast at a time. In case of collisions on the line, Ethernet controllers are able to detect the collision and perform random back off. Random back off simply means that upon collision detection, a random amount of time is waited before another send is attempted.
+An Ethernet frame consists of a Preamble, Start-of-Frame-Delimiter, MAC Destination, MAC Source, Ethertype, Payload, and Checksum.
+
+<p>The Preamble and Start-of-Frame-Delimiter are used in order to specify that an Ethernet frame is starting. Every Ethernet controller can be addressed using its Media Access Control (MAC) address. Thus, each Ethernet frame also contains MAC Destination and Source addresses. The Ethertype specifies what protocol to use when decoding the payload. The payload is the actual data, and the final Checksum is to make sure the Ethernet frame header is correct.
+
+<h3>User Datagram Protocol/Internet Protocol</h3>
+
+<p>User Datagram Protocol (UDP) and the Internet Protocol (IP) reside on the next two layers of the OSI model at the Transport Layer and Network Layer respectively. The UDP/IP protocol, like Ethernet, does not guarantee reliable packet reception, only best effort delivery. The primary purpose of the IP protocol is to provide a layer of abstraction above the Link Layer. This way if the underlying Link Layer is not Ethernet, application level software does not need to be changed. The IP protocol provides this abstraction by having yet another pair of source and destination address, a fragmentation offset, a header checksum, and the protocol used in the payload.
+
+<p>The IP checksum is calculated as a the one's complement of the one's complement sum of all the 16 bit header values.
+The UDP protocol, which resides in the IP frame, actually tells the network stack how large the data is and what is the destination port. The UDP is the final layer of abstraction before the Application Level.
+
+<a name="design"></a>
+<h1>Design</h1>
+
+<p>The code is heavily modularized, with outputs feeding into the inputs of the successive modules. The steps of the encoding are broken down into the following steps, each of which is implemented in a separate module: 1-D DCT, 2-D DCT/Quantization, zig-zag organization, VL translation, Huffman translation, and bitstream construction. This system considers a 256x256 image, but can be expanded to analyze more pixels. A dataflow diagram is shown below:
+
+<p><img src="dataflow.png"></img>
+
+<p>By considering only greyscale imaging, we used one third the amount of memory and processing power that would have been required by a color system. For a system to process color images, the entire compression process described above needs to be applied to each color channel individually. We originally obtained greyscale images by selecting only the green values of each pixel, instead of performing a conversion from RGB to YUV. This simplification is not exactly correct, but the emphasis of the project was not on the image, but rather the compression, so we did not feel the need to waste extra calculations on the converstion operation. 
+
+<h3>1-D DCT</h3>
+
+<p>The 1-dimensional DCT is implemented using a fast algorithm that requires eight cycles to finish. The algorithm requires mostly successive additions of the inputs and resulting sums, with five multiplies occurring during three of the intermediate steps. This algorithm produces DCT results, which are scaled by some factor from the actual DCT results. However, the scale can be accounted for in the quantization step thus yielding the correctly quantized-transformed matrix. The scale factors for the coefficients are as follows:
+
+<p><img src="s0eqn.gif"></img>
+<br><img src="skeqn.gif"></img>
+
+<p>The algorithm dataflow is shown in the figure below. 
+
+<p><img src="dct_algorithm_flow.png"></img>
+<br><img src="dct_alg_mult_params.gif"></img>
+
+<p>The module is fully pipelined, meaning new inputs can be fed at each cycle with new outputs coming out eight cycles later. This allows the module to more rapidly process blocks.
+
+<h3>2-D DCT</h3>
+<p>The 2-D DCT is a separable operation, meaning it can be obtained by applying the 1-D DCT on each of the rows of the 8x8 block, then applying it to the columns of the 8x8 block. This allows us to use the pipelined 1-D DCT to perform 2-D DCTs quite rapidly by feeding the rows of the block into the 1-D module for 8 cycles, then getting the results and feeding those columns back into the same module. 
+
+<p>The quantization is also performed in this 2-D module, before the results are written back to memory. Because of the way the scaling for the algorithm combines with the quantization, the entire operation requires only shifts on the 2-D algorithm results. 
+
+<h3>Zig-Zag</h3>
+
+<p>The zig-zag organization is performed by simply reading the values out of memory in the appropriate order. The elements of a block are stored in an address that is obtained directly from the pixel's coordinates within the image. This output from memory is fed directly into the translator, at a rate of one pixel per cycle. 
+
+<h3>VL and RL Translation</h3>
+
+<p>The translation from the pixel's quantized value to a variable length code is done using a lookup table. The table contains the value, and the length (in bits) of the code. These two values are then sent to a Huffman translator. The Huffman translator takes the preceding number of zeros and the size of the coefficient's code. These two numbers are fed to another lookup table that gives a Huffman code as "header" for the non-zero coefficient.
+
+<p>The VL code translation for DC and AC coefficients are exactly the same. The difference for DC and AC translations is in the Huffman code, so only the Huffman look up table needs to distinguish DC from AC pixels.
+
+<h3>Bitstream Construction</h3>
+
+<p>The outputs of the VL and RL translators are fed into a bitstream constructor that concatenates the appropriate bits to form a JPEG bitstream. This module essentially needs to keep track of the sizes of the Huffman and VL codes coming in and appropriately relay them to the 16-bit FIFO for the Ethernet transmitter.
+
+<h3>Hardware Ethernet Controller</h3>
+<p>The hardware Ethernet Controller is used to initialize the DM9000A controller chip, push data packets out to the DM9000A, grab received data from the DM9000A, and receive interrupts from the DM9000A. The Controller is largely written by Adam Shapiro but debugged by us.
+<p>The Controller is broken down into two separate state machines, one handling commands to and from the DM9000A (including interrupts) and another handling the transmit and receive sequences.
+<p>The transmit sequence involves:
+<br>1)	Wait for the input FIFO to be not empty. Store the first value as the number of bytes in the payload.
+<br>2)	Tell the hardware controller how many bytes will be stored including the Ethernet headers.
+<br>3)	Send the Ethernet frame as data to the DM9000A.
+<br>4)	Send the payload to the DM9000A.
+<br>5)	Wait for transmit to finish through interrupts. Return to idle state.
+<br>Because we do not use the receive function, we will not describe the receive sequence here.
+
+<h3>UDP Wrapper</h3>
+
+<p>The UDP Wrapper utilizes Adam Shapiro's hardware DM9000A Ethernet Controller to produce valid UDP/IP headers and then send the payload data. Using First-In-First-Out data structure (FIFO), the UDP Wrapper first obtains the total number of bytes in the payload then obtains the payload 16-bits at a time. The Wrapper performs the following steps using a state machine to send out a single UDP packet:
+<br>1)	Wait for input FIFO to not be empty. Store the first value as the number of bytes in the payload.
+<br>2)	Tell the hardware controller how many bytes will be stored including the UDP/IP headers.
+<br>3)	Send the Ethernet frame as data to the hardware controller.
+<br>4)	Send the IP header as data to the hardware controller. IP checksum is calculated before the header is sent.
+<br>5)	Send the UDP header as data to the hardware controller.
+<br>6)	Send all data to the hardware controller.<br>
+<br>Because the purpose of the UDP Wrapper is to allow the DE2 to communicate with a single computer directly connected by Ethernet, many values are hardcoded into the Verilog. Hardcoded values include the destination and source MAC addresses, the destination and source IP addresses, and the destination port. These four hardcoded values are all set to broadcast addresses, FF:FF:FF:FF:FF:FF for MAC addresses and 255.255.255.255 for IP addresses. The destination port is hardcoded to be an arbitrary 31373. Other values, such as the IP header checksum, are calculated on the fly simply because header values are not necessarily the same every time. Once finished, the control registers reset and returns to the waiting state.
+
+<h3>Memory Usage</h3> 
+
+<p>Only M4K blocks are used in this project. M4K blocks are used because of their speed, and ease of use since the idea was to have a real-time JPEG compressor. The first memory module, which holds the values that are fed directly from the camera, can hold up to 16 rows of 256 pixels (1 byte each). 16 rows are used to always have an 8 row buffer on which we perform the DCTs, and 8 rows that are ready to be overwritten by the camera.
+
+<p>At the output end of the DCT is another 256x16 element M4K module. The write end of this memory module feeds to the zig-zag unit, which simply reads out the values in the zig zag pattern by setting the address appropriately over time. 
+
+<p>Finally, at the end of the bitstream constructor, there is a third FIFO that acts as a transmission FIFO for the Ethernet transmitter. This memory module would ideally be as large as possible, and since the JPEG compression should significantly reduce the number of bits for the image, we would be able to store the entire image in M4K blocks (which we couldn't do with the raw pixel stream).
+
+<a name="documentation"></a>
+<h1>Documentation</h1>
+
+As a note, addresses to memory are generally in a format such that the upper bits represent the y-coordinate and the lower bits represent the x-coordinate of the pixel in question. The lengths of these addresses may change from module to module since some of the memory modules have different sized inputs/outputs, depending on the application. 
+
+<h3>dct_algorithm</h3>
+inputs: clk, reset, in0, ..., in7
+<br>outputs: out0, ..., out7
+<p>This module runs the fast algorithm to calculate a 1-D DCT.  This module is fully pipelined, and outputs the length-8 DCT results 8 cycles after the input is read. This module has 22 bit, fixed point (8 decimal bits) inputs and outputs. Though the pixels in memory are stored as 8-bit values, the numbers are extended to 22 to avoid overflow and to keep some accuracy with fractional values in intermediate steps of the transform. 
+
+<p>To get the actual DCT from the results of the algorithm, the corresponding output must be multiplied by the <i>s</i> values given in the design section. This step is skipped in our system, however, because it is combined with the multiplication required in the quantization operation. 
+
+<p>Problems: This module was fairly straightforward to implement, since it was really just five multiplications and a series of adds. Pipelining it was also straightforward, but the original module attempted to use shifts and summations as a replacement for the multiplications, which sometimes gave issues with the output values (but not always). Once we realized that there are no other modules that need multipliers, we decided to scrap the attempted optimization.
+
+<h3>dct2d</h3>
+inputs: clk, reset, q, currentX, currentY
+<br>outputs: wren, rdaddress, wraddress
+
+<p>This module schedules the inputs and outputs that are being fed to the pipelined 1-D DCT algorithm. The output <i>rdaddress</i> determines the value that should be read from memory to get the appropriate row. The schedule of which block to read in depends on which X and Y value is being written to memory by the camera (dictated by <i>currentX</i> and <i>currentY</i>). 
+
+<p>The input, q, is a 64 bit value representing a row of 8 pixels from memory. This input is split and fed into the appropriate 8 inputs of the <i>dct_algorithm</i> module. The intermediate matricies (after performing the 1-D DCT on the rows) are stored in registers as to hold more bits for higher precision. These registers then feed back into the 1-D DCT as columns to complete the 2-D DCT. These outputs are then scaled appropriately to account for the algorithm's scale factor, and to quantize the coefficients. The quantized values are then stored back into a separate M4K block.
+
+<p>Problems: Scheduling of when to latch register values and assign new inputs was the biggest problem for this module. The M4K blocks have specific timing requirements for when data is available. Additionally, storing to registers and storing to memory also took some tweaking. 
+
+<h3>zigzag</h3>
+inputs: clk, enable
+<br>outputs: rden, latch_dc, rdaddress
+
+<p>This module simply controls the read address fed to the memory module to read out the matrix in a zig-zag pattern, as described in the Background section. The latch_dc output tells the top-level module to latch the outgoing value from memory because it is the DC value of that particular 8x8 block. This needs to be done to do the differential coding scheme for the DC coefficients, as described in the Background section. 
+
+<h3>translate_to_vl</h3>
+inputs: clk, enable, value
+<br>outputs: size, code
+
+<p>This module translates the quantized pixel values to the appropriate variable length codes. The two outputs are the code (which must be output as a fixed-length value) and a size component that tells the next translation module which bits to take out of the code output. This is simply a implemented as a lookup table. This translation is the same for DC and AC coefficients. 
+
+<h3>translate_to_huffman</h3>
+inputs: clk, enable, dc, size, zero_run
+<br>outputs: huffman_length, huffman
+
+<p>This module is another lookup table, and gives the Huffman code, which acts as a prefix to each non-zero pixel. The <i>dc</i> input tells this module whether it is encoding a DC value, otherwise it assumes it is encoding an AC value. The two types of coefficients have different translation methods, as described previously (specifically because DC does not take zero-runs into account). 
+
+<p>The Huffman code simply describes the number of preceding zeros, and the size of the value's VL code. The Huffman itself is also variable length, so the length must also be an output so the bitstream module can extract the appropriate bits. <b>Note</b>: The huffman_length output of this module is actually one less than the actual length, so this signal really signifies the highest valid bit in the 16-bit huffman signal (when counting from 0). This module is embedded in the bitstream buffer, which is described below. 
+
+<h3>bitstream_buffer</h3>
+inputs: clk, enable, size, code
+<br>outputs: next_transmit, new_stream
+
+<p>The buffer takes the output from the Huffman translator and the variable-length translator, and feeds in the appropriate bits to a bitstream buffer that will eventually go out to be transmitted. The VL translator feeds in the size and code, which are fed to the Huffman translator (embedded inside this module). The module has a 64-bit buffer of bits into which the appropriate number of variable-length translated bits flows. The module keeps track of how many bits of the 64-bit register are actually valid and need to be transmitted. 
+
+<p>This module also handles writing to the transmission FIFO. Once the bitstream buffer has at least 16 bits, a write line is asserted and the 16 bits are stored into the FIFO appropriately. This module also handles keeping track of zero runs, and attaches an End-of-Block (EOB) code when it sees that there are no more non-zero coefficients in the array. 
+
+<p>Problems: This module had the most problems out of any for the translation process. Firstly, the process of appending zero-run information for runs longer than 15 elements proved to be slightly difficult, since the end-of-byte needed to be taken into consideration. We could not blindly insert a 15-run indicator since it was possible that the string of zeros ran completely to the end of the block, in which case the EOB code would need to be appended without any 15-run indicators. Additionally, scheduling of inputs and outputs from the translation modules, and any conditional signals were somewhat difficult to coordinate.
+
+<h3>udp_wrapper</h3>
+inputs: clk, reset, enet_int, enet_data, udp_clk, udp_wr, udp_data, halt
+<br>outputs: enet_clk, enet_rst_n, enet_cs_n, enet_cmd, enet_wr_n, enet_rd_n, udp_full
+<p>This module is fed bytes into its FIFO and constructs a UDP/IP header around the inputted data and sends it out using a state machine to the hardware Ethernet Controller.
+<p>To use you must:
+<br>1)	Push the number of bytes of payload as the first piece of data.
+<br>2)	Push the bytes of payload.<br>
+<br>It is very important to have the correct number of bytes in the payload because the Wrapper uses this number to keep the its state machine in sync with the external state machine driving the Wrapper.
+<p>Most of the MAC address and IP values are also hardcoded in. While changing the MAC address is easy enough, changing the IP values also include changing the amount added to the IP layer checksum.
+<p>Currently the Wrapper has problems if it still requires to read from the FIFO but the FIFO is empty. It will continue to read from the empty FIFO and feed the garbage data to the hardware Controller.
+<p>At full blast, the UDP wrapper is able to transmit up to 8 megabytes per second.
+
+<a name="results"></a>
+<h1>Results</h1>
+
+<p>The results of this project gave proof of concept, but the overall implementation could not be completed by the demonstration deadline. 
+
+<p>The JPEG compressor, which was modularized into several interacting pieces, worked (to an extent) in simulation. Accuracy was not fully verified for variable data (i.e. when receiving frames from the video camera). The compressor came out of the original idea of performing motion JPEG video encoding. As such, the hardware is able to encode into a JPEG bitstream at a rate roughly equal to the rate that raw pixels are fed by the Terasic camera. We were pleased with the speed at which the compression could be performed, but when we tried to combine all modules together on the FPGA, we could not get anything to come out through the Ethernet. 
+
+<p>We were able to prove that intermediate pieces of the design functioned almost correctly by completing two smaller systems:
+<br>1.	Read a 16x8 block of pixels (greyscale) from M4K blocks, apply the 2-D DCT on each of the 8x8 blocks, and transmit the results through Ethernet using the UDP. 
+<br>2.	Read an 8x8 block of bytes (representing the results of a 2-D DCT) from M4K blocks, apply the VL/RL encoding on the block, produce a translated bitstream, and transmit the results through Ethernet using a UDP. 
+
+<p>These two experiments proved that the pieces of our compressor work, but the control logic to combine all the modules together was faulty. Since the blocks read from memory in the experiments were preloaded, the results were known prior and compared to the bytes transmitted through Ethernet. The second of these experiments showed a bug in our huffman translation code. The zero-count for runs longer than 15 does not quite function correctly, however the translation of non-zero values was correct (for the particular test stream). Also, since the experiment was performed using known inputs (static memory at the beginning of the dataflow), the camera aspect of the project was entirely removed.
+
+<h3>System Problems</h3>
+The modules created for the processes are very rigid and strictly timed. Additionally, there is minimal communication between modules, leaving almost no room for relaxed discrepancies in timing of control signals, even by one clock cycle. While this makes the processing very fast, it means that the control logic must be very specific and has no slack. The control signals between modules rely on the modules knowing the timing beforehand, rather than communicating to determine control. The architecture of the entire system should have been planned more carefully from the beginning. Allowing communication between modules possibly could have solved some control logic issues. Because of the strict requirements, we could not get the control logic correct, meaning we could not get the system (from raw image to transmitted bitstream) to function properly. 
+
+<h3>Ethernet Alternatives</h3>
+There were two alternatives to the hardware ethernet controller that were considered for communication before we had the ethernet controller fully working:
+<br>1. Implement Ethernet in software using the NiosII, which is an embedded processor on which software can be programmed with c code. This method proved to be too slow, and was thrown out while we were still considering real-time compression. It could be possible to use the Nios if real-time is not required, since the frame (compressed, uncompressed, or both) could be stored into some form of memory and transmitted slowly through the software.
+<br>2. Transmit the bitstream through the RS-232. This was considered after we decided to remove the real-time constraint on our project, and was considered as an alternative to Ethernet entirely. However, this idea was thrown out once we found that we would be able to complete an adequate Ethernet controller and UDP wrapper.
+
+<a name="conclusion"></a>
+<h1>Conclusion</h1>
+Though we could not get the final desired system to run, we did create usable functioning modules that could be relevant in a variety of other applications. The UDP wrapper and hardware ethernet controller are very useful in any network communications project. The pipelined 1-D DCT algorithm can be useful for signal and image processing projects, since the DCT-II is a widely used transform for other applications. This project, though not completed as intended, is still considered to be a success. We were happy with the results and the functionality of the finished designs. 
+
+<a name="appendix"></a>
+<h1>Appendix</h1>
+<h3>Code</h3>
+Experiments:
+<br><a href="dct_to_ethernet.v">Experiment 1 - DCT Results Through Ethernet</a>
+<br><a href="zz_to_ethernet.v">Experiment 2 - Translation Results Through Ethernet</a>
+
+<p>Modules:
+<br><a href="dct_algorithm.v">1-D DCT Algorithm</a>
+<br><a href="dct2d.v">2-D DCT</a>
+<br><a href="zigzag.v">Zig-Zag Control</a>
+<br><a href="translate_to_vl.v">Variable-Length Code Translator</a>
+<br><a href="translate_to_huffman.v">Huffman Translator</a>
+<br><a href="bitstream_buffer.v">Bitstream Buffer</a>
+<br><a href="udp_wrapper.zip">UDP Wrapper</a>
+
+<h3>References</h3>
+James Rosenthal. <i>JPEG Image Compression Using an FPGA</i>. 2006
+<br>John Watkinson. <i>The MPEG Handbook: MPEG-1, MPEG-2, MPEG-4</i>. 2001
+<br><a href="../../../../../../../../www.cs.cmu.edu/~dongw/final_fantasy/545FinalReport.html">Advanced Digital Design Project</a>
+<br><a href="../../../../../../../../en.wikipedia.org/wiki/Jpeg">JPEG</a>
+<br><a href="../../../../../../../../www.impulseadventure.com/photo/jpeg-snoop.html">JPEG Snoop: JPEG Decoding Utility</a>

@@ -1,0 +1,341 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta http-equiv="Content-Language" content="en-us">
+<title>Video Game Enhancer - ECE 5760</title>
+<link rel="stylesheet" type="text/css" media="all" href="css/cornell_main.css">
+<link rel="stylesheet" type="text/css" media="all" href="css/cornell_1column.css">
+<link rel="stylesheet" type="text/css" media="all" href="css/main.css">
+
+<link rel="icon" type="image/x-icon" href="images/favicon.ico">
+<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
+<meta name="author" content="Scott Warren, Adam Shih">
+<meta name="description" content="DESCRIPTION HERE">
+<meta name="keywords" content="ECE, Cornell, 5760, Scott Warren, Adam Shih, FPGA, video, game, enhancer, final project">
+</head>
+<body>
+
+<div id="header">
+  <!-- The following div contains the Cornell University logo and search link -->
+  <div id="cu-identity"> 
+		<div id="cu-logo"> 
+			<a href="../../../../../../../../www.ece.cornell.edu/default.htm"><img src="css/cu_logo.gif" alt="Cornell University" width="340" height="75" border="0"></a> 
+		</div> 
+  </div>
+  <div class="linklist"> <a name="top"></a> </div>
+  <!-- The search-form div contains a form that allows the user to search 
+		either pages or people within cornell.edu directly from the banner.	-->
+  <div id="search-form">
+    <form action="http://www.cornell.edu/search/" method="get" enctype="application/x-www-form-urlencoded">
+      <div id="search-input">
+        <label for="search-form-query">SEARCH:</label>
+        <input type="text" id="search-form-query" name="q" value="" size="20">
+        <input type="submit" id="search-form-submit" name="submit" value="go">
+      </div>
+      <div id="search-filters">
+        <input type="radio" id="search-filters1" name="tab" value="" checked="checked">
+        <label for="search-filters1">Pages</label>
+        <input type="radio" id="search-filters2" name="tab" value="people">
+        <label for="search-filters2">People</label>
+        <a href="../../../../../../../../www.cornell.edu/search/default.htm">more options</a> </div>
+    </form>
+  </div>
+</div>
+<div id="mainnav">
+  <ul>
+    <li><a href="#design">High&nbsp;Level&nbsp;Design</a></li>
+	<li><a href="#hardware">Hardware</a></li>
+    <li><a href="#results">Results</a></li>
+    <li><a href="#conclusions">Conclusions</a></li>
+    <li><a href="#appendices">Appendices</a></li>
+	<li><a href="#references">References</a></li>
+  </ul>
+</div>
+<!-- end mainnav -->
+<!-- end header -->
+<div id="sectiontitle">
+  <h4><a href="../../../../default.htm">ECE 5760</a>: <a href="../../../default.htm">Final Project</a></h4>
+  <h1>Video Game Enhancer</h1>
+  <h2>Visual distortion effects for 2-player split screen games</h2>
+  <h3>Scott Warren (<a href="mailto:spw54@cornell.edu">spw54@cornell.edu</a>)</h3>
+  <h3>Adam Shih (<a href="mailto:as986@cornell.edu">as986@cornell.edu</a>)</h3>
+</div>
+<div id="wrapper">
+  <div id="content">
+    <div id="maincontent" class="hub">
+    
+      <div id="introblurb">
+      <div id="pullquote">
+          <p class="quote" align="left">"A video game enhancing system using various distortion visual effects on 2-player split screen games"</p>
+        </div>
+
+<p>The objective of this project was to design and implement a video game enhancing system on an FPGA. Our implementation partitions the video signal of a standard 2-player split screen game to two VGA signals, each which only display a single player's half of the screen. Each player is allowed to select 1 of 8 different video "effects" to use on their opponent periodically.</p> 
+
+<p>For the purposes of our project we customized our system for the Halo series on Xbox 360. The majority of our visual effects can be used on most first-person shooters and other split screen games.</p>
+	<div class="image">
+		<img src="images/scott_adam.jpg" width="600">
+		<p class="caption">Scott Warren (left) and Adam Shih (right)</p>
+	</div>
+	<div class="image" style="text-align:center">
+        <OBJECT width="560" height="315"  ><PARAM name="movie" value="MPFLVPlayer.swf" /><PARAM name="allowFullScreen" value="true" /><PARAM name="FlashVars" value="fn=../../../../../../../../www.youtube.com/watch@v=-G4FHX_EKr4&flvskin=MPFLVSkin.swf" /><EMBED src="MPFLVPlayer.swf"  width="560" height="315"  type="application/x-shockwave-flash" allowFullScreen="true" FlashVars="fn=../../../../../../../../www.youtube.com/watch@v=-G4FHX_EKr4&flvskin=MPFLVSkin.swf"></EMBED></OBJECT>on that experience. In addition, we wanted to base our project idea around some sort of game. With those two thoughts in mind, we originally considered developing our own simple first-person shooter game. In the end, we decided that we wouldn't be able to utilize FPGA potential enough under our time constraint, and chose to implement a system which enhanced a game or games we both enjoy to play (and could play against each other).</p>
+	
+	<p>The motivation for this project was to create a system that could be complementary to existing split screen games, and would essentially enhance a player's experience. Our hope was to be able to add effects and power-ups that visually distort an opponent's view and in doing so would add novels elements to existing games.</p>
+	
+<h3>Logical Structure</h3>
+
+	<p>At a high-level, our design consists of two DE2 boards, but we really only use one of the two FPGAs. The first serves as the primary controller, and essentially does all the computation necessary in our implementation. NTSC video signal is taken as an input into the primary DE2 board. The FPGA on the board also listens to designated GPIO pins connected to external buttons added for effect usage. Once a player pushes his/her button to select or use an effect, the primary FPGA updates the player's screen accordingly through VGA signal output. The primary FPGA also sends VGA data across the GPIO pins to the secondary DE2 board, which utilizes it to drive a second VGA monitor. The second DE2 board is only used for its VGA output capabilities. No computation is done on the second FPGA.</p>
+	<div class="image">
+		<img src="images/block_diagram.png" width="600">
+		<p class="caption">High-level block diagram</p>
+	</div>
+<h3>Standards</h3>
+  <p>Our project requires NTSC video standard signal as input (coming from a game console). Additionally, we output data as a VGA signal. As such, we must consider both television and computer display standards. Interfacing with these standards is aided with the reference to Altera's DE2_TV example (explained in Hardware Design).</p>
+
+<div class="linklist"> <a name="hardware"></a>
+
+<h2>Hardware Design</h2>
+
+<h3>Overview</h3>
+	<p>The physical hardware we used as part of our video game enhancer mainly consists of two Altera DE2 development boards. In addition, we also use 40 jumpers (for communication between the boards), two external push buttons, and two VGA cables plus two LCD computer monitors. Custom hardware is designed on the two on-board Cyclone II FPGAs in Verilog. Custom hardware design and other relevant components are detailed more below.</p>
+
+<div class="image">
+  <img src="images/hardware.jpg" width="600">
+  <p class="caption">The physical hardware we used in our project</p>
+</div>
+  
+<h3>Top Level Module</h3>
+  <p>The block diagram for our FPGA hardware design (what's inside of the primary FPGA) is shown below. We built our design off of the DE2 TV example provided by Altera as one of the demonstrations on the DE2 board CD. That hardware is explained in the next section. Our hardware sits between DE2_TV and the VGA output. We basically take the pixels that the DE2_TV monitor thinks it's displaying on the screen, manipulate them, and then drive two VGA monitors.</p>
+  
+  <p>The RGB data from the DE2_TV module is streamed into the 5-line buffer to provide the delay needed for some of our effects. Each line in turn is sent through shift registers. When combined this creates a 6x9 matrix that moves through the pixel data at video rate. Each video effect module takes all or part of the matrix to work on. All the effect modules output the new pixel value which goes through two muxes. Each of these muxes select out the appropriate effect pixel to use (or the original if no effect is in use) based on the control signals from the icon modules. These icon modules are discussed in detail below. Each screen's pixel goes through one final mux which selects off of the value of the VGA Controller's Y coordinate. This is what displays the icons in one half of the screen and the game video in the other half. One of these pixel streams is sent to the VGA DAC on the DE2 board and the other goes out the GPIO pins to the other DE2 which simply sends that data straight to its own VGA DAC.</p>
+  
+  <div class="image">
+    <img src="images/de2_top_block_diagram.png" width="600">
+    <p class="caption">Top level FPGA logic block diagram</p>
+  </div>
+  
+<h3>DE2_TV Example</h3>
+	<p>Our design is based off of the DE2 TV example provided by Altera. This example takes an NTSC signal and converts it for display on a VGA monitor. Shown below is the block diagram. The system works by setting up the TV decoder, then streaming the data from there through a second decoder to convert to YUV 4:2:2 color space. This passes its data into an SDRAM frame buffer which is necessary because of the interlacing done by NTSC. The frames are read out from SDRAM a line at a time with even and odd frames changing every line to interleave the entire picture back together. This data is then goes through two more color space converters. First from YUV 4:2:2 to YUV 4:4:4, then from there to RGB which is necessary for display on the VGA. The VGA controller then takes the RGB data and generates the appropriate signals to drive the VGA monitor.</p>
+  <div class="image">
+    <img src="images/de2_tv_block_diagram.PNG" width="600">
+    <p class="caption">DE2_TV block diagram</p>
+  </div>
+  
+<h3>Icons</h3>
+  <p>This module controls the display and use of the various effects. Its inputs include the VGA coordinates, the buttons, and the pixel data from the icon sprite ROMs. It controls these ROMs through output addresses. As there are two icon modules the addresses into the ROMs are buffered by a mux that gives control based on which half of the screen is currently being worked on. This module also outputs the current effect, if it's been enabled, and the data for the pixel that should be displayed (the icons). These pixels are chosen based off of the current coordinates. We section off the screen into 8 squares. When in one of these squares we choose the appropriate pixel from the icon sprite ROMs and increment the appropriate address. When not in a square we simply output a black pixel value.</p>
+  <p>Show below is the state machine diagram for the icons module. It resets to the choosing state. In this state the icons are displayed one at a time for 4 frames each in a roulette style. When the player presses the button it transitions to the debounce state and holds the current effect value. The debounce state simply waits until the button has not been pressed for a certain time. This is to prevent any bouncing of the switch causing a second unwanted button press. Once it's sure the button is release it goes into the ready state. Here we just wait for another button press. During this time the selected effect will be statically shown on the player's screen. When the player presses the button again we go into a counting state. This simply counts out time, to 10 seconds, while the effect is being displayed. Afterwards we go into a delay state that again counts to 10 seconds, but in this state the effect is no longer enabled. This was done to give the other player a break so their screen isn't constantly being affected. After delay we go back to choosing and the process starts over.</p>
+  <div class="image">
+    <img src="images/icons_state_machine.png" width="600">
+    <p class="caption">Icons state machine</p>
+  </div>
+  
+<h3>5-line Buffer</h3>
+	<p>In order to store enough pixel data to perform image filtering on each video frame, we use a 5-line Buffer for use in convolution techniques. We utilize the Altera Megafunction ALTSHIFT_TAPS, which is a RAM-based shift register. Our 5-line buffer uses M4K blocks with taps on each line (with tap distance 640 for the screen width). Shift-in and shift-out width is 34 bits to accommodate 10-bit color channel RGB encoding plus VGA signal data (horizontal sync, vertical sync, etc.). The size of this line buffer allows the video game to perform a 6x6 convolution (later sections show we increase the horizontal size of this matrix up to 9x6 for better visual performance). Most of our filters only use a 3x3 matrix, but the more the better for the blur filter so we just made it as large as we could given the limited number of M4k blocks on the Cyclone II.</p>
+	
+<h3>Visual effects</h3>
+	<p>Our video game enhancer involves visually altering the video input of a video game, and as such our design features eight different visual effects implemented with custom hardware. The main objective of these effects is to visually distort your opponents view on their LCD monitor such to distract him/her and reduce his/her ability to effectively play the game.</p>
+  
+  <h4>Blur</h4>
+	<p>The first visual effect involves using a 9x6 custom matrix to create a blurring effect on a player's screen. Typically, blurring matrices involve the averaging of pixel values surrounding the center pixel, and updating that center value. For our blurring matrix, we use a 9x6 matrix that takes the outer most values on the matrix along with six central values and averages them. Rationale behind using this particular matrix includes better performance (extended matrix from 6x6 to 9x6), more pixel variation (using further pixel values from the center), and more efficient averaging (32 "1" values in the matrix allow for logical shifts rather than division). The matrix shown below uses the 5-line buffer to store required data and effectively convolve over the screen image, pixel by pixel, to display on screen.</p>
+	<div class="image">
+		<img src="images/blur_matrix.jpg">
+		<p class="caption">9x6 matrix for blurring</p>
+	</div>
+  
+  <h4>Edge Detection</h4>
+	<p>The second visual effect uses a Sobel operator to detect the edges in each video frame. The full operation involves convolving two 3x3 kernels with the image of interest to approximate horizontal and vertical derivatives. To do this, we convolve the x-direction and y-direction kernels (shown below) with the sum of a video frame's RGB components and take the sum of the squares of both convolution products in order to produce the gradient magnitude. Our implementation uses the megafunction ALTSQUARE to compute the square of each convolution product. As a final step, we color all values that are over some empirically found threshold to green, while leaving all other pixels black to show only the edges.</p>
+	<div class="image">
+		<img src="images/sobel_matrices.jpg">
+		<p class="caption">3x3 Sobel matrices used for horizontal and vertical edge detection</p>
+	</div>
+  
+  <h4>Edge Enhancement</h4>
+	<p>In addition to Sobel filtering, we use a second edge detection method. To detect edges in all directions, we convolve a 3x3 kernel consisting of center value of -8, and surrounding 1 values (shown below). Unlike with Sobel filtering, we convolve the kernel with each of the three RGB components rather than the sum. As a final step, we concatenate the altered components back in the correct sequence to produce the pixel value.</p>
+	<div class="image">
+		<img src="images/edges_matrix.jpg">
+		<p class="caption">3x3 matrix used for secondary method of edge detection</p>
+	</div>
+  
+  <h4>Color Inversion</h4>
+	<p>To complement visual effects that use convolution kernels, we also added effects that only operate on a single pixel to distort the color of the picture. To begin, we created a simple module to invert the RGB values for each pixel, essentially inverting the entire picture to its "negative". Our rationale behind this color distortion is to momentarily confuse a player that is looking for a certain colored object/opponent on the screen.<p>
+  
+  <h4>Red/Blue Swap</h4>
+  <p>With the Halo games in mind, we created a fifth effect that specifically flips red and blue colors. The objective of this color flipping was to switch the colors of a red versus blue team game type, and as a result your allies appear to be your enemies and vice versa. For example, as a player on a red team, your allies are colored red and opponents blue. When the color flip effect is activated, your allies are suddenly colored blue, and your opponents red. To implement this, we exclude all green components and flip red and blue values for each pixel streamed in (green is omitted because of the small amounts of green in Halo's red and blue shades; this provides better color flipping in game).</p>
+  
+  <h4>Strobe Light</h4>
+	<p>With five effects that already use image filtering techniques, we decided to add two visual effects that are based on blacking out opponents view in some way. The first of these is a strobe type effect that illuminates the screen image as normal for some small amount of time, then completely blacks out the screen for another small amount of time, periodically cycling through the image and a black screen for the duration of the effect. Our implementation uses a delay counter clock off of the frame rate, and displays a pixel normally if the count is below 8, or displays a black pixel if the count is above 8.</p>
+  
+  <h4>Tunnel Vision</h4>
+  <p>The second blackout effect involves simulating tunnel vision. We implement this by simple displaying a black pixel if the current VGA X coordinate is outside the range of 200 and 440, else if it's within that range we display the actual pixel data. This creates a narrowing effect by eliminating side peripheral view by a width of 200 pixels on each side.</p>
+  
+  <h4>Screen Peek</h4>
+	<p>Our eighth and final visual effect is different from the other seven because it does not involve distorting an opponent's screen, but rather enhancing yours. This effect restores the full screen that you would normally see when playing a split screen game, allowing you to "screen peek" and see where the other player is. The other player can however still use his effects on you to counteract this as the effects will work for both the top and bottom halves of your screen.</p>
+  
+<h3>Screen Splitting</h3>
+	<p>The screen splitting is done by simply changing the VGA signals going to each screen based off of the current Y coordinate of the VGA Controller. When it is above the threshold then one screen gets the converted input signal with any additional effects and the other screen gets the icon data. This is opposite for when the Y coordinate is below the threshold.</p>
+  
+<h3>Game controls</h3>
+
+<div class="floatingimagewrapperwide"> <img src="images/buttons.jpg" width="278" height="156">
+	<p class="caption">The physical buttons we use for input.</p>
+</div>
+
+	<p>Our game is controlled through two buttons. There is one button per player. Pressing the button first halts the roulette of icons. Once an effect has been selected, pressing the button again will use that effect. Then there is a delay both as the effect is in use and after it has been used. When the roulette of icons shows up again this process starts over. Both of these buttons are connected to the second GPIO port. As seen in Appendix B, the button input is connected to VCC through a pull-up resistor. When the button is pushed it shorts the input to ground. We needed to add a small amount of additional hardware to properly debounce the switch.</p>
+  
+<h3>ROM initialization and icons</h3>
+	<p>In order to differentiate between different effects, we created unique icons to represent each individual one. Each icon was made as a 32x32 24-bit bitmap. To convert these .bmp files to .mif files required for ROM initialization, we wrote a Matlab script to format the file properly and output a memory initialization file (see Appendix A for .m script).</p>
+	<div class="image">
+		<img src="images/all_icons.jpg" width="370">
+		<p class="caption">Eight 32x32 effect icons (blur, edge detection, edge enhancement, color inversion, red/blue swap, strobe light, tunnel vision, screen peek)</p>
+	</div>
+	<p>We use the megafunction ALTSYNCRAM to store our icon data in M4K blocks and initialize these with the .mif files.</p>
+
+
+<div class="linklist"> <a name="results"></a>
+<h2>Results and Analysis</h2>
+<h3>Speed of Execution</h3>
+	<p>The video game enhancer responds extremely fast in realtime with no noticeable delay. This makes sense, as the system performs at video rate and displays pixel data almost immediately after being streamed in (with the exception of the line buffer and conversion delays, which are both small fractions of a frame). During development, we tested the system's primary game functions and visual effects, and noted no perceivable delay.</p>
+  
+<h3>Accuracy</h3>
+	<p>The below images display each of our effects. Strobe is not included as it would be difficult to capture in a picture. As can be seen, all of our filters create the desired effect. The Halo game has many edges so our edge detection filter is very busy. We iterated through many different threshold values to find a good middle ground. There are minor distortions at the edges of the screen due to our convolution matrix implementation.</p>
+	<div class="image">
+		<img src="images/original.jpg" width="600">
+		<p class="caption">Screenshot of original video screen</p>
+	</div>
+	<div class="image">
+		<img src="images/blur.jpg" width="600">
+		<p class="caption">Screenshot of blurring effect</p>
+	</div>
+	<div class="image">
+		<img src="images/sobel.jpg" width="600">
+		<p class="caption">Screenshot of edge detection using Sobel filtering</p>
+	</div>
+	<div class="image">
+		<img src="images/edges.jpg" width="600">
+		<p class="caption">Screenshot of edge enhancement effect</p>
+	</div>
+	<div class="image">
+		<img src="images/invert.jpg" width="600">
+		<p class="caption">Screenshot of color inversion effect</p>
+	</div>
+	<div class="image">
+		<img src="images/color_flip.jpg" width="600">
+		<p class="caption">Screenshot of red/blue color flip effect</p>
+	</div>
+	<div class="image">
+		<img src="images/tunnel.jpg" width="600">
+		<p class="caption">Screenshot of tunnel vision effect</p>
+	</div>
+	<div class="image">
+		<img src="images/screen_peek.jpg" width="600">
+		<p class="caption">Screenshot of screen peek effect</p>
+	</div>
+
+<h3>Usability</h3>
+	<p>Our video game enhancer is easily usable by anyone who has played 2-player split screen video games before. In a way, our game enhancer is a skin over the standard game and only adds one extra button (per player) that uses 1 of 8 effects - it's simply like having an extra button with one extra functionality. To increase usability during game start-menu and setup, we assign switch 17 on the main DE2 board to turn off screen splitting and blacking, and instead display the full video screen. Then when the players start the game they can just flip the switch back and resume the screen splitting functionality.</p>
+	<p>For project purposes, we kept the additional effect button on a protoboard with a stock pushbutton. However, with some customization, this button could easily be attached to a game controller by the connection of a longer, sturdier wire.</p>
+  
+<h3>Safety</h3>
+	<p>Due to the fact that we were using Altera DE2 development boards, there was little need to enforce safety. We ensure that all wire outs from GPIO pins are fully sheathed and that ESD foam is used between both DE2 boards, as they sit in close proximity to one another. When connecting the two DE2 boards together we also made sure not to connect the VCC's together or to ground.</p>
+	<p>We note that our strobe effect may not be ideal for those who are photosensitive and/or at risk of rapidly flashing images and lights. We took this into account while designing this effect, with the aim to make the periodic flashing slow enough as not to cause harm or discomfort. Without proper video game testing, it is difficult to say if our measures are effective. We make the assumption that if a player can play a standard Xbox game without negative effects, this slowed flashing should be reasonable as well.</p>
+  
+<div class="linklist"> <a name="conclusions"></a>
+<h2>Conclusions</h2>
+
+<h3>Summary</h3>
+	<p>Overall, the results of our project met our expectations at the beginning of the project. Our video game enhancer implementation successfully adds a novel element to 2-player split screen games using image filtering and other distorting effects. Additionally our project was able to successfully interface with both NTSC and VGA signal standards<p>
+	<p>In hindsight, if we were to redo this project, there would be a few aspects we'd try to improve upon. First, we'd be interested in outputting a NTSC signal rather than VGA signal. This would increase the usability of the device for practical everyday use in homes; it would allow players to use the same TV the normally would as opposed to a computer monitor. Second, we'd attempt to add any addition button hardware onto the video game controller directly, again, to improve usability in the real world. Lastly, we'd attempt to eliminate the need for a second DE2 board by purchasing and directly connecting the VGA DAC chip that is on the DE2 boards.</p>
+<h3>Intellectual Property</h3>
+	<p>As mentioned earlier, our project uses Altera's DE2_TV example provided on CD with the DE2 board. Additionally, we used a few megafunctions from Quartus II to create custom hardware for use in our design. Aside from these exceptions, all code was written by us. No designs were reverse engineered in the process.</p>
+<h3>Legal Considerations</h3>
+	<p>We do not own the rights to any games used or demoed with the video game enhancer. The video game enhancer serves our academic project as an interesting way to augment games we enjoy playing via the use of FPGA programming.</p>
+
+<div class="linklist"> <a name="appendices"></a>
+<h2>Appendices</h2>
+
+<h3>A. Code Listing</h3>
+	<ul>
+	<li><a href="code/DE2_TOP.v">DE2_TOP.v</a></li>
+	<li><a href="code/blur.v">blur.v</a></li>
+	<li><a href="code/sobel.v">sobel.v</a></li>
+	<li><a href="code/edges.v">edges.v</a></li>
+	<li><a href="code/invert.v">invert.v</a></li>
+	<li><a href="code/color_flip.v">color_flip.v</a></li>
+	<li><a href="code/strobe.v">strobe.v</a></li>
+	<li><a href="code/tunnel.v">tunnel.v</a></li>
+	<li><a href="code/icons.v">icons.v</a></li>
+	<li><a href="code/delay.v">delay.v</a></li>
+	<li><a href="code/create_mif.m">create_mif.m</a></li>
+	</ul>
+	
+
+<h3>B. Schematics</h3>
+	<p>FPGA Interface:</p>
+	<p><a href="images/fpga_interface.jpg"><img src="images/fpga_interface.jpg" width="740" height="556" /></a></p>
+	<p>External hardware:</p>
+	<p><a href="images/external_hw.jpg"><img src="images/external_hw.jpg" width="740" height="556" /></a></p>
+
+
+<h3>C. Distribution of Work</h3>
+        <div class="group1">
+          <h4>Scott</h4>
+          <ul>
+            <li>Filters and effects</li>
+			<li>Game controls</li>
+			<li>Screen splitting</li>
+          </ul>
+        </div>
+		
+        <div class="group2">
+          <h4>Adam</h4>
+          <ul>
+            <li>Filters and effects</li>
+			<li>Effect icons</li>
+			<li>Project website</li>
+			
+          </ul>
+        </div>
+
+<div class="linklist"> <a name="references"></a>
+<h2>References</h2>
+	<p style="margin: 0 0 0.5em">Below are links to external documents, code, and websites referenced and used throughout this project.</p>
+		<div align="left">
+			<h3>References</h3>
+			<ul>
+			<li><a href="../../../../../../../../www.altera.com/education/univ/materials/boards/de2/unv-de2-board.html">Altera DE2 board</a></li>
+			<li><a href="../../../../DE2_Datasheets/DE2_UserManual.pdf">Altera DE2 User Manual</a></li>
+			<li><a href="../../../../../../../../www.terasic.com.tw/cgi-bin/page/archive.pl@No=30">Altera DE2_TV decoder example (from CD included with DE2 board)</a></li>
+			<li><a href="../../../../../../../../lodev.org/cgtutor/filtering.html">Computer Graphics Tutorial</a></li>
+			</ul>
+		</div>
+		
+           
+<div class="linklist"> <a name="ack"></a>
+<h2>Acknowledgements</h2>
+<p>We would like to thank Altera for their example code and donation of DE2 boards to Cornell. We would also like to thank our instructor Bruce Land for the assistance and advice he provided towards this project, and of course for all the valuable discussion during lab (including topics both related and unrelated to lab).</p>
+
+
+</div>
+    <!-- end maincontent -->
+  </div>
+  <!-- end content -->
+  <!-- content out -->
+  <hr>
+  <!-- footer in -->
+  <div id="footerwrap">
+    <div id="footer">
+      <div id="copyright">
+        <div class="copyright">©2013 Adam Shih &amp; Scott Warren</div>
+        <div class="copyright">Layout ©2012 Cornell University</div>
+      </div>
+    </div>
+    <!-- end footer -->
+  </div>
+  <!-- end footerwrap -->
+  <!-- footer out -->
+</div>
+<!-- end wrapper -->
+
+
+<embed type="application/x-shockwave-flash" width="0" height="0">
+</div></div></div></div></div></div></div></div></div></div></div></body></html>

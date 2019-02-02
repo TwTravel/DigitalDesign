@@ -1,0 +1,202 @@
+
+<html>
+<head>
+<title>ECE 5760 Lab 3</title>
+<style type="text/css">
+<!--
+.red {
+	color: #F00;
+}
+-->
+</style>
+</head>
+
+<body>
+<h2>
+ECE 5760: Laboratory 3</h2> 
+<h2> Mandelbrot set visualization. </h2>
+<p>
+<b> Introduction. </b>
+
+<p> In this assignment you will implement a system to compute and draw the <a href="../../../../../../mathworld.wolfram.com/MandelbrotSet.html">Mandelbrot
+set</a>, and to zoom in on pieces of the set. A <a href="mandelbrot_rect.m">matlab program</a> shows
+how the computation is done. Note that the numbers are all complex. The image
+below is from the program output. The x,y axis units on the image are pixels, not natural
+units. The actual x axis range is <code>[-2,1]</code> and the y axis <code>[-1,1]</code>. The rectangle is the largest rectangle I could fit into the set.<br>
+Former TA, Shiva Rajagopal, found a video for Mandelbrot Set made by Cornell students! <a previewinformation="1" id="LPlnk170748" href="../../../../../../https@www.youtube.com/watch@v=ES-yKOYaXq0" target="_blank">https://www.youtube.com/watch?v=ES-yKOYaXq0</a> <br>
+Lyrics: <a href="../../../../../../www.jonathancoulton.com/wiki/Mandelbrot_Set/Lyrics" target="_blank">http://www.jonathancoulton.com/wiki/Mandelbrot_Set/Lyrics</a><br>
+<img src="lab3_mandelbrot_rectangle.png" alt="mandelbrot" width="560" height="420">
+<p> <b> Procedures:</b>  
+<ul>
+  <li>There may be a HPS to control computation and set parameters. <br>
+    Baseline perfromance that <em>you must beat</em> is my best single-processor HPS code. <br>
+    Read the <a href="../../DE1_SOC/HPS_peripherials/univ_pgm_computer.index.html">University computer</a> page, Mandelbrot example. </li>
+  <li>You will  use  custom bus-master hardware to compute
+    the image. The computation of a 640x480 image is compute intensive, so you
+    are going to want to implement multiple computational units to speed up the
+    process. Spend some time considering load balancing since some regions of the
+    complex plane are much faster to compute than others. Initial testing suggests that you can calculate and display the mandebrot set approximately 30 times faster on FPGA hardware, than on the HPS. The computation must output directly to VGA and not pass results through the HPS.</li>
+  <li>For the custom hardware, I suggest using a <em>minimum of</em> 4.23 fixed point notation for
+    interating the quadratic
+    complex number calculation. The number of bits carried will limit the zoom depth. Every bit gives one level of zoom, but you need 10 bits to represent the screen width, so 23 bits gives only 13 zoom levels. The top bit will be the usual 2's comp sign bit.
+     The 4.23 notation means that a single DSP unit can do one multiply. This format give the numbers a dynamic range of +/-7. A <a href="mandelbrot_limit_bits.m">matlab
+      program</a> to check the effect
+    of limiting the range shows that the computation  works without overflow.</li>
+</ul>
+<p><strong>Examples from class:</strong></p>
+<ul>
+  <li>2018 -- <a href="../../../../../../https@youtu.be/T8Jwu5fdKRU">video1</a>, <a href="../../../../../../https@youtu.be/Aet-lHSlhBs">video2</a>, <a href="../../../../../../https@www.youtube.com/watch@v=T8Jwu5fdKRU&list=PL2E0D05BEC0140F13&index=3&t=0s">video3</a> ; 20 solvers, 100 MHz. <br>
+    Effective arithmetic rate is about 10 billion operations/sec.<br>
+  Thanks: Xitang Zhao and Vidya Ramesh</li>
+  <li>Skyler Schneider <a href="../../StudentWork/ss868/lab3/ss868_lab3_photos/100_4904.JPG">1</a>, <a href="../../StudentWork/ss868/lab3/ss868_lab3_photos/100_4891.JPG">2</a>, <a href="../../StudentWork/ss868/lab3/ss868_lab3_photos/100_4919.JPG">3</a>, <a href="../../StudentWork/ss868/lab3/ss868_lab3_photos/100_4923.JPG">4</a></li>
+  <li>Venkatesh Santhanagopalan and Rick Wong <a href="../../StudentWork/vs327/2010-10-21_22-08-27_804 (Custom).jpg">1</a>, <a href="../../StudentWork/vs327/2010-10-21_22-17-32_749 (Custom).jpg">2</a>, <a href="../../StudentWork/vs327/2010-10-21_22-22-30_621 (Custom).jpg">3</a></li>
+  <li>Jinda Cui and Jiawei Yang, <a href="../../StudentWork/jy554/Mandelbrot Set.JPG">Full set</a>.; <br>
+    <a href="../../StudentWork/jy554/satellite_double_spiral.JPG">Satellite double spiral</a>: x_mid=-0.743 643 900 055; y_mid=0.131 825 890 901; zoom level=3000; <br>
+  <a href="../../StudentWork/jy554/neural_network.JPG">neural network</a>: range mode: x=(-0.37432239 -0.373655726 ); y=(0.65938433 0.66005100); zoom mode: x_mid=-0.37398906; y_mid=0.65971767; zoom level=3000;<br>
+  <a href="../../StudentWork/jy554/devils_eye.JPG">devil's eye</a>: range mode: x=(-1.87 -1.85); y=(-0.01 0.01); zoom mode: x_mid=-1.86; y_mid=0; zoom level=100; <br>
+  <a href="../../StudentWork/jy554/alien_egg.JPG">alien's egg</a>: range mode: x=(-1.863 -1.85); y=(-0.00153846 0.00153846); zoom mode: x_mid=-1.8615; y_mid=0; zoom level=650; <br>
+  <a href="../../StudentWork/jy554/lava.JPG">lava</a>: range mode: x=(-1.38 -1.36);y=(-0.026 -0.006); zoom mode: x_mid=-1.37; y_mid=-0.016; zoom level=100; </li>
+  <li>Sandeep Gangundi and  Sion Wang   <a href="../../StudentWork/sg835/600x_zoom.jpg">600x_zoom</a><br>
+    <table border="0" cellpadding="0" cellspacing="0" width="583">
+      <tbody>
+        <tr>
+          <td nowrap="nowrap" valign="bottom" width="159"><p><strong>image name</strong></p></td>
+          <td nowrap="nowrap" valign="bottom" width="220"><p><strong>x coord</strong></p></td>
+          <td nowrap="nowrap" valign="bottom" width="204"><p><strong>y coord</strong></p></td>
+        </tr>
+        <tr>
+          <td nowrap="nowrap" valign="bottom" width="159"><p><a href="../../StudentWork/sg835/flower.jpg">flower</a></p></td>
+          <td nowrap="nowrap" valign="bottom" width="220"><p>[-0.37465401, -0.37332411]</p></td>
+          <td nowrap="nowrap" valign="bottom" width="204"><p>[0.659227668, 0.66020767]</p></td>
+        </tr>
+        <tr>
+          <td nowrap="nowrap" valign="bottom" width="159"><p><a href="../../StudentWork/sg835/asymmetric_mandelbrot.jpg">asymmetric mandelbrot</a></p></td>
+          <td nowrap="nowrap" valign="bottom" width="220"><p>[0.435396403, 0.451687191]</p></td>
+          <td nowrap="nowrap" valign="bottom" width="204"><p>[0.367981352, 0.380210061]</p></td>
+        </tr>
+        <tr>
+          <td nowrap="nowrap" valign="bottom" width="159"><p><a href="../../StudentWork/sg835/pattern.jpg">pattern</a></p></td>
+          <td nowrap="nowrap" valign="bottom" width="220"><p>[-0.758,-0.75]</p></td>
+          <td nowrap="nowrap" valign="bottom" width="204"><p>[0.05,0.06]</p></td>
+        </tr>
+        <tr>
+          <td nowrap="nowrap" valign="bottom" width="159"><p><a href="../../StudentWork/sg835/spiral.jpg">spiral</a></p></td>
+          <td valign="bottom" width="220"><p>[-0.403, -0.399]</p></td>
+          <td nowrap="nowrap" valign="bottom" width="204"><p>[-0.600, -0.603]</p></td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>Mohammad Saifee Dohadwala<br>
+    <table width="864" border="1">
+      <tbody>
+        <tr>
+          <th width="243" scope="col">name</th>
+          <th width="276" scope="col">complex cood x</th>
+          <th width="323" scope="col">complex cood y</th>
+        </tr>
+        <tr>
+          <td><a href="../../Student_Work/md874/8991ECE279E74F26AE0281793B4C9F19.jpg">SPIRAL</a></td>
+          <td><em> x = [-1.339301 , -1.336371]    </em></td>
+          <td><em>y = [-0.060742 , 0.058789]</em></td>
+        </tr>
+        <tr>
+          <td><a href="../../Student_Work/md874/7AAFB9BD55B14AE9ADBBD4B3CBFC37DB.jpg">INVERTED MANDELBROT</a></td>
+          <td><em> x = [0.385683 , 0.388613]  </em></td>
+          <td><em> y = [-0.268013 , -0.266060]</em></td>
+        </tr>
+        <tr>
+          <td><a href="../../Student_Work/md874/CA737EEA8BA845E5B2B19C7DFAC0CC49.jpg">Spiral 2</a></td>
+          <td><em> x = [0.379813 , 0.381278]    </em></td>
+          <td><em>y = [-0.275228 , -0.274251]</em></td>
+        </tr>
+        <tr>
+          <td><a href="../../Student_Work/md874/322705BE33574B13A1B1CBD2F9295A9A.jpg">STARFISH</a></td>
+          <td><em> x = [-0.670565, -0.669833]   </em></td>
+          <td><em>y = [-0.458300, -0.457812]</em></td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+</ul>
+<p>Other links</p>
+<ul>
+  <li>A student <a href="../../../../../../web.cecs.pdx.edu/~mperkows/CLASS_574/Oct16-2008/mand.pdf">report</a> on implementing
+a mandelbrot generator on a DE1 board. </li>
+  <li>Mark Bowers <a href="../../../../../../https@www.markbowers.org/fpga-mandelbrot/default.htm">FPGA-based Mandelbrot generator</a></li>
+  <li><a href="../../../../../../locklessinc.com/articles/mandelbrot/default.htm">Mandelbrot set</a></li>
+  <li>MIke Field <a href="../../../../../../https@hackaday.com/2011/06/07/fpga-mandelbrot-fractal-engine/default.htm">Mandelbrot on FPGA</a></li>
+  <li>Who needs VRAM anyway? <a href="../../../../../../blog.cmd.nu/2011/12/who-needs-vram-anyway-or-calculating.html">Or, calculating Mandelbrot on an FPGA</a></li>
+  <li><a href="../../../../../../kluge.in-chemnitz.de/documents/fractal/node9.html">Properties of Mandelbrot set</a></li>
+  <li><a href="../../../../../../en.wikipedia.org/wiki/Mandelbrot_set#Optimizations">Optimizations</a></li>
+</ul>
+<hr>
+<p><b> Assignment </b></p>
+<p><strong>Weekly check points</strong></p>
+<ol>
+  <li>Week 1: <br>
+    -- 
+    demonstrate a simulation of one complex iterator pipeline. The number of iterations required should match the equivalent matlab point in the complex plane for at least two points. </li>
+  <li>Week 2:  <br>
+    -- 
+  demo <em>more than one</em> complex interator bus-master writing to the VGA bus-slave to show full Mandelbrot Set on the VGA. <br>
+  -- demo interactive zooming on the VGA.
+  </li>
+  <li>Week 3: demo full system below</li>
+</ol>
+<p><strong>Full System</strong></p>
+<ul>
+  <li>You may use  HPS for control, but you do not have to. </li>
+  <li>You do need the best HPS time for comparision to FPGA solution time.</li>
+  <li>The corners of the region being plotted should be displayed either on the VGA screen, or on a serial console.</li>
+  <li>You should be able
+  to choose the maximum number of iterations using serial input the HPS, or toggle switches,
+  or however you want to do it.</li>
+  <li>Upon pressing KEY3, the system should compute and display the full Mandelbrot
+    set,
+    as shown above. </li>
+  <li>The computation must be a bus-master output directly to the VGA bus-slave, and not pass results through the HPS. The VGA graphics interface should  run the VGA at 640x480 resolution with at least 8-bit color per pixel. Colors may aid in
+    debugging and certainly look cool. You may want to map color to the number of iterations
+    to divergence, or to the log of that number. A reasonable approximation of
+    the log is to just use the position of the largest non-zero bit in the count
+    (in matlab<code> fix(log2(count))</code>.
+  A modified <a href="mandelbrot_log.m">matlab
+  program</a> and <a href="mandelbrot_640x480_log.png">image</a> show the effect
+  of log-compressing the numerical range.
+The <a href="mandelbrot_640x480_zoom_log.png">zoomed image</a> (see below) also
+shows different detail.
+  <li>There will be a zoom interface using push buttons, or serial communication
+    to a terminal or a mouse interface. It is sufficient to pick a center coordinate and zoom in/out by a factor of two.
+   When you trigger the zoom calculation, the specified
+  corners should be reassigned to the corners of the display and 640x480 new points in those intervals should be iterated
+  again. 
+  <li><strong>Part of your grade
+  will depend upon how fast you can render the full 640x480 set and two other regions picked on demo day.</strong> </li>
+  <li>The
+    elapsed time to draw the screen (in  milliseconds)  should be shown  on the VGA screen. <br>
+  </li>
+  <li>You will need to show how your solution time for the full set depends on the number of solver pipelines used.</li>
+  <br>
+  Be prepared to demo your design to your TA in lab.
+  </li>
+</ul>
+<p> Your written lab report should include the sections mentioned in the <a href="../../policy.html">policy page</a>, and :
+<ul>
+  <li>A table of times to compute various regions of the Mandelbrot set close
+    to the areas specified in the list.
+    <ul>
+      <li><code>x=[-2 1],  y=[-1 1] </code></li>
+      <li><code>x=[-0.758,-0.75], y=[0.05,0.06]</code></li>
+      <li><code>x=[-1.45, -1.3], y=[-0.07, 0.07]</code></li>
+  </ul>  
+  <li>A collection of photographs of your favorite regions, and their coordinates.
+    The camera should be good enough to resolve individual pixels.
+  <li>A table of your solution time for the full set versus  the number of solver pipelines used <br>
+    and for FPGA solution versus HPS solution time.
+  <li>A detailed dsecription of your Qsys design. 
+  <li> A heavily commented listing of your Verilog design (for FPGA) and GCC code (for HPS). 
+</ul>
+<hr>
+<small> <font size="-1">Copyright Cornell University </font></small><!-- #BeginDate format:Am1 -->November 15, 2018<!-- #EndDate -->
+</body> </html>
+

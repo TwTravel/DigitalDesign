@@ -1,0 +1,608 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><!--
+	This document provides the basis of a semantically structured web page 
+	authored in XHTML 1.0 Transitional using established Cornell University
+	naming conventions.
+--><title>Final Projects ECE 5760</title>
+	
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+	<meta http-equiv="Content-Language" content="en-us">
+	<link rel="shortcut icon" href="../../../favicon.ico" type="image/x-icon"><!--
+	All layout and formatting should be controlled through Cascading Stylesheets (CSS).
+	The following link tag should appear in the head of every page in the website. see
+	styles/screen.css.
+-->
+	
+
+	<link rel="stylesheet" type="text/css" media="screen" href="styles/screen.css">
+	<link href="styles/prettify_002.htm" type="text/css" rel="stylesheet">
+	
+	<style type="text/css">
+
+/* All Styles Optional */
+
+div#show3 {
+background-color:#f0eee4;
+width:250px;
+margin:0 auto;
+border:1px solid #f0eee4;
+}
+div#show3 table td, div#show4 table td {
+height:24px;
+background-image:url('38.gif');
+}
+div#show4 table td {
+background-image:url('40.gif');
+}
+div#show3 table input,  div#show4 table input {
+outline-style:none;
+}
+    </style>
+
+<!--[if IE]>
+<style type="text/css">
+div#show3 table td, div#show4 table td {
+height:21px;
+}
+</style>
+<![endif]-->
+<!--
+<script type="text/javascript">
+
+//If using image buttons as controls, Set image buttons' image preload here true
+//(use false for no preloading and for when using no image buttons as controls):
+var preload_ctrl_images=true;
+
+//And configure the image buttons' images here:
+var previmg='left.gif';
+var stopimg='stop.gif';
+var playimg='play.gif';
+var nextimg='right.gif';
+
+var slides3=[]; //THIRD SLIDESHOW
+//configure the below images and descriptions to your own, note optional links, target and window specifications. 
+// USE 200 pixels tall
+
+		slides3[0]=["f2007/hc454_gtc32/both02.jpg","", "f2007/hc454_gtc32/hc454_gtc32/index.html"]
+		slides3[1]=["f2007/ms882_yc292/game.jpg","", "f2007/ms882_yc292/ms882_yc292/index.htm"]
+		slides3[2]=["f2007/rc437_mj288/rc437_mj288/pba03.jpg","", "f2007/rc437_mj288/rc437_mj288/rc437_mj288/index.html"]
+		slides3[3]=["f2007/tjs49aw259/headerSmall.jpg","", "f2007/tjs49aw259/index.html"]
+		slides3[4]=["f2007/pictures/StereogramSmall.jpg","", "f2007/awh24_mdj23/awh24_mdj23/index.html"]
+		slides3[5]=["f2006/stb25/Ray1small.jpg","", "f2006/stb25/stb25ydz2/index.html"]
+		slides3[6]=["f2006/PataneBrumer/firSmall.png","", "f2006/PataneBrumer/index.html"]
+		slides3[7]=["f2007/pictures/StereogramSmall.jpg","", "f2007/awh24_mdj23/awh24_mdj23/index.html"]
+		slides3[8]=["f2008/aj77/IMG_2948small.jpg","", "f2008/aj77/aj77/finalreport.html"]
+		slides3[9]=["f2008/pae26_jsc59/NetSmall.jpg","", "f2008/pae26_jsc59/pae26_jsc59/index.html"]
+		slides3[10]=["f2008/ap328_sjp45/RabbitSmall.jpg","", "f2008/ap328_sjp45/website/introduction.htm"]
+		slides3[11]=["f2008/tt236/DisplaySmall.jpg","", "f2008/tt236/tt236/index.html"]
+		slides3[12]=["f2008/ed267/gasket.jpg","", "f2008/ed267/erik_webpage_files/ed267_576.htm"]
+		slides3[13]=["f2008/tor2/ScreenSmall.jpg","", "f2008/tor2/main.html"]
+		slides3[14]=["f2009/jsd46_pag42/titlepicSmall.jpg","",    "f2009/jsd46_pag42/jsd46_pag42/index.html"]
+		slides3[15]=["f2009/jmd242_aps243/receiverSmall.jpg","",    "f2009/jmd242_aps243/576JonAllisite/site/index.html"]
+		slides3[16]=["f2009/csm44_jck46/keyboard_small.jpg","", "f2009/csm44_jck46/index.html"]
+		slides3[17]=["f2010/kaf42_jay29_teg25/cartoon_small.jpg","", "f2010/???/index.html"]
+		slides3[18]=["f2010/ss868/demo_small.jpg","", "f2010/ss868/ss868/index.html"]
+		slides3[19]=["f2010/pfk5_jk459/depth_image_small.jpg","", "f2010/pfk5_jk459/pfk5_jk459/index.html"]
+		slides3[20]=["f2010/tss64_rs423/surface_small.jpg","", "f2010/tss64_rs423/rs423_tss64/index.html"]
+		slides3[21]=["f2010/ssc88_yl477/game_small.jpg","", "f2010/ssc88_yl477/ssc88_yl477/index.html"]
+		slides3[22]=["f2010/der34_mpl56/screen_small.jpg","", "f2010/der34_mpl56/mpl56_der34/musicvisualization.html"]
+		slides3[23]=["f2010/dj238_ssb224_aa764/draw_small.jpg","", "f2010/dj238_ssb224_aa764/MyWebSites/index.htm"]
+		slides3[24]=["f2011/yk579_vm285/small.jpg","", "f2011/yk579_vm285/yk579_vm285/index.html"]
+		slides3[25]=["f2011/ml984_tnn7_yy475/small.jpg","", "f2011/ml984_tnn7_yy475/Publish/intro.html"] 
+		slides3[26]=["f2011/lba36_wl336/small.jpg","", "f2011/lba36_wl336/lba36_wl336/index.html"] 
+		slides3[27]=["f2011/sg835/small.jpg","", "f2011/sg835/Air_Driano/index.html"]
+		
+//optional properties for these images:
+slides3.no_descriptions=1; //use for no descriptions displayed
+slides3.pause=1; //use for pause onmouseover
+slides3.image_controls=0; //use images for controls
+slides3.button_highlight='#cccccc'; //onmouseover background-color for image buttons (requires image_controls=1)
+slides3.specs='width=350, height=400' //global specifications for this show's new window(s)
+slides3.random=1; //set a random slide sequence on each page load
+slides3.manual_start=0; //start show in manual mode (stopped)
+slides3.fadecolor='#f0eee4';
+slides3.no_descriptions=1;
+//slides3.jumpto=1;
+slides3.no_added_linebreaks=1;
+slide3.controls_top=0;
+//slide3.no_controls=1;
+
+//Notes:
+//slides#.target will set a target for a slide group, will be overridden by slides#[#][3], if present
+//slides#.specs will set new window specifications for a slide group, will be overridden by slides#[#][4], if present
+//slides#.fadecolor will set fading images background color, defaults to white
+//slides#.no_controls will set a slide show with no controls
+//slides#.random will set a random slide sequence on each page load
+//slides#.delay=3000 will set miliseconds delay between slides for a given show, may also be set in the call as the last parameter
+//slides#.jumpto=1 will display added controls to jump to a particular image by its number
+//slides#.no_added_linebreaks=1; use for no added line breaks in formatting of texts and controls
+
+//use below to create a customized onclick event for linked images in a given show:
+//slides#.onclick="window.open(this.href,this.target,'top=0, left=0, width='+screen.availWidth+', height='+screen.availHeight);return false;"
+
+</script>
+
+<script src="swissarmy.js" type="text/javascript">
+
+/***********************************************
+* Swiss Army Image slide show script  - © John Davenport Scheuer: http://home.comcast.net/~jscheuer1/
+* This notice MUST stay intact for legal use
+* Visit Dynamic Drive at http://www.dynamicdrive.com/ for full original source code
+***********************************************/
+
+</script>
+-->
+</head><body class="bridge" onload="prettyPrint()">
+
+<!--
+	The following link provides a way for people using text-based browsers and
+	screen readers to skip over repetitive navigation elements so that they can 
+	get directly to the content. It is hidden from general users through CSS.
+-->
+<div id="skipnav">
+	<a href="#content">Skip to main content</a>
+</div>
+
+
+
+<!-- The following div contains the Cornell University logo with unit signature -->
+<div id="cu-identity">
+	<div id="cu-logo">
+		<a id="insignia-link" href="../../../../../www.cornell.edu/default.htm"><img src="styles/unit_signature_unstyled.gif" alt="Cornell University" border="0" height="75" width="240"></a>
+		<div id="unit-signature-links">
+			<a id="cornell-link" href="../../../../../www.cornell.edu/default.htm">Cornell University</a>
+		</div>
+	</div>
+	
+	<!--
+		The search-navigation div contains links that allow the user to search
+		either the unit website or all of cornell.edu.
+		These links will be displayed in the unit signature banner and will
+		be aligned with the right edge of the page.
+	
+	<div id="search-navigation">
+		<ul>
+			<li><a href="http://www.cornell.edu/search/">Search Cornell</a></li>
+		</ul>
+	</div> -->
+	
+	 
+		<!--The search-form div contains a form that allows the user to search 
+		either pages or people within cornell.edu directly from the banner.-->
+	<div id="search-form">
+		<form action="http://www.cornell.edu/search/" method="get" enctype="application/x-www-form-urlencoded">
+			<div id="search-input">
+				<label for="search-form-query">SEARCH CORNELL:</label>
+				<input type="text" id="search-form-query" name="q" value="" size="20" />
+				<input type="submit" id="search-form-submit" name="submit" value="go" />
+			</div>
+
+			<div id="search-filters">
+					<input type="radio" id="search-filters1" name="tab" value="" checked="checked" />
+					<label for="search-filters1">Pages</label>
+				
+					<input type="radio" id="search-filters2" name="tab" value="people" />
+					<label for="search-filters2">People</label>
+					
+					<a href="../../../../../www.cornell.edu/search/default.htm">more options</a>
+			</div>	
+		</form>
+	</div>
+	
+	
+	<!-- 
+		The search-form div contains a form that allows the user to search 
+		either the unit website or all of cornell.edu directly from the banner.
+	<div id="search-form">
+		<form action="#" method="post" enctype="application/x-www-form-urlencoded">
+			<div id="search-input">
+				<label for="search-form-query">SEARCH:</label>
+				<input type="text" id="search-form-query" name="query" value="" size="20" />
+				<input type="submit" id="search-form-submit" name="submit" value="go" />
+			</div>
+
+			<div id="search-filters">
+					<input type="radio" id="search-filters1" name="target" value="unit" checked="checked" />
+					<label for="search-filters1">Unit name</label>
+				
+					<input type="radio" id="search-filters2" name="target" value="cornell" />
+					<label for="search-filters2">Cornell</label>
+					
+					<a href="#">more options</a>
+			</div>	
+		</form>
+	</div>
+	-->
+</div>
+
+<!-- The header div contains the main identity and main navigation for the site -->
+<div id="header">	
+	<!--
+		The navigation div contains the site's main navigation. These
+		links will be displayed in a horizontal, gray navigation bar 
+		under the unit signature banner.
+	-->	
+	<div id="navigation">
+		<ul>
+			<li><a href="../../../../../www.ece.cornell.edu/default.htm">ECE</a></li>
+			<li><a href="../../../../../https@intranet.ece.cornell.edu/default.htm">ECE intranet</a></li>
+			<li><a href="../../../../../www.cuinfo.cornell.edu/default.htm">CUinfo</a></li>
+			<li><a href="../../../../../www.cornell.edu/default.htm">Cornell</a></li>
+			<li><a href="../../../../../www.library.cornell.edu/default.htm">Library</a></li>
+			<li><a href="../../../default.htm">Bruce Land</a></li>
+			<!-- More navigation as needed
+			<li><a href="#">Navigation 6</a></li>
+			-->
+						
+		</ul>
+	</div>
+	
+	<hr>
+	
+	<!-- 
+		The identity div contains the name of a main site section
+	-->
+	<div id="identity" align="center">
+	<h1> <br />
+	Cornell University <br />
+	ECE 5760 <br />
+	
+	 Advanced Microcontrollers<br />
+	Final Projects<br />
+
+	</h1>
+	</div>
+</div>
+
+<hr>
+<!-- The content div contains the main content of the page -->
+<div id="wrap">
+
+<!-- The content div contains the main content of the page -->
+
+<div id="content">
+	<div id="main">
+	
+	<div class="bridge-section">
+	<!--<h2>Teaching</h2> -->
+	
+	
+	<div class="main-photo-small"> 
+	
+		<!--
+		<script type="text/javascript">
+		//Define Image Array. Syntax: ["image_path", "url_destination", "url_target"]
+		var myimages=new Array()
+		myimages[0]=["s2006/rg242/helicopterSmall.jpg", "s2006/rg242/webpage/ece%20476.htm", ""]
+		myimages[1]=["s2007/jxd2/robotSmall.jpg", "s2007/jxd2/djd36_jxd2/neuralrobot.htm", ""]
+		myimages[2]=["s2006/cjr37/CardsWithReaderSmall.jpg", "s2006/cjr37/Website/index.htm", ""]
+		myimages[3]=["s2007/LaserHead.jpg", "s2007/aw259_bkr24/index.html", ""]
+		myimages[4]=["s2006/jzs3_da65/Small.jpg", "s2006/jzs3_da65/jzs3_da65/index.htm", ""]
+		myimages[5]=["s2008/bmy5_hcj4/SmallImage.jpg", "s2008/bmy5_hcj4/bmy5_hcj4/index.html", ""]
+		myimages[6]=["s2008/pae26_rwc28/CubeSmall.JPG", "s2008/pae26_rwc28/pae26_rwc28/index.html", ""]
+		myimages[7]=["s2008/RobotArmSmall.jpg", "s2008/aa349_jjs222/aa349_jjs222/robotarmOPENTHIS.html", ""]
+		myimages[8]=["s2007/cmm98_jl478/packageSmall.jpg", "s2007/cmm98_jl478/cmm98_jl478/index.html", ""]
+		myimages[9]=["s2008/twc22_bef23/SmallTrumpet.jpg", "s2008/twc22_bef23/twc22_bef23/index.html", ""]
+		myimages[10]=["s2008/cj72_xg37/pic2.jpg", "s2008/cj72_xg37/cj72_xg37/index.html", ""]
+		myimages[11]=["s2000/HARREN/cardreader.jpg", "s2000/harren/index.htm", ""]
+		
+		//Create new drop-in slideshow
+		//Syntax: new dropinslideshow(image_array, slideshow_width, slideshow_height, delay_before_rotation)
+		new dropinslideshow(myimages, 250, 200, 1000)
+		</script> -->
+		<div id="show3">
+	<script type="text/javascript">	
+	new inter_slide(slides3,350,250,15000) 
+	</script>
+	</div>
+	</div>
+	
+<p><br />
+The following projects were produced in the last month of <a href="../index.html"><strong>ECE 5760</strong></a>. The students were given the responsibility of choosing their project, then designing and building it. In 2017 we started using Intel/Altera/Terasic Cyclone5 FPGA. Earlier projects were built using the <a href="../../../../../www.altera.com/education/univ/materials/boards/unv-de2-board.html">Altera</a>/<a href="../../../../../www.terasic.com.tw/cgi-bin/page/archive.pl@Language=English&CategoryNo=39&No=30">Terasic</a> CycloneII FPGA, educational board. See the <a href="../LABS/f2008/lab5.html"><strong>assignment</strong></a>  or a few <a href="ProjectIdeas.htm"><strong>ideas for projects</strong></a> for further description. The project numbers are for identification and represent no other ranking.  Send comments or questions to <a href="../../../default.htm">Bruce Land</a>, <a href="../../../../../www.ece.cornell.edu/default.htm">Electrical and Computer Engineering</a></p>
+<!-- <br clear="right" /> -->
+<div class="bridge-section">
+<h2>Years &nbsp;&nbsp;<font size="-1"><strong> 
+	<a href="#s2018">2018</a> |
+<a href="#s2017">2017</a> |
+<a href="#s2016">2016</a> |
+<a href="#s2015">2015</a> |<a href="#s2014">2014</a> |<a href="#s2013">2013</a> | <a href="#f2011">2011</a> | 
+  <a href="#f2010">2010</a> | <a href="#f2009">2009</a> |
+	<a href="#f2008">2008</a> | <a href="#f2007">2007</a> | <a href="#f2006">2006</a> 
+	</strong></font></h2>
+ 
+<p><a name="s2018"></a></p>
+<h4>Spring 2018 <a href="../../../../../https@www.youtube.com/user/ece4760"><img src="youtube.png" alt="youtube" width="54" height="24" align="absmiddle" /></a>CycloneV SoC</h4> 
+	<ol>
+	  <li><a href="s2018/mch258_mtr73_jsp263/final_report_mch258_mtr73_jsp263/final_report_mch258_mtr73_jsp263/index.html">Interactive Mandelbrot Viewer</a> (<a href="../../../../../https@www.youtube.com/watch@v=WxDH-1V-4o0">video</a>) <a href="../../../../../https@hackaday.com/2018/07/15/interactive-mandelbrot-set-viewer-runs-on-fpgas/default.htm">hackaday</a>, </li>
+	  <li><a href="s2018/es876_aw528_bac239/es876_aw528_bac239/es876_aw528_bac239/index.html">FPGA Knn Image Recognition</a> (<a href="../../../../../https@youtu.be/hYRiWG278oo">video</a>)</li>
+	  <li><a href="s2018/bt346_yw883_ap2289/bt346_yw883_ap2289/bt346_yw883_ap2289/index.html">Four Camera Pyramid Display</a> (<a href="../../../../../https@youtu.be/d7XWErJ8ilE">video</a>)</li>
+	  <li><a href="s2018/jmw483_cjs342_jzw8/jmw483_cjs342_jzw8/html5up-stellar/index.html">Animation-rate Lattice Boltzmann Solver</a> (<a href="../../../../../https@youtu.be/vGuJlq_7fU4">video</a>)</li>
+	  <li><a href="s2018/ac2369_de229_vg254/ac2369_de229_vg254/ac2369_de229_vg254/index.html">Visual Playing Card Recognition</a> (<a href="../../../../../https@youtu.be/DPKz4nK2bHc">video</a>)</li>
+	  <li><a href="s2018/cz382_zz488_bx64/cz382_zz488_bx64/cz382_zz488_bx64/index.html">Dijkstra algorithm on railway network of China</a> (<a href="../../../../../https@youtu.be/8EkWldmILow">video</a>) <a href="../../../../../https@hackaday.com/2018/09/23/using-an-fpga-to-navigate-chinas-railroads/default.htm">hackaday</a>, </li>
+	  <li><a href="s2018/vr236_xz522/vr236_xz522/vr236_xz522/index.html">Binary Neural Network for Digit Recognition on FPGA</a> (<a href="../../../../../https@youtu.be/OIkAZBkXz3U">video</a>)</li>
+	  <li><a href="s2018/jgc232_mmm389_jw2299/mmm389_jgc232_jw2299/mmm389_jgc232_jw2299/ECE_5760_Final_Project.htm">Head-Related Transfer Function Explorer</a> (<a href="../../../../../https@youtu.be/JtTN3p5GRpE">video</a>)</li>
+	  <li><a href="s2018/dc884/dc884/index.html">Reaction-Diffusion simulation on HPS</a> (<a href="../../../../../https@youtu.be/XqCPUvazw5g">video</a>)</li>
+	  <li><a href="s2018/btj28_bjr96_dg524/btj28_bjr96_dg524/btj28_bjr96_dg524/index.html">Fluid Flow Simulation with Musical Stimulus</a> (<a href="../../../../../https@youtu.be/u7EYMLRzBFU">video</a>)</li>
+	  <li><a href="s2018/yr233_pq32/yr233_pq32/yr233_pq32/index.html">FPGA Convolution Neural Network Accelerator</a><br />
+      <em>Following projects are private, by request of the authors</em>.	  </li>
+	  <li>Binary Neural Net<br />
+	  </li>
+	  <li>FPGA-Based Radio Receiver </li>
+	</ol>
+	
+ <p><a name="s2017"></a></p>
+ <h4>Spring 2017 <a href="../../../../../https@www.youtube.com/user/ece4760"><img src="youtube.png" alt="youtube" width="54" height="24" align="absmiddle" /></a> CycloneV SoC</h4> 
+<ol>
+  <li> <a href="s2017/jmt329_swc63_gzm3/jmt329_swc63_gzm3/PitchShifter/index.html">Realtime pitch shifter</a> (<a href="../../../../../https@www.youtube.com/watch@v=VeT4ikeRbic&index=10&list=PL2E0D05BEC0140F13&t=3s">video</a>) <a href="../../../../../hackaday.com/2017/06/18/voice-shifting-with-a-cyclone-v-fpga/default.htm"><strong>hackaday</strong></a>, </li>
+  <li><a href="s2017/ijt5_jgf82_jls633/ijt5_jgf82_jls633/sillyscope/index.html">Digital oscilloscope</a> (<a href="../../../../../https@youtu.be/-_ALmpx59SQ@list=PL2E0D05BEC0140F13">video</a>)</li>
+  <li><a href="s2017/eli8_sjy33_awx2/ece5760finalproject/ece5760finalproject/index.html">Big Red Strings: A FPGA Musical Trio</a> (<a href="../../../../../https@youtu.be/DvpA_gBL1VU@list=PL2E0D05BEC0140F13">video</a>) <a href="../../../../../hackaday.com/2017/05/18/synthesizing-strings-on-a-cyclone-v/default.htm"><strong>hackaday</strong></a>, </li>
+  <li><a href="s2017/amg432_srs383_gkt27/amg432_srs383_gkt27/amg432_srs383_gkt27/ECE5760FinalProject.htm">Catch Bruce if you Can: A video hand tracking Game</a> (<a href="../../../../../https@youtu.be/ImjKtQfo_rQ@list=PL2E0D05BEC0140F13">video</a>)</li>
+  <li><a href="s2017/fck22_asm356_rr697/fck22_asm356_rr697/fck22_asm356_rr697/index.html">Character Recognition Using OpenCV on DE1-SOC</a> (<a href="../../../../../https@youtu.be/n0iMeJDNrGU@list=PL2E0D05BEC0140F13">video</a>)</li>
+  <li><a href="s2017/md874/md874/LogicAnalyzer.htm">HPS-powered Logic Analyzer debugging FPGA </a> (<a href="../../../../../https@youtu.be/ouLi8tj1zsg@list=PL2E0D05BEC0140F13">video</a>) <a href="../../../../../hackaday.com/2017/05/17/logic-analyzer-on-chips/default.htm"><strong>hackaday</strong></a>, </li>
+  <li><a href="s2017/rk534_ty252_jdf258/rk534_ty252_jdf258/index.html">Robot Operating System Stereo Vision Accelerator</a> (<a href="../../../../../https@youtu.be/DKKSj_acFZU@list=PL2E0D05BEC0140F13">video</a>)</li>
+  <li><a href="s2017/ipb7/ipb7/ipb7/JuliaProcessor.html">Julia Set Renderer</a> (video)</li>
+  <li><a href="s2017/yz424_clc288/yz424_clc288/final_website/index.html">Real-Time Vision-based Object Identification and Tracking</a> (<a href="../../../../../https@youtu.be/6QZgYuS9QR0@list=PL2E0D05BEC0140F13">video</a>) <strong><a href="../../../../../hackaday.com/2017/06/10/quality-assurance-through-fpga/default.htm">hackaday</a></strong>, <br />
+    Circuit Cellar Magazine, April 2018, #333, pages 18-25
+  </li>
+  <li><a href="s2017/bh475_nds64_wm226/bh475_nds64_wm226/bh475_nds64_wm226/ECE5760FinalProject.htm">HPP lattice Gas Automaton</a> (video)</li>
+  <li><a href="s2017/jss459_ssd56_aj373/jss459_ssd56_aj373/index.html">3D paint using video tracking</a> (<a href="../../../../../https@youtu.be/_DYayH-mK2M@list=PL2E0D05BEC0140F13">video</a>)</li>
+  <li><a href="s2017/arl228_dhl72_wpa26/arl228_dhl72_wpa26/5760 website/index.html">Spooky Tag: Spatial sound cues</a> (<a href="../../../../../https@youtu.be/8c6E6q0jGZw@list=PL2E0D05BEC0140F13">video</a>) <a href="../../../../../hackaday.com/2017/05/23/run-from-the-sound-of-footsteps-in-blind-game-of-tag/default.htm"><strong>hackaday</strong></a>, </li>
+  <li><a href="s2017/cs886_bc472/cs886_bc472/cs886_bc472/index.html">Sound controlled video game</a> (<a href="../../../../../https@youtu.be/AYPyFAELM_k">video</a>)</li>
+</ol>
+<hr />
+<p>CycloneV SoC -- start<br />
+  ====================================================<br />
+  CycloneII and CycloneIV
+-- end</p>
+ 
+ <p><a name="s2016"></a></p>  
+<h4>Spring 2016 <a href="../../../../../https@www.youtube.com/user/ece4760"><img src="youtube.png" alt="youtube" width="54" height="24" align="absmiddle" /></a> CycloneIV</h4> 
+<ol> 
+<li><a href="s2016/svr24/svr24/index.html">Ambient light from TV signal</a> (<a href="../../../../../https@www.youtube.com/watch@v=jbla_nbcfxk&list=PL2E0D05BEC0140F13&index=1">video</a>) (<a href="s2016/svr24/rgb2hsl.zip">rgb-hsv code</a>) <a href="../../../../../hackaday.com/2016/05/20/using-an-fpga-to-generate-ambient-color-from-video/default.htm">hackaday</a>, <a href="../../../../../dangerousprototypes.com/blog/2016/05/24/ambient-tv-lighting-a-low-power-solution-for-creating-ambient-light-based-on-a-tv-signal/#more-91236">dangerous prototypes</a>, 
+<li><a href="s2016/jc2954_zy259/jc2954_zy259/jc2954_zy259.html">Camera-based Finger tip</a> <a href="s2016/jc2954_zy259/jc2954_zy259/jc2954_zy259.html">detection</a> (<a href="../../../../../https@www.youtube.com/watch@v=2rWrv-5ZufY">video</a>) <a href="../../../../../hackaday.com/2016/06/04/real-time-fpga-finger-detection/default.htm">hackaday</a>, 
+<li><a href="s2016/cwa37_nml45/cwa37_nml45/cwa37_nml45/index.html">Audio signal visualization</a> (<a href="../../../../../https@www.youtube.com/watch@v=RYJPcRr-yeI&list=PL2E0D05BEC0140F13&index=1">video</a>) <a href="../../../../../hackaday.com/2016/06/16/no-frame-buffer-for-fpga-vga-graphics/default.htm">hackaday</a>, 
+<li><a href="s2016/sgm82_skg73_mm889/sgm82_skg73_mm889/sgm82_skg73_mm889/index.html">RGB LED Matrix Audio Visualizer</a> (<a href="../../../../../https@www.youtube.com/watch@v=swapwjI-fT8&index=1&list=PL2E0D05BEC0140F13">video</a>) <a href="../../../../../hackaday.com/2016/06/13/fpga-powers-blazingly-fast-led-matrix-audio-visualizer/default.htm">hackaday</a>, 
+<li><a href="s2016/crl233_gp348_nds55/gp348_crl233_nds55/gp348_crl233_nds55/index.html">Levitating a ball</a> (<a href="../../../../../https@vimeo.com/167056844">video</a>) <a href="../../../../../hackaday.com/2016/06/26/mag-lev-without-the-train-but-with-an-fpga/default.htm">hackaday</a>, 
+<li><a href="s2016/avh34_sz296/ece5760_Final_Project_avh34_sz296/ece5760_Final_Project_avh34_sz296/ece5760.Final.Project.Report/ece5760.Final.Project.Report.html">Nintendo sound unit</a> (<a href="../../../../../https@people.ece.cornell.edu/land/courses/ece5760/FinalProjects/s2016/avh34_sz296/ece5760_Final_Project_avh34_sz296/ece5760_Final_Project_avh34_sz296/ece5760.Final.Project.Report/mp3/Shovel.Knight.mp3">audio</a>) <a href="../../../../../hackaday.com/2016/06/19/recreating-chiptunes-in-verilog/default.htm">hackaday</a>,
+<li><a href="s2016/rjb297_map379_cs795/rjb297_map379_cs795/rjb297_map379_cs795/index.html">Gesture Tetris</a> (<a href="../../../../../https@www.youtube.com/watch@v=v-qqfSnmufg">video</a>) <a href="../../../../../hackaday.com/2016/05/28/hand-gestures-play-tetris/default.htm">hackaday</a>, 
+<li><a href="s2016/mjf332_mkp53_sm893/mjf332_mkp53_sm893/index.html">Cricket 2007  Auto-batter</a> (<a href="../../../../../https@www.youtube.com/watch@v=TcaY5SJkQ9Y">video</a>) <a href="../../../../../hackaday.com/2016/05/23/computers-beating-computers-at-cricket/default.htm">hackaday</a>, 
+<li><a href="s2016/msm294_tj93/msm294_tj93/index.html">Evolution game</a>
+</ol>
+    
+<p><a name="s2015"></a></p>  
+<h4>Spring 2015 <a href="../../../../../https@www.youtube.com/user/ece4760"><img src="youtube.png" alt="youtube" width="54" height="24" align="absmiddle" /></a> CycloneIV</h4> 
+<ol> 
+<li><a href="s2015/ttt/ttt/ttt/index.html">Table Tennis Tracker</a> (<a href="../../../../../https@www.youtube.com/watch@v=GB31-bBfpS4&list=PL2E0D05BEC0140F13&index=1">video</a>) <a href="../../../../../hackaday.com/2015/05/15/fpgas-keep-track-of-your-ping-pong-game/default.htm">hackaday</a>, <a href="../../../../../dangerousprototypes.com/2015/05/15/a-real-time-table-tennis-score-keeper/default.htm">dangerous prototypes</a>, <a href="../../../../../hackedgadgets.com/2015/05/16/automated-table-tennis-score-keeper/default.htm">hacked gadgets</a>, <a href="../../../../../www.computer.org/csdl/mags/co/2015/10/mco2015100080.pdf">IEEE Computer Oct 2015</a> pp 80-84, </li>
+<li><a href="s2015/akw62_rq35_sp2283/akw62_rq35_sp2283/index.html">Rubic's cube solver</a> (<a href="../../../../../https@www.youtube.com/watch@v=o-id_F1htPc&list=PL2E0D05BEC0140F13&index=1">video</a>) <a href="../../../../../https@www.unocero.com/2015/06/05/tres-brazos-roboticos-y-una-videocamara-para-resolver-el-cubo-de-rubik/default.htm">unocero</a>, <a href="../../../../../hackaday.com/2015/06/02/solving-rubiks-cube-with-an-fpga/default.htm">hackaday</a>, <a href="../../../../../hackedgadgets.com/2015/08/05/fpga-based-rubiks-cube-solver/default.htm">hacked gadgets</a>, <a href="../../../../../blog.bricogeek.com/noticias/robotica/resolviendo-el-cubo-de-rubik-con-un-fpga/default.htm">bricogeek</a>, </li>
+<li><a href="s2015/spo38_ fc254/witprocam-gh-pages/witprocam-gh-pages/index.html">Real time video anonymizer</a> (<a href="../../../../../https@www.youtube.com/watch@v=J8Envpj3tqI&list=PL2E0D05BEC0140F13&index=2">video</a>) <a href="../../../../../hackaday.com/2015/05/19/real-time-video-anonymizer/default.htm">hackaday</a>, </li>
+<li><a href="s2015/mje56_bwc65/mje56_bwc65/mje56_bwc65/index.html">Gravitational N-Particle Simulator</a> (<a href="../../../../../https@youtu.be/ph_z_JFjPiE">video</a>) <a href="../../../../../hackaday.com/2017/01/02/gravity-simulations-with-an-fpga/default.htm">hackaday</a>, </li>
+<li><a href="s2015/ra469_bt268/ra469_bt268/ra469_bt268/webpage_files.html">Rock/Paper/Scissors</a> (<a href="../../../../../https@www.youtube.com/watch@v=XRmVCAvsOv0&list=PL2E0D05BEC0140F13&index=1">video</a>)</li>
+<li><a href="s2015/zt27_mm2675/zt27_mm2675/zt27_mm2675/index.htm">Gesture control of iPhone</a> (<a href="../../../../../https@youtu.be/9G0S_O9lWTM">video</a>) <a href="../../../../../hackedgadgets.com/2015/05/24/gesture-control-iphone-dock/default.htm">hacked gadgets</a>, </li>
+<li><a href="s2015/wz233_ly288_jpl279/wz233_ly288_jpl279/wz233_ly288_jpl279/FFT_MandelbrotSet.html">Mandelbrot color modulation and zoom</a> (<a href="../../../../../https@youtu.be/epDKXIOjEI4">video</a>) <a href="../../../../../hackaday.com/2015/05/26/dancing-mandelbrot-set-on-a-fpga/default.htm">hackaday</a>, </li>
+<li><a href="s2015/vf63_sw679_rq32/vf63_sw679_rq32/vf63_sw679_rq32/index.html">Re-inventing the Personal Computer</a> (<a href="../../../../../https@youtu.be/Ulg4T83uQ_E">video</a>)</li>
+<li><a href="s2015/spp66_aa2264_ayk33/spp66_aa2264_ayk33/spp66_aa2264_ayk33/FPGA_ARM.html">OpenCL on DE1-SOC</a></li>
+<li><a href="s2015/qw77_ht425/qw77_ht425/qw77_ht425/Hand_Tracking_Mandelbrot_Set _ECE_5760.html">Gesture steered Mandelbrot rendering</a> (<a href="../../../../../https@youtu.be/ziIzqpyvyP0">video</a>)</li>
+<li><a href="s2015/ar856/ECE5760webpage/ECE5760 webpage/webpage_files.html">AES encryptor/decryptor</a></li>
+</ol>
+ 
+<p><a name="s2014"></a></p>
+<h4>Spring 2014 <a href="../../../../../https@www.youtube.com/user/ece4760"><img src="youtube.png" alt="youtube" width="54" height="24" align="absmiddle" /></a>  CycloneII and CycloneIV</h4>
+<ol>
+<li> <a href="s2014/js2839_yc969_ww387/js2839_yc969_ww387/js2839_yc969_ww387/index.html">Fruit Ninja with video tracking</a> (<a href="../../../../../https@www.youtube.com/watch@v=oDQUxPjDd4A&list=PL2E0D05BEC0140F13">video</a>)</li>
+<li><a href="s2014/alt53_akt52_sm2354/alt53_akt52_sm2354/index.html">Flappy Bird player</a> (<a href="../../../../../https@www.youtube.com/watch@v=Fuzear7ZRhc&list=PL2E0D05BEC0140F13">video</a>) <a href="../../../../../hackaday.com/2014/07/27/an-automated-flappy-bird-player/default.htm">hackaday</a>, <a href="../../../../../freeio.org/tag/fpga/default.htm">FreeIO</a>, </li>
+<li><a href="s2014/zh239/ECE5760_ZEQUN_NINGNING_KANG/ECE5760_ZEQUN_NINGNING_KANG/ECE5760.html">Whack-a-Mole with video tracking</a> (<a href="../../../../../https@www.youtube.com/watch@v=L7q5g2qjT5U&list=PL2E0D05BEC0140F13">video</a>)</li>
+<li><a href="s2014/jsw267/html/html/index.html">Bruce-in-a-box</a> (<a href="../../../../../https@www.youtube.com/watch@v=shh8ySmrpKo&list=PL2E0D05BEC0140F13">video</a>) <a href="../../../../../hackedgadgets.com/2014/05/15/bruce-in-a-box-augmented-reality-project-cornell-university-ece-5760/default.htm">hacked gadgets</a>, <a href="../../../../../hackaday.com/2014/05/16/augmented-reality-with-an-fpga/default.htm">hackaday</a>, <a href="../../../../../dangerousprototypes.com/2014/05/15/bruce-in-a-box-augmented-reality-project/default.htm">dangerous prototypes</a></li>
+<li><a href="s2014/rk447/rk447/ECE5760_webpage.htm">Interrupt for Pancake processor</a></li>
+<li><a href="s2014/cig23/cig23/ECE5760PancakeStackCPUHardwareExtensions.htm">Hardware return stack and MAC for Pancake processor</a></li>
+<li><a href="s2014/aab85_jmv87/Final/Final/index.html">Hardware Ethernet Implementation</a></li>
+<li><a href="s2014/ll654_xc255/ll654_xc255/ll654_xc255/index.html">Driving Simulator</a> (<a href="../../../../../https@www.youtube.com/watch@v=lANWXnQwkxc&list=PL2E0D05BEC0140F13">video</a>)</li>
+<li><a href="s2014/zq39_jh2362_jx236/zq39_jh2362_jx236/index.htm">Egg Crusher video game</a> (<a href="../../../../../https@www.youtube.com/watch@v=RnmUTEWmkOM&list=PL2E0D05BEC0140F13">video</a>)</li>
+<li><a href="s2014/am2462_sv345_ts599/am2462_sv345_ts599/final_report_ece5760.html">Color following robot</a> (<a href="../../../../../https@www.youtube.com/watch@v=hw_IRBh_m_0&list=PL2E0D05BEC0140F13&index=6">video</a>)</li>
+</ol>
+
+<p><a name="s2013"></a></p>
+<h4>Spring 2013 <a href="../../../../../https@www.youtube.com/user/ece4760"><img src="youtube.png" alt="youtube" width="54" height="24" align="absmiddle" /></a>  CycloneII</h4>
+<ol>
+<li><a href="s2013/wd65/wd65_SP13/index.html">Upper body</a> <a href="s2013/wd65/wd65_SP13/index.html">Motion Tracking</a> (<a href="s2013/wd65/body_motion_1.MP4">video1</a>, <a href="s2013/wd65/body_motion_2.MP4">video2</a>)</li>
+<li><a href="s2013/hl855_kre27/hl855_kre27/index.html">Hand tracking Pong</a> (<a href="s2013/hl855_kre27/pong.MP4">video</a>) <a href="../../../../../hackedgadgets.com/2013/05/11/hand-tracking-pong/default.htm">hackedgadgets</a>, <a href="../../../../../www.gadgetfactory.net/2013/05/hand-tracking-pong-game-on-fpga/default.htm">gadget factory</a>, <a href="../../../../../dangerousprototypes.com/2013/05/14/hand-tracking-pong-project/default.htm">dangerous prototypes</a>, <a href="../../../../../www.cooking-hacks.com/index.php/blog/default.htm">cooking hacks</a>, <a href="../../../../../www.microsiervos.com/archivo/hackers/pong-a-mano.html">microsiervos</a>, </li>
+<li><a href="s2013/mdr87/index.html">Multiple NTSC screen game battleship</a> (<a href="s2013/video/battleship.MP4">video</a>)</li>
+<li><a href="s2013/cwf38_as889_mao65/index.htm">Augmented Reality Ball Game</a> (<a href="s2013/video/line_game.MP4">video</a>)</li>
+<li><a href="s2013/tg293/tg293/index.html">Anti-tetris game</a> (<a href="s2013/video/push_game.MP4">video</a>) <a href="../../../../../hackaday.com/2013/05/22/anti-tetris-project-is-a-study-in-hand-tracking/default.htm">hackaday</a>, <a href="../../../../../hackedgadgets.com/2013/05/28/hand-controlled-tetris-like-game/default.htm">hacked gadgets</a>, <a href="../../../../../dangerousprototypes.com/2013/05/27/hand-tracking-anti-tetris-game-on-de2-board/default.htm">dangerous protoypes</a>,</li>
+<li><a href="s2013/spw54_as986/spw54_as986/index.htm">Video Game Enhancer</a> (<a href="s2013/video/split_screen.MP4">video</a>)</li>
+<li><a href="../../../../../www.nintendoninja.com/default.htm">Hardware-Based FPGA AI for Super Mario Bros</a> (<a href="../../../../../https@github.com/sciguy14/NintendoNinja-Website/archive/master.zip">code</a>) (<a href="s2013/video/Mario AI.mp4">video1</a>, <a href="s2013/video/mario.MP4">video2</a>) <a href="../../../../../hackaday.com/2013/05/19/fpga-plays-mario-like-a-champ/default.htm">hackaday</a>,</li>
+<li><a href="s2013/and43_mms297/and43_mms297_Webpage/index.html">Beat-Programmagle Gate Array </a></li>
+<li><a href="s2013/cl972_rh523/cl972_rh523/index.html">Piano Hero with Virtual Keyboard</a> (<a href="s2013/video/video_piano.MP4">video</a>) <a href="../../../../../hackaday.com/2013/05/20/camera-based-touchscreen-input-via-an-fpga/default.htm">hackaday</a>, </li>
+<li><a href="s2013/esh64_er294_as885/esh64_er294_as885/index.html">Music Suite</a> (<a href="s2013/video/conductor.MP4">video</a>)</li>
+<li><a href="s2013/xb46_jw937/xb46_jw937/index.html">Realtime image effects</a> (<a href="s2013/video/vid_filter.MP4">video</a>)</li>
+<li><a href="s2013/em447_jm776/em447_jm776/index.html">Red tool revolver</a></li>
+</ol>    
+<p><a name="f2011"></a></p>
+<h4>Fall 2011 <a href="../../../../../https@www.youtube.com/user/ece4760"><img src="youtube.png" alt="youtube" width="54" height="24" align="absmiddle" /></a>  CycloneII</h4>
+(<a href="f2011/ece5760summary2011.jpg">Banner_image</a>, <a href="../../../../../fpgablog.com/posts/cornell-ece5760-2011/default.htm">FPGA blog</a>, <a href="../../../../../www.electronics-lab.com/blog/@p=16037">electronics-lab</a>, <a href="../../../../../blog.terasic.com/cornell-ece5760-a-great-fpga-design-resource/default.htm">Terasic blog</a>, )
+<ol>
+<li><a href="f2011/clt67_yl478/clt67_yl478/index.html">Prime Number Generator and RSA Encrypter/Decrypter</a></li>
+<li><a href="f2011/yk579_vm285/yk579_vm285/index.html">Air String</a> (video <a href="f2011/yk579_vm285/video_instrument1.MP4">1</a>, <a href="f2011/yk579_vm285/video_instrument2.MP4">2</a>, <a href="f2011/yk579_vm285/video_instrument3.MP4">3</a>) <a href="../../../../../hackaday.com/2011/12/12/get-ready-to-play-some-wicked-air-harp/default.htm">hackaday</a>, </li>
+<li><a href="f2011/lba36_wl336/lba36_wl336/index.html">Game of Life Music Synthesizer</a> (video <a href="f2011/lba36_wl336/CA_synth1.MP4">1</a>, <a href="f2011/lba36_wl336/CA_synth2.MP4">2</a>, <a href="f2011/lba36_wl336/CA_synth3.MP4">3</a>, <a href="f2011/lba36_wl336/CA_synth4.MP4">4</a>) <a href="../../../../../blog.makezine.com/archive/2011/12/music-synthesis-added-to-conways-game-of-life.html">make</a>, <a href="../../../../../www.embedds.com/game-of-life-plays-music/default.htm">embedded</a>, </li>
+<li><a href="f2011/csb88/final/index.html">Conway's Game of Life</a> (video <a href="f2011/csb88/CA1.MP4">1</a>) <a href="../../../../../hackedgadgets.com/2011/12/13/fpga-conways-game-of-life/default.htm">hackedgadgets</a>, </li>
+<li><a href="f2011/sg835/Air_Driano/index.html">Air Driano</a> (video <a href="f2011/sg835/driano1.MP4">1</a>,<a href="f2011/sg835/driano2.MP4"> 2</a>, <a href="f2011/sg835/driano3.MP4">3</a>, <a href="f2011/sg835/driano4.MP4">4</a>,<a href="f2011/sg835/driano5.MP4"> 5</a>) <a href="../../../../../www.cnycentral.com/news/story.aspx@id=738360#.T4LMm9WDl8F">BOOM 2012</a> people's choice winner. <a href="../../../../../https@exchange.mail.cornell.edu/owa/redir.aspx@C=ab7107fe48474f9db2c60bb8787d08bb&URL=http_3A_2F_2Fwww.youtube.com_2Fwatch@v=pSzsy7elZlU">youtube</a></li>
+<li><a href="f2011/jy554_jc2636/jy554_jc2636/index.htm">Adaptive Noise Cancellation</a> (youtube <a href="../../../../../www.youtube.com/watch@v=B333dhgzF6U">1</a>, <a href="../../../../../www.youtube.com/watch@v=luI4AN4q4PQ">2</a>, <a href="../../../../../www.youtube.com/watch@v=8JmqB1AgQls">3</a>)</li>
+<li><a href="f2011/emr76_jmm536/emr76_jmm536/index.html">Additively Synthesized Ocarina</a> (video <a href="f2011/emr76_jmm536/ocarina2.MP4">1</a>, <a href="f2011/emr76_jmm536/ocarina3.MP4">2</a>, <a href="f2011/emr76_jmm536/ocarina4.MP4">3</a>, ) <a href="../../../../../hackaday.com/2011/12/13/building-the-ocarina-of-time-with-an-fpga/default.htm">hackaday</a>,</li>
+<li><a href="f2011/ml984_tnn7_yy475/Publish/intro.html">Video bricks</a> (video <a href="f2011/ml984_tnn7_yy475/bricks1.MP4">1</a>, <a href="f2011/ml984_tnn7_yy475/bricks2.MP4">2</a>) <a href="../../../../../hackedgadgets.com/2011/12/14/fpga-breakout-game-played-by-moving-your-hands-hand-breaking-bricks/default.htm">hackedgadgets</a>, </li>
+<li><a href="f2011/mis47_ayg6/mis47_ayg6/index.html">Ethernet Communication Interface</a></li>
+<li><a href="f2011/jl2782/musical_critics/index.html">Visual midi Composer</a> </li>
+</ol>
+    
+    
+    <p><a name="f2010"></a></p>
+<h4>Fall 2010  CycloneII</h4>
+(<a href="f2010/pictures/ece5760summary2010.jpg">Banner_image</a>, <a href="../../../../../blog.makezine.com/archive/2010/12/ece576_final_projects_1.html">make</a>, <a href="../../../../../fpgablog.com/posts/ece5760-fpga/default.htm">fpgablog</a>, <a href="../../../../../www.electronics-lab.com/blog/@p=7468">electronics-lab</a>, <a href="../../../../../hackedgadgets.com/2010/12/15/altera-de2-based-3d-pong-game/default.htm">hackedgadgets</a>, <a href="../../../../../hackaday.com/2010/12/15/falling-sand-game-on-and-fpga/default.htm">hackaday</a>, )
+<ol>
+<li><a href="f2010/ss868/ss868/index.html">Falling Sand Game </a>(video <a href="f2010/ss868/FallingSand1.MOV">1</a>, <a href="f2010/ss868/FallingSand2.MOV">2</a>, <a href="f2010/ss868/FallingSand3.MOV">3</a>)(youtube search &quot;ece 5760 falling sand game&quot;) <a href="../../../../../hackaday.com/2010/12/15/falling-sand-game-on-and-fpga/default.htm">hackaday</a></li>
+      <li><a href="f2010/kaf42_jay29_teg25/teg25_jay29_kaf42/index.html">Video Realtime Cartoonifier</a> (video <a href="f2010/kaf42_jay29_teg25/Demo_1_tom.MOV">1</a>, <a href="f2010/kaf42_jay29_teg25/Demo_2_jeff_line.MOV">2</a>, <a href="f2010/kaf42_jay29_teg25/Demo_3_bruce_lines.MOV">3</a>, <a href="f2010/kaf42_jay29_teg25/Demo_4_edge_off.MOV">4</a>, <a href="f2010/kaf42_jay29_teg25/Demo_4_edge_on.MOV">5</a>, <a href="f2010/kaf42_jay29_teg25/Demo_5_brl4_gray.MOV">6</a>)(youtube search: &quot;ece 5760 cartoon&quot;) <a href="../../../../../blog.makezine.com/archive/2010/12/ece576_final_projects_1.html">make</a></li>
+      <li><a href="f2010/dj238_ssb224_aa764/MyWebSites/index.htm">Virtual Paint</a>  (video <a href="f2010/dj238_ssb224_aa764/Demo_1.MOV">1</a> ,<a href="f2010/dj238_ssb224_aa764/Demo_2.MOV">2</a>, <a href="f2010/dj238_ssb224_aa764/Demo_3.MOV">3</a>)</li>
+      <li><a href="f2010/pfk5_jk459/pfk5_jk459/index.html">Stereographic Depth Mapping</a> (video <a href="f2010/pfk5_jk459/Stereo_1.MOV">1</a>, <a href="f2010/pfk5_jk459/depth_image.jpg">still</a>)</li>
+      <li><a href="f2010/tss64_rs423/rs423_tss64/index.html">Fractal Landscape</a> (video <a href="f2010/tss64_rs423/Surface_1.MOV">1</a>, <a href="f2010/tss64_rs423/Surface_2.MOV">2</a>)(youtube <a href="../../../../../www.youtube.com/watch@v=jCGw_JQi2nA">1</a>, <a href="../../../../../www.youtube.com/watch@v=lr58PStpBD4">2</a>)</li>
+      <li><a href="f2010/ssc88_yl477/ssc88_yl477/index.html">3D pong with video overlay </a>(video <a href="f2010/ssc88_yl477/game_1.MOV">1</a>, <a href="f2010/ssc88_yl477/game_2.MOV">2</a>) <a href="../../../../../hackedgadgets.com/2010/12/15/altera-de2-based-3d-pong-game/default.htm">hackedgadgets</a></li>
+      <li><a href="f2010/der34_mpl56/mpl56_der34/musicvisualization.html">Music Visualization</a> (video <a href="f2010/der34_mpl56/music_1.MOV">1</a>, <a href="f2010/der34_mpl56/music_2.MOV">2</a>, <a href="f2010/der34_mpl56/music_3.MOV">3</a>, <a href="f2010/der34_mpl56/music_4.MOV">4</a>, <a href="f2010/der34_mpl56/music_5.MOV">5</a>)</li>
+      <li><a href="f2010/ma638_ca325_as2454/ma638_ca325_as2454/index.html">PID temperature controller</a></li>
+      <li><a href="f2010/vs327_rw363/WAV_player/ECE 5760.htm">WAV player</a></li>
+      <li><a href="f2010/np276_ksp55_aj355/np276_ksp55_aj355/index.html">Word recognition</a></li>
+</ol>
+    
+	<p><a name="f2009"></a></p>
+<h4>Fall 2009  CycloneII</h4>
+(<a href="../../../../../hackedgadgets.com/2009/12/11/velocity-sensitive-digital-piano-cornell-university-ece-5760-advanced-microcontrollers-final-project/default.htm">hacked gadgets</a>, <a href="../../../../../hackaday.com/2009/12/11/19177/default.htm">hack-a-day</a>, <a href="../../../../../blog.makezine.com/archive/2009/12/fpga_class_project_roundup.html">make</a>, <a href="../../../../../dailydiy.com/2009/12/11/ece576-final-projects/default.htm">dailyDIY</a>, )
+<ol>
+<li><a href="f2009/ty244_jgs33/ty244_jgs33/index.html">Realtime face tracking</a> (<a href="f2009/ty244_jgs33/FaceTracker1.MP4">MP4</a>, )</li>
+      <li><a href="f2009/jsd46_pag42/jsd46_pag42/index.html">Green screen chroma key</a> (<a href="f2009/jsd46_pag42/GreenScreen1.MP4">MP4</a>, <a href="f2009/jsd46_pag42/GreenScreen2.MP4">2</a>, <a href="f2009/jsd46_pag42/GreenScreen3.MP4">3</a>)</li>
+      <li><a href="f2009/jmd242_aps243/576JonAllisite/site/index.html">Sound localizing robot</a> (<a href="f2009/jmd242_aps243/SoundRobot1.MP4">MP4</a>)</li>
+      <li><a href="f2009/Adam_Tom/graphics_engine_12_9_09/index.html">2D graphics engine</a></li>
+      <li><a href="f2009/ng292/ng292/index.html">3D render engine</a></li>
+      <li><a href="f2009/csm44_jck46/index.html">Keyboard synthesizer</a> (<a href="f2009/csm44_jck46/KeyboardSynth1.MP4">MP4</a>)</li>
+      <li><a href="f2009/kr334_ask43/kr334_ask43/kr334_ask43/index.html">Guitar synthesis</a> (<a href="f2009/kr334_ask43/GuitarSynth1.MP4">MP4</a>)</li>
+<li><a href="f2009/nic4_sck76/nic4_sck76/index.html">Evolution tic-tac-toe</a></li>
+      <li><a href="f2009/jfs36_jsm66/jfs36jsm66/index.html">Software radio</a></li>
+      <li><a href="f2009/jl589_jbw48/jl589_jbw48/index.html">JPEG compression engine</a></li>
+      <li><a href="f2009/ts472_mrk99/ts472_mrk99/ts472_mrk99/index.html">Video communications system</a></li>
+    </ol>
+
+	<p><a name="f2008"></a>
+</p>
+   <h4>Fall 2008  CycloneII</h4>
+   (<a href="../../../../../news.slashdot.org/article.pl@sid=08_2F12_2F14_2F019211">slashdot</a>, <a href="../../../../../blog.makezine.com/archive/2008/12/fpga_hacks_cornell_ece5760_final_pr.html">make</a>, <a href="../../../../../www.hackszine.com/blog/archive/2008/12/fpga_hacks_cornell_ece5760_fin.html">hackzine</a>, <a href="../../../../../hackedgadgets.com/2008/12/13/ball-e-color-following-robot-cornell-university-ece-5760-advanced-microcontrollers-project/default.htm">hacked gadgets</a>, <a href="../../../../../www.toysgadget.com/fpga-hacks-cornell-ece5760-final-projects/hacks">toysgadgets</a>, <a href="../../../../../dailydiy.com/2008/12/13/fpga-hacks-cornell-ece5760-final-projects/default.htm">dailyDIY</a>)
+    <ol>
+      <li><a href="f2008/aj77/aj77/finalreport.html">Parallel Tetris</a></li>
+      <li><a href="f2008/pae26_jsc59/pae26_jsc59/index.html">Speaker Recognition </a></li>
+      <li><a href="f2008/ap328_sjp45/website/introduction.htm">Triangle <span class="style2">Graphics Processing Unit</span></a><span class="style2"> (<a href="f2008/ap328_sjp45/Rabbit.MP4">rabbit</a> MP4)</span> </li>
+      <li><a href="f2008/tt236/tt236/index.html">Brute Force Search of a DES Keyspace</a> (youtube <a href="../../../../../www.youtube.com/watch@v=kh2PwUCR7A8&NR=1">1</a>, <a href="../../../../../www.youtube.com/watch@v=uEXoloZczD4&feature=related">2</a>, <a href="../../../../../www.youtube.com/watch@v=FTA62HeP6uE&feature=related">3</a>, <a href="../../../../../www.youtube.com/watch@v=FhrplzKtstg&NR=1">4</a>) </li>
+      <li><a href="f2008/djd36_fac24_wy47/djd36_fac24_wy47/index.html">Implementing a SoC Design on an FPGA</a></li>
+      <li><a href="f2008/ed267/erik_webpage_files/ed267_576.htm">L-System</a> (<a href="f2008/ed267/LSystem.MP4">stocastic L-system</a> MP4) </li>
+      <li><a href="f2008/tor2/main.html">All Digital, FPGA Based, Lock-in Amplifier</a></li>
+      <li><a href="f2008/sdh78_cc459/sdh78_cc459/ideal_gas_simulator.html">Simulation of Ideal Gas Particles</a> (<a href="f2008/sdh78_cc459/CollisionSystem.MP4">500 particles</a> MP4) </li>
+      <li><a href="f2008/cc464_mrm58/FinalProjWebsite/index.html">Video guided, ball-following robot</a> (<a href="f2008/cc464_mrm58/BallEFloor.MP4">demo run</a>, <a href="f2008/cc464_mrm58/BallEVideoProcess.MP4">robot-eye-view</a> MP4) (youtube <a href="../../../../../www.youtube.com/watch@v=pNLdO0iFfSk">1</a>, <a href="../../../../../www.youtube.com/watch@v=a6VNLMlPTcs">2</a>) </li>
+</ol>
+
+	<a name="f2007"></a>
+   <h4>Fall 2007  CycloneII</h4>
+   (<a href="../../../../../hackedgadgets.com/2007/12/04/cornell-university-ece576-advanced-microcontroller-final-projects/default.htm">hacked-gadgets</a>, <a href="../../../../../www.hackaday.com/2007/12/05/cornell-final-projects-2007/default.htm">hackaday</a>, <a href="../../../../../blog.makezine.com/archive/2007/12/ece576_final_projects.html">make magazine</a>, <a href="../../../../../geeksinside.com/viewPost.php@p=341">geeksinside</a>, <a href="../../../../../www.fpga4fun.com/Links.html">fpga4fun</a>, <a href="../../../../../devtoys.com/Projects/Electronics/1213.aspx">devtoys</a>, <a href="../../../../../fpgablog.com/posts/ece-5760-mcu/default.htm">fpgablog</a>,  <a href="../../../../../ee.jobmsn.com/index.php/673.html">EE</a>, <a href="../../../../../www.innovatenordic.com/nordic/page_03.html">innovateNordic</a>, <a href="../../../../../www.dmoz.org/Computers/Hardware/Components/Processors/Nios/default.htm">dmoz</a>, )
+    <ol>
+      <li><a href="f2007/ib54/SysToolkitwebsite/index.html">System-on-Chip Toolkit</a> </li>
+      <li><a href="f2007/ms882_yc292/ms882_yc292/index.htm">FPGA BBQ Stick video game</a> (<a href="f2007/pictures/BBQstick.MP4">mp4</a>) </li>
+      <li><a href="f2007/hc454_gtc32/hc454_gtc32/index.html">Real time Edge extraction</a> (<a href="f2007/pictures/EdgeDetection.MP4">mp4</a>) </li>
+      <li><a href="f2007/tjs49aw259/index.html">Real time Spectrograph</a> (<a href="f2007/pictures/SpectroTedCompressed.MP4">mp4voice</a>, <a href="f2007/pictures/SpectrogramCompressed.MP4">mp4music</a>) </li>
+      <li><a href="f2007/awh24_mdj23/awh24_mdj23/index.html">Real time, Single Image, Random Dot Stereogram</a> (<a href="f2007/pictures/Stereogram.MOV">mov</a> 12 Mbyte, static <a href="f2007/pictures/Stereogram.jpg">image</a>)</li>
+      <li><a href="f2007/dah64_dp239/index.htm">Real time audio pitch shifter</a> (<a href="f2007/pictures/PitchShifter.MP4">mp4</a>) </li>
+      <li><a href="f2007/rc437_mj288/rc437_mj288/rc437_mj288/index.html">FPGA Paint</a> (<a href="f2007/pictures/RanjaniCompressed.MP4">mp4</a>) </li>
+      <li><a href="f2007/cd247_rmz8/cd247_rmz8/index.html">Parallelized Knuth-Morris-Pratt Search Algorithm</a></li>
+      <li><a href="f2007/mjk64_hmm32_jdp45/mjk64_hmm32_jdp45/index.html">UDP Network Hardware </a></li>
+      <li><a href="f2007/ms883_sa453/ms883_sa453/index.html">3D WireMesh Generator</a></li>
+      <li><a href="f2007/pl328/pl328/index.html">Light Source Motion Tracking</a> </li>
+      <li><a href="f2007/bjc54_wh84/bjc54_wh84/index.html">Laser tracker</a> </li>
+      <li><a href="f2007/nry6/nry6/index.html">FPGA Jezzball</a></li>
+      <li><a href="f2007/chc58/index.htm">FPGA DSO</a></li>
+      <li><a href="f2007/bc226/576_report05_website/index.html">Programmable Discrete Graphics Hardware</a></li>
+      <li><a href="f2007/jas328_asl45/jas328_asl45/index.htm">SimpleGPU</a></li>
+      <li><a href="f2007/hkc2_zk29/hkc2_zk29/index.htm">3D wiremesh </a></li>
+</ol>
+   
+
+    <a name="f2006"></a>
+  <h4>Fall 2006 CycloneII</h4>
+(<a href="../../../../../www.hackaday.com/2006/12/07/late-night-mini-extra/http_3A//www.hackaday.com/2006/12/07/late-night-mini-extra/default.htm">hack-a-day</a>, <a href="../../../../../www.makezine.com/blog/archive/2006/12/ece576_final_pr.html">make magazine</a>)
+<ol>
+      <li><a href="f2006/PataneBrumer/index.html">Head related transfer function</a> (Sound spatialization) </li>
+      <li><a href="f2006/KimDorset/ECE576/Sound_Spatialization_ECE576.htm">Head related transfer function</a> (<a href="f2006/KimDorset/Final%20Project576.pdf">pdf version</a>) </li>
+      <li><a href="f2006/stb25/stb25ydz2/index.html">FPGA ray tracer</a> (images <a href="f2006/stb25/Ray1big.jpg">1</a>, <a href="f2006/stb25/Ray2big.jpg">2</a>, <a href="f2006/stb25/Ray3big.jpg">3</a>, <a href="f2006/stb25/Ray4big.jpg">4</a> mpeg <a href="f2006/stb25/MOV04810.MPG">1</a>, <a href="f2006/stb25/MOV04807.MPG">2</a>) (<a href="f2006/stb25/finalReport.doc">doc version</a>) <br />
+      (<a href="../../../../../www.circuitcellar.com/default.htm">Circuit Cellar Magazine</a>, page36, Issue #215 June 2008) </li>
+      <li><a href="f2006/dbb28_kj49/index.html">Pipelined ray tracer</a> </li>
+      <li><a href="f2006/AaronJimmy/576final/index.htm">Image motion tracker </a></li>
+</ol>
+<p><strong>ECE 5760 thanks: </strong></p>
+<ul>
+  <li><strong><a href="../../../../../www.altera.com/default.htm">INTEL/ALTERA</a> for their donation of development hardware and software</strong></li>
+  <li><strong><a href="../../../../../www.terasic.com/default.htm">TERASIC</a> for timely technical support</strong></li>
+  <li></li>
+</ul>
+<div id="footer-content" align="center">
+Copyright November 10, 2010, Cornell University<br />
+This page is transmitted using 100% recycled electrons.<br />
+</div>
+
+<div class="bridge-section"> 
+	<h2>Site Stats</h2>
+	<table width="83%" height="194"  border="1">
+      <tr>
+        <td width="30%" height="53"><div align="center">Year</div></td>
+        <td width="16%"><div align="center">Page visits /year </div></td>
+        <td width="14%"><div align="center">Page views /year</div></td>
+        <td width="16%"><div align="center">Unique visitors/year</div></td>
+        <td width="24%"><div align="center">Summaries</div></td>
+      </tr>
+      <tr>
+        <td><div align="center">2007<br />
+        2008 <br />
+        2009
+        <br />
+        2010
+        <br />
+        2011
+        <br />
+        </div></td>
+        <td><div align="center">11,000<br />
+        32,000<br />
+        19,000<br />
+        16,700
+        <br />
+        22,819
+        <br />
+        <br />
+        </div></td>
+        <td><div align="center"><br />
+                50,000<br />
+                30,000<br />
+                30,200
+                <br />
+                38,003
+    <br />
+                <br />
+                <br />
+                <br />
+        </div></td>
+        <td><div align="center"><br />
+                26,500<br />
+                11,000<br />
+                10,600
+                <br />
+                14,522
+    <br />
+                <br />
+                <br />
+                <br />
+        </div></td>
+        <td><div align="center"><br />
+          <a href="AnalyticsResults/Analytics_ECE5760_projects_Summary.pdf">all</a>, <a href="AnalyticsResults/Analytics_ECE5760_projects_By_Country.pdf">region</a>, <a href="AnalyticsResults/Analytics_ECE5760_projects_by_net.pdf">net</a><br />
+<a href="AnalyticsResults/Analytics_ECE5760_projects_Summary_2009.pdf">all</a>, <a href="AnalyticsResults/Analytics_ECE5760_projects_By_Country_2009.pdf">region</a><br />
+<a href="AnalyticsResults/Analytics_ece576_FinalProjects_2010_all.pdf">all</a>, <a href="AnalyticsResults/Analytics_ece576_FinalProjects_2010_region.pdf">region</a><br />
+                <br />
+                <br />
+                <br />
+                <br />
+        </div></td>
+      </tr>
+    </table>
+	<p>&nbsp;</p>
+  <p><font size="-1">Copyright Cornell University 
+    <!-- #BeginDate format:Am1 -->November 29, 2018<!-- #EndDate -->
+  </font><br>
+</p>
+<!--
+<!--ipt src="http://www.google-analytics.com/urchin.js" type="text/javascript">
+</scri-->
+<!--ipt type="text/javascript">
+_uacct = "UA-3015648-3";
+urchinTracker();
+</scri--> -->
+</body></html>
+

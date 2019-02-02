@@ -1,0 +1,83 @@
+; This program demos compiler
+; with LED output and button input
+; ==================================
+
+constant ; named constants
+	key3mask 8
+	key2mask 4
+	keys 1  ; port 1
+	keymask 15 ; 0x0f
+	pattern2 255 ; 0xff
+	pattern3 15 ; 0x0f
+	redLEDs 3 ; port 3
+	greenLEDs 2 ; port 2
+	forever 1 ; endless loop
+
+; ==================================
+
+variable
+	test   ; location to push test data
+	counter1   ; outer loop counter
+	counter2   ; inner loop counter
+ 
+; ==================================
+ 
+inline inc
+	1 add
+endinline
+
+inline swap
+	pop.4 ; locs 4&5 are hidden temp locations
+	pop.5
+	push.4
+	push.5
+endinline
+
+; ================================
+
+function
+	evalkey
+	
+; =================================
+program ; this section contains the actual program
+
+main:
+255 out[greenLEDs]; reset the green LEDs
+0 =counter1 ; init counter
+
+while forever ; never exit
+do
+	counter1 inc ; get the counter and increment
+	dup ; copy stack top 
+swap
+	out[redLEDs] ;output one copy, one on stack to store
+	=counter1  ; save the counter
+
+	;slow it down with an inner loop counter
+	1 =counter2 ; reset and store inner counter
+	while counter2 0 ne ; compare stack top to zero
+		do counter2 inc =counter2 ; inc the counter
+	endwhile	;end of inner loop	
+
+	; detect some button presses
+	if ; is KEY[3] pressed?
+		key3mask evalkey ; detect 4th bit set
+	then ; key 3 is pressed
+		pushi.pattern2 out.greenLEDs   
+	else ; key 3 is not pressed
+		pushpc. out[greenLEDs]
+	endif	
+endwhile ; end of outer loop
+
+;=== read keys function ====
+; enter with a switch selector bit on the stack
+; exits with a TRUE/FALSE for match/nomatch on stack
+evalkey: 
+	in[keys] bnot ; invert so key-down==1
+	keymask band ; use only lower 4 bits
+	eq ; compare to specific_keymask
+	return
+; ===========================
+
+
+;===end of code ============================

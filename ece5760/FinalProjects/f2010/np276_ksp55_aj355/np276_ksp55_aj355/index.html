@@ -1,0 +1,2355 @@
+<html xmlns:v="urn:schemas-microsoft-com:vml"
+xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:w="urn:schemas-microsoft-com:office:word"
+xmlns:st1="urn:schemas-microsoft-com:office:smarttags"
+xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=utf-8">
+<meta name=ProgId content=Word.Document>
+<meta name=Generator content="Microsoft Word 11">
+<meta name=Originator content="Microsoft Word 11">
+<link rel=File-List href="index_files/filelist.xml">
+<link rel=Edit-Time-Data href="index_files/editdata.mso">
+<!--[if !mso]>
+<style>
+v\:* {behavior:url(#default#VML);}
+o\:* {behavior:url(#default#VML);}
+w\:* {behavior:url(#default#VML);}
+.shape {behavior:url(#default#VML);}
+</style>
+<![endif]-->
+<title>Real Time Speech Recognition Engine</title>
+<o:SmartTagType namespaceuri="urn:schemas-microsoft-com:office:smarttags"
+ name="place"/>
+<!--[if gte mso 9]><xml>
+ <o:DocumentProperties>
+  <o:Author>Aakash Jain</o:Author>
+  <o:LastAuthor>Aakash Jain</o:LastAuthor>
+  <o:Revision>301</o:Revision>
+  <o:TotalTime>341</o:TotalTime>
+  <o:Created>2010-12-08T17:04:00Z</o:Created>
+  <o:LastSaved>2010-12-10T08:23:00Z</o:LastSaved>
+  <o:Pages>1</o:Pages>
+  <o:Words>3639</o:Words>
+  <o:Characters>20744</o:Characters>
+  <o:Lines>172</o:Lines>
+  <o:Paragraphs>48</o:Paragraphs>
+  <o:CharactersWithSpaces>24335</o:CharactersWithSpaces>
+  <o:Version>11.9999</o:Version>
+ </o:DocumentProperties>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <w:WordDocument>
+  <w:Zoom>90</w:Zoom>
+  <w:SpellingState>Clean</w:SpellingState>
+  <w:GrammarState>Clean</w:GrammarState>
+  <w:ValidateAgainstSchemas/>
+  <w:SaveIfXMLInvalid>false</w:SaveIfXMLInvalid>
+  <w:IgnoreMixedContent>false</w:IgnoreMixedContent>
+  <w:AlwaysShowPlaceholderText>false</w:AlwaysShowPlaceholderText>
+  <w:BrowserLevel>MicrosoftInternetExplorer4</w:BrowserLevel>
+ </w:WordDocument>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <w:LatentStyles DefLockedState="false" LatentStyleCount="156">
+ </w:LatentStyles>
+</xml><![endif]--><!--[if !mso]><object
+ classid="clsid:38481807-CA0E-42D2-BF39-B33AF135CC4D" id=ieooui></object>
+<style>
+st1\:*{behavior:url(#ieooui) }
+</style>
+<![endif]-->
+<style>
+<!--
+ /* Font Definitions */
+ @font-face
+	{font-family:SimSun;
+	panose-1:2 1 6 0 3 1 1 1 1 1;
+	mso-font-alt:宋体;
+	mso-font-charset:134;
+	mso-generic-font-family:auto;
+	mso-font-pitch:variable;
+	mso-font-signature:3 680460288 22 0 262145 0;}
+@font-face
+	{font-family:Calibri;
+	panose-1:2 15 5 2 2 2 4 3 2 4;
+	mso-font-charset:0;
+	mso-generic-font-family:swiss;
+	mso-font-pitch:variable;
+	mso-font-signature:-520092929 1073786111 9 0 415 0;}
+@font-face
+	{font-family:"\@SimSun";
+	panose-1:2 1 6 0 3 1 1 1 1 1;
+	mso-font-charset:134;
+	mso-generic-font-family:auto;
+	mso-font-pitch:variable;
+	mso-font-signature:3 680460288 22 0 262145 0;}
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{mso-style-parent:"";
+	margin:0in;
+	margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+h1
+	{mso-margin-top-alt:auto;
+	margin-right:0in;
+	mso-margin-bottom-alt:auto;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	mso-outline-level:1;
+	font-size:24.0pt;
+	font-family:"Times New Roman";
+	font-weight:bold;}
+h2
+	{mso-margin-top-alt:auto;
+	margin-right:0in;
+	mso-margin-bottom-alt:auto;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	mso-outline-level:2;
+	font-size:18.0pt;
+	font-family:"Times New Roman";
+	font-weight:bold;}
+h3
+	{mso-style-link:"h3 Char\,l3 Char\,CT Char Char";
+	mso-style-next:Normal;
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	page-break-after:avoid;
+	mso-outline-level:3;
+	font-size:13.0pt;
+	font-family:Arial;
+	font-weight:bold;}
+p.MsoToc1, li.MsoToc1, div.MsoToc1
+	{mso-style-update:auto;
+	mso-style-next:Normal;
+	margin-top:0in;
+	margin-right:-9.0pt;
+	margin-bottom:0in;
+	margin-left:0in;
+	margin-bottom:.0001pt;
+	text-align:justify;
+	mso-pagination:none;
+	tab-stops:21.0pt right dotted 454.5pt;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:SimSun;
+	mso-font-kerning:1.0pt;
+	mso-fareast-language:ZH-CN;
+	mso-no-proof:yes;}
+p.MsoToc2, li.MsoToc2, div.MsoToc2
+	{mso-style-update:auto;
+	mso-style-next:Normal;
+	margin:0in;
+	margin-bottom:.0001pt;
+	text-align:justify;
+	mso-pagination:none;
+	tab-stops:60.0pt right dotted 445.5pt;
+	font-size:10.5pt;
+	mso-bidi-font-size:11.0pt;
+	font-family:Calibri;
+	mso-fareast-font-family:SimSun;
+	mso-bidi-font-family:"Times New Roman";
+	mso-font-kerning:1.0pt;
+	mso-fareast-language:ZH-CN;}
+p
+	{mso-margin-top-alt:auto;
+	margin-right:0in;
+	mso-margin-bottom-alt:auto;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+span.h3Char
+	{mso-style-name:"h3 Char\,l3 Char\,CT Char Char";
+	mso-style-locked:yes;
+	mso-style-parent:"";
+	mso-style-link:"Heading 3";
+	mso-ansi-font-size:13.0pt;
+	mso-bidi-font-size:13.0pt;
+	font-family:Arial;
+	mso-ascii-font-family:Arial;
+	mso-hansi-font-family:Arial;
+	mso-bidi-font-family:Arial;
+	mso-ansi-language:EN-US;
+	mso-fareast-language:EN-US;
+	mso-bidi-language:AR-SA;
+	font-weight:bold;}
+p.meta, li.meta, div.meta
+	{mso-style-name:meta;
+	mso-margin-top-alt:auto;
+	margin-right:0in;
+	mso-margin-bottom-alt:auto;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.links, li.links, div.links
+	{mso-style-name:links;
+	mso-margin-top-alt:auto;
+	margin-right:0in;
+	mso-margin-bottom-alt:auto;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.ListParagraph, li.ListParagraph, div.ListParagraph
+	{mso-style-name:"List Paragraph";
+	margin:0in;
+	margin-bottom:.0001pt;
+	text-align:justify;
+	text-indent:21.0pt;
+	mso-char-indent-count:2.0;
+	mso-pagination:none;
+	font-size:10.5pt;
+	mso-bidi-font-size:11.0pt;
+	font-family:Calibri;
+	mso-fareast-font-family:SimSun;
+	mso-bidi-font-family:"Times New Roman";
+	mso-font-kerning:1.0pt;
+	mso-fareast-language:ZH-CN;}
+p.listparagraphcxspmiddle, li.listparagraphcxspmiddle, div.listparagraphcxspmiddle
+	{mso-style-name:listparagraphcxspmiddle;
+	mso-margin-top-alt:auto;
+	margin-right:0in;
+	mso-margin-bottom-alt:auto;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+p.listparagraphcxsplast, li.listparagraphcxsplast, div.listparagraphcxsplast
+	{mso-style-name:listparagraphcxsplast;
+	mso-margin-top-alt:auto;
+	margin-right:0in;
+	mso-margin-bottom-alt:auto;
+	margin-left:0in;
+	mso-pagination:widow-orphan;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	mso-fareast-font-family:"Times New Roman";}
+span.date
+	{mso-style-name:date;}
+span.SpellE
+	{mso-style-name:"";
+	mso-spl-e:yes;}
+span.GramE
+	{mso-style-name:"";
+	mso-gram-e:yes;}
+@page Section1
+	{size:8.5in 11.0in;
+	margin:1.0in 1.25in 1.0in 1.25in;
+	mso-header-margin:.5in;
+	mso-footer-margin:.5in;
+	mso-paper-source:0;}
+div.Section1
+	{page:Section1;}
+ /* List Definitions */
+ @list l0
+	{mso-list-id:129829107;
+	mso-list-type:hybrid;
+	mso-list-template-ids:132681608 67698689 67698691 67698693 67698689 67698691 67698693 67698689 67698691 67698693;}
+@list l0:level1
+	{mso-level-number-format:bullet;
+	mso-level-text:;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l0:level2
+	{mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l0:level3
+	{mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l0:level4
+	{mso-level-tab-stop:2.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l0:level5
+	{mso-level-tab-stop:2.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l0:level6
+	{mso-level-tab-stop:3.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l0:level7
+	{mso-level-tab-stop:3.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l0:level8
+	{mso-level-tab-stop:4.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l0:level9
+	{mso-level-tab-stop:4.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1
+	{mso-list-id:549878274;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-1202009496 67698711 67698713 67698715 67698703 67698713 67698715 67698703 67698713 67698715;}
+@list l1:level1
+	{mso-level-number-format:alpha-lower;
+	mso-level-text:"%1\)";
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	mso-bidi-font-family:"Times New Roman";}
+@list l1:level2
+	{mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level3
+	{mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level4
+	{mso-level-tab-stop:2.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level5
+	{mso-level-tab-stop:2.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level6
+	{mso-level-tab-stop:3.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level7
+	{mso-level-tab-stop:3.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level8
+	{mso-level-tab-stop:4.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l1:level9
+	{mso-level-tab-stop:4.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l2
+	{mso-list-id:934677922;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-1344773094 67698705 67698713 67698715 67698703 67698713 67698715 67698703 67698713 67698715;}
+@list l2:level1
+	{mso-level-text:"%1\)";
+	mso-level-tab-stop:none;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	mso-bidi-font-family:"Times New Roman";}
+@list l2:level2
+	{mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l2:level3
+	{mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l2:level4
+	{mso-level-tab-stop:2.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l2:level5
+	{mso-level-tab-stop:2.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l2:level6
+	{mso-level-tab-stop:3.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l2:level7
+	{mso-level-tab-stop:3.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l2:level8
+	{mso-level-tab-stop:4.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l2:level9
+	{mso-level-tab-stop:4.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l3
+	{mso-list-id:944920523;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-1665919922 1686566030 -1434812332 -1273610798 197055290 353637826 41867194 -1345683396 -563472396 1031453470;}
+@list l3:level1
+	{mso-level-number-format:image;
+	list-style-image:url("index_files/image025.jpg");
+	mso-level-text:;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l3:level2
+	{mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l3:level3
+	{mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l3:level4
+	{mso-level-tab-stop:2.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l3:level5
+	{mso-level-tab-stop:2.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l3:level6
+	{mso-level-tab-stop:3.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l3:level7
+	{mso-level-tab-stop:3.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l3:level8
+	{mso-level-tab-stop:4.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l3:level9
+	{mso-level-tab-stop:4.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l4
+	{mso-list-id:1153596087;
+	mso-list-type:hybrid;
+	mso-list-template-ids:711478774 1647093526 -1734057242 1844896600 1599772884 -1747787742 828660434 -1711876000 1958773948 -1516975082;}
+@list l4:level1
+	{mso-level-number-format:image;
+	list-style-image:url("index_files/image025.jpg");
+	mso-level-text:;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l4:level2
+	{mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l4:level3
+	{mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l4:level4
+	{mso-level-tab-stop:2.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l4:level5
+	{mso-level-tab-stop:2.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l4:level6
+	{mso-level-tab-stop:3.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l4:level7
+	{mso-level-tab-stop:3.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l4:level8
+	{mso-level-tab-stop:4.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l4:level9
+	{mso-level-tab-stop:4.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l5
+	{mso-list-id:2029791227;
+	mso-list-type:hybrid;
+	mso-list-template-ids:296512960 -319491654 129298982 1530008210 -254657110 203612136 1182859092 -1113662492 1809221526 -148493586;}
+@list l5:level1
+	{mso-level-number-format:image;
+	list-style-image:url("index_files/image025.jpg");
+	mso-level-text:;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l5:level2
+	{mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l5:level3
+	{mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l5:level4
+	{mso-level-tab-stop:2.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l5:level5
+	{mso-level-tab-stop:2.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l5:level6
+	{mso-level-tab-stop:3.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l5:level7
+	{mso-level-tab-stop:3.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l5:level8
+	{mso-level-tab-stop:4.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l5:level9
+	{mso-level-tab-stop:4.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l6
+	{mso-list-id:2106994720;
+	mso-list-type:hybrid;
+	mso-list-template-ids:-451780426 -1826957108 -1215788394 1214398650 2091909806 626062240 -147043992 2105069754 276302210 -57929332;}
+@list l6:level1
+	{mso-level-number-format:image;
+	list-style-image:url("index_files/image025.jpg");
+	mso-level-text:;
+	mso-level-tab-stop:.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;
+	font-family:Symbol;}
+@list l6:level2
+	{mso-level-tab-stop:1.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l6:level3
+	{mso-level-tab-stop:1.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l6:level4
+	{mso-level-tab-stop:2.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l6:level5
+	{mso-level-tab-stop:2.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l6:level6
+	{mso-level-tab-stop:3.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l6:level7
+	{mso-level-tab-stop:3.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l6:level8
+	{mso-level-tab-stop:4.0in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+@list l6:level9
+	{mso-level-tab-stop:4.5in;
+	mso-level-number-position:left;
+	text-indent:-.25in;}
+ol
+	{margin-bottom:0in;}
+ul
+	{margin-bottom:0in;}
+-->
+</style>
+<!--[if gte mso 10]>
+<style>
+ /* Style Definitions */
+ table.MsoNormalTable
+	{mso-style-name:"Table Normal";
+	mso-tstyle-rowband-size:0;
+	mso-tstyle-colband-size:0;
+	mso-style-noshow:yes;
+	mso-style-parent:"";
+	mso-padding-alt:0in 5.4pt 0in 5.4pt;
+	mso-para-margin:0in;
+	mso-para-margin-bottom:.0001pt;
+	mso-pagination:widow-orphan;
+	font-size:10.0pt;
+	font-family:"Times New Roman";
+	mso-ansi-language:#0400;
+	mso-fareast-language:#0400;
+	mso-bidi-language:#0400;}
+</style>
+<![endif]-->
+<meta name=keywords content="">
+<meta name=description content="">
+<link href=style.css rel=stylesheet type="text/css" media=screen>
+<!--[if gte mso 9]><xml>
+ <o:shapedefaults v:ext="edit" spidmax="13314"/>
+</xml><![endif]--><!--[if gte mso 9]><xml>
+ <o:shapelayout v:ext="edit">
+  <o:idmap v:ext="edit" data="1"/>
+ </o:shapelayout></xml><![endif]-->
+</head>
+
+<body lang=EN-US link="#000000" vlink=blue style='tab-interval:.5in'>
+
+<div class=Section1>
+
+<div id=wrapper>
+
+<div id=header>
+
+<div id=logo>
+
+<h1><a name="_Toc279678663"></a><a name="_Toc279679559"><span style='mso-bookmark:
+_Toc279678663'>Real Time Speech Recognition Engine</span></a> </h1>
+
+<p style='margin-left:1.5in;text-indent:.5in'>By: Aakash Jain, <st1:place
+w:st="on">Krishna</st1:place> <span class=SpellE>Teja</span> <span
+class=SpellE><span class=date>Panchagnula</span></span><span class=date> </span>and
+<span class=SpellE>Nitish</span> <span class=SpellE>Paliwal</span> <o:p></o:p></p>
+
+</div>
+
+</div>
+
+<!-- end #header -->
+
+<div id=page>
+
+<div id=page-bgtop>
+
+<div id=page-bgbtm>
+
+<div id=content>
+
+<div>
+
+<div>
+
+<h1 style='margin-top:12.0pt;margin-right:0in;margin-bottom:0in;margin-left:
+.45in;margin-bottom:.0001pt;text-indent:-.45in;page-break-before:always;
+page-break-after:avoid;tab-stops:list 32.1pt'><a name="_Toc279676442"></a><a
+name="_Toc279679560"><span style='mso-bookmark:_Toc279676442'><span
+style='font-size:20.0pt;mso-bidi-font-size:14.0pt;color:#3070BE;mso-fareast-language:
+ZH-CN'>Introduction</span></span></a><span style='font-size:20.0pt;mso-bidi-font-size:
+14.0pt;color:#3070BE;mso-fareast-language:ZH-CN'> <o:p></o:p></span></h1>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><a
+name="_Toc167091296"></a><a name="_Toc172089047"><span style='mso-bookmark:
+_Toc167091296'><span style='font-size:1.0pt;mso-bidi-font-size:12.0pt;
+line-height:150%'><o:p>&nbsp;</o:p></span></span></a></p>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><span
+style='mso-bookmark:_Toc172089047'><span style='mso-bookmark:_Toc167091296'>Our
+project aimed at developing a Real Time Speech Recognition Engine on an FPGA using
+<span class=SpellE>Altera</span> DE2 board. The system was designed so as to
+recognize the word being spoken into the microphone. Both industry and academia
+have spent a considerable effort in this field for developing software and
+hardware to come up with a robust solution. However, it is because of large
+number of accents spoken around the world that this conundrum still remains an
+active area of research. Speech Recognition finds numerous applications
+including health care, artificial intelligence, human computer interaction,
+Interactive Voice Response Systems, military, avionics etc. Another most
+important application resides in helping the physically challenged people to
+interact with the world in a better way. </span></span></p>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><span
+style='mso-bookmark:_Toc172089047'><span style='mso-bookmark:_Toc167091296'><o:p>&nbsp;</o:p></span></span></p>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><span
+style='mso-bookmark:_Toc172089047'><span style='mso-bookmark:_Toc167091296'>We
+implemented a Real Time Speech Recognition Engine that takes as an input the
+time domain signal from a microphone and performs the frequency domain feature
+extraction on the sample to identify the word being spoken. Our design exploits
+the fact that most of the words spoken across various accents around the world
+have some common frequency domain features that can be used to identify the
+word. Speech Recognition has always been a conundrum and a point of keen
+interest for researchers all around the globe. While various methodologies have
+been developed to solve this issue, it still remains an unsolved, nevertheless
+an intriguing problem.</span></span></p>
+
+<p class=MsoNormal><span style='mso-bookmark:_Toc172089047'><span
+style='mso-bookmark:_Toc167091296'><span style='mso-fareast-language:ZH-CN'><o:p>&nbsp;</o:p></span></span></span></p>
+
+<h1 style='margin-top:12.0pt;margin-right:0in;margin-bottom:3.0pt;margin-left:
+32.1pt;text-indent:-32.1pt;page-break-before:always;page-break-after:avoid;
+tab-stops:list 32.1pt'><span style='mso-bookmark:_Toc172089047'><span
+style='mso-bookmark:_Toc167091296'><a name="_Toc279676444"></a><a
+name="_Toc279679561"><span style='mso-bookmark:_Toc279676444'><span
+style='font-size:20.0pt;mso-bidi-font-size:14.0pt;color:#3070BE;mso-fareast-language:
+ZH-CN'>Principles Involved</span></span></a></span></span><span
+style='mso-bookmark:_Toc172089047'><span style='mso-bookmark:_Toc167091296'><span
+style='mso-bookmark:_Toc279676444'><span style='font-size:20.0pt;mso-bidi-font-size:
+14.0pt;color:#3070BE;mso-fareast-language:ZH-CN'><o:p></o:p></span></span></span></span></h1>
+
+<h2 style='margin-top:12.0pt;margin-right:0in;margin-bottom:3.0pt;margin-left:
+.4in;text-align:justify;text-indent:-.4in;page-break-after:avoid;tab-stops:
+list .4in 39.3pt'><span style='mso-bookmark:_Toc172089047'><span
+style='mso-bookmark:_Toc167091296'><span style='mso-bookmark:_Toc279676444'><a
+name="_Toc279679562"><u><span style='font-size:14.0pt;mso-bidi-font-size:18.0pt;
+font-weight:normal;mso-bidi-font-weight:bold'>Speech Recognition Principle</span></u></a></span></span></span><span
+style='mso-bookmark:_Toc279679562'></span><span style='mso-bookmark:_Toc279676444'></span><span
+style='mso-bookmark:_Toc172089047'><span style='mso-bookmark:_Toc167091296'><span
+style='font-size:14.0pt;mso-bidi-font-size:18.0pt'><o:p></o:p></span></span></span></h2>
+
+<p class=MsoNormal style='text-align:justify'><span style='mso-bookmark:_Toc172089047'><span
+style='mso-bookmark:_Toc167091296'><span style='mso-no-proof:yes'><!--[if gte vml 1]><v:shapetype
+ id="_x0000_t75" coordsize="21600,21600" o:spt="75" o:preferrelative="t"
+ path="m@4@5l@4@11@9@11@9@5xe" filled="f" stroked="f">
+ <v:stroke joinstyle="miter"/>
+ <v:formulas>
+  <v:f eqn="if lineDrawn pixelLineWidth 0"/>
+  <v:f eqn="sum @0 1 0"/>
+  <v:f eqn="sum 0 0 @1"/>
+  <v:f eqn="prod @2 1 2"/>
+  <v:f eqn="prod @3 21600 pixelWidth"/>
+  <v:f eqn="prod @3 21600 pixelHeight"/>
+  <v:f eqn="sum @0 0 1"/>
+  <v:f eqn="prod @6 1 2"/>
+  <v:f eqn="prod @7 21600 pixelWidth"/>
+  <v:f eqn="sum @8 21600 0"/>
+  <v:f eqn="prod @7 21600 pixelHeight"/>
+  <v:f eqn="sum @10 21600 0"/>
+ </v:formulas>
+ <v:path o:extrusionok="f" gradientshapeok="t" o:connecttype="rect"/>
+ <o:lock v:ext="edit" aspectratio="t"/>
+</v:shapetype><v:shape id="_x0000_i1025" type="#_x0000_t75" style='width:463.5pt;
+ height:112.5pt;visibility:visible'>
+ <v:imagedata src="index_files/image006.png" o:title=""/>
+</v:shape><![endif]--><![if !vml]><img width=618 height=150
+src="index_files/image001.jpg" v:shapes="_x0000_i1025"><![endif]></span></span></span></p>
+
+<p class=MsoNormal style='text-align:justify'><span style='mso-bookmark:_Toc172089047'><span
+style='mso-bookmark:_Toc167091296'><a name=TYPES><o:p>&nbsp;</o:p></a></span></span></p>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><span
+style='mso-bookmark:_Toc172089047'><span style='mso-bookmark:_Toc167091296'><span
+style='mso-bookmark:TYPES'>Speech recognition systems can be classified into
+several models by describing the types of utterances to be recognized. These
+classes shall take into consideration the ability to determine the instance
+when the speaker starts and finishes the utterance.</span> In our project we
+aimed to implement Isolated Word Recognition System which usually used a
+rectangular window over the word being spoken. These types of systems have
+&quot;Listen/Not-Listen&quot; states, where they require the speaker to wait
+between utterances. </span></span></p>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><span
+style='mso-bookmark:_Toc172089047'><span style='mso-bookmark:_Toc167091296'><a
+name=MICROPHONES><o:p>&nbsp;</o:p></a></span></span></p>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><span
+style='mso-bookmark:_Toc172089047'><span style='mso-bookmark:_Toc167091296'><span
+style='mso-bookmark:MICROPHONES'>A desktop microphone usage shall not be
+appropriate for realization of the project since they tend to pick up more
+ambient noise that gives might not be appropriate for accurate detection of
+speech.</span> The usage of headset styled microphone allows the ambient noise
+to be minimized. Since the Speech Recognition is heavily dependent on
+processing speed because of a large amount of signal processing, implementation
+of the same on an FPGA was a good choice and motivation behind this project.
+Also, the memory available on <span class=SpellE>Altera</span> DE2 Development
+board was enough to easily and successfully implement the design for a word of
+length nearly 1 second. </span></span></p>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><span
+style='mso-bookmark:_Toc172089047'><span style='mso-bookmark:_Toc167091296'><o:p>&nbsp;</o:p></span></span></p>
+
+<p class=MsoNormal style='line-height:150%'><span style='mso-bookmark:_Toc172089047'><span
+style='mso-bookmark:_Toc167091296'>The Speech Recognition Engines are broadly
+classified into 2 types, namely Pattern Recognition and Acoustic Phonetic
+systems. While the former use the known/trained patterns to determine a match,
+the latter uses attributes of the human body to compare speech features
+(phonetics such as vowel sounds). The pattern recognition systems combine with
+current computing techniques and tend to have higher accuracy.</span></span></p>
+
+<h2 style='margin:0in;margin-bottom:.0001pt;page-break-after:avoid;tab-stops:
+list .4in 39.3pt'><span style='mso-bookmark:_Toc172089047'><span
+style='mso-bookmark:_Toc167091296'><a name="_Toc279676445"><span
+style='font-size:12.0pt;mso-bidi-font-size:18.0pt'><o:p>&nbsp;</o:p></span></a></span></span></h2>
+
+<h2 style='margin-top:0in;margin-right:0in;margin-bottom:3.0pt;margin-left:
+.4in;text-align:justify;text-indent:-.4in;page-break-after:avoid;tab-stops:
+list .4in 39.3pt'><span style='mso-bookmark:_Toc172089047'><span
+style='mso-bookmark:_Toc167091296'><span style='mso-bookmark:_Toc279676445'><a
+name="_Toc279679563"><u><span style='font-size:14.0pt;mso-bidi-font-size:18.0pt;
+font-weight:normal;mso-bidi-font-weight:bold'>Data Acquisition</span></u></a></span></span></span><span
+style='mso-bookmark:_Toc172089047'><span style='mso-bookmark:_Toc167091296'><u><span
+style='font-size:14.0pt;mso-bidi-font-size:18.0pt;font-weight:normal;
+mso-bidi-font-weight:bold'><o:p></o:p></span></u></span></span></h2>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%;mso-layout-grid-align:
+none;text-autospace:none'><span style='mso-bookmark:_Toc172089047'><span
+style='mso-bookmark:_Toc167091296'>The speech signal is essentially analog in nature.
+Hence, the signals must be converted to digital data in order to be read and
+processed. We used an inbuilt ADC using the <span class=SpellE>Wolfson</span>
+Codec to sample our signal at 8 KHz frequency thus producing a 16 bit signed
+digital output.<span style='mso-spacerun:yes'>  </span>Once the word was known
+to be detected, we acquired the FFT over the next 32 blocks of data and read
+their power coefficients in Nios II. </span></span></p>
+
+<p class=MsoNormal align=center style='text-align:center;mso-layout-grid-align:
+none;text-autospace:none'><span style='mso-bookmark:_Toc172089047'><span
+style='mso-bookmark:_Toc167091296'><span style='mso-no-proof:yes'><!--[if gte vml 1]><v:shape
+ id="_x0000_i1026" type="#_x0000_t75" style='width:253.5pt;height:159.75pt;
+ visibility:visible'>
+ <v:imagedata src="index_files/image012.png" o:title=""/>
+</v:shape><![endif]--><![if !vml]><img width=338 height=213
+src="index_files/image009.jpg" v:shapes="_x0000_i1026"><![endif]></span></span></span></p>
+
+<h2 style='margin-top:12.0pt;margin-right:0in;margin-bottom:3.0pt;margin-left:
+.4in;text-align:justify;text-indent:-.4in;page-break-after:avoid;tab-stops:
+list .4in 39.3pt'><span style='mso-bookmark:_Toc172089047'><span
+style='mso-bookmark:_Toc167091296'><a name="_Toc279676446"></a><a
+name="_Toc279679564"><span style='mso-bookmark:_Toc279676446'><u><span
+style='font-size:14.0pt;mso-bidi-font-size:18.0pt;font-weight:normal;
+mso-bidi-font-weight:bold'>Detection</span></u></span></a><u><o:p></o:p></u></span></span></h2>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><span
+style='mso-bookmark:_Toc172089047'><span style='mso-bookmark:_Toc167091296'>The
+very next issue to be addressed was to detect whether the word was being
+spoken. Hence, we used the FFT Module which output the <span class=SpellE>source_exp</span>
+signal which is a signed block exponent which accounts for the internal signal
+values during FFT computation. We experimentally decided to settle down on a
+value for this 6 bit signals to detect whether a word was being spoken or not
+and to trigger the computations in Nios II Processor.<span
+style='mso-spacerun:yes'>  </span><a name="_Toc279676447"></a></span></span></p>
+
+<h2 style='margin-top:12.0pt;margin-right:0in;margin-bottom:0in;margin-left:
+.4in;margin-bottom:.0001pt;text-align:justify;text-indent:-.4in;page-break-after:
+avoid;tab-stops:list .4in 39.3pt'><span style='mso-bookmark:_Toc172089047'><span
+style='mso-bookmark:_Toc167091296'><span style='mso-bookmark:_Toc279676447'><a
+name="_Toc279679565"><u><span style='font-size:14.0pt;mso-bidi-font-size:18.0pt;
+font-weight:normal;mso-bidi-font-weight:bold'>Feature Extraction and
+Transformations</span></u></a></span><u><o:p></o:p></u></span></span></h2>
+
+<p class=ListParagraph align=left style='text-align:left;text-indent:0in;
+mso-char-indent-count:0'><span style='mso-bookmark:_Toc172089047'><span
+style='mso-bookmark:_Toc167091296'><span style='font-size:4.5pt;mso-bidi-font-size:
+11.0pt;font-family:"Times New Roman"'><o:p>&nbsp;</o:p></span></span></span></p>
+
+<p class=listparagraphcxspmiddle style='margin-top:0in;margin-right:0in;
+margin-bottom:10.0pt;margin-left:.5in;mso-add-space:auto;text-indent:-.25in;
+line-height:115%;mso-list:l1 level1 lfo1'><span style='mso-bookmark:_Toc172089047'><span
+style='mso-bookmark:_Toc167091296'><![if !supportLists]><b style='mso-bidi-font-weight:
+normal'><span style='mso-list:Ignore'>a)<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></b><![endif]><b style='mso-bidi-font-weight:normal'>Mel
+Frequency <span class=SpellE>Cepstrum</span><o:p></o:p></b></span></span></p>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><span
+style='mso-bookmark:_Toc172089047'><span style='mso-bookmark:_Toc167091296'>Mel
+Frequency Analysis of speech is based on perception in which the filter bank is
+used to concentrate only on certain perceptible frequency ranges. Mel-Frequency
+<span class=SpellE>Cepstrum</span> (MFC) is a representation of the short-term
+power spectrum of a speech, based on a linear cosine </span></span><a
+href="../../../../../../../../www.worldlingo.com/ma/enwiki/en/Mel-frequency_cepstrum"
+target="_blank"><span style='mso-bookmark:_Toc172089047'><span
+style='mso-bookmark:_Toc167091296'>transform</span></span></a><span
+style='mso-bookmark:_Toc172089047'><span style='mso-bookmark:_Toc167091296'> of
+a log power spectrum on a nonlinear <span class=SpellE><span class=GramE>mel</span></span>
+scale of frequency. The mathematical relation between the frequency domain and <span
+class=SpellE>mel</span> scale can be given as:</span></span></p>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><span
+style='mso-bookmark:_Toc172089047'><span style='mso-bookmark:_Toc167091296'>m =
+2595 * log10(1 + f./700);</span></span></p>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><span
+style='mso-bookmark:_Toc172089047'><span style='mso-bookmark:_Toc167091296'>The
+triangular <span class=SpellE>mel</span>-filters in the filter bank are placed
+in the frequency domain so that each filter's center frequency follows the <span
+class=SpellE>mel</span> scale so that each filter bank represents different
+perceptual effect for different frequency bands. <span class=SpellE>MFCCs</span>
+combine consideration of aspects of human hearing (logarithmic frequency
+perception, the <span class=SpellE>mel</span> scale).</span></span></p>
+
+<p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto'><span
+style='mso-bookmark:_Toc172089047'><span style='mso-bookmark:_Toc167091296'><o:p>&nbsp;</o:p></span></span></p>
+
+<p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto'><span
+style='mso-bookmark:_Toc172089047'><span style='mso-bookmark:_Toc167091296'><span
+style='mso-no-proof:yes'><!--[if gte vml 1]><v:shape id="_x0000_i1027" type="#_x0000_t75"
+ style='width:468pt;height:107.25pt;visibility:visible'>
+ <v:imagedata src="index_files/image014.png" o:title=""/>
+</v:shape><![endif]--><![if !vml]><img border=0 width=624 height=143
+src="index_files/image010.jpg" v:shapes="_x0000_i1027"><![endif]></span><span
+style='mso-spacerun:yes'> </span></span></span></p>
+
+<p class=ListParagraph><span style='mso-bookmark:_Toc172089047'><span
+style='mso-bookmark:_Toc167091296'><span style='font-family:"Times New Roman"'><o:p>&nbsp;</o:p></span></span></span></p>
+
+<p class=listparagraphcxspmiddle style='margin-top:0in;margin-right:0in;
+margin-bottom:10.0pt;margin-left:.5in;mso-add-space:auto;text-indent:-.25in;
+line-height:115%;mso-list:l1 level1 lfo1'><span style='mso-bookmark:_Toc172089047'><span
+style='mso-bookmark:_Toc167091296'><![if !supportLists]><b style='mso-bidi-font-weight:
+normal'><span style='mso-list:Ignore'>b)<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></b><![endif]><b style='mso-bidi-font-weight:normal'>Performing
+Discrete Cosine Transform on Mel <span class=SpellE>Cepstrum</span><o:p></o:p></b></span></span></p>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><span
+style='mso-bookmark:_Toc172089047'><span style='mso-bookmark:_Toc167091296'>A
+DCT computes a sequence of data points in terms of summation of cosine
+functions oscillating at various frequencies. The idea of performing DCT on Mel
+Scale is rather difficult to imagine on what the transformations might look
+like physically, however, we understood the applied mathematics behind the
+motive to extract speech frequency domain characteristics. Hence, we further
+need to use the computation of DCT on 12 point Mel Scale in software implementation.
+We decided to perform only a 12 point transform as that gave us considerably
+good results for identification of one word. Since most of the information
+after performing a DCT resides in the first two coefficients, we used these two
+to identify the word being spoken. After obtaining a DCT for each chunk of 32
+ms of the speech signal, an algorithm to find the shortest distance match for
+the sequence of these 32 blocks is to be done. </span></span></p>
+
+<h1 style='margin-top:12.0pt;margin-right:0in;margin-bottom:3.0pt;margin-left:
+32.1pt;text-indent:-32.1pt;page-break-before:always;page-break-after:avoid;
+tab-stops:list 32.1pt'><span style='mso-bookmark:_Toc172089047'><span
+style='mso-bookmark:_Toc167091296'><a name="_Toc279676448"><span
+style='font-size:18.0pt;mso-bidi-font-size:14.0pt;color:#3070BE;mso-fareast-language:
+ZH-CN;font-weight:normal;mso-bidi-font-weight:bold'><o:p>&nbsp;</o:p></span></a></span></span></h1>
+
+<h1 style='margin-top:12.0pt;margin-right:0in;margin-bottom:3.0pt;margin-left:
+32.1pt;text-indent:-32.1pt;page-break-before:always;page-break-after:avoid;
+tab-stops:list 32.1pt'><span style='mso-bookmark:_Toc172089047'><span
+style='mso-bookmark:_Toc167091296'><span style='mso-bookmark:_Toc279676448'><a
+name="_Toc279679566"><span style='font-size:20.0pt;mso-bidi-font-size:14.0pt;
+color:#3070BE;mso-fareast-language:ZH-CN'>Top Level Design</span></a></span></span></span><span
+style='mso-bookmark:_Toc172089047'><span style='mso-bookmark:_Toc167091296'><span
+style='font-size:20.0pt;mso-bidi-font-size:14.0pt;color:#3070BE;mso-fareast-language:
+ZH-CN'><o:p></o:p></span></span></span></h1>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><span
+style='mso-bookmark:_Toc172089047'><span style='mso-bookmark:_Toc167091296'>Our
+project idea was highly motivated by the current trends going in this field of
+research. While most of the Speech Recognition solutions are present in
+software, implementation of the same in hardware required a sound background of
+mathematical analysis and signal processing. We did a background research for
+the project and designs used by other researchers to implement an engine on
+hardware. While we used MATLAB code to generate and verify our approach, most
+of the time in the project went in debugging the hardware and gaining
+synchronization between the various hardware modules and the Nios II processor.</span></span><span
+style='mso-bookmark:_Toc172089047'><span style='mso-bookmark:_Toc167091296'><span
+lang=EN-IN style='mso-ansi-language:EN-IN;mso-fareast-language:EN-IN'><o:p></o:p></span></span></span></p>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><span
+style='mso-bookmark:_Toc172089047'><span style='mso-bookmark:_Toc167091296'><o:p>&nbsp;</o:p></span></span></p>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><span
+style='mso-bookmark:_Toc172089047'><span style='mso-bookmark:_Toc167091296'>We
+extensively studied the transformations which are needed to be performed on the
+speech sample in order to derive a characteristic to identify a word. Because
+of the reason that speech could vary amongst different people, it was initially
+unclear whether the speech features would be speaker independent or dependent.
+So, we referred to some text as acknowledged at the end of the report to decide
+the approach we needed to use. </span></span></p>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><span
+style='mso-bookmark:_Toc172089047'><span style='mso-bookmark:_Toc167091296'><o:p>&nbsp;</o:p></span></span></p>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><span
+style='mso-bookmark:_Toc172089047'><span style='mso-bookmark:_Toc167091296'>Since
+the project involved a large amount of computation and mathematical analysis,
+using hardware for the same would have been quite difficult. Initially we
+intended to implement all the transformations in hardware by writing various
+modules in Verilog for an FPGA. However, due to increased amount of complexity
+we settled on performing operations up to finding the DFT of the signal in
+hardware and using NIOS II Processor to perform the other transformations by
+running a C code. This hurt our time performance, however, it helped us in
+improving the design and in debugging the project significantly. </span></span><span
+style='mso-bookmark:_Toc172089047'><span style='mso-bookmark:_Toc167091296'><span
+style='mso-fareast-language:ZH-CN'><o:p></o:p></span></span></span></p>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><span
+style='mso-bookmark:_Toc172089047'><span style='mso-bookmark:_Toc167091296'><span
+style='mso-fareast-language:ZH-CN'><o:p>&nbsp;</o:p></span></span></span></p>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><span
+style='mso-bookmark:_Toc172089047'><span style='mso-bookmark:_Toc167091296'><span
+style='mso-fareast-language:ZH-CN'>The top level working of our system can be
+visualized in the following manner. The system takes the input from the
+microphone and feeds it to the ADC which is sampling at 8KHz. The ADC output is
+interfaced to a 256x16 bits memory. The memory stores a 32ms chunk of voice and
+outputs it to the FFT module which computes the FFT of that voice chunk. The
+FFT module is interfaced with the NIOS which reads the FFT outputs and it
+checks whether the voice chunk corresponds to silence or a speech signal. If it
+detects a speech signal, it stores the next 32 chunks of voice (which
+corresponds to 1.024s(32ms*32) of voice). After it stores the 1 second of
+voice, it perform various computations like normalization, feature extraction,
+comparison etc. and checks if the spoken word corresponds to any of the
+predefined command. If it finds a match it takes the action corresponding to
+that particular command.<o:p></o:p></span></span></span></p>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><span
+style='mso-bookmark:_Toc172089047'><span style='mso-bookmark:_Toc167091296'><span
+style='mso-fareast-language:ZH-CN'><o:p>&nbsp;</o:p></span></span></span></p>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><span
+style='mso-bookmark:_Toc172089047'><span style='mso-bookmark:_Toc167091296'><span
+style='mso-fareast-language:ZH-CN'>The following block diagram represents the
+overall system:<o:p></o:p></span></span></span></p>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><span
+style='mso-bookmark:_Toc172089047'><span style='mso-bookmark:_Toc167091296'><span
+style='mso-fareast-language:ZH-CN'><o:p>&nbsp;</o:p></span></span></span></p>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><span
+style='mso-bookmark:_Toc172089047'><span style='mso-bookmark:_Toc167091296'><span
+style='mso-fareast-language:ZH-CN'><!--[if gte vml 1]><v:shape id="_x0000_i1028"
+ type="#_x0000_t75" style='width:450pt;height:107.25pt'>
+ <v:imagedata src="index_files/image016.png" o:title=""/>
+</v:shape><![endif]--><![if !vml]><img border=0 width=600 height=143
+src="index_files/image011.jpg" v:shapes="_x0000_i1028"><![endif]><o:p></o:p></span></span></span></p>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><span
+style='mso-bookmark:_Toc172089047'><span style='mso-bookmark:_Toc167091296'><span
+style='mso-fareast-language:ZH-CN'><o:p>&nbsp;</o:p></span></span></span></p>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><span
+style='mso-bookmark:_Toc172089047'><span style='mso-bookmark:_Toc167091296'><span
+style='mso-fareast-language:ZH-CN'>In case of a word spoken, we store the FFT
+of the 1.024 seconds of the voice signal and pass it to the NIOS-II and store
+the samples in the SDRAM. The C code then treats this input as an array and
+performs feature extraction and distance comparison on this input array to
+check whether it matches with any of the predefined command. If so, it sends
+out a matching signal which are indicated by the hardware.<o:p></o:p></span></span></span></p>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><span
+style='mso-bookmark:_Toc172089047'><span style='mso-bookmark:_Toc167091296'><span
+style='mso-fareast-language:ZH-CN'><span style='mso-spacerun:yes'> </span><o:p></o:p></span></span></span></p>
+
+<h1 style='margin-top:12.0pt;margin-right:0in;margin-bottom:3.0pt;margin-left:
+32.1pt;text-indent:-32.1pt;page-break-before:always;page-break-after:avoid;
+tab-stops:list 32.1pt'><span style='mso-bookmark:_Toc172089047'><span
+style='mso-bookmark:_Toc167091296'><a name="_Toc279676449"></a><a
+name="_Toc279679567"><span style='mso-bookmark:_Toc279676449'><span
+style='font-size:20.0pt;mso-bidi-font-size:14.0pt;color:#3070BE;mso-fareast-language:
+ZH-CN'>Hardware Implementation</span></span></a></span></span><span
+style='mso-bookmark:_Toc172089047'><span style='mso-bookmark:_Toc167091296'><span
+style='font-size:20.0pt;mso-bidi-font-size:14.0pt;color:#3070BE;mso-fareast-language:
+ZH-CN'><o:p></o:p></span></span></span></h1>
+
+<p class=MsoNormal><span style='mso-bookmark:_Toc172089047'><span
+style='mso-bookmark:_Toc167091296'><span style='mso-fareast-language:ZH-CN'>Following
+diagram represents the hardware design used: <o:p></o:p></span></span></span></p>
+
+<p class=MsoNormal><span style='mso-bookmark:_Toc172089047'><span
+style='mso-bookmark:_Toc167091296'><span style='mso-fareast-language:ZH-CN'><!--[if gte vml 1]><v:shape
+ id="_x0000_i1029" type="#_x0000_t75" style='width:437.25pt;height:317.25pt'>
+ <v:imagedata src="index_files/image018.jpg" o:title="module"/>
+</v:shape><![endif]--><![if !vml]><img border=0 width=583 height=423
+src="index_files/image013.jpg" v:shapes="_x0000_i1029"><![endif]><a
+name="_Toc272489765"></a><a name="_Toc279676450"></a><a name="_GoBack"></a><span
+style='mso-bookmark:_Toc272489765'><span style='mso-bookmark:_Toc279676450'><o:p></o:p></span></span></span></span></span></p>
+
+<h2 style='margin-top:12.0pt;margin-right:0in;margin-bottom:3.0pt;margin-left:
+39.3pt;text-align:justify;text-indent:-39.3pt;page-break-after:avoid;
+tab-stops:list 27.0pt 39.3pt'><span style='mso-bookmark:_Toc172089047'><span
+style='mso-bookmark:_Toc167091296'><span style='mso-bookmark:_Toc272489765'><span
+style='mso-bookmark:_Toc279676450'><a name="_Toc279679568"><u><span
+style='font-size:14.0pt;mso-bidi-font-size:18.0pt;font-weight:normal;
+mso-bidi-font-weight:bold'>DE2 Board</span></u></a></span></span></span></span></h2>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><span
+style='mso-bookmark:_Toc172089047'><span style='mso-bookmark:_Toc167091296'><span
+style='mso-bookmark:_Toc272489765'>The code was implemented using <span
+class=SpellE>Altera</span> Cyclone II board or DE2 FPGA Board. Beyond the FPGA,
+the board includes a number of peripherals and different types of memory. The
+FPGA is programmed through the USB blaster port using <span class=SpellE>Quartus</span>
+II software.<span style='mso-spacerun:yes'>   </span><span
+style='mso-spacerun:yes'> </span><a name="_Toc279676451"></a></span></span></span></p>
+
+<h2 style='margin-top:12.0pt;margin-right:0in;margin-bottom:3.0pt;margin-left:
+.4in;text-align:justify;text-indent:-.4in;page-break-after:avoid;tab-stops:
+list .4in 39.3pt'><span style='mso-bookmark:_Toc172089047'><span
+style='mso-bookmark:_Toc167091296'><span style='mso-bookmark:_Toc272489765'><span
+style='mso-bookmark:_Toc279676451'><a name="_Toc279679569"><u><span
+style='font-size:14.0pt;mso-bidi-font-size:18.0pt;font-weight:normal;
+mso-bidi-font-weight:bold'>TOP LEVEL MODULE</span></u></a></span></span></span></span></h2>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><span
+style='mso-bookmark:_Toc172089047'><span style='mso-bookmark:_Toc167091296'><span
+style='mso-bookmark:_Toc272489765'>The Verilog Top level module connects and
+synchronizes the NIOS-II, Memory controller and FFT controller. Apart from
+this, it also interfaces with the ADC_DAC module and the I2C Bus Controller. In
+order to properly generate the required clock signals for the NIOS, DRAM and
+AUDIO_CODEC, it uses 2 <span class=SpellE>PLLs</span> which are inbuilt in the
+DE2 board.<a name="_Toc279676452"></a></span></span></span></p>
+
+<h2 style='margin-top:12.0pt;margin-right:0in;margin-bottom:3.0pt;margin-left:
+.4in;text-align:justify;text-indent:-.4in;page-break-after:avoid;tab-stops:
+list .4in 39.3pt'><span style='mso-bookmark:_Toc172089047'><span
+style='mso-bookmark:_Toc167091296'><span style='mso-bookmark:_Toc272489765'><span
+style='mso-bookmark:_Toc279676452'><a name="_Toc279679570"><u><span
+style='font-size:14.0pt;mso-bidi-font-size:18.0pt;font-weight:normal;
+mso-bidi-font-weight:bold'>Memory Module</span></u></a></span></span></span></span></h2>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><span
+style='mso-bookmark:_Toc172089047'><span style='mso-bookmark:_Toc167091296'><span
+style='mso-bookmark:_Toc272489765'>In our implementation, we used minimal
+amount of memory in the hardware. The memory is used only to store 32ms of
+voice before its FFT is done. As the sampling frequency used is 8KHz, a total
+of 256 samples are taken in a timeframe of 32ms. Therefore we implemented a
+memory of size 256x16bits. The memory control signal is interfaced to NIOS, so
+that the NIOS CPU is able to synchronize the input to memory and is able to
+keep the Memory module in wait state while the NIOS CPU does the computation.
+When the memory completes loading 32ms chunk, it signals the FFT module, so
+that the module can perform the appropriate operation.<a name="_Toc279676453"></a></span></span></span></p>
+
+<h2 style='margin-top:12.0pt;margin-right:0in;margin-bottom:3.0pt;margin-left:
+.4in;text-align:justify;text-indent:-.4in;page-break-after:avoid;tab-stops:
+list .4in 39.3pt'><span style='mso-bookmark:_Toc172089047'><span
+style='mso-bookmark:_Toc167091296'><span style='mso-bookmark:_Toc272489765'><span
+style='mso-bookmark:_Toc279676453'><a name="_Toc279679571"><u><span
+style='font-size:14.0pt;mso-bidi-font-size:18.0pt;font-weight:normal;
+mso-bidi-font-weight:bold'>FFT Module</span></u></a></span></span></span></span></h2>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><span
+style='mso-bookmark:_Toc172089047'><span style='mso-bookmark:_Toc167091296'><span
+style='mso-bookmark:_Toc272489765'>In order to map the input voice from time
+domain to frequency domain, the <span class=SpellE>Altera</span> IP <span
+class=SpellE>Megacore</span> FFT module is used. The module is configured so as
+to produce a 256-point FFT. It takes data input in natural order, and output
+the transformed data in natural order. In the <span class=SpellE>megafuncion</span>
+parameterization of the FFT module, we tried out various architectures for the
+fft, i.e. Burst, Buffered Burst, Streaming and Variable Streaming. It turns out
+that the Burst architecture was most efficient as per our implementation.</span></span></span></p>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><span
+style='mso-bookmark:_Toc172089047'><span style='mso-bookmark:_Toc167091296'><span
+style='mso-bookmark:_Toc272489765'><o:p>&nbsp;</o:p></span></span></span></p>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><span
+style='mso-bookmark:_Toc172089047'><span style='mso-bookmark:_Toc167091296'><span
+style='mso-bookmark:_Toc272489765'>The FFT module contains 256x16 bits of
+memory in order to store the FFT output. The memory is running at the same
+clock as the FFT and is also interfaced to the NIOS-II. The completion of FFT
+operation is indicated to the NIOS through a PIO named <span class=SpellE><i
+style='mso-bidi-font-style:normal'>fftcomlpete</i></span>. When the NIOS senses
+the <span class=SpellE><i style='mso-bidi-font-style:normal'>fftcomplete</i></span>
+signal, it checks for the ‘exp’ value, and reads the FFT output from the FFT
+memory and stores it in the SDRAM.<a name="_Toc279676454"></a></span></span></span></p>
+
+<span style='mso-bookmark:_Toc279676454'></span>
+
+<h2 style='margin-top:12.0pt;margin-right:0in;margin-bottom:3.0pt;margin-left:
+.4in;text-align:justify;text-indent:-.4in;page-break-after:avoid;tab-stops:
+list .4in 39.3pt'><span style='mso-bookmark:_Toc172089047'><span
+style='mso-bookmark:_Toc167091296'><span style='mso-bookmark:_Toc272489765'><a
+name="_Toc279679572"><u><span style='font-size:14.0pt;mso-bidi-font-size:18.0pt;
+font-weight:normal;mso-bidi-font-weight:bold'>Miscellaneous</span></u></a></span></span></span></h2>
+
+<p class=MsoNormal style='line-height:150%'><span style='mso-bookmark:_Toc172089047'><span
+style='mso-bookmark:_Toc167091296'><span style='mso-bookmark:_Toc272489765'>We
+changed the ADC sampling frequency to 8KHz from the default value of 48 KHz
+from the <span class=SpellE>Wolfson</span> audio codec. The codec was provided
+by Prof. Bruce Land.</span></span></span></p>
+
+<p class=MsoNormal><span style='mso-bookmark:_Toc172089047'><span
+style='mso-bookmark:_Toc167091296'><span style='mso-bookmark:_Toc272489765'><b
+style='mso-bidi-font-weight:normal'><span style='font-size:14.0pt;color:#1F497D'><o:p>&nbsp;</o:p></span></b></span></span></span></p>
+
+<h1 style='margin-top:12.0pt;margin-right:0in;margin-bottom:3.0pt;margin-left:
+.3in;text-indent:-.3in;page-break-before:always;page-break-after:avoid;
+tab-stops:list .3in 32.1pt'><span style='mso-bookmark:_Toc172089047'><span
+style='mso-bookmark:_Toc167091296'><span style='mso-bookmark:_Toc272489765'><a
+name="_Toc279676455"></a><a name="_Toc279679573"><span style='mso-bookmark:
+_Toc279676455'><span style='font-size:20.0pt;mso-bidi-font-size:14.0pt;
+color:#3070BE;mso-fareast-language:ZH-CN'>Software Implementation</span></span></a></span></span></span><span
+style='mso-bookmark:_Toc172089047'><span style='mso-bookmark:_Toc167091296'><span
+style='mso-bookmark:_Toc272489765'><span style='font-size:20.0pt;mso-bidi-font-size:
+14.0pt;color:#3070BE;mso-fareast-language:ZH-CN'><o:p></o:p></span></span></span></span></h1>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><span
+style='mso-bookmark:_Toc172089047'><span style='mso-bookmark:_Toc167091296'><span
+style='mso-bookmark:_Toc272489765'>We choose “NIOS-II/f” processor with 4kb
+data cache, 4kb instruction cache, Level 2 debugger and an integrated floating
+point multiplier. Since most of the audio computation is done in the software
+and the voice samples are stored in the SDRAM, the systems required a higher
+memory. We interfaced an 8 MB SDRAM with the NIOS. Since most of the operations
+were floating point, we enabled hardware floating point multiply and divide in
+the CPU architecture. We interfaced LCD, Switches, <span class=SpellE>LEDs</span>
+and Keys with the NIOS through the <span class=SpellE>PIOs</span>. The clock
+frequency used for the NIOS was 50MHz.</span></span></span><a
+name="_Toc279676456"><span style='mso-bookmark:_Toc272489765'><span
+style='mso-bookmark:_Toc167091296'><span style='mso-bookmark:_Toc172089047'><span
+lang=EN-IN style='mso-ansi-language:EN-IN;mso-fareast-language:EN-IN'><o:p></o:p></span></span></span></span></a></p>
+
+<h2 style='margin-top:12.0pt;margin-right:0in;margin-bottom:3.0pt;margin-left:
+.4in;text-align:justify;text-indent:-.4in;page-break-after:avoid;tab-stops:
+list .4in 39.3pt'><span style='mso-bookmark:_Toc279676456'><span
+style='mso-bookmark:_Toc272489765'><span style='mso-bookmark:_Toc167091296'><span
+style='mso-bookmark:_Toc172089047'><a name="_Toc279679574"><u><span
+style='font-size:14.0pt;mso-bidi-font-size:18.0pt;font-weight:normal;
+mso-bidi-font-weight:bold'>Hardware Interface</span></u></a></span></span></span></span><span
+style='mso-bookmark:_Toc272489765'><span style='mso-bookmark:_Toc167091296'><span
+style='mso-bookmark:_Toc172089047'></span></span></span></h2>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><span
+style='mso-bookmark:_Toc272489765'><span style='mso-bookmark:_Toc167091296'><span
+style='mso-bookmark:_Toc172089047'>The NIOS was interfaced with the Top level
+module, FFT Module, and Memory Module. </span></span></span><span
+style='mso-bookmark:_Toc272489765'><span style='mso-bookmark:_Toc167091296'><span
+style='mso-bookmark:_Toc172089047'><span lang=EN-IN style='mso-ansi-language:
+EN-IN;mso-fareast-language:EN-IN'><o:p></o:p></span></span></span></span></p>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><span
+style='mso-bookmark:_Toc272489765'><span style='mso-bookmark:_Toc167091296'><span
+style='mso-bookmark:_Toc172089047'>The PIO (parallel input output) connected to
+the NIOS are the following:</span></span></span></p>
+
+<ul style='margin-top:0in' type=disc>
+ <li class=MsoNormal style='text-align:justify;line-height:150%;mso-list:l0 level1 lfo2;
+     tab-stops:list .5in'><span style='mso-bookmark:_Toc272489765'><span
+     style='mso-bookmark:_Toc167091296'><span style='mso-bookmark:_Toc172089047'><span
+     class=SpellE>iFFTComplete</span>: Indicate the completion of the FFT
+     operation.</span></span></span></li>
+ <li class=MsoNormal style='text-align:justify;line-height:150%;mso-list:l0 level1 lfo2;
+     tab-stops:list .5in'><span style='mso-bookmark:_Toc272489765'><span
+     style='mso-bookmark:_Toc167091296'><span style='mso-bookmark:_Toc172089047'><span
+     class=SpellE>iFFTCoeff</span>: it contains the value of the FFT
+     coefficient.</span></span></span></li>
+ <li class=MsoNormal style='text-align:justify;line-height:150%;mso-list:l0 level1 lfo2;
+     tab-stops:list .5in'><span style='mso-bookmark:_Toc272489765'><span
+     style='mso-bookmark:_Toc167091296'><span style='mso-bookmark:_Toc172089047'><span
+     class=SpellE>iFFTLevel</span>: It is connected to <span class=SpellE>source_exp</span>
+     signal of FFT and indicate the voice level and is used to detect the
+     silence.</span></span></span></li>
+ <li class=MsoNormal style='text-align:justify;line-height:150%;mso-list:l0 level1 lfo2;
+     tab-stops:list .5in'><span style='mso-bookmark:_Toc272489765'><span
+     style='mso-bookmark:_Toc167091296'><span style='mso-bookmark:_Toc172089047'><span
+     class=SpellE>oFFTAddress</span>: Indicates the address of the FFT memory
+     from which NIOS reads the FFT <span class=SpellE>coeff</span></span></span></span></li>
+ <li class=MsoNormal style='text-align:justify;line-height:150%;mso-list:l0 level1 lfo2;
+     tab-stops:list .5in'><span style='mso-bookmark:_Toc272489765'><span
+     style='mso-bookmark:_Toc167091296'><span style='mso-bookmark:_Toc172089047'><span
+     class=SpellE>oFFTStart</span>: output signal by NIOS to synchronize the
+     start of the FFT operation</span></span></span></li>
+ <li class=MsoNormal style='text-align:justify;line-height:150%;mso-list:l0 level1 lfo2;
+     tab-stops:list .5in'><span style='mso-bookmark:_Toc272489765'><span
+     style='mso-bookmark:_Toc167091296'><span style='mso-bookmark:_Toc172089047'><span
+     class=SpellE>iSwitches</span>: input from various switches on the DE2
+     board.</span></span></span></li>
+ <li class=MsoNormal style='text-align:justify;line-height:150%;mso-list:l0 level1 lfo2;
+     tab-stops:list .5in'><span style='mso-bookmark:_Toc272489765'><span
+     style='mso-bookmark:_Toc167091296'><span style='mso-bookmark:_Toc172089047'><span
+     class=SpellE>oKeys</span>: input from various keys on the DE2 board.</span></span></span></li>
+ <li class=MsoNormal style='text-align:justify;line-height:150%;mso-list:l0 level1 lfo2;
+     tab-stops:list .5in'><span style='mso-bookmark:_Toc272489765'><span
+     style='mso-bookmark:_Toc167091296'><span style='mso-bookmark:_Toc172089047'><span
+     class=SpellE>oLEDR</span>: output signal to the red <span class=SpellE>LEDs</span></span></span></span></li>
+ <li class=MsoNormal style='text-align:justify;line-height:150%;mso-list:l0 level1 lfo2;
+     tab-stops:list .5in'><span style='mso-bookmark:_Toc272489765'><span
+     style='mso-bookmark:_Toc167091296'><span style='mso-bookmark:_Toc172089047'>LEDG:
+     output signal to the green <span class=SpellE>LEDs</span></span></span></span></li>
+</ul>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><span
+style='mso-bookmark:_Toc272489765'><span style='mso-bookmark:_Toc167091296'><span
+style='mso-bookmark:_Toc172089047'><o:p>&nbsp;</o:p></span></span></span></p>
+
+<p class=MsoNormal style='line-height:150%'><span style='mso-bookmark:_Toc272489765'><span
+style='mso-bookmark:_Toc167091296'><span style='mso-bookmark:_Toc172089047'>The
+SOPC builder used is as shown below:</span></span></span></p>
+
+<p class=MsoNormal style='margin-left:-.25in;line-height:150%'><span
+style='mso-bookmark:_Toc272489765'><span style='mso-bookmark:_Toc167091296'><span
+style='mso-bookmark:_Toc172089047'><b style='mso-bidi-font-weight:normal'><span
+style='font-size:14.0pt;line-height:150%;color:#1F497D'><!--[if gte vml 1]><v:shape
+ id="_x0000_i1030" type="#_x0000_t75" style='width:495.75pt;height:174.75pt'>
+ <v:imagedata src="index_files/image020.png" o:title=""/>
+</v:shape><![endif]--><![if !vml]><img border=0 width=661 height=233
+src="index_files/image015.jpg" v:shapes="_x0000_i1030"><![endif]><o:p></o:p></span></b></span></span></span></p>
+
+<h2 style='margin-top:12.0pt;margin-right:0in;margin-bottom:3.0pt;margin-left:
+.4in;text-align:justify;text-indent:-.4in;page-break-after:avoid;tab-stops:
+list .4in 39.3pt'><span style='mso-bookmark:_Toc272489765'><span
+style='mso-bookmark:_Toc167091296'><span style='mso-bookmark:_Toc172089047'><a
+name="_Toc279676457"><span style='font-size:9.0pt;mso-bidi-font-size:18.0pt'><o:p>&nbsp;</o:p></span></a></span></span></span></h2>
+
+<h2 style='margin-top:12.0pt;margin-right:0in;margin-bottom:3.0pt;margin-left:
+.4in;text-align:justify;text-indent:-.4in;page-break-after:avoid;tab-stops:
+list .4in 39.3pt'><span style='mso-bookmark:_Toc272489765'><span
+style='mso-bookmark:_Toc167091296'><span style='mso-bookmark:_Toc172089047'><span
+style='mso-bookmark:_Toc279676457'><a name="_Toc279679575"><u><span
+style='font-size:14.0pt;mso-bidi-font-size:18.0pt;font-weight:normal;
+mso-bidi-font-weight:bold'>NIOS C Program</span></u></a></span></span></span></span><span
+style='mso-bookmark:_Toc279679575'></span><span style='mso-bookmark:_Toc279676457'></span><span
+style='mso-bookmark:_Toc272489765'><span style='mso-bookmark:_Toc167091296'><span
+style='mso-bookmark:_Toc172089047'><span style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt;font-weight:normal;mso-bidi-font-weight:bold'><o:p></o:p></span></span></span></span></h2>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><span
+style='mso-bookmark:_Toc272489765'><span style='mso-bookmark:_Toc167091296'><span
+style='mso-bookmark:_Toc172089047'>We used the “NIOS II Software Build Tools
+for Eclipse” software for writing our C program. The C program executes our
+algorithm for the speech recognition. We have included the complete code in the
+code listing section. The overall operation of the code can be described as
+follows.</span></span></span><span style='mso-bookmark:_Toc272489765'><span
+style='mso-bookmark:_Toc167091296'><span style='mso-bookmark:_Toc172089047'><span
+lang=EN-IN style='mso-ansi-language:EN-IN;mso-fareast-language:EN-IN'><o:p></o:p></span></span></span></span></p>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><span
+style='mso-bookmark:_Toc272489765'><span style='mso-bookmark:_Toc167091296'><span
+style='mso-bookmark:_Toc172089047'><o:p>&nbsp;</o:p></span></span></span></p>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><span
+style='mso-bookmark:_Toc272489765'><span style='mso-bookmark:_Toc167091296'><span
+style='mso-bookmark:_Toc172089047'>The code is executing an infinite loop as
+it’s always either expecting the input or processing it. It initiates start by
+giving the <span class=SpellE><i style='mso-bidi-font-style:normal'>fftstart</i></span>
+signal which starts the memory loading and the FFT operation. It keeps checking
+the <span class=SpellE><i style='mso-bidi-font-style:normal'>fftcomplete</i></span>
+signal to detect the end of the FFT operation. Once the FFT is complete it make
+the <span class=SpellE><i style='mso-bidi-font-style:normal'>fftstart</i></span><i
+style='mso-bidi-font-style:normal'> </i>signal<i style='mso-bidi-font-style:
+normal'> </i>low so that the FFT values stored in the FFT memory doesn’t change
+before it copies the values to SDRAM. It then checks for the <span
+class=SpellE><i style='mso-bidi-font-style:normal'>fftlevel</i></span> signal to
+check whether a significant level of input is present of the MIC input and so
+as to indicate the start of the voice command. We found out experimentally that
+the value of <span class=SpellE>fftlevel</span> greater than 60 corresponds to
+an actual voice command, while the value below this represent either silence or
+the noise.</span></span></span></p>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><span
+style='mso-bookmark:_Toc272489765'><span style='mso-bookmark:_Toc167091296'><span
+style='mso-bookmark:_Toc172089047'><o:p>&nbsp;</o:p></span></span></span></p>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><span
+style='mso-bookmark:_Toc272489765'><span style='mso-bookmark:_Toc167091296'><span
+style='mso-bookmark:_Toc172089047'>Once we detected the start of the command,
+we continuously stored the FFT output of next 32 chunks of voice sample which
+each chunk being 32ms. We store these values in a large array named <span
+class=SpellE><i style='mso-bidi-font-style:normal'>fftcoeff</i></span> of size 8192.
+This is performed through a <i style='mso-bidi-font-style:normal'>for</i> loop
+iterating for 32 cycles and performing the above operation of initiating the
+FFT module and then storing the FFT output into the <span class=SpellE><i
+style='mso-bidi-font-style:normal'>fftcoeff</i></span> array at appropriate
+location. Now, we have got the power spectrum of the word which has been
+spoken. We will now do the feature extraction and determine the word spoken.</span></span></span></p>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><span
+style='mso-bookmark:_Toc272489765'><span style='mso-bookmark:_Toc167091296'><span
+style='mso-bookmark:_Toc172089047'><o:p>&nbsp;</o:p></span></span></span></p>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><span
+style='mso-bookmark:_Toc272489765'><span style='mso-bookmark:_Toc167091296'><span
+style='mso-bookmark:_Toc172089047'>First step is to convert the spectrum to the
+<span class=SpellE><i style='mso-bidi-font-style:normal'>mel</i></span> scale.
+We defined the <span class=SpellE><i style='mso-bidi-font-style:normal'>melcepstrum_conversion</i></span>
+function which converts the input power spectrum to the <span class=SpellE>mel</span>
+scale. We extracted 12 coefficients from this spectrum. We pass the as input
+the <span class=SpellE><i style='mso-bidi-font-style:normal'>fftcoeff</i></span>
+array, and output the <span class=SpellE><i style='mso-bidi-font-style:normal'>mel</i></span>
+array. The C module does the shifting as described in the theory section. We
+did the <span class=SpellE>mel</span> shifting for the entire 1 sec speech
+instead of 32ms chunks of speech. It would have been more efficient to do
+separate <span class=SpellE><i style='mso-bidi-font-style:normal'>mel</i></span>
+shifting for each of the 32ms but would have required a sophisticated
+synchronization and nevertheless wasn’t required for the operation which we are
+trying to achieve. </span></span></span></p>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><span
+style='mso-bookmark:_Toc272489765'><span style='mso-bookmark:_Toc167091296'><span
+style='mso-bookmark:_Toc172089047'><o:p>&nbsp;</o:p></span></span></span></p>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><span
+style='mso-bookmark:_Toc272489765'><span style='mso-bookmark:_Toc167091296'><span
+style='mso-bookmark:_Toc172089047'>Next step is to compute the discrete cosine
+transform of these spectral points and obtain the <span class=SpellE>MFCCs</span>.
+We defined the <span class=SpellE><i style='mso-bidi-font-style:normal'>dct</i></span>
+function which takes the input as the <span class=SpellE><i style='mso-bidi-font-style:
+normal'>mel</i></span> array(12 coefficients) and outputs the <span
+class=SpellE><i style='mso-bidi-font-style:normal'>mfcc</i></span> array(12
+coefficients).</span></span></span></p>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><span
+style='mso-bookmark:_Toc272489765'><span style='mso-bookmark:_Toc167091296'><span
+style='mso-bookmark:_Toc172089047'><o:p>&nbsp;</o:p></span></span></span></p>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><span
+style='mso-bookmark:_Toc272489765'><span style='mso-bookmark:_Toc167091296'><span
+style='mso-bookmark:_Toc172089047'>Next we identify the spoken word based on the
+DCT coefficients. Since the first two coefficients contain the maximum
+information we took the sum of first two coefficients of the <span
+class=SpellE>dct</span> output and store it in the variable named <span
+class=SpellE><i style='mso-bidi-font-style:normal'>sum_mel</i></span>. Since in
+our implementation we are differentiating between the words ‘Yes’ and ‘No’, we
+experimentally noticed that this value was always above 59 for the word <i
+style='mso-bidi-font-style:normal'>Yes</i> and was in between 50 to 58 for the
+word <i style='mso-bidi-font-style:normal'>No.</i> The program compares <span
+class=SpellE><i style='mso-bidi-font-style:normal'>sum_mel</i></span> variables
+with these values in order to determine whether the spoken word is a <i
+style='mso-bidi-font-style:normal'>‘Yes’</i> or <i style='mso-bidi-font-style:
+normal'>‘No’</i>. It then accordingly glows the appropriate <span class=SpellE>LEDs</span>
+and the hardware displays the word ‘Yes’ or ‘No’ on the 7-segment display.</span></span></span></p>
+
+<p class=MsoNormal style='line-height:150%'><span style='mso-bookmark:_Toc272489765'><span
+style='mso-bookmark:_Toc167091296'><span style='mso-bookmark:_Toc172089047'><b
+style='mso-bidi-font-weight:normal'><span style='font-size:14.0pt;line-height:
+150%;color:#1F497D'><o:p>&nbsp;</o:p></span></b></span></span></span></p>
+
+<h1 style='margin-top:12.0pt;margin-right:0in;margin-bottom:3.0pt;margin-left:
+.3in;text-indent:-.3in;page-break-before:always;page-break-after:avoid;
+tab-stops:list .3in 32.1pt'><span style='mso-bookmark:_Toc272489765'><span
+style='mso-bookmark:_Toc167091296'><span style='mso-bookmark:_Toc172089047'><a
+name="_Toc279676458"></a><a name="_Toc279679576"><span style='mso-bookmark:
+_Toc279676458'><span style='font-size:20.0pt;mso-bidi-font-size:14.0pt;
+color:#3070BE;mso-fareast-language:ZH-CN'>Issues Faced</span></span></a></span></span></span><span
+style='mso-bookmark:_Toc272489765'><span style='mso-bookmark:_Toc167091296'><span
+style='mso-bookmark:_Toc172089047'><span style='font-size:20.0pt;mso-bidi-font-size:
+14.0pt;color:#3070BE;mso-fareast-language:ZH-CN'><o:p></o:p></span></span></span></span></h1>
+
+<p class=ListParagraph style='margin-top:0in;margin-right:0in;margin-bottom:
+10.0pt;margin-left:.5in;mso-add-space:auto;text-indent:-.5in;mso-char-indent-count:
+0;line-height:115%;mso-pagination:widow-orphan;mso-list:l2 level1 lfo3'><span
+style='mso-bookmark:_Toc272489765'><span style='mso-bookmark:_Toc167091296'><span
+style='mso-bookmark:_Toc172089047'><![if !supportLists]><span style='font-family:
+"Times New Roman";mso-fareast-font-family:"Times New Roman"'><span
+style='mso-list:Ignore'>1)<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]><u><span style='font-family:"Times New Roman"'>Usage
+of FFT <span class=SpellE>Megafunction</span> <o:p></o:p></span></u></span></span></span></p>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><span
+style='mso-bookmark:_Toc272489765'><span style='mso-bookmark:_Toc167091296'><span
+style='mso-bookmark:_Toc172089047'>We took quite some time to understand the
+way FFT <span class=SpellE>Meagfucntion</span> is implemented in <span
+class=SpellE>Quartus</span> using its datasheet. In order to efficiently use
+the module generated by <span class=SpellE>Quartus</span>, we spent a
+considerable amount of time in setting various parameters like Transformation
+Length, Data and Twiddle Precision, FFT Engine Architectures and Implementation
+Details. We settled to use the Buffered Burst Architecture and a Quad Output
+FFT Engine. Also, because of various signals that are being inputted and
+outputted from FFT, we decided to write a controller which synchronizes FFT
+function’s working with other modules and Nios II. </span></span></span></p>
+
+<p class=ListParagraph><span style='mso-bookmark:_Toc272489765'><span
+style='mso-bookmark:_Toc167091296'><span style='mso-bookmark:_Toc172089047'><span
+style='font-family:"Times New Roman"'><o:p>&nbsp;</o:p></span></span></span></span></p>
+
+<p class=listparagraphcxsplast style='margin-top:0in;margin-right:0in;
+margin-bottom:10.0pt;margin-left:.5in;mso-add-space:auto;text-indent:-.5in;
+line-height:115%;mso-list:l2 level1 lfo3'><span style='mso-bookmark:_Toc272489765'><span
+style='mso-bookmark:_Toc167091296'><span style='mso-bookmark:_Toc172089047'><![if !supportLists]><span
+style='mso-list:Ignore'>2)<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]><u>Synchronization Issues and Debugging<o:p></o:p></u></span></span></span></p>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><span
+style='mso-bookmark:_Toc272489765'><span style='mso-bookmark:_Toc167091296'><span
+style='mso-bookmark:_Toc172089047'>Due to added hardware complexity, we had to
+face several <span class=SpellE>synchronzation</span> issues between the
+modules we have used.<span style='mso-spacerun:yes'>  </span>Moreover, we had
+to output the signals to the GPIO pins to debug the issues using the
+oscilloscope. We also had to pull over the signals used for memory and FFT
+controller up into Nios to debug the hardware using the <span class=SpellE>printf</span>
+command in Nios II console. Since we were working on a project that used a wide
+array of dataset to realize the goal, we had to be cautious to check our
+implementation from time to time to avoid any misguided steps we took. Hence,
+checking the design and debugging the issues took a large amount of time. </span></span></span></p>
+
+<p class=ListParagraph><span style='mso-bookmark:_Toc272489765'><span
+style='mso-bookmark:_Toc167091296'><span style='mso-bookmark:_Toc172089047'><span
+style='font-family:"Times New Roman"'><o:p>&nbsp;</o:p></span></span></span></span></p>
+
+<p class=listparagraphcxsplast style='margin-top:0in;margin-right:0in;
+margin-bottom:10.0pt;margin-left:.5in;mso-add-space:auto;text-indent:-.5in;
+line-height:115%;mso-list:l2 level1 lfo3'><span style='mso-bookmark:_Toc272489765'><span
+style='mso-bookmark:_Toc167091296'><span style='mso-bookmark:_Toc172089047'><![if !supportLists]><span
+style='mso-list:Ignore'>3)<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]><u>Detecting Start of Command<o:p></o:p></u></span></span></span></p>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><span
+style='mso-bookmark:_Toc272489765'><span style='mso-bookmark:_Toc167091296'><span
+style='mso-bookmark:_Toc172089047'>The FFT module was designed to continuously
+take 32 ms sample, perform FFT on the sample set and output the <span
+class=SpellE>source_exp</span> signal which we used to detect whether anything
+was being spoken into the microphone. We were successfully able to implement
+the detection of the word being spoken, however, after changing the
+architecture <span class=SpellE>source_exp</span> signal’s value seemed to
+change abruptly. Hence, we settled to use a switch to let the system know that
+a word will now be spoken for the next 1 second. </span></span></span></p>
+
+<p class=ListParagraph><span style='mso-bookmark:_Toc272489765'><span
+style='mso-bookmark:_Toc167091296'><span style='mso-bookmark:_Toc172089047'><span
+style='font-family:"Times New Roman"'><o:p>&nbsp;</o:p></span></span></span></span></p>
+
+<p class=listparagraphcxsplast style='margin-top:0in;margin-right:0in;
+margin-bottom:10.0pt;margin-left:.5in;mso-add-space:auto;text-indent:-.5in;
+line-height:115%;mso-list:l2 level1 lfo3'><span style='mso-bookmark:_Toc272489765'><span
+style='mso-bookmark:_Toc167091296'><span style='mso-bookmark:_Toc172089047'><![if !supportLists]><span
+style='mso-list:Ignore'>4)<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]><u>Mel Transform<o:p></o:p></u></span></span></span></p>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><span
+style='mso-bookmark:_Toc272489765'><span style='mso-bookmark:_Toc167091296'><span
+style='mso-bookmark:_Toc172089047'>Ideally, in order to derive the maximum
+information out of the full sample set, we needed to take the Mel Transform for
+every block of 32ms to extract features. However, due to the memory sync
+issues, we decided to implement the transform on full set of data which was
+enough for detection of 1 word, as in our case. </span></span></span></p>
+
+<p class=ListParagraph style='text-indent:0in;mso-char-indent-count:0'><span
+style='mso-bookmark:_Toc272489765'><span style='mso-bookmark:_Toc167091296'><span
+style='mso-bookmark:_Toc172089047'><span style='font-family:"Times New Roman"'><o:p>&nbsp;</o:p></span></span></span></span></p>
+
+<p class=listparagraphcxsplast style='margin-top:0in;margin-right:0in;
+margin-bottom:10.0pt;margin-left:.5in;mso-add-space:auto;text-indent:-.5in;
+line-height:115%;mso-list:l2 level1 lfo3'><span style='mso-bookmark:_Toc272489765'><span
+style='mso-bookmark:_Toc167091296'><span style='mso-bookmark:_Toc172089047'><![if !supportLists]><span
+style='mso-list:Ignore'>5)<span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span><![endif]><u>Compilation Time<o:p></o:p></u></span></span></span></p>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><span
+style='mso-bookmark:_Toc272489765'><span style='mso-bookmark:_Toc167091296'><span
+style='mso-bookmark:_Toc172089047'>Our design used a convoluted usage of many
+modules and synchronization issues. In order to debug and experiment for
+various architectures of <span class=SpellE>Megafunction</span>, we needed to
+build the SOPC Design using the SOPC Builder. Hence, rendering of our SOPC
+design and compilation time to generate the <span class=SpellE>sof</span> file
+needed to program the FPGA was large. So, even for a minute change in design,
+we were mandated to invest a considerable amount of time to come up with a
+solution for a problem. </span></span></span></p>
+
+<p class=MsoNormal><span style='mso-bookmark:_Toc272489765'><span
+style='mso-bookmark:_Toc167091296'><span style='mso-bookmark:_Toc172089047'><span
+style='mso-fareast-language:ZH-CN'><o:p>&nbsp;</o:p></span></span></span></span></p>
+
+<h1 style='margin-top:12.0pt;margin-right:0in;margin-bottom:3.0pt;margin-left:
+.3in;text-indent:-.3in;page-break-before:always;page-break-after:avoid;
+tab-stops:list .3in 32.1pt'><span style='mso-bookmark:_Toc272489765'><span
+style='mso-bookmark:_Toc167091296'><span style='mso-bookmark:_Toc172089047'><a
+name="_Toc279676459"></a><a name="_Toc279679577"><span style='mso-bookmark:
+_Toc279676459'><span style='font-size:20.0pt;mso-bidi-font-size:14.0pt;
+color:#3070BE;mso-fareast-language:ZH-CN'>Results And Conclusion</span></span></a></span></span></span><span
+style='mso-bookmark:_Toc272489765'><span style='mso-bookmark:_Toc167091296'><span
+style='mso-bookmark:_Toc172089047'><span style='font-size:20.0pt;mso-bidi-font-size:
+14.0pt;color:#3070BE;mso-fareast-language:ZH-CN'><o:p></o:p></span></span></span></span></h1>
+
+<h2 style='margin-top:12.0pt;margin-right:0in;margin-bottom:3.0pt;margin-left:
+39.3pt;text-align:justify;text-indent:-39.3pt;page-break-after:avoid;
+tab-stops:list 27.0pt 39.3pt'><span style='mso-bookmark:_Toc272489765'><span
+style='mso-bookmark:_Toc167091296'><span style='mso-bookmark:_Toc172089047'><a
+name="_Toc279676460"></a><a name="_Toc279679578"><span style='mso-bookmark:
+_Toc279676460'><u><span style='font-size:14.0pt;mso-bidi-font-size:18.0pt;
+font-weight:normal;mso-bidi-font-weight:bold'>Demonstration</span></u></span></a></span></span></span><span
+style='mso-bookmark:_Toc279676460'></span><span style='mso-bookmark:_Toc279679578'></span><span
+style='mso-bookmark:_Toc272489765'><span style='mso-bookmark:_Toc167091296'><span
+style='mso-bookmark:_Toc172089047'><span style='font-size:12.0pt;mso-bidi-font-size:
+10.0pt;font-weight:normal;mso-bidi-font-weight:bold'><o:p></o:p></span></span></span></span></h2>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><span
+style='mso-bookmark:_Toc272489765'><span style='mso-bookmark:_Toc167091296'><span
+style='mso-bookmark:_Toc172089047'>We successfully demonstrated a working
+project during the demo session. Our system was able to distinguish between the
+words ‘yes’ and ‘no’ very well with an accuracy of over 90%. We tested the
+system for various speakers and the system was able to distinguish between
+these words irrespective of the speaker.</span></span></span><a
+name="_Toc279676461"><span style='mso-bookmark:_Toc172089047'><span
+style='mso-bookmark:_Toc167091296'><span style='mso-bookmark:_Toc272489765'><span
+lang=EN-IN style='mso-ansi-language:EN-IN;mso-fareast-language:EN-IN'><o:p></o:p></span></span></span></span></a></p>
+
+<h2 style='margin-top:12.0pt;margin-right:0in;margin-bottom:3.0pt;margin-left:
+39.3pt;text-align:justify;text-indent:-39.3pt;page-break-after:avoid;
+tab-stops:list 27.0pt 39.3pt'><span style='mso-bookmark:_Toc279676461'><span
+style='mso-bookmark:_Toc172089047'><span style='mso-bookmark:_Toc167091296'><span
+style='mso-bookmark:_Toc272489765'><a name="_Toc279679579"><u><span
+style='font-size:14.0pt;mso-bidi-font-size:18.0pt;font-weight:normal;
+mso-bidi-font-weight:bold'>Further Improvements</span></u></a></span></span></span></span><span
+style='mso-bookmark:_Toc172089047'><span style='mso-bookmark:_Toc167091296'><span
+style='mso-bookmark:_Toc272489765'></span></span></span></h2>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><span
+style='mso-bookmark:_Toc172089047'><span style='mso-bookmark:_Toc167091296'><span
+style='mso-bookmark:_Toc272489765'>Given more time, we would have liked to
+implement a more robust system with a larger dictionary of words. Also, using
+the Mel Scale followed by DCT is a weaker approach to solve the Speech
+Recognition problem. Instead, the usage of algorithms built upon the concept of
+using the Hidden Markov Models which are predominantly statistical techniques
+that treat a speech signal as a piecewise stationary signal over a window of
+10ms is preferred. Hence, using these algorithms we could enhance the accuracy
+of the system and make the system more robust. </span></span></span><a
+name="_Toc279676462"></a></p>
+
+<h2 style='margin-top:12.0pt;margin-right:0in;margin-bottom:3.0pt;margin-left:
+39.3pt;text-align:justify;text-indent:-39.3pt;page-break-after:avoid;
+tab-stops:list 27.0pt 39.3pt'><span style='mso-bookmark:_Toc279676462'><a
+name="_Toc279679580"><u><span style='font-size:14.0pt;mso-bidi-font-size:18.0pt;
+font-weight:normal;mso-bidi-font-weight:bold'>Conclusion</span></u></a></span></h2>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'>We were
+successfully able to identify the word being spoken over a dictionary of 2
+words, i.e., Yes and No. Speech Recognition has always remained a difficult
+problem for engineers, however, we are satisfied with our approach and the
+outcomes of the project. <a name="OLE_LINK1"></a><a name="OLE_LINK2"></a><a
+name="_Toc279676463"><span style='mso-bookmark:OLE_LINK2'><span
+style='mso-bookmark:OLE_LINK1'><span lang=EN-IN style='mso-ansi-language:EN-IN;
+mso-fareast-language:EN-IN'><o:p></o:p></span></span></span></a></p>
+
+<h2 style='margin-top:12.0pt;margin-right:0in;margin-bottom:3.0pt;margin-left:
+39.3pt;text-align:justify;text-indent:-39.3pt;page-break-after:avoid;
+tab-stops:list 27.0pt 39.3pt'><span style='mso-bookmark:_Toc279676463'><span
+style='mso-bookmark:OLE_LINK2'><span style='mso-bookmark:OLE_LINK1'><a
+name="_Toc279679581"><u><span style='font-size:14.0pt;mso-bidi-font-size:18.0pt;
+font-weight:normal;mso-bidi-font-weight:bold'>Acknowledgments</span></u></a></span></span></span><span
+style='mso-bookmark:OLE_LINK2'><span style='mso-bookmark:OLE_LINK1'></span></span></h2>
+
+<p class=MsoNormal style='text-align:justify;line-height:150%'><span
+style='mso-bookmark:OLE_LINK2'><span style='mso-bookmark:OLE_LINK1'>We are
+thankful to Prof Bruce Land for his kind guidance all through the project. His
+consistent motivation and unlimited domain of knowledge helped us realize the
+project. Our project was also motivated by project pursued by Jordan Crittenden
+and Parker Evans of Cornell University on a similar topic. We also referred to
+the project documentation by Carlos <span class=SpellE>Asmat</span>, David
+Lopez <span class=SpellE>Sanzo</span> and <span class=SpellE>Kanwen</span> Wu
+of Mc Gill University which performed operations in time-domain. </span></span></p>
+
+<h1 style='margin-top:12.0pt;margin-right:0in;margin-bottom:3.0pt;margin-left:
+.3in;text-indent:-.3in;page-break-before:always;page-break-after:avoid;
+tab-stops:list .3in 32.1pt'><a name="_Toc279676464"></a><a name="_Toc279679582"><span
+style='mso-bookmark:_Toc279676464'><span style='font-size:18.0pt;mso-bidi-font-size:
+14.0pt;color:#3070BE;mso-fareast-language:ZH-CN;font-weight:normal;mso-bidi-font-weight:
+bold'>Appendix</span></span></a><span style='mso-bookmark:_Toc279676464'></span><span
+style='mso-bookmark:_Toc279679582'></span><span style='font-size:18.0pt;
+mso-bidi-font-size:14.0pt;color:#3070BE;mso-fareast-language:ZH-CN'><o:p></o:p></span></h1>
+
+<h2 style='margin-top:12.0pt;margin-right:0in;margin-bottom:3.0pt;margin-left:
+39.3pt;text-align:justify;text-indent:-39.3pt;page-break-after:avoid;
+tab-stops:list 27.0pt 39.3pt'><a name="_Toc279676465"></a><a
+name="_Toc279679583"><span style='mso-bookmark:_Toc279676465'><u><span
+style='font-size:14.0pt;mso-bidi-font-size:18.0pt;font-weight:normal;
+mso-bidi-font-weight:bold'>Comparison of Words Yes and No</span></u></span></a><span
+style='mso-bookmark:_Toc279676465'><u><span style='font-size:14.0pt;mso-bidi-font-size:
+18.0pt;font-weight:normal;mso-bidi-font-weight:bold'><o:p></o:p></span></u></span></h2>
+
+<p class=MsoNormal><span style='mso-bookmark:_Toc279676465'>The following images
+were derived using MATLAB for the words ‘Yes’ and ‘No’ to efficiently make out
+both time domain and frequency domain differences between the two spoken words:</span></p>
+
+<p class=MsoNormal><span style='mso-bookmark:_Toc279676465'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal><span style='mso-bookmark:_Toc279676465'><u>Time Domain
+Representation:<o:p></o:p></u></span></p>
+
+<p class=MsoNormal><span style='mso-bookmark:_Toc279676465'><span
+style='mso-no-proof:yes'><!--[if gte vml 1]><v:shape id="_x0000_i1031" type="#_x0000_t75"
+ alt="C:../../../../../../../Users/Nitish/Desktop/figuresfrommatlab/time domain _ yes.jpg" style='width:470.25pt;
+ height:220.5pt;visibility:visible'>
+ <v:imagedata src="index_files/image002.jpg" o:title=""/>
+</v:shape><![endif]--><![if !vml]><img border=0 width=627 height=294
+src="index_files/image003.jpg"
+alt="C:\Users\Nitish\Desktop\figuresfrommatlab\time domain _ yes.jpg" v:shapes="_x0000_i1031"><![endif]></span></span></p>
+
+<p class=MsoNormal align=center style='text-align:center'><span
+style='mso-bookmark:_Toc279676465'>For the word ‘Yes’</span></p>
+
+<p class=MsoNormal><span style='mso-bookmark:_Toc279676465'><span
+style='mso-no-proof:yes'><!--[if gte vml 1]><v:shape id="_x0000_i1032" type="#_x0000_t75"
+ alt="C:../../../../../../../Users/Nitish/Desktop/figuresfrommatlab/time domain _ no.jpg" style='width:470.25pt;
+ height:223.5pt;visibility:visible'>
+ <v:imagedata src="index_files/image004.jpg" o:title=""/>
+</v:shape><![endif]--><![if !vml]><img border=0 width=627 height=298
+src="index_files/image005.jpg"
+alt="C:\Users\Nitish\Desktop\figuresfrommatlab\time domain _ no.jpg" v:shapes="_x0000_i1032"><![endif]></span></span></p>
+
+<p class=MsoNormal align=center style='text-align:center'><span
+style='mso-bookmark:_Toc279676465'>For the word ‘No’</span></p>
+
+<p class=MsoNormal align=center style='text-align:center'><span
+style='mso-bookmark:_Toc279676465'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal><span style='mso-bookmark:_Toc279676465'><span
+style='mso-no-proof:yes'>FFT for the two words <o:p></o:p></span></span></p>
+
+<p class=MsoNormal><span style='mso-bookmark:_Toc279676465'><span
+style='mso-no-proof:yes'><!--[if gte vml 1]><v:shape id="Picture_x0020_3"
+ o:spid="_x0000_i1033" type="#_x0000_t75" alt="C_3A/Users/Nitish/Desktop/figuresfrommatlab/fft_yes.jpg"
+ style='width:460.5pt;height:179.25pt;visibility:visible'>
+ <v:imagedata src="index_files/image007.jpg" o:title=""/>
+</v:shape><![endif]--><![if !vml]><img border=0 width=614 height=239
+src="index_files/image008.jpg"
+alt="C:\Users\Nitish\Desktop\figuresfrommatlab\fft_yes.jpg" v:shapes="Picture_x0020_3"><![endif]></span></span></p>
+
+<p class=MsoNormal align=center style='text-align:center'><span
+style='mso-bookmark:_Toc279676465'>For word ‘Yes’</span></p>
+
+<p class=MsoNormal align=center style='text-align:center'><span
+style='mso-bookmark:_Toc279676465'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal align=center style='text-align:center'><span
+style='mso-bookmark:_Toc279676465'><span style='mso-no-proof:yes'><!--[if gte vml 1]><v:shape
+ id="_x0000_i1034" type="#_x0000_t75" alt="C:../../../../../../../Users/Nitish/Desktop/figuresfrommatlab/fft_no.jpg"
+ style='width:460.5pt;height:186pt;visibility:visible'>
+ <v:imagedata src="index_files/image017.jpg" o:title=""/>
+</v:shape><![endif]--><![if !vml]><img border=0 width=614 height=248
+src="index_files/image019.jpg"
+alt="C:\Users\Nitish\Desktop\figuresfrommatlab\fft_no.jpg" v:shapes="_x0000_i1034"><![endif]></span></span></p>
+
+<p class=MsoNormal align=center style='text-align:center'><span
+style='mso-bookmark:_Toc279676465'>For word ‘No’</span></p>
+
+<p class=MsoNormal align=center style='text-align:center'><span
+style='mso-bookmark:_Toc279676465'><o:p>&nbsp;</o:p></span></p>
+
+<p class=MsoNormal><span style='mso-bookmark:_Toc279676465'>The Power Graphs:</span></p>
+
+<p class=MsoNormal><span style='mso-bookmark:_Toc279676465'><span
+style='mso-no-proof:yes'><!--[if gte vml 1]><v:shape id="Picture_x0020_5"
+ o:spid="_x0000_i1035" type="#_x0000_t75" alt="C_3A/Users/Nitish/Desktop/figuresfrommatlab/power_yes.jpg"
+ style='width:460.5pt;height:186pt;visibility:visible'>
+ <v:imagedata src="index_files/image021.jpg" o:title=""/>
+</v:shape><![endif]--><![if !vml]><img border=0 width=614 height=248
+src="index_files/image022.jpg"
+alt="C:\Users\Nitish\Desktop\figuresfrommatlab\power_yes.jpg" v:shapes="Picture_x0020_5"><![endif]></span></span></p>
+
+<p class=MsoNormal align=center style='text-align:center'><span
+style='mso-bookmark:_Toc279676465'>For word ‘Yes’</span></p>
+
+<p class=MsoNormal align=center style='text-align:center'><span
+style='mso-bookmark:_Toc279676465'><span style='mso-no-proof:yes'><!--[if gte vml 1]><v:shape
+ id="Picture_x0020_6" o:spid="_x0000_i1036" type="#_x0000_t75" alt="C_3A/Users/Nitish/Desktop/figuresfrommatlab/power_no.jpg"
+ style='width:460.5pt;height:171.75pt;visibility:visible'>
+ <v:imagedata src="index_files/image023.jpg" o:title=""/>
+</v:shape><![endif]--><![if !vml]><img border=0 width=614 height=229
+src="index_files/image024.jpg"
+alt="C:\Users\Nitish\Desktop\figuresfrommatlab\power_no.jpg" v:shapes="Picture_x0020_6"><![endif]></span></span></p>
+
+<p class=MsoNormal align=center style='text-align:center'><span
+style='mso-bookmark:_Toc279676465'>For word ‘No’</span></p>
+
+<h2 style='margin-top:12.0pt;margin-right:0in;margin-bottom:3.0pt;margin-left:
+39.3pt;text-align:justify;text-indent:-39.3pt;page-break-after:avoid;
+tab-stops:list 27.0pt 39.3pt'><span style='mso-bookmark:_Toc279676465'><a
+name="_Toc279679584"><u><span style='font-size:14.0pt;mso-bidi-font-size:18.0pt;
+font-weight:normal;mso-bidi-font-weight:bold'>Code Listing</span></u></a></span></h2>
+
+<p class=MsoNormal><u><span style='font-size:11.0pt;mso-bidi-font-size:12.0pt'>Verilog
+Code:<o:p></o:p></span></u></p>
+
+<p class=MsoNormal style='margin-left:.25in;text-indent:-.25in'><span
+style='font-size:11.0pt;mso-bidi-font-size:12.0pt'><!--[if gte vml 1]><v:shape
+ id="_x0000_i1037" type="#_x0000_t75" style='width:9pt;height:10.5pt'>
+ <v:imagedata src="index_files/image026.jpg" o:title="file"/>
+</v:shape><![endif]--><![if !vml]><img border=0 width=12 height=14
+src="index_files/image026.jpg" v:shapes="_x0000_i1037"><![endif]><span
+style='mso-tab-count:1'>   </span><a href="SpeechRecog.v"><span class=SpellE>SpeechRecog.v</span></a><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:.5in;text-indent:-.5in;mso-list:l3 level1 lfo4;
+tab-stops:list .25in .5in'><![if !supportLists]><span style='font-size:11.0pt;
+mso-bidi-font-size:12.0pt;font-family:Symbol;mso-fareast-font-family:Symbol;
+mso-bidi-font-family:Symbol'><span style='mso-list:Ignore'><img width=10
+height=12 src="index_files/image025.jpg" alt="*"><span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]><span style='font-size:11.0pt;mso-bidi-font-size:
+12.0pt'><a href="MemoryModule.v"><span class=SpellE>MemoryModule.v</span></a><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:.5in;text-indent:-.5in;mso-list:l6 level1 lfo5;
+tab-stops:list .25in .5in'><![if !supportLists]><span style='font-size:11.0pt;
+mso-bidi-font-size:12.0pt;font-family:Symbol;mso-fareast-font-family:Symbol;
+mso-bidi-font-family:Symbol'><span style='mso-list:Ignore'><img width=10
+height=12 src="index_files/image025.jpg" alt="*"><span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]><span style='font-size:11.0pt;mso-bidi-font-size:
+12.0pt'><a href="FFTModule.v"><span class=SpellE>FFTModule.v</span></a><o:p></o:p></span></p>
+
+<p class=MsoNormal style='margin-left:.5in;text-indent:-.5in;mso-list:l4 level1 lfo6;
+tab-stops:list .25in .5in'><![if !supportLists]><span style='font-size:11.0pt;
+mso-bidi-font-size:12.0pt;font-family:Symbol;mso-fareast-font-family:Symbol;
+mso-bidi-font-family:Symbol'><span style='mso-list:Ignore'><img width=10
+height=12 src="index_files/image025.jpg" alt="*"><span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]><span style='font-size:11.0pt;mso-bidi-font-size:
+12.0pt'><a href="AUDIO_DAC_ADC.v"><span class=SpellE>Audio_Dac_Adc.v</span></a><o:p></o:p></span></p>
+
+<p class=MsoNormal><u><span style='font-size:11.0pt;mso-bidi-font-size:12.0pt'>C
+code:<o:p></o:p></span></u></p>
+
+<p class=MsoNormal style='margin-left:.25in;text-indent:-.25in;mso-list:l5 level1 lfo7;
+tab-stops:list .5in'><![if !supportLists]><span style='font-family:Symbol;
+mso-fareast-font-family:Symbol;mso-bidi-font-family:Symbol'><span
+style='mso-list:Ignore'><img width=11 height=13 src="index_files/image025.jpg"
+alt="*"><span style='font:7.0pt "Times New Roman"'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+</span></span></span><![endif]><span style='font-size:11.0pt;mso-bidi-font-size:
+12.0pt'><a href="main.c"><span class=SpellE>Main.c</span></a></span></p>
+
+<h2 style='margin-top:12.0pt;margin-right:0in;margin-bottom:3.0pt;margin-left:
+.4in;text-align:justify;text-indent:-.4in;page-break-after:avoid;tab-stops:
+list .4in 39.3pt'><a name="_Toc279676466"><span style='font-size:9.0pt;
+mso-bidi-font-size:18.0pt'><o:p>&nbsp;</o:p></span></a></h2>
+
+<h2 style='margin-top:12.0pt;margin-right:0in;margin-bottom:3.0pt;margin-left:
+39.3pt;text-align:justify;text-indent:-39.3pt;page-break-after:avoid;
+tab-stops:list 27.0pt 39.3pt'><span style='mso-bookmark:_Toc279676466'><a
+name="_Toc279679585"><u><span style='font-size:14.0pt;mso-bidi-font-size:18.0pt;
+font-weight:normal;mso-bidi-font-weight:bold'>Tasks</span></u></a></span></h2>
+
+<table class=MsoNormalTable border=1 cellspacing=0 cellpadding=0 width=672
+ style='width:7.0in;margin-left:5.4pt;border-collapse:collapse;border:none;
+ mso-border-alt:solid windowtext .5pt;mso-padding-alt:0in 5.4pt 0in 5.4pt;
+ mso-border-insideh:.5pt solid windowtext;mso-border-insidev:.5pt solid windowtext'>
+ <tr style='mso-yfti-irow:0;mso-yfti-firstrow:yes;height:8.25pt'>
+  <td width=360 valign=top style='width:3.75in;border-top:windowtext;
+  border-left:windowtext;border-bottom:white;border-right:white;border-style:
+  solid;border-width:1.0pt;mso-border-top-alt:windowtext;mso-border-left-alt:
+  windowtext;mso-border-bottom-alt:white;mso-border-right-alt:white;mso-border-style-alt:
+  solid;mso-border-width-alt:.5pt;padding:0in 5.4pt 0in 5.4pt;height:8.25pt'>
+  <p class=MsoNormal><b style='mso-bidi-font-weight:normal'>Task<o:p></o:p></b></p>
+  </td>
+  <td width=312 valign=top style='width:3.25in;border-top:solid windowtext 1.0pt;
+  border-left:none;border-bottom:solid white 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-left-alt:solid white .5pt;mso-border-top-alt:windowtext;
+  mso-border-left-alt:white;mso-border-bottom-alt:white;mso-border-right-alt:
+  windowtext;mso-border-style-alt:solid;mso-border-width-alt:.5pt;padding:0in 5.4pt 0in 5.4pt;
+  height:8.25pt'>
+  <p class=MsoNormal><b style='mso-bidi-font-weight:normal'>Performed by:<o:p></o:p></b></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:1;height:8.25pt'>
+  <td width=360 valign=top style='width:3.75in;border-top:none;border-left:
+  solid windowtext 1.0pt;border-bottom:solid white 1.0pt;border-right:solid white 1.0pt;
+  mso-border-top-alt:solid white .5pt;mso-border-alt:solid white .5pt;
+  mso-border-left-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt;
+  height:8.25pt'>
+  <p class=MsoNormal><span style='font-size:11.0pt;mso-bidi-font-size:12.0pt'>Background
+  Theory and Research<o:p></o:p></span></p>
+  </td>
+  <td width=312 valign=top style='width:3.25in;border-top:none;border-left:
+  none;border-bottom:solid white 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid white .5pt;mso-border-left-alt:solid white .5pt;
+  mso-border-alt:solid white .5pt;mso-border-right-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt;height:8.25pt'>
+  <p class=MsoNormal><span style='color:gray'>Aakash Jain, <span class=SpellE>Nitish</span>
+  <span class=SpellE>Paliwal</span> and <st1:place w:st="on">Krishna</st1:place>
+  <span class=SpellE>Teja</span><o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:2;height:8.25pt'>
+  <td width=360 valign=top style='width:3.75in;border-top:none;border-left:
+  solid windowtext 1.0pt;border-bottom:solid white 1.0pt;border-right:solid white 1.0pt;
+  mso-border-top-alt:solid white .5pt;mso-border-alt:solid white .5pt;
+  mso-border-left-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt;
+  height:8.25pt'>
+  <p class=MsoNormal><span style='font-size:11.0pt;mso-bidi-font-size:12.0pt'>FFT
+  Hardware Controller&nbsp; and Audio RAM Controller</span></p>
+  </td>
+  <td width=312 valign=top style='width:3.25in;border-top:none;border-left:
+  none;border-bottom:solid white 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid white .5pt;mso-border-left-alt:solid white .5pt;
+  mso-border-alt:solid white .5pt;mso-border-right-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt;height:8.25pt'>
+  <p class=MsoNormal><span class=SpellE><span style='color:gray'>Nitish</span></span><span
+  style='color:gray'> <span class=SpellE>Paliwal</span> and <st1:place w:st="on">Krishna</st1:place>
+  <span class=SpellE>Teja</span><o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:3;height:8.25pt'>
+  <td width=360 valign=top style='width:3.75in;border-top:none;border-left:
+  solid windowtext 1.0pt;border-bottom:solid white 1.0pt;border-right:solid white 1.0pt;
+  mso-border-top-alt:solid white .5pt;mso-border-alt:solid white .5pt;
+  mso-border-left-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt;
+  height:8.25pt'>
+  <p class=MsoNormal><span style='font-size:11.0pt;mso-bidi-font-size:12.0pt'>Nios
+  Software<o:p></o:p></span></p>
+  </td>
+  <td width=312 valign=top style='width:3.25in;border-top:none;border-left:
+  none;border-bottom:solid white 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid white .5pt;mso-border-left-alt:solid white .5pt;
+  mso-border-alt:solid white .5pt;mso-border-right-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt;height:8.25pt'>
+  <p class=MsoNormal><span style='color:gray'>Aakash Jain<o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:4;height:8.25pt'>
+  <td width=360 valign=top style='width:3.75in;border-top:none;border-left:
+  solid windowtext 1.0pt;border-bottom:solid white 1.0pt;border-right:solid white 1.0pt;
+  mso-border-top-alt:solid white .5pt;mso-border-alt:solid white .5pt;
+  mso-border-left-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt;
+  height:8.25pt'>
+  <p class=MsoNormal><span style='font-size:11.0pt;mso-bidi-font-size:12.0pt'>Interfacing
+  of Modules with Nios&nbsp;<o:p></o:p></span></p>
+  </td>
+  <td width=312 valign=top style='width:3.25in;border-top:none;border-left:
+  none;border-bottom:solid white 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid white .5pt;mso-border-left-alt:solid white .5pt;
+  mso-border-alt:solid white .5pt;mso-border-right-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt;height:8.25pt'>
+  <p class=MsoNormal><span style='color:gray'>Aakash Jain, <span class=SpellE>Nitish</span>
+  <span class=SpellE>Paliwal</span> and <st1:place w:st="on">Krishna</st1:place>
+  <span class=SpellE>Teja</span><o:p></o:p></span></p>
+  </td>
+ </tr>
+ <tr style='mso-yfti-irow:5;mso-yfti-lastrow:yes;height:8.25pt'>
+  <td width=360 valign=top style='width:3.75in;border-top:none;border-left:
+  solid windowtext 1.0pt;border-bottom:solid windowtext 1.0pt;border-right:
+  solid white 1.0pt;mso-border-top-alt:solid white .5pt;mso-border-top-alt:
+  white;mso-border-left-alt:windowtext;mso-border-bottom-alt:windowtext;
+  mso-border-right-alt:white;mso-border-style-alt:solid;mso-border-width-alt:
+  .5pt;padding:0in 5.4pt 0in 5.4pt;height:8.25pt'>
+  <p class=MsoNormal><span style='font-size:11.0pt;mso-bidi-font-size:12.0pt'>Website
+  Development<o:p></o:p></span></p>
+  </td>
+  <td width=312 valign=top style='width:3.25in;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid white .5pt;mso-border-left-alt:solid white .5pt;
+  mso-border-top-alt:white;mso-border-left-alt:white;mso-border-bottom-alt:
+  windowtext;mso-border-right-alt:windowtext;mso-border-style-alt:solid;
+  mso-border-width-alt:.5pt;padding:0in 5.4pt 0in 5.4pt;height:8.25pt'>
+  <p class=MsoNormal><span style='color:gray'>Aakash Jain, <span class=SpellE>Nitish</span>
+  <span class=SpellE>Paliwal</span> and <st1:place w:st="on">Krishna</st1:place>
+  <span class=SpellE>Teja</span><o:p></o:p></span></p>
+  </td>
+ </tr>
+</table>
+
+<h2 style='margin-top:12.0pt;margin-right:0in;margin-bottom:3.0pt;margin-left:
+39.3pt;text-align:justify;text-indent:-39.3pt;page-break-after:avoid;
+tab-stops:list 27.0pt 39.3pt'><a name="_Toc279676467"></a><a
+name="_Toc279679586"><span style='mso-bookmark:_Toc279676467'><u><span
+style='font-size:14.0pt;mso-bidi-font-size:18.0pt;font-weight:normal;
+mso-bidi-font-weight:bold'><span style='mso-spacerun:yes'> </span><o:p></o:p></span></u></span></a></h2>
+
+<h2 style='margin-top:12.0pt;margin-right:0in;margin-bottom:3.0pt;margin-left:
+39.3pt;text-align:justify;text-indent:-39.3pt;page-break-after:avoid;
+tab-stops:list 27.0pt 39.3pt'><span style='mso-bookmark:_Toc279679586'><span
+style='mso-bookmark:_Toc279676467'><u><span style='font-size:14.0pt;mso-bidi-font-size:
+18.0pt;font-weight:normal;mso-bidi-font-weight:bold'>References</span></u></span></span></h2>
+
+<p class=MsoNormal><a
+href="../../../../../../../../en.wikipedia.org/wiki/Speech_recognition#Algorithms">Speech
+Recognition Algorithms (Wikipedia</a><span class=GramE>)</span><br>
+<a href="../../../../../../../../en.wikipedia.org/wiki/Mel_scale">Mel Scale (Wikipedia)</a><br>
+<a href="../../../../../../../../en.wikipedia.org/wiki/Discrete_cosine_transform">Discrete
+Cosine Transformation (Wikipedia)</a><br>
+<a href="../../../../../../../../www.altera.com/literature/ug/ug_fft.pdf">FFT <span
+class=SpellE>Megacore</span> Function User Guide</a><br>
+<a href="../../../../../../../../www.alteraforum.com/default.htm"><span class=SpellE>Altera</span> Forums</a><br
+style='mso-special-character:line-break'>
+<![if !supportLineBreakNewLine]><br style='mso-special-character:line-break'>
+<![endif]></p>
+
+<p class=MsoNormal><o:p>&nbsp;</o:p></p>
+
+<p>Copyright (c) 2010 Cornell University. All rights reserved. <span
+class=GramE><span style='font-size:10.0pt;mso-bidi-font-size:12.0pt'>Design by <a
+href="../../../../../../../../www.freecsstemplates.org/default.htm"><span style='color:blue'>Free CSS
+Templates</span></a>.</span></span><o:p></o:p></p>
+
+</div>
+
+</div>
+
+</div>
+
+<div>
+
+<p class=MsoNormal style='mso-margin-top-alt:auto;mso-margin-bottom-alt:auto;
+margin-left:.5in'><!-- end #footer -->&nbsp;</p>
+
+</div>
+
+<p class=MsoToc1><o:p>&nbsp;</o:p></p>
+
+<p class=MsoToc1><!--[if supportFields]><span style='mso-element:field-begin'></span><span
+style='mso-spacerun:yes'> </span>TOC \o &quot;1-3&quot; \h \z \u <span
+style='mso-element:field-separator'></span><![endif]--><span
+class=MsoHyperlink><b style='mso-bidi-font-weight:normal'><a
+href="#_Toc279679560"><span style='color:black'>Introduction<span
+style='display:none;mso-hide:screen'><span style='mso-tab-count:1 dotted'>. </span></span></span><!--[if supportFields]><span
+style='color:black;display:none;mso-hide:screen'><span style='mso-element:field-begin'></span>
+PAGEREF _Toc279679560 \h </span><span style='color:black'><span
+style='display:none;mso-hide:screen'><span style='mso-element:field-separator'></span></span></span><![endif]--><span
+style='color:black;display:none;mso-hide:screen'>2<!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003200370039003600370039003500360030000000</w:data>
+</xml><![endif]--></span><!--[if supportFields]><span style='color:black;
+display:none;mso-hide:screen'><span style='mso-element:field-end'></span></span><![endif]--></a></b></span><b
+style='mso-bidi-font-weight:normal'><span style='mso-fareast-font-family:"Times New Roman";
+mso-font-kerning:0pt;mso-fareast-language:EN-US'><o:p></o:p></span></b></p>
+
+<p class=MsoToc1><span class=MsoHyperlink><b style='mso-bidi-font-weight:normal'><a
+href="#_Toc279679561"><span style='color:black'>Principles Involved<span
+style='display:none;mso-hide:screen'><span style='mso-tab-count:1 dotted'>. </span></span></span><!--[if supportFields]><span
+style='color:black;display:none;mso-hide:screen'><span style='mso-element:field-begin'></span>
+PAGEREF _Toc279679561 \h </span><span style='color:black'><span
+style='display:none;mso-hide:screen'><span style='mso-element:field-separator'></span></span></span><![endif]--><span
+style='color:black;display:none;mso-hide:screen'>3<!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003200370039003600370039003500360031000000</w:data>
+</xml><![endif]--></span><!--[if supportFields]><span style='color:black;
+display:none;mso-hide:screen'><span style='mso-element:field-end'></span></span><![endif]--></a></b></span><b
+style='mso-bidi-font-weight:normal'><span style='mso-fareast-font-family:"Times New Roman";
+mso-font-kerning:0pt;mso-fareast-language:EN-US'><o:p></o:p></span></b></p>
+
+<p class=MsoToc2><span class=MsoHyperlink><span style='font-family:Calibri;
+mso-no-proof:yes'><a href="#_Toc279679562"><span style='color:black'>Speech
+Recognition Principle<span style='display:none;mso-hide:screen'><span
+style='mso-tab-count:1 dotted'>. </span></span></span><!--[if supportFields]><span
+style='color:black;display:none;mso-hide:screen'><span style='mso-element:field-begin'></span>
+PAGEREF _Toc279679562 \h </span><span style='color:black'><span
+style='display:none;mso-hide:screen'><span style='mso-element:field-separator'></span></span></span><![endif]--><span
+style='color:black;display:none;mso-hide:screen'>3<!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003200370039003600370039003500360032000000</w:data>
+</xml><![endif]--></span><!--[if supportFields]><span style='color:black;
+display:none;mso-hide:screen'><span style='mso-element:field-end'></span></span><![endif]--></a></span></span><span
+style='font-size:12.0pt;font-family:"Times New Roman";mso-fareast-font-family:
+"Times New Roman";mso-font-kerning:0pt;mso-fareast-language:EN-US;mso-no-proof:
+yes'><o:p></o:p></span></p>
+
+<p class=MsoToc2><span class=MsoHyperlink><span style='font-family:Calibri;
+mso-no-proof:yes'><a href="#_Toc279679563"><span style='color:black'>Data
+Acquisition<span style='display:none;mso-hide:screen'><span style='mso-tab-count:
+1 dotted'>. </span></span></span><!--[if supportFields]><span style='color:
+black;display:none;mso-hide:screen'><span style='mso-element:field-begin'></span>
+PAGEREF _Toc279679563 \h </span><span style='color:black'><span
+style='display:none;mso-hide:screen'><span style='mso-element:field-separator'></span></span></span><![endif]--><span
+style='color:black;display:none;mso-hide:screen'>3<!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003200370039003600370039003500360033000000</w:data>
+</xml><![endif]--></span><!--[if supportFields]><span style='color:black;
+display:none;mso-hide:screen'><span style='mso-element:field-end'></span></span><![endif]--></a></span></span><span
+style='font-size:12.0pt;font-family:"Times New Roman";mso-fareast-font-family:
+"Times New Roman";mso-font-kerning:0pt;mso-fareast-language:EN-US;mso-no-proof:
+yes'><o:p></o:p></span></p>
+
+<p class=MsoToc2><span class=MsoHyperlink><span style='font-family:Calibri;
+mso-no-proof:yes'><a href="#_Toc279679564"><span style='color:black'>Detection<span
+style='display:none;mso-hide:screen'><span style='mso-tab-count:1'>  </span></span></span><!--[if supportFields]><span
+style='color:black;display:none;mso-hide:screen'><span style='mso-element:field-begin'></span>
+PAGEREF _Toc279679564 \h </span><span style='color:black'><span
+style='display:none;mso-hide:screen'><span style='mso-element:field-separator'></span></span></span><![endif]--><span
+style='color:black;display:none;mso-hide:screen'>3<!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003200370039003600370039003500360034000000</w:data>
+</xml><![endif]--></span><!--[if supportFields]><span style='color:black;
+display:none;mso-hide:screen'><span style='mso-element:field-end'></span></span><![endif]--></a></span></span><span
+style='font-size:12.0pt;font-family:"Times New Roman";mso-fareast-font-family:
+"Times New Roman";mso-font-kerning:0pt;mso-fareast-language:EN-US;mso-no-proof:
+yes'><o:p></o:p></span></p>
+
+<p class=MsoToc2><span class=MsoHyperlink><span style='font-family:Calibri;
+mso-no-proof:yes'><a href="#_Toc279679565"><span style='color:black'>Feature
+Extraction<span style='display:none;mso-hide:screen'><span style='mso-tab-count:
+1 dotted'>. </span></span></span><!--[if supportFields]><span style='color:
+black;display:none;mso-hide:screen'><span style='mso-element:field-begin'></span>
+PAGEREF _Toc279679565 \h </span><span style='color:black'><span
+style='display:none;mso-hide:screen'><span style='mso-element:field-separator'></span></span></span><![endif]--><span
+style='color:black;display:none;mso-hide:screen'>3<!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003200370039003600370039003500360035000000</w:data>
+</xml><![endif]--></span><!--[if supportFields]><span style='color:black;
+display:none;mso-hide:screen'><span style='mso-element:field-end'></span></span><![endif]--></a></span></span><span
+style='font-size:12.0pt;font-family:"Times New Roman";mso-fareast-font-family:
+"Times New Roman";mso-font-kerning:0pt;mso-fareast-language:EN-US;mso-no-proof:
+yes'><o:p></o:p></span></p>
+
+<p class=MsoToc1><span class=MsoHyperlink><b style='mso-bidi-font-weight:normal'><a
+href="#_Toc279679566"><span style='color:black'>Top Level Design<span
+style='display:none;mso-hide:screen'><span style='mso-tab-count:1 dotted'>. </span></span></span><!--[if supportFields]><span
+style='color:black;display:none;mso-hide:screen'><span style='mso-element:field-begin'></span>
+PAGEREF _Toc279679566 \h </span><span style='color:black'><span
+style='display:none;mso-hide:screen'><span style='mso-element:field-separator'></span></span></span><![endif]--><span
+style='color:black;display:none;mso-hide:screen'>4<!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003200370039003600370039003500360036000000</w:data>
+</xml><![endif]--></span><!--[if supportFields]><span style='color:black;
+display:none;mso-hide:screen'><span style='mso-element:field-end'></span></span><![endif]--></a></b></span><b
+style='mso-bidi-font-weight:normal'><span style='mso-fareast-font-family:"Times New Roman";
+mso-font-kerning:0pt;mso-fareast-language:EN-US'><o:p></o:p></span></b></p>
+
+<p class=MsoToc1><span class=MsoHyperlink><b style='mso-bidi-font-weight:normal'><a
+href="#_Toc279679567"><span style='color:black'>Hardware Implementation<span
+style='display:none;mso-hide:screen'><span style='mso-tab-count:1 dotted'>. </span></span></span><!--[if supportFields]><span
+style='color:black;display:none;mso-hide:screen'><span style='mso-element:field-begin'></span>
+PAGEREF _Toc279679567 \h </span><span style='color:black'><span
+style='display:none;mso-hide:screen'><span style='mso-element:field-separator'></span></span></span><![endif]--><span
+style='color:black;display:none;mso-hide:screen'>4<!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003200370039003600370039003500360037000000</w:data>
+</xml><![endif]--></span><!--[if supportFields]><span style='color:black;
+display:none;mso-hide:screen'><span style='mso-element:field-end'></span></span><![endif]--></a></b></span><b
+style='mso-bidi-font-weight:normal'><span style='mso-fareast-font-family:"Times New Roman";
+mso-font-kerning:0pt;mso-fareast-language:EN-US'><o:p></o:p></span></b></p>
+
+<p class=MsoToc2><span class=MsoHyperlink><span style='font-family:Calibri;
+mso-no-proof:yes'><a href="#_Toc279679568"><span style='color:black'>DE2 Board<span
+style='display:none;mso-hide:screen'><span style='mso-tab-count:1'>  </span></span></span><!--[if supportFields]><span
+style='color:black;display:none;mso-hide:screen'><span style='mso-element:field-begin'></span>
+PAGEREF _Toc279679568 \h </span><span style='color:black'><span
+style='display:none;mso-hide:screen'><span style='mso-element:field-separator'></span></span></span><![endif]--><span
+style='color:black;display:none;mso-hide:screen'>4<!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003200370039003600370039003500360038000000</w:data>
+</xml><![endif]--></span><!--[if supportFields]><span style='color:black;
+display:none;mso-hide:screen'><span style='mso-element:field-end'></span></span><![endif]--></a></span></span><span
+style='font-size:12.0pt;font-family:"Times New Roman";mso-fareast-font-family:
+"Times New Roman";mso-font-kerning:0pt;mso-fareast-language:EN-US;mso-no-proof:
+yes'><o:p></o:p></span></p>
+
+<p class=MsoToc2><span class=MsoHyperlink><span style='font-family:Calibri;
+mso-no-proof:yes'><a href="#_Toc279679569"><span style='color:black'>TOP LEVEL
+MODULE<span style='display:none;mso-hide:screen'><span style='mso-tab-count:
+1 dotted'>. </span></span></span><!--[if supportFields]><span style='color:
+black;display:none;mso-hide:screen'><span style='mso-element:field-begin'></span>
+PAGEREF _Toc279679569 \h </span><span style='color:black'><span
+style='display:none;mso-hide:screen'><span style='mso-element:field-separator'></span></span></span><![endif]--><span
+style='color:black;display:none;mso-hide:screen'>4<!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003200370039003600370039003500360039000000</w:data>
+</xml><![endif]--></span><!--[if supportFields]><span style='color:black;
+display:none;mso-hide:screen'><span style='mso-element:field-end'></span></span><![endif]--></a></span></span><span
+style='font-size:12.0pt;font-family:"Times New Roman";mso-fareast-font-family:
+"Times New Roman";mso-font-kerning:0pt;mso-fareast-language:EN-US;mso-no-proof:
+yes'><o:p></o:p></span></p>
+
+<p class=MsoToc2><span class=MsoHyperlink><span style='font-family:Calibri;
+mso-no-proof:yes'><a href="#_Toc279679570"><span style='color:black'>Memory
+Module<span style='display:none;mso-hide:screen'><span style='mso-tab-count:
+1 dotted'>. </span></span></span><!--[if supportFields]><span style='color:
+black;display:none;mso-hide:screen'><span style='mso-element:field-begin'></span>
+PAGEREF _Toc279679570 \h </span><span style='color:black'><span
+style='display:none;mso-hide:screen'><span style='mso-element:field-separator'></span></span></span><![endif]--><span
+style='color:black;display:none;mso-hide:screen'>4<!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003200370039003600370039003500370030000000</w:data>
+</xml><![endif]--></span><!--[if supportFields]><span style='color:black;
+display:none;mso-hide:screen'><span style='mso-element:field-end'></span></span><![endif]--></a></span></span><span
+style='font-size:12.0pt;font-family:"Times New Roman";mso-fareast-font-family:
+"Times New Roman";mso-font-kerning:0pt;mso-fareast-language:EN-US;mso-no-proof:
+yes'><o:p></o:p></span></p>
+
+<p class=MsoToc2><span class=MsoHyperlink><span style='font-family:Calibri;
+mso-no-proof:yes'><a href="#_Toc279679571"><span style='color:black'>FFT Module<span
+style='display:none;mso-hide:screen'><span style='mso-tab-count:1'>  </span></span></span><!--[if supportFields]><span
+style='color:black;display:none;mso-hide:screen'><span style='mso-element:field-begin'></span>
+PAGEREF _Toc279679571 \h </span><span style='color:black'><span
+style='display:none;mso-hide:screen'><span style='mso-element:field-separator'></span></span></span><![endif]--><span
+style='color:black;display:none;mso-hide:screen'>4<!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003200370039003600370039003500370031000000</w:data>
+</xml><![endif]--></span><!--[if supportFields]><span style='color:black;
+display:none;mso-hide:screen'><span style='mso-element:field-end'></span></span><![endif]--></a></span></span><span
+style='font-size:12.0pt;font-family:"Times New Roman";mso-fareast-font-family:
+"Times New Roman";mso-font-kerning:0pt;mso-fareast-language:EN-US;mso-no-proof:
+yes'><o:p></o:p></span></p>
+
+<p class=MsoToc2><span class=MsoHyperlink><span style='font-family:Calibri;
+mso-no-proof:yes'><a href="#_Toc279679572"><span style='color:black'>Miscellaneous<span
+style='display:none;mso-hide:screen'><span style='mso-tab-count:1'>  </span></span></span><!--[if supportFields]><span
+style='color:black;display:none;mso-hide:screen'><span style='mso-element:field-begin'></span>
+PAGEREF _Toc279679572 \h </span><span style='color:black'><span
+style='display:none;mso-hide:screen'><span style='mso-element:field-separator'></span></span></span><![endif]--><span
+style='color:black;display:none;mso-hide:screen'>4<!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003200370039003600370039003500370032000000</w:data>
+</xml><![endif]--></span><!--[if supportFields]><span style='color:black;
+display:none;mso-hide:screen'><span style='mso-element:field-end'></span></span><![endif]--></a></span></span><span
+style='font-size:12.0pt;font-family:"Times New Roman";mso-fareast-font-family:
+"Times New Roman";mso-font-kerning:0pt;mso-fareast-language:EN-US;mso-no-proof:
+yes'><o:p></o:p></span></p>
+
+<p class=MsoToc1><span class=MsoHyperlink><b style='mso-bidi-font-weight:normal'><a
+href="#_Toc279679573"><span style='color:black'>Software Implementation<span
+style='display:none;mso-hide:screen'><span style='mso-tab-count:1 dotted'>. </span></span></span><!--[if supportFields]><span
+style='color:black;display:none;mso-hide:screen'><span style='mso-element:field-begin'></span>
+PAGEREF _Toc279679573 \h </span><span style='color:black'><span
+style='display:none;mso-hide:screen'><span style='mso-element:field-separator'></span></span></span><![endif]--><span
+style='color:black;display:none;mso-hide:screen'>4<!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003200370039003600370039003500370033000000</w:data>
+</xml><![endif]--></span><!--[if supportFields]><span style='color:black;
+display:none;mso-hide:screen'><span style='mso-element:field-end'></span></span><![endif]--></a></b></span><b
+style='mso-bidi-font-weight:normal'><span style='mso-fareast-font-family:"Times New Roman";
+mso-font-kerning:0pt;mso-fareast-language:EN-US'><o:p></o:p></span></b></p>
+
+<p class=MsoToc2><span class=MsoHyperlink><span style='font-family:Calibri;
+mso-no-proof:yes'><a href="#_Toc279679574"><span style='color:black'>Hardware
+Interface<span style='display:none;mso-hide:screen'><span style='mso-tab-count:
+1 dotted'>. </span></span></span><!--[if supportFields]><span style='color:
+black;display:none;mso-hide:screen'><span style='mso-element:field-begin'></span>
+PAGEREF _Toc279679574 \h </span><span style='color:black'><span
+style='display:none;mso-hide:screen'><span style='mso-element:field-separator'></span></span></span><![endif]--><span
+style='color:black;display:none;mso-hide:screen'>4<!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003200370039003600370039003500370034000000</w:data>
+</xml><![endif]--></span><!--[if supportFields]><span style='color:black;
+display:none;mso-hide:screen'><span style='mso-element:field-end'></span></span><![endif]--></a></span></span><span
+style='font-size:12.0pt;font-family:"Times New Roman";mso-fareast-font-family:
+"Times New Roman";mso-font-kerning:0pt;mso-fareast-language:EN-US;mso-no-proof:
+yes'><o:p></o:p></span></p>
+
+<p class=MsoToc2><span class=MsoHyperlink><span style='font-family:Calibri;
+mso-no-proof:yes'><a href="#_Toc279679575"><span style='color:black'>NIOS C
+Program<span style='display:none;mso-hide:screen'><span style='mso-tab-count:
+1 dotted'>.. </span></span></span><!--[if supportFields]><span
+style='color:black;display:none;mso-hide:screen'><span style='mso-element:field-begin'></span>
+PAGEREF _Toc279679575 \h </span><span style='color:black'><span
+style='display:none;mso-hide:screen'><span style='mso-element:field-separator'></span></span></span><![endif]--><span
+style='color:black;display:none;mso-hide:screen'>4<!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003200370039003600370039003500370035000000</w:data>
+</xml><![endif]--></span><!--[if supportFields]><span style='color:black;
+display:none;mso-hide:screen'><span style='mso-element:field-end'></span></span><![endif]--></a></span></span><span
+style='font-size:12.0pt;font-family:"Times New Roman";mso-fareast-font-family:
+"Times New Roman";mso-font-kerning:0pt;mso-fareast-language:EN-US;mso-no-proof:
+yes'><o:p></o:p></span></p>
+
+<p class=MsoToc1><span class=MsoHyperlink><a href="#_Toc279679576"><span
+style='color:black'>Issues Faced<span style='display:none;mso-hide:screen'><span
+style='mso-tab-count:1 dotted'>. </span></span></span><!--[if supportFields]><span
+style='color:black;display:none;mso-hide:screen'><span style='mso-element:field-begin'></span>
+PAGEREF _Toc279679576 \h </span><span style='color:black'><span
+style='display:none;mso-hide:screen'><span style='mso-element:field-separator'></span></span></span><![endif]--><span
+style='color:black;display:none;mso-hide:screen'>4<!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003200370039003600370039003500370036000000</w:data>
+</xml><![endif]--></span><!--[if supportFields]><span style='color:black;
+display:none;mso-hide:screen'><span style='mso-element:field-end'></span></span><![endif]--></a></span><span
+style='mso-fareast-font-family:"Times New Roman";mso-font-kerning:0pt;
+mso-fareast-language:EN-US'><o:p></o:p></span></p>
+
+<p class=MsoToc1><span class=MsoHyperlink><b style='mso-bidi-font-weight:normal'><a
+href="#_Toc279679577"><span style='color:black'>Results And Conclusion<span
+style='display:none;mso-hide:screen'><span style='mso-tab-count:1 dotted'>. </span></span></span><!--[if supportFields]><span
+style='color:black;display:none;mso-hide:screen'><span style='mso-element:field-begin'></span>
+PAGEREF _Toc279679577 \h </span><span style='color:black'><span
+style='display:none;mso-hide:screen'><span style='mso-element:field-separator'></span></span></span><![endif]--><span
+style='color:black;display:none;mso-hide:screen'>4<!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003200370039003600370039003500370037000000</w:data>
+</xml><![endif]--></span><!--[if supportFields]><span style='color:black;
+display:none;mso-hide:screen'><span style='mso-element:field-end'></span></span><![endif]--></a></b></span><b
+style='mso-bidi-font-weight:normal'><span style='mso-fareast-font-family:"Times New Roman";
+mso-font-kerning:0pt;mso-fareast-language:EN-US'><o:p></o:p></span></b></p>
+
+<p class=MsoToc2><span class=MsoHyperlink><span style='font-family:Calibri;
+mso-no-proof:yes'><a href="#_Toc279679578"><span style='color:black'>Demonstration<span
+style='display:none;mso-hide:screen'><span style='mso-tab-count:1'>  </span></span></span><!--[if supportFields]><span
+style='color:black;display:none;mso-hide:screen'><span style='mso-element:field-begin'></span>
+PAGEREF _Toc279679578 \h </span><span style='color:black'><span
+style='display:none;mso-hide:screen'><span style='mso-element:field-separator'></span></span></span><![endif]--><span
+style='color:black;display:none;mso-hide:screen'>4<!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003200370039003600370039003500370038000000</w:data>
+</xml><![endif]--></span><!--[if supportFields]><span style='color:black;
+display:none;mso-hide:screen'><span style='mso-element:field-end'></span></span><![endif]--></a></span></span><span
+style='font-size:12.0pt;font-family:"Times New Roman";mso-fareast-font-family:
+"Times New Roman";mso-font-kerning:0pt;mso-fareast-language:EN-US;mso-no-proof:
+yes'><o:p></o:p></span></p>
+
+<p class=MsoToc2><span class=MsoHyperlink><span style='font-family:Calibri;
+mso-no-proof:yes'><a href="#_Toc279679579"><span style='color:black'>Further
+Improvements<span style='display:none;mso-hide:screen'><span style='mso-tab-count:
+1 dotted'>. </span></span></span><!--[if supportFields]><span style='color:
+black;display:none;mso-hide:screen'><span style='mso-element:field-begin'></span>
+PAGEREF _Toc279679579 \h </span><span style='color:black'><span
+style='display:none;mso-hide:screen'><span style='mso-element:field-separator'></span></span></span><![endif]--><span
+style='color:black;display:none;mso-hide:screen'>4<!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003200370039003600370039003500370039000000</w:data>
+</xml><![endif]--></span><!--[if supportFields]><span style='color:black;
+display:none;mso-hide:screen'><span style='mso-element:field-end'></span></span><![endif]--></a></span></span><span
+style='font-size:12.0pt;font-family:"Times New Roman";mso-fareast-font-family:
+"Times New Roman";mso-font-kerning:0pt;mso-fareast-language:EN-US;mso-no-proof:
+yes'><o:p></o:p></span></p>
+
+<p class=MsoToc2><span class=MsoHyperlink><span style='font-family:Calibri;
+mso-no-proof:yes'><a href="#_Toc279679580"><span style='color:black'>Conclusion<span
+style='display:none;mso-hide:screen'><span style='mso-tab-count:1'>  </span></span></span><!--[if supportFields]><span
+style='color:black;display:none;mso-hide:screen'><span style='mso-element:field-begin'></span>
+PAGEREF _Toc279679580 \h </span><span style='color:black'><span
+style='display:none;mso-hide:screen'><span style='mso-element:field-separator'></span></span></span><![endif]--><span
+style='color:black;display:none;mso-hide:screen'>4<!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003200370039003600370039003500380030000000</w:data>
+</xml><![endif]--></span><!--[if supportFields]><span style='color:black;
+display:none;mso-hide:screen'><span style='mso-element:field-end'></span></span><![endif]--></a></span></span><span
+style='font-size:12.0pt;font-family:"Times New Roman";mso-fareast-font-family:
+"Times New Roman";mso-font-kerning:0pt;mso-fareast-language:EN-US;mso-no-proof:
+yes'><o:p></o:p></span></p>
+
+<p class=MsoToc2><span class=MsoHyperlink><span style='font-family:Calibri;
+mso-no-proof:yes'><a href="#_Toc279679581"><span style='color:black'>Acknowledgments<span
+style='display:none;mso-hide:screen'><span style='mso-tab-count:1 dotted'>. </span></span></span><!--[if supportFields]><span
+style='color:black;display:none;mso-hide:screen'><span style='mso-element:field-begin'></span>
+PAGEREF _Toc279679581 \h </span><span style='color:black'><span
+style='display:none;mso-hide:screen'><span style='mso-element:field-separator'></span></span></span><![endif]--><span
+style='color:black;display:none;mso-hide:screen'>4<!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003200370039003600370039003500380031000000</w:data>
+</xml><![endif]--></span><!--[if supportFields]><span style='color:black;
+display:none;mso-hide:screen'><span style='mso-element:field-end'></span></span><![endif]--></a></span></span><span
+style='font-size:12.0pt;font-family:"Times New Roman";mso-fareast-font-family:
+"Times New Roman";mso-font-kerning:0pt;mso-fareast-language:EN-US;mso-no-proof:
+yes'><o:p></o:p></span></p>
+
+<p class=MsoToc1><span class=MsoHyperlink><b style='mso-bidi-font-weight:normal'><a
+href="#_Toc279679582"><span style='color:black'>Appendix<span style='display:
+none;mso-hide:screen'><span style='mso-tab-count:1 dotted'>. </span></span></span><!--[if supportFields]><span
+style='color:black;display:none;mso-hide:screen'><span style='mso-element:field-begin'></span>
+PAGEREF _Toc279679582 \h </span><span style='color:black'><span
+style='display:none;mso-hide:screen'><span style='mso-element:field-separator'></span></span></span><![endif]--><span
+style='color:black;display:none;mso-hide:screen'>4<!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003200370039003600370039003500380032000000</w:data>
+</xml><![endif]--></span><!--[if supportFields]><span style='color:black;
+display:none;mso-hide:screen'><span style='mso-element:field-end'></span></span><![endif]--></a></b></span><b
+style='mso-bidi-font-weight:normal'><span style='mso-fareast-font-family:"Times New Roman";
+mso-font-kerning:0pt;mso-fareast-language:EN-US'><o:p></o:p></span></b></p>
+
+<p class=MsoToc2><span class=MsoHyperlink><span style='font-family:Calibri;
+mso-no-proof:yes'><a href="#_Toc279679583"><span style='color:black'>Comparison
+of Words Yes and No<span style='display:none;mso-hide:screen'><span
+style='mso-tab-count:1 dotted'>. </span></span></span><!--[if supportFields]><span
+style='color:black;display:none;mso-hide:screen'><span style='mso-element:field-begin'></span>
+PAGEREF _Toc279679583 \h </span><span style='color:black'><span
+style='display:none;mso-hide:screen'><span style='mso-element:field-separator'></span></span></span><![endif]--><span
+style='color:black;display:none;mso-hide:screen'>4<!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003200370039003600370039003500380033000000</w:data>
+</xml><![endif]--></span><!--[if supportFields]><span style='color:black;
+display:none;mso-hide:screen'><span style='mso-element:field-end'></span></span><![endif]--></a></span></span><span
+style='font-size:12.0pt;font-family:"Times New Roman";mso-fareast-font-family:
+"Times New Roman";mso-font-kerning:0pt;mso-fareast-language:EN-US;mso-no-proof:
+yes'><o:p></o:p></span></p>
+
+<p class=MsoToc2><span class=MsoHyperlink><span style='font-family:Calibri;
+mso-no-proof:yes'><a href="#_Toc279679584"><span style='color:black'>Code
+Listing<span style='display:none;mso-hide:screen'><span style='mso-tab-count:
+1'>  </span></span></span><!--[if supportFields]><span style='color:black;
+display:none;mso-hide:screen'><span style='mso-element:field-begin'></span>
+PAGEREF _Toc279679584 \h </span><span style='color:black'><span
+style='display:none;mso-hide:screen'><span style='mso-element:field-separator'></span></span></span><![endif]--><span
+style='color:black;display:none;mso-hide:screen'>4<!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003200370039003600370039003500380034000000</w:data>
+</xml><![endif]--></span><!--[if supportFields]><span style='color:black;
+display:none;mso-hide:screen'><span style='mso-element:field-end'></span></span><![endif]--></a></span></span><span
+style='font-size:12.0pt;font-family:"Times New Roman";mso-fareast-font-family:
+"Times New Roman";mso-font-kerning:0pt;mso-fareast-language:EN-US;mso-no-proof:
+yes'><o:p></o:p></span></p>
+
+<p class=MsoToc2><span class=MsoHyperlink><span style='font-family:Calibri;
+mso-no-proof:yes'><a href="#_Toc279679585"><span style='color:black'>Tasks<span
+style='display:none;mso-hide:screen'><span style='mso-tab-count:1'>  </span></span></span><!--[if supportFields]><span
+style='color:black;display:none;mso-hide:screen'><span style='mso-element:field-begin'></span>
+PAGEREF _Toc279679585 \h </span><span style='color:black'><span
+style='display:none;mso-hide:screen'><span style='mso-element:field-separator'></span></span></span><![endif]--><span
+style='color:black;display:none;mso-hide:screen'>4<!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003200370039003600370039003500380035000000</w:data>
+</xml><![endif]--></span><!--[if supportFields]><span style='color:black;
+display:none;mso-hide:screen'><span style='mso-element:field-end'></span></span><![endif]--></a></span></span><span
+style='font-size:12.0pt;font-family:"Times New Roman";mso-fareast-font-family:
+"Times New Roman";mso-font-kerning:0pt;mso-fareast-language:EN-US;mso-no-proof:
+yes'><o:p></o:p></span></p>
+
+<p class=MsoToc2><span class=MsoHyperlink><span style='font-family:Calibri;
+mso-no-proof:yes'><a href="#_Toc279679586"><span style='color:black'>References<span
+style='display:none;mso-hide:screen'><span style='mso-tab-count:1'>  </span></span></span><!--[if supportFields]><span
+style='color:black;display:none;mso-hide:screen'><span style='mso-element:field-begin'></span>
+PAGEREF _Toc279679586 \h </span><span style='color:black'><span
+style='display:none;mso-hide:screen'><span style='mso-element:field-separator'></span></span></span><![endif]--><span
+style='color:black;display:none;mso-hide:screen'>4<!--[if gte mso 9]><xml>
+ <w:data>08D0C9EA79F9BACE118C8200AA004BA90B02000000080000000E0000005F0054006F0063003200370039003600370039003500380036000000</w:data>
+</xml><![endif]--></span><!--[if supportFields]><span style='color:black;
+display:none;mso-hide:screen'><span style='mso-element:field-end'></span></span><![endif]--></a></span></span><span
+style='font-size:12.0pt;font-family:"Times New Roman";mso-fareast-font-family:
+"Times New Roman";mso-font-kerning:0pt;mso-fareast-language:EN-US;mso-no-proof:
+yes'><o:p></o:p></span></p>
+
+<p class=MsoToc1><!--[if supportFields]><span style='mso-element:field-end'></span><![endif]--><span
+style='mso-fareast-font-family:"Times New Roman";mso-font-kerning:0pt;
+mso-fareast-language:EN-US'><span style='mso-spacerun:yes'> </span><o:p></o:p></span></p>
+
+</div>
+
+<div>
+
+<p class=MsoNormal>&nbsp;<o:p></o:p></p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- end #page --></div>
+
+</body>
+
+</html>

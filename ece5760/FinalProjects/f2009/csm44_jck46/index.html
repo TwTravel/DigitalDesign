@@ -1,0 +1,491 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<!--
+	This document provides the basis of a semantically structured web page 
+	authored in XHTML 1.0 Transitional using established Cornell University
+	naming conventions.
+-->
+
+<head>
+	<title>Velocity Sensitive Digital Piano</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+	<meta http-equiv="Content-Language" content="en-us" />
+	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+	
+<!--
+	All layout and formatting should be controlled through Cascading Stylesheets (CSS).
+	The following link tag should appear in the head of every page in the website. see
+	styles/screen.css.
+-->
+
+	<link rel="stylesheet" type="text/css" media="screen" href="screen.css" />
+	<link rel="stylesheet" type="text/css" href="csharp.css" >
+
+</head>
+
+<body class="onecolumn">
+
+<!--
+	The following link provides a way for people using text-based browsers and
+	screen readers to skip over repetitive navigation elements so that they can 
+	get directly to the content. It is hidden from general users through CSS.
+-->
+<div id="skipnav">
+	<a href="#content">Skip to main content</a>
+</div>
+
+<hr />
+
+<!-- The following div contains the Cornell University logo with unit signature -->
+<div id="cu-identity">
+
+	<div id="cu-logo">
+		<a href="../../../../../../../www.cornell.edu/default.htm"><img src="cu_logo_unstyled.gif" alt="Cornell University" width="166" height="45" border="0" /></a>
+	</div>
+	
+	<!-- 
+		The search-form div contains a form that allows the user to search 
+		either pages or people within cornell.edu directly from the banner.
+	-->
+
+	<div id="search-form">
+		<form action="http://www.cornell.edu/search/" method="get" enctype="application/x-www-form-urlencoded">
+			<div id="search-input">
+				<label for="search-form-query">SEARCH CORNELL:</label>
+				<input type="text" id="search-form-query" name="q" value="" size="20" />
+				<input type="submit" id="search-form-submit" name="submit" value="go" />
+			</div>
+
+			<div id="search-filters">
+
+					<input type="radio" id="search-filters1" name="tab" value="" checked="checked" />
+					<label for="search-filters1">Pages</label>
+				
+					<input type="radio" id="search-filters2" name="tab" value="people" />
+					<label for="search-filters2">People</label>
+					
+					<a href="../../../../../../../www.cornell.edu/search/default.htm">more options</a>
+			</div>	
+		</form>
+	</div>
+
+	
+	<!-- 
+		The search-form div contains a form that allows the user to search 
+		either the unit website or all of cornell.edu directly from the banner.
+	<div id="search-form">
+		<form action="#" method="post" enctype="application/x-www-form-urlencoded">
+			<div id="search-input">
+				<label for="search-form-query">SEARCH:</label>
+				<input type="text" id="search-form-query" name="query" value="" size="20" />
+				<input type="submit" id="search-form-submit" name="submit" value="go" />
+			</div>
+
+			<div id="search-filters">
+					<input type="radio" id="search-filters1" name="target" value="unit" checked="checked" />
+					<label for="search-filters1">Unit name</label>
+				
+					<input type="radio" id="search-filters2" name="target" value="cornell" />
+					<label for="search-filters2">Cornell</label>
+					
+					<a href="#">more options</a>
+			</div>	
+		</form>
+	</div>
+	-->
+	
+	<!--
+		The search-navigation div contains links that allow the user to search
+		either the unit website or all of cornell.edu.
+		These links will be displayed in the unit signature banner and will
+		be aligned with the right edge of the page.
+	<div id="search-navigation">
+		<ul>
+			<li><a href="#">Search Unit Name</a></li>
+			<li><a href="http://www.cornell.edu/search/">Search Cornell</a></li>
+		</ul>
+	</div>
+	-->
+</div>
+
+<!-- The header div contains the main identity and main navigation for the site -->
+<div id="header">	
+	<!--
+		The navigation div contains the site's main navigation. These
+		links will be displayed in a horizontal, gray navigation bar 
+		under the unit signature banner.
+	-->	
+	<div id="navigation">
+		<ul>
+				
+			
+			<!-- More navigation as needed
+			<li><a href="#">Navigation 6</a></li>
+			-->
+						
+		</ul>
+	</div>
+	
+	<hr />
+	
+	<!-- 
+		The identity div contains the name of a main site section
+	-->
+	<div id="identity">
+
+		<h1>KSD Piano<br>by Chris McNally (csm44) and Joe Kerekes (jck46)</h1>
+		
+	</div>
+</div>
+
+<hr />
+
+<div id="wrap">
+
+<!-- The content div contains the main content of the page -->
+<div id="content">
+	<div id="main">
+		<div style="text-align:center;"><p class="image"><img src="IMG_0342.JPG" alt="Der piano" height="480" width="640" /></p>
+  </div>
+		<h2>Introduction</h2>
+
+	<!--	<p>		
+		Lorem ipsum est <a href="images/cu_logo_unstyled.gif">scripserit referrentur ne</a>, eum ei fuisset postulant constituam. <a href="#">Mea ne modo putent (visited link).</a> Libris praesent hendrerit et duo, est ut offendit consequuntur. Percipit gubergren assueverit eum an, vix ad dictas tamquam praesent.
+		</p>
+	-->	<h3><em>Sound Bite</em></h3>
+		<p>
+		The KSD Keyboard is an FPGA based Karplus Strong string synthesis digital piano with velocity sensing keys.
+		</p>
+		<h3><em>Summary</em></h3>
+		<p>
+		Our project is a velocity sensitive hardware based piano. We simulated two strings per note using a 
+		Karplus Strong algorithm written in Verilog, and coupled it with a Casio electric piano keyboard fitted 
+		with custom switches to act as a user interface. On an Altera DE2 board we built a hardware 
+		Karplus-Strong synthesizer to simulate a piano key with two strings, along with a hardware timer. 
+		The timer was used to determine the key push's velocity, which in turn affected the volume level of 
+		the synthesized sound. The keyboard fed into the DE2 using the board's GPIO ports.
+		</p>
+		
+	<!--	<h4>H4 Headline</h4> -->
+	
+		<h2>High Level Design</h2>
+		<h3><em>Rationale</em></h3>
+		<p>
+		Our project aimed to demonstrate the performance improvement of implementing Karplus-Strong in 
+		hardware on an FPGA versus in C on a microcontroller. The idea for the project came from the 
+		ECE576 course website and past experiences in ECE476 with Karplus-Strong on a microcontroller. 
+		We thought that many more strings could be implemented on an FPGA given the parallel nature of 
+		hardware design. 
+		</p>
+		<h3><em>Background Math</em></h3>
+		<p>
+		The Karpus-Strong algorithm is a method of synthesizing sound by simulating the decay of a 
+		wave on a string. The KS algorithm starts with a random noise burst, which is the fourier transform of 
+                    an impulse of energy. The noise burst is feed through a shift register and eventually added with a delayed version
+		and low pass filtered (through simply averaging). The pitch of the note is related to the length of the shift register,
+		equaling the sampling frequency over the length of the shift register.
+		</p>
+		<div style="text-align:center;"><img src="actKSgeneral.png"  alt="General KS algorithm"  /></p></div>
+		
+		<h3><em>Logical Structure</em></h3>
+		<p>
+		The piano is divided into two parts: the user interface and key detection, and the sound synthesis. The user interface 
+		accepts one or more key pushes as input, which the key detection hardware picks up. Key detection then forwards 
+		the relevant information to the sound synthesis portion, where the key sound is synthesized and forwarded to the 
+		audio codec on the DE2 board. The audio codec then outputs to the audio out port on the DE2 to a speaker.
+		</p>
+		<div style="text-align:center;"><p class="image"><img src="highlevel.jpg" alt="High level diagram" /></p></div>
+		
+		<h3><em>Hardware/Software Tradeoffs</em></h3>
+		<p>
+		To achieve the level of parallel processing we required, using a Nios II and software was not possible. 
+		All keys had to be simulated concurrently, while a microprocessor/software solution would be forced to 
+		switch between keys due to its serial nature of processing. This left us with designing the project completely 
+		in hardware.
+		</p>
+		<h3><em>Relationship of Design to Standards</em></h3>
+		<p>
+		Our project does not make use of any standards.
+		</p>
+			
+		<h3><em>Patent Discussion</em></h3>
+		<p>
+		
+		</p>
+		<p>
+		The original Karplus-Strong algorithm is patented under <a href="../../../../../../../patft.uspto.gov/netacgi/nph-Parser@Sect1=PTO1&Sect2=HITOFF&d=PALL&p=1&u=_2Fnetahtml_2FPTO_2Fsrchnum.htm&r=1&f=G&l=50&s1=4649783.PN.&OS=PN_2F4649783&RS=PN_2F4649783">US patent 4,649,783</a>. The patent was filed in 1987 and expired in 2001. Regardless, our project is academic and does not have commercial applications or intentions, and thus should be safe from patent infringement. In a sense, Casio's keyboard was reverse-engineered because we disassembled and reused the keyboard, but we felt that no patents were violated in doing so due to the academic nature of the project, and that no proprietary technology was borrowed from the design (such as the sound synthesis).</p>
+		
+		<h2>Hardware Design</h2>
+		<h3><em>User interface and key capture</em></h3>
+		<p>
+		We chose to use the keyboard from an old Casio digital piano as our user interface. This most closely approximated 
+		playing a real piano as our time and budget constraints allowed. The keyboard detected two types of input on each 
+		key: the rest position when the key was not pressed, and the pressed position where the key was completely pushed 
+		down. 
+		</p>
+		<div style="text-align:center;"><img src="IMG_0347.JPG"  alt="Rest position contact strip"  height="480" width="640"/>
+</p></div>
+		<div style="text-align:center;"><img src="IMG_0348.JPG"  alt="Rest position contact strip"  height="480" width="640"/></p></div>
+		
+		<p>
+		In the rest position, a copper strip on the key contacts a common copper strip connected to 3.3V. The key’s 
+		rest copper strip was connected to both a GPIO port and a 10K pull down resistor. When the key was pushed, 
+		the contact between these two broke. Another copper strip on the key contacted a different common copper 
+		strip when the key reached its full pushed position. The set up of this copper strip was identical to the rest 
+		position, but connected to a different GPIO port. A schematic of the switch is in the appendix section. A piece 
+		of foam was placed in between the mounting board and the keys' base in order to help them return to their rest 
+		position with more force.
+		</p>
+		<p>
+		This configuration of the keys allowed us to detect when the key was at rest, being pushed, and in transit between 
+		the two. These three pieces of information allowed us to find the time from the initial push of the key to the fully 
+		depressed state, which in turn corresponded to the force of the key push. This information was important for the 
+		sound synthesis portion of the project. To measure the time the key is in ‘transit’ between the two contacts, we 
+		used an Altera Megawizard function to create a hardware timer. The timer was a 50 MHz 26 bit, up only counter 
+		with synchronous reset and enable pins. The counters are set to count from the time the key breaks contact with 
+		the rest position to the time the down position makes contact. When the key is in the down position, the counter is 
+		disabled, but not cleared. The counter is only reset when the key makes contact again with the rest position. The 
+		count is outputted to our sound synthesis modules, where it is used in determination of the amplitude of the key strike.
+		</p>
+		<p>
+		<em>Attempted Designs</em>
+		</p>
+		<p>
+		The physical construction of the keyboard had several iterations before we found a design that worked. The keyboard 
+		came with a circuit in place to detect the push down of each key using a rubber strip under the keys contacting a mesh 
+		of conductive material on the board. When the key was pressed down, a conductive tip on the rubber closed the 
+		circuit between the material on the board. We attempted to adapt this board for our purposes by removing the 
+		components on the board and replacing them with wires to the GPIO ports, but the solder pads on the board were 
+		destroyed in the process. After deconstructing the keyboard, we found a suitable place for a similar design to the 
+		rest position contacts: a copper strip attached to each key contacting a common copper strip at Vcc.
+		</p>
+		<p>
+		The rest position contacts had a similar design throughout the project, but the method of attaching the copper strips 
+		to the plastic key stops required some experimentation. Initially we tried to use the adhesive that was already on the 
+		copper strip, but the stress of having wires attached to them was too much. We next tried hot glue to reinforce them, 
+		but this also proved not sufficiently strong, and added the problem of glue interfering with key operation. Super glue 
+		(specifically 'Krazy Glue') ended up being a good balance between strength and the amount of adhesive required.
+		</p>
+		<p>
+		We initially hoped that the keys possessed enough strength to make good contact with the rest position strip, but it 
+		turned out that the keys were returned to their up position only by the deflection of the plastic connection of the key 
+		to the plastic body. Due to the age of the piano, this force was not sufficient in making a good electrical connection. 
+		The foam at the base of each key was added to strengthen the rest position's connection. 
+		</p>
+		<h3><em>Sound Synthesis</em></h3>
+		<p>
+		As explained above in the high level overview, our sound synthesis used the basic Karplus Strong algorithm with 
+		additional improvements and tweaks to move the generated sound from a guitar twang to a piano hammer strike.
+		Each string was contained within its own module and feed it's pitch as an input allowing for easy replication and
+		generation of new notes.
+		</p>
+		<p>
+		The first improvement to the KS algorithm was to simulate the hammer strike of a piano versus the twang of a guitar
+		pluck, which the basic KS algorithm simulates. The hammer strike imparts an impulse of energy into the string, 
+		which is represented as  random noise throughout the shift register. In contrast with a pluck, a hammer produces a 
+		softer more muted and smooth sound which is accomplished through initial filtering of the random noise. In addition the
+		travelling sound wave has the opportunity to interact with the hammer multiple times as the wave returns before the 
+		hammer leaves the strings. This was accomplished in simulation by low pass filtering a delayed version of the original
+		delayed sample and summing with the current sample. For really good quality three hammer string interactions
+		are considered appropriate, however our choice of two was more than adequate.
+		</p>
+		<div style="text-align:center;"><img src="hammerInter.png"  alt="Hammer String Interactions"  /></p></div>
+		<p>
+		The next improvement was to simulate multiple strings per note. In a real piano, some notes can have up to 3 separate strings
+		which enriches the sound and is more pleasing to hear. We implemented multiple strings with slightly different lengths
+		(+/- 1 from the note length) to simulate the slight variations same note strings experience.
+		</p>
+		<p>
+		In our system, two strings were used to simulate each note. In a real piano, these strings are in close proximity, 
+		and thus each string's vibrations affects the other. To simulate this effect, we attempted to couple the feedback loop of both 
+		strings after the filter and gain stages. The output of both strings were shifted right by 3 (divided by 8) and added 
+		to the main line of the other string which would then be stored. Unfortunately, for some unknown reason coupling results
+		in breaking the system and no sound is played at all. Fortunately non coupled strings still improve the sound over a single string.
+		</p>
+		<div style="text-align:center;"><img src="coupling.png"  alt="Coupled KS algorithm"  /></p></div>
+		<p>
+		As mentioned above in the user interface, velocity sensing was implemented by measuring the time between starting and ending a key hit.
+		The short the time the faster the key was struck, which would represent a harder hammer hit and thus louder sound. We were able to
+		successfully implement this for a single key by determing a region of time and appropriately sign shifting down the
+		inputted random noise which represents removing energy.
+		</p>
+		<p>
+		Final considerations for the sound synthesis were the multiple decay lengths. As with a real piano, holding down a piano
+		key makes the time decay much longer as the dampers in the piano are lifted off the string. We can check for a key being held down as 
+		well as the press of a button (representing the sustain pedal on a piano) and feed the appropriate decay constant to the string modules. We also 
+		used M4K blocks to store data for our shift registers. We decided to run the M4K blocks at 3 times the speed of our update scheme to 
+		ensure speedy reading and writing.
+		</p>
+		<em>Difficulties</em>
+		<p>
+		While working with a single key was a fairly simple affair, once we extended our project to all 18 keys 
+		we barely managed to pass timing tests which results in a very touchy system. We often tried changing 
+		minor qualities of the project (such as the pitch of a note) and the system would break as a result. We 
+		eventually settled on a design that worked, that despite failing strict timing still managed to work on the FPGA.
+		</p>
+		<h2>Results</h2>
+		<h3><em>User interface and key capture</em></h3>
+		<p>
+		The keyboard performed mostly as expected, with some exceptions. The "rest" position proved to be unreliable on 
+		some keys because they had difficulty bouncing back. This requires that to ‘end’ a key press the key had to be 
+		manually lifted up to close the switch. Using stiffer foam or replacing the foam with a spring may have alleviated 
+		this problem. The mechanical action of most keys worked well, and provided a more authentic feel for playing a 
+		piano than some other alternatives, such as the DE2's push buttons. The interface also had the advantage of 
+		providing a mapping of notes that was familiar to users who have played a piano before. Other students in lab 
+		came up to the keyboard and played songs with no instruction, demonstrating the ease of use of the interface.
+		</p>
+		<h3><em>Sound Synthesis</em></h3>
+		<p>
+		Once we settled on a configuration that worked, sound synthesis was surprisingly good. Hits were quickly detected, 
+		producing the notes sound immediately. In addition, to the parallel nature of the FPGA, all keys can be played 
+		simultaneously and without overflow. This allows users to play chords just as well as single notes. While there was
+		almost no hesitation in playing there were some discrepencies on expected frequency and generated frequency. 
+		This was a result of unanticipated changes to sampling rate, most likely due to the heavy stress we place on the clock signals.
+		Although our piano's notes were out of tune with a real life piano, the KSD Piano was in tune with itself; a note higher 
+		on the piano was indeed a semitone higher in frequency.
+		</p>
+		<table class="image">
+		<caption align="bottom">Generated D4 Sound Wave</caption>
+		<tr><td>
+		<div style="text-align:center;"><img src="F0000TEK.BMP"  alt="Generated D4 Sound Wave"  /></p></div>
+		</tr></td>
+		</table>
+		
+		<table class="image">
+		<caption align="bottom">Generated B3 Sound Wave</caption>
+		<tr><td>
+		<div style="text-align:center;"><img src="F0001TEK.BMP"  alt="Generated B3 Sound Wave"  /></p></div>
+		</tr></td>
+		</table>
+		
+		<table class="image">
+		<caption align="bottom">Generated C Major Chord</caption>
+		<tr><td>
+		<div style="text-align:center;"><img src="F0002TEK.BMP"  alt="Generated C Major Chord"  /></p></div>
+		</tr></td>
+		</table>
+		
+		<h3><em>Safety Considerations</em></h3>
+		<p>
+		Our keyboard had several exposed wires and copper contacts on the top of the black keys of the keyboard, 
+		directly where a user would press the key when using the piano. In addition to the risk of shock, the wires 
+		were soldered to the copper pads, exposing the user to solder. To combat these safety risks, we covered 
+		the pad and exposed wire with electrical tape. The tape serves as an insulator from the wire and a barrier 
+		between the user and solder.
+		</p>
+		<h3><em>Interference</em></h3>
+		<p>
+		To our knowledge our design did not cause interference with other group's projects. Our only output was 
+		an audio signal that was directly wired to a set of speakers. No radio or other wireless signals were 
+		broadcasted by any part of our product. To reduce interfering with other groups comfort or ability to 
+		concentrate, we kept the volume of the speakers on low when testing.
+		</p>
+		<h3><em>Usability</em></h3>
+		<p>
+		Usability was extremely intuitive. Our design exactly models a normal piano allowing anyone to simply sit down 
+		and play a few notes. More experienced players were even able to play simple tunes that fit within our key range. The 
+		only minor detail affect usability was the high resistance on a key or two which forced an adjacent key to play in addition 
+		itself.
+		</p>
+
+		<h2>Conclusions</h2>
+		<p>
+		</p>
+		<h3><em>Our Expectations</em></h3>
+		<p>
+		Our project met most of our expectations. For the physical keyboard implementation, adapting the Casio 
+		keyboard proved to be more of a challenge than we thought. A keyboard with larger keys may have 
+		been easier to work with, as the Casio keyboard did not provide much space to attach our copper strips 
+		for the contacts. We were still very grateful for the donation of the keyboard, as purchasing a keyboard 
+		for the purpose of disassembling it would have been a waste of money and a keyboard.  
+		</p>
+		<p>
+		The design of the "down position" switches worked well, and provided a reasonably reliable indicator 
+		of a completed key push. The "up position" that we tried to detect when a key was at rest was more 
+		troublesome. The forces pushing the key to return to its rest position were insufficient for our 
+		purposes, and even with our modifications continued to be a source of problems in detecting the rest 
+		position of some keys. We dealt with the remaining problems after adding foam under the keys by 
+		simply manually returning keys to their rest position if they did not do so on their own. For 
+		demonstrating the project's idea of parallel Karplus-Strong synthesizers, this was acceptable. If the 
+		project was expanded to be more oriented toward playing real songs and simulating a piano as closely 
+		as possible, a more elegant solution should be sought.
+		</p>
+		<p>
+		Next time we would design a more exacting standard module and template and verify correct operation of SRAM. 
+		The weird bugs that prevented us from implementing some features for all keys were extremely frustrating, but were 
+		most likely the result of fully using resources on the board forcing very exacting timing requirements. We would 
+		approach the project with a more efficient design, possibly implementing some sharing mechanism in order pass 
+		timing and produce a more resilient circuit.
+		</p>
+		
+		<h3><em>IP Considerations</em></h3>
+		<p>
+		Our code was based on several examples available on the course website. These code examples 
+		were made freely available for use in the course projects, so we violated no patents or copyrights by 
+		basing our own code off of them. The Karplus-Strong algorithm itself was protected by a patent, but the 
+		patent has since expired. We also used several Altera Megawizard functions, which are protected 
+		Altera intellectual property. The Quartus II subscription edition we used for the course include in the 
+		license the right to use these Megawizard functions in academic projects. However, we have not posted the source 
+		code for these Megawizard functions in accordance with the licensing agreement with Altera. The project 
+		did not introduce any novel approaches or designs, and thus represents no real patent opportunities. 
+		</p>
+		
+		</p>
+		
+		<h2>Appendix A: Code</h2>
+		<a href="DE2_TOP.v">Top level Verilog module</a><br>
+		<a href="karplus.v">Karplus-Strong module</a><br>
+		<p>
+		<h2>Appendix B: Schematic and pictures</h2>
+		<div style="text-align:center;"><img src="schem.bmp"  alt="Schematic"  height="622" width="833"/></p></div>
+		<div style="text-align:center;"><img src="IMG_0343.JPG"  alt="GPIO connections"  height="480" width="640"/></p></div>
+		<div style="text-align:center;"><img src="IMG_0344.JPG"  alt="Overall system"  height="480" width="640"/></p></div>
+		<p>
+		</p>
+		<h2>Appendix C: Work Split</h2>
+		<p>
+		<em>Chris McNally: </em><br>
+		Major physical hardware modifications <br>
+		Whiteboarding <br>
+		Glue code to connect modules in top level <br>
+		<em>Joe Kerekes: </em> <br>
+		Karplus Strong code <br>
+		Timer code <br>
+		Minor physical hardware modifications <br>
+		</p>
+		
+		<h2>References Used</h2>
+		<p>
+		<a href="../../../../../../../https@ccrma.stanford.edu/~jos/SimpleStrings/SimpleStrings.html">Elementary Digital Waveguide Models for Vibrating Strings</a><br>
+		<a href="../../../../../../../https@ccrma.stanford.edu/~jos/pasp04/Piano.html/default.htm">Piano Digital Synthesis</a><br>
+		<a href="../../../../../../../instruct1.cit.cornell.edu/Courses/ece576/default.htm">ECE 5720 Website</a><br>
+		<a href="../../../../../../../www.speech.kth.se/music/5_lectures/weinreic/strings.html">The Acoustics of the Piano</a><br>
+		<a href="../../../../../../../www.music.sc.edu/fs/bain/atmi02/tuning/default.html">Frequency Table Maker</a><br>
+		<a href="../../../../../../../www.altera.com/default.htm">Altera Data Sheets and Design Documents</a><br>
+		</p>
+		
+		<h2>Acknowledgements</h2>
+		<p>
+		Thank you Bruce Land and Adam Shapiro for your astute advice and guidance during this project. It was a fun and interesting semester. 
+		In addition we would like to thank <a href="../../../../../../../www.hickeys.com/default.htm">Hickey's Music Center</a> for donating an old keyboard for our use. Thanks for the help!
+		</p>
+	
+	</div>
+</div>
+</div>
+
+<hr />
+
+<div id="footer">
+<!-- The footer-content div contains the Cornell University copyright -->
+
+<div id="footer-content">
+	&copy;2008 <a href="../../../../../../../www.cornell.edu/default.htm">Cornell University</a>
+</div>
+</div>
+
+
+</body>
+</html> 

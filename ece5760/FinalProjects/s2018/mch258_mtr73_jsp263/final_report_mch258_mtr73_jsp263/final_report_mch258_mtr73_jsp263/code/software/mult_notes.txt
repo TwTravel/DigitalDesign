@@ -1,0 +1,46 @@
+a:   0 .   1   2   3   4
+b:   0 .   1   2   3   4
+------------------------
+c:                   0,4 1,4
+                 0,3 1,3 2,3
+             0,2 1,2 2,2 3,2
+         0,1 1,1 2,1 3,1 4,1
+   0,0 . 1,0 2,0 3,0 4,0
+
+
+psudo code
+==========================
+
+neg_a := isNeg(a)
+neg_b := isNeg(b)
+
+if neg_a
+    a = negate(a)
+
+if neg_b
+    b = negate(b)
+
+for i in [0 : length)
+    ret.limbs[i] := 0
+
+last_carry := 0
+for bj in [length - 1 : 0]
+    carry := 0
+    extra_limb := 0
+    for ai in [length - bj : 0]
+        limb_index := bj + ai
+        new_limb[15:0] := (b.limbs[bj] * a.limbs[ai]) + carry + (ai == 0 ? last_carry : 0) + (limb_index < length ? ret.limbs[limb_index] : extra_limb)
+        if limb_index < length
+            ret.limbs[limb_index] := new_limb[7:0]
+        else
+            extra_limb := new_limb[7:0]
+        carry := new_limb[15:8]
+        if ai == 0
+            last_carry := new_limb[15:8]
+
+if neg_a ^ neg_b
+    negate(ret)
+
+return ret
+
+===========================

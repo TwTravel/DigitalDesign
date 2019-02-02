@@ -1,0 +1,143 @@
+
+<html>
+<head>
+<title>ee576 Lab 2</title>
+</head>
+
+<body>
+<h2>
+EE 576: Laboratory 2 </h2> 
+<h2> NiosII graphics interface. </h2>
+<p>
+<b> Introduction. </b>
+
+<p> In this assignment you will implement a video interface to the NiosII processor, then use it to animate a ball dropping on an uneven surface. You will use the <a href="../../../../../../altera.com/education/univ/materials/manual/labs/tut_sopc_introduction_verilog.pdf">SOPC builder</a> to construct a NiosII processor, QuartusII to add a VGA video interface, and the NiosII IDE to write a GCC program to animate the ball. 
+<p> <b> Procedures:</b>  
+<ol>
+  <li>  You must handle the boards only on on the ESD mat. These boards are expensive and you must be careful of them. 
+  <li>Make sure the Altera DE2 board is connected to power and to the PC as specified 
+    in the evaluation board description. Turn on the power supply with the red switch 
+    on the board. Make sure the toggle switch on the left edge of the board marked (<code>Run/Prog</code>) is in the <code>Run</code> position and <em>leave it there at all times</em>.
+The FPGA will program in the <code>Run</code> position. Putting the switch in the <code>Prog</code> position writes your design to flash memory, which you do not want to do.
+  <li>The <a href="../../DE2/DE2_TOP.v">default top level module</a> for the DE2 defines all of the logical i/o signals. 
+  <li>You can define the mapping from logical signal to FPGA pins (<em>pin assignment</em> in QuartusII) for all the pins at once by importing <a href="../../DE2/DE2_pin_assignments.csv">this file</a> using the menu item <code>Assignments... Import Assignments...</code> and specifying the file name. There is no need to define pins one-by-one.   
+<li>A hardware VGA interface is shown on the <a href="../../../../../../instruct1.cit.cornell.edu/courses/ece576/DE2/index.html">DE2 page</a>. Read VGA example 1 Verilog code.
+</ol>
+<p><strong>--See also:</strong></p>
+<ul>
+  <li><a href="../../NiosII_doc/n2sw_nii52002.pdf">overview of the NiosII IDE</a></li>
+  <li><a href="../../NiosII_doc/ug_nios2_ide_help.pdf">NiosII IDE help system</a></li>
+  <li><a href="../../../../../../www.altera.com/literature/hb/nios2/n2sw_nii5v2.pdf">NiosII Software Development Handbook</a></li>
+  <li>The Nios II IDE is based on the Eclipse IDE project and the Eclipse C/C++ Development Tools&nbsp;(CDT). See Eclipse Project at <a href="../../../../../../www.eclipse.org/default.htm">www.eclipse.org</a>.</li>
+</ul>
+<p><strong>--Setting up a new project in the NiosII IDE:</strong></p>
+<ol>
+  <li>When using the IDE there must be <strong>no space characters in the path</strong> you choose to your workspace! </li>
+  <li>Start the IDE and specify a workspace. When you designed the cpu and top-level module, the design was stored in a folder. In the Workspace selection dialog box, browse for that folder, then add the string <code>\software</code> to the folder path. This new folder will be used to store all of the software projects associated with the specific cpu you built in the SOPC. After you press OK, you may need to click on the <code>workbench</code> icon to do anything useful. </li>
+  <li>Create a new software project. Select <code>File&gt;New&gt;project</code>. A series of dialog boxes will open. 
+    <ol>
+      <li>Choose <code>C/C++</code> application, then click <code>Next</code>. </li>
+      <li>Give the project a <code>name</code>, specify the <code>ptf</code> file from SOPC builder, use the <code>default location</code>, and specify a <code>blank project</code>. <br>
+      Then click <code>Next</code>.</li>
+      <li>Select <code>creat new system library</code>  then click <code>finish</code>. </li>
+    </ol>
+  </li>
+  <li>Back in the main IDE window, right-click on the <code>syslib</code> entry in the <code>C/C++ Projects </code>pane, then select <code>Properties</code>. 
+    <ol>
+      <li>In the dialog box, select <code>system library</code> on the left. </li>
+      <li>Associate the desired device with <code>stdout</code>, <code>stdin</code>, and <code>stderr</code>. These will usually default to the JTAG UART. </li>
+      <li>From the pulldown menu, select whether you are going to use <code>single threaded</code> or <code>microC/OS</code>. Note that the web-version of the IDE does not support the operating system. </li>
+      <li>Select the memory location, usually defaults to SDRAM. </li>
+      <li>Click <code>OK</code> to proceed. </li>
+    </ol>
+  </li>
+  <li>Back in the main IDE window, right-click on the <code>syslib</code> entry in the <code>C/C++ Projects </code>pane, then select <code>Build Project</code>. <br>
+  Wait for it to finish. </li>
+  <li>Create header files using <code>File&gt;New&gt;headerfile </code>and C files using<code> File&gt;New&gt;file. </code></li>
+  <li>If you get the following message when downloading your program to the NiosII (when using SDRAM for the program):<br>
+    <pre>Using cable "USB-Blaster [USB-0]", device 1, instance 0x00
+Pausing target processor: not responding.
+Resetting and trying again: FAILED
+Leaving target processor paused&gt; </pre>
+Then three  suspects come to mind:
+(1) You forgot to assign pins to the QuartusII project.
+ (2) There is an incorrect or missing PLL file for SDRAM delay (use the megawizard
+ to rebuild).
+ (3) There is a misspelled control line in the Nios module interface.
+
+  </li>
+</ol>
+<p><strong>--Opening a  downloaded, zipped project from the course site</strong></p>
+<ol>
+  <li>Unzip the file.</li>
+  <li>Open the QuartusII project then:
+    <ol>
+      <li>Regenerate the NiosII in SPOC builder.</li>
+      <li>Close the SOPC builder.</li>
+      <li> Resynthesize the Verilog design. </li>
+      <li>Download the <code>sof</code> file to the DE2. </li>
+    </ol>
+  </li>
+  <li>Start the Nios II IDE. The path to the IDE is approximately <code>C:\altera\kits\nios2_60\bin\eclipse\nios2-ide.exe</code>.
+    <ol>
+      <li>The folder heirarchy will have a folder with all the SOPC-generated stuff in it. In that folder will be a folder entitled <code>software</code>. In the Nios II IDE menu <code>File</code>, choose <code>Switch Workspace...</code> and point the workspace to the <code>software</code> folder. The Nios IDE will appear to close itself, then reopen in the specified workspace. Some folders should appear in the left panel of the IDE. </li>
+      <li>In the menu <code>Project</code>, choose <code>Clean...,</code> and in the dialog box choose <code>All projects</code>. This action will remove any dependencies on older versions of the Nios IDE or libraries.</li>
+      <li>Rebuild all the project parts by selecting the <code>Run</code> menu, choosing <code>Run as...,</code> and then <code>NiosII hardware</code>. </li>
+    </ol>
+  </li>
+</ol>
+<p><strong>--Using   QuartusII SignalTap tool to verify your design.</strong> </p>
+<p>Here are the steps that seem to be necssary to get SignalTap working. For more information, read the Altera <a href="../../Verilog/tut_signaltapII_verilogDE2.pdf">tutorial</a> on using SignalTap, an on chip logic analyzer. </p>
+<ol>
+  <li>Choose menu <code>Tools&gt;SignalTap</code></li>
+  <li>In the main SignalTap window, click <code>Hardware Setup...</code> (in the upper rigtht corner) <br>
+    and in the dialog box choose the hardware (USB-Blaster)</li>
+  <li>Choose menu <code>Edit&gt;AddNodes... </code>
+      <ol>
+        <li>Choose the appropriate <code>Filter</code> to simplify the list of nodes, the press <code>List</code></li>
+        <li>Highlight nodes and move to right-hand list using <strong><code>&gt;</code></strong> button </li>
+        <li>Click <code>OK</code> to get back to main SignalTap window </li>
+      </ol>
+  </li>
+  <li>In the main SignalTap window, click the <code>Clock ...</code> button and choose the clock signal as in AddNodes</li>
+  <li>In the node panel of the main window, set up trigger conditions.</li>
+  <li>Compile and then load the design onto the FPGA</li>
+  <li> In the main SignalTap window, toggle the <code>Data/Setup</code> button</li>
+  <li> Choose menu <code>Processing &gt;Run Analysis</code> </li>
+</ol>
+<hr>
+<b> Assignment </b> 
+<ul>
+  <li> You will design the cpu system, plus timers, UARTs and parallel interfaces in SOPC, then use Verilog to add the VGA hardware interface. Don't use schematic entry or VHDL. </li>
+  <li>The VGA graphics interface should include the ability to draw arbitrary lines under control from the NiosII. It is acceptable to run the VGA at 320x240 resolution.  You will  need to implement a <a href="../../../../../../graphics.idav.ucdavis.edu/education/GraphicsNotes/Bresenhams-Algorithm.pdf">breshenham</a> line drawing scheme in hardware. 
+  <li>I suggest using SDRAM as memory for the NiosII and SRAM as the VGA display memory. Be sure to follow the suggestions in the <a href="../../DE2/tut_DE2_sdram_verilog.pdf">SDRAM tutorial</a> to get the SDRAM timing correct. </li>
+  <li>When KEY3 is pressed to indicate reset, the region in which a ball will bounce should be drawn. The region will include the corners of the screen, and the left, right and top boudaries will be straight lines. The bottom  boundary will not be level, but rather consist of at least five connected segments which will form an uneven bounday for the ball to bounce off of. The five connected segments will have a fixed horizontal endpoints, and constrained random endpoints. </li>
+  <li>Once you can draw boundary lines, animate a ball released from the upper-left corner of the screen with some horizontal velocity, falling under the influence of gravity, and with energy loss at each bounce. Pressing KEY2 should reset the ball to the upper left corner. The ball should bounce off the inside of the screen boundaries with appropriate conservation of momentum. The ball will clearly come rest in a local minimum on the bottom boundary. </li>
+  <li>The elapsed time in seconds since ball release should be shown on the LCD. </li>
+  <li>You will need to come up with a command scheme so that the cpu can communicate with the VGA graphics interface. Minimally, there needs to be commands to:
+    <ul>
+      <li>erase the screen (optional, can be done in hardware) </li>
+      <li>draw a point at x,y in any color </li>
+      <li>draw a line from x1,y1 to x2,y2  in any color</li>
+    </ul>
+	There
+also needs to feedback to the cpu from the graphics system to:
+	<ul>
+	  <li>read a point at x,y (optional) </li>
+      <li>signal the cpu that the graphics system is ready for another command </li>
+	</ul>
+  </li>
+  <br>
+  Be prepared to demo your design to your TA in lab.
+  </li>
+</ul>
+<p> Your written lab report should include: 
+<ul>
+  <li>How you made the  line generator. 
+  <li>A detailed dsecription of your SOPC design. 
+  <li> A heavily commented listing of your Verilog design and GCC code. 
+</ul>
+<hr>
+<small> <font size="-1">Copyright Cornell University May 2007</font></small> 
+</body> </html>
+

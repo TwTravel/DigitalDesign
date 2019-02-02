@@ -1,0 +1,119 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>High Level Design</TITLE>
+<META NAME="description" CONTENT="High Level Design">
+<META NAME="keywords" CONTENT="576_report05">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="576_report05.css">
+
+<LINK REL="next" HREF="node3.html">
+<LINK REL="previous" HREF="node1.html">
+<LINK REL="up" HREF="576_report05.html">
+<LINK REL="next" HREF="node3.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation"><!--Navigation Panel-->
+<A NAME="tex2html51"
+  HREF="node3.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="next.png"></A> 
+<A NAME="tex2html49"
+  HREF="576_report05.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="up.png"></A> 
+<A NAME="tex2html43"
+  HREF="node1.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="prev.png"></A>   
+<BR>
+<B> Next:</B> <A NAME="tex2html52"
+  HREF="node3.html">Hardware Design</A>
+<B> Up:</B> <A NAME="tex2html50"
+  HREF="576_report05.html">576_report05</A>
+<B> Previous:</B> <A NAME="tex2html44"
+  HREF="node1.html">Introduction</A>
+<BR>
+<BR></DIV>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION00020000000000000000">
+High Level Design</A>
+</H1>
+<P>
+<BIG CLASS="LARGE">The graphics platform was designed to be able to generate shapes and objects by computing the edges for the object, perform a number of transformations, and to rasterize the scene into a VGA buffer.
+The module houses three concurrent pipelines: one to generate an edge list, one to compute the transformations, and one to rasterize the transformed points.
+These three pipelines are implicit consumer-producer constructs, with one waiting for the completion of the previous before continuing.
+</BIG>
+<P>
+<BIG CLASS="LARGE">The Altera Cyclone II FPGA on the Altera DE2 board was used to synthesize the Verilog designs.
+The software used to program the FPGA and organize the DE2 was the Altera Quartus II.
+Additionally, a the NIOS II CPU was also available to run software specified in C to interact with the hardware.
+</BIG>
+<P>
+<BIG CLASS="LARGE">One of the constraints was where to store the edge list, since its the most consumed resource in an organization of this kind.
+With the three available memories on board - SRAM, SDRAM, and M4K blocks<A NAME="tex2html3"
+  HREF="footnode.html#foot24"><SUP><SPAN CLASS="arabic">3</SPAN></SUP></A> - M4K blocks were chosen to hold the edge list.
+This allowed the memory to be fully simulated in an independent development environment and did not require waiting a cycle for memory to respond.
+</BIG>
+<P>
+<BIG CLASS="LARGE">Communication between two consumer-producer objects were maintained by having all the pipelines advance on the same clock, and by having a producer pipeline atomically incrementing the global count of produced objects.
+The consumer pipeline maintained its own counter/iterator as it consumed the data.
+This way the larger three pipeline dealt with data stalls implicitly and without a centralized dispatch logic.
+</BIG>
+<P>
+<BIG CLASS="LARGE">From the beginning, the design of the project included as little software as possible in order to emphasize writing and testing Verilog.<A NAME="tex2html4"
+  HREF="footnode.html#foot25"><SUP><SPAN CLASS="arabic">4</SPAN></SUP></A>For the original specification, it was believed that it would have been possible to completely implement the desired system within the realms of hardware.
+Thus, the hardware is especially general, and lends itself to quick and simple feature extensions.
+For example, the implied consumer-producer setup allows any additional pipelines to be quickly created and inserted without having to modify any dispatch logic.
+Although this decision has greatly simplified initial development, further development could demand more memory to store the intermediate data between pipelines, which may exhaust the memory capacity available on the DE2 board, in which case it would be beneficial to create a stalling mechanism and multiple VGA buffers in order to compensate for the decreased resilience of the whole circuit.
+</BIG>
+<P>
+<BIG CLASS="LARGE">There was no known industry standard relevant to this project.
+There is intellectual property protection relevant to this project.
+There is Verilog made public by Terasic for many of the common designs for the Altera DE2 board.
+There is Altera's NIOS II CPU that, while the current iteration of the circuit does not employ, future extensions will.
+</BIG>
+<P>
+
+<DIV CLASS="navigation"><HR>
+<!--Navigation Panel-->
+<A NAME="tex2html51"
+  HREF="node3.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="next.png"></A> 
+<A NAME="tex2html49"
+  HREF="576_report05.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="up.png"></A> 
+<A NAME="tex2html43"
+  HREF="node1.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="prev.png"></A>   
+<BR>
+<B> Next:</B> <A NAME="tex2html52"
+  HREF="node3.html">Hardware Design</A>
+<B> Up:</B> <A NAME="tex2html50"
+  HREF="576_report05.html">576_report05</A>
+<B> Previous:</B> <A NAME="tex2html44"
+  HREF="node1.html">Introduction</A></DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+
+2007-12-02
+</ADDRESS>
+</BODY>
+</HTML>

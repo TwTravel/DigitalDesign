@@ -1,0 +1,19 @@
+body{
+	WIDTH: 700px; 
+	margin-left: 200px; 
+	margin-right: auto;
+	style:"text-align: left";
+	bgcolor:"#EEEEEE";
+	font-size:16px;
+}
+h1{
+	margin-left: 100px; 
+}
+
+h2{
+	margin-left: 50px; 
+}
+
+p{
+	text-indent: 30px
+}

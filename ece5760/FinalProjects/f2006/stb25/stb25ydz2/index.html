@@ -1,0 +1,80 @@
+<html>
+<head>
+<title>STB25 YDZ2 Ray Tracer</title>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<style type="text/css">
+<!--
+
+a:link {  color: #FFFFFF; text-decoration: none}
+
+a:visited {  text-decoration: none; color: #FFCC66}
+
+a:hover {  color: #99CCFF; text-decoration: underline}
+body {  font-family: "Arial", "Helvetica", "sans-serif"}
+.titles {  font-family: "Geneva", "Arial", "Helvetica", "san-serif"; font-size: 16px; font-weight: bold; color: #000000; text-decoration: underline}
+.text {  font-family: "Arial", "Helvetica", "sans-serif"; font-size: 14px}
+.code {  font-family: "Courier New", Courier, mono; font-size: 14px}
+-->
+</style>
+</head>
+
+<body bgcolor="#FFFFFF" link="#FFFFFF">
+<table background="image/top.gif" width="700" border="0" cellspacing="0" cellpadding="0" height="75" align="center" >
+<tr background="image/top.gif"> <td colspan="2">
+      <p><FONT FACE="Tahoma" SIZE="6"> FPGA Ray Tracer</FONT><br>
+      <font face="Tahoma" size="3">Scott Bingham / Donald Zhang</font></p>
+</td></tr>
+</table><table width="700" border="0" cellspacing="0" cellpadding="0" height="20" align="center">
+<tr bgcolor="#000000"> <td BGCOLOR="#336666"> <div align="center">
+  <font color="#FFFFFF" face="Tahoma">|</font><font face="Tahoma">
+  <a href="index.html">Introduction</a> <font color="#FFFFFF">|</font>
+<a href="high.html">High Level Design</a> <font color="#FFFFFF">|</font>
+ <a href="pd_design.html">Program/Hardware Design</a>  <font color="#FFFFFF">|</font>
+<a href="results.html">Results</a> <font color="#FFFFFF">|
+<a href="conclusion.html">Conclusion</a> <font color="#FFFFFF">|
+<a href="appendix.html">Appendix</a> |</font></font></font></div></td></tr> </table>
+<table width="700" border="0" cellspacing="0" cellpadding="0" height="13" background="image/top1.gif" align="center">
+
+<tr> <td><FONT FACE="Tahoma"><img src="image/pixel.gif" width="1" height="1"></FONT></td></tr>
+</table><FONT FACE="Tahoma"><br> </FONT>
+<table width="700" border="0" cellspacing="0" cellpadding="0" align="center">
+<tr> 
+    
+    <td width="677" valign="top"> 
+      <table width="456" border="0" cellspacing="0" cellpadding="0" background="image/longmenu.gif" height="34">
+        <tr> <td><b><font face="Tahoma">Introduction</font></b></td></tr> </table>
+      
+		 
+      <p><font face="Tahoma"><span class="text">Our final project in ECE576 was 
+        implementing a ray tracer capable of rendering, rotating, and moving spheres. 
+        </span></font></p>
+      <p class="text"><font face="Tahoma">Our initial goal was to realistically 
+        render and shade spheres with reflections while being able to navigate 
+        through the scene and allow the spheres to bounce and roll around. Once 
+        we met this goal, we added anti-aliasing and the ability to render planes 
+        as well. Because spheres are particularly hard to draw accurately with 
+        non-ray tracing 3-D accelerators and spheres can be used as bounding objects 
+        for polygon tracing, we chose to implement spheres first. Planes were 
+        added because they can be used as polygons to render more complicated 
+        objects with sufficient bounding. We used a NIOSII processor to update 
+        the sphere table in hardware so that we could rotate spheres about any 
+        axis and have them move without adding significant complexity to the hardware. 
+        Rotations and motion were done in floating point on the CPU, making the 
+        calculations more accurate than the 24bit 12.12 fixed point representation 
+        used in the hardware. All input switches and keys were used to allow motion 
+        of the light source, motion of the origin, rotation of the scene, selection 
+        of the resolution, selection of the scene if the CPU was not used, the 
+        level of reflections, the level of anti-aliasing, reset, the option render 
+        planes, and finally telescoping/widening the camera.</font></p>
+      <p align=center><img border=1 src="image/ray/intro.jpg" width="500" height="510"></p> 
+	  
+	  </td></tr>
+  </TABLE>
+
+
+
+<FONT FACE="Tahoma"></FONT>
+<center>&nbsp;</center><br><br></body>
+</html>
+
+                        

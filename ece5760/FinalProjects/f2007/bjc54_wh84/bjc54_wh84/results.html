@@ -1,0 +1,93 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<!--
+Design by Free CSS Templates
+http://www.freecsstemplates.org
+Released for free under a Creative Commons Attribution 2.5 License
+
+Name       : Blogsmith
+Description: A two-column, fixed-width blog design.
+Version    : 1.0
+Released   : 20071001
+
+-->
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" />
+<title>ECE 576 Final Project: Laser Tracker</title>
+<meta name="keywords" content="" />
+<meta name="description" content="" />
+<link href="default.css" rel="stylesheet" type="text/css" media="screen" />
+</head>
+<body>
+<!-- start header -->
+<div id="logo">
+	<h1><a href="index.html">ECE 576 Final Project: Laser Tracker</a></h1>
+	<p>By Brandon Chan and Willie Huang</p>
+</div>
+<div id="menu">
+	<ul> <!--class="current_page_item"-->
+		<li><a href="index.html">Home</a></li>
+		<li><a href="design.html">Design</a></li>
+		<li class="current_page_item"><a href="results.html">Results</a></li>
+		<li><a href="conclusion.html">Conclusion</a></li>
+		<li><a href="Appendix.html">Appendix</a></li>
+	</ul>
+</div>
+<!-- end header -->
+<!-- start page -->
+<div id="page">
+	<div id="page-bg">
+		<!-- start content -->
+		<div id="content">
+			<div class="post">
+				<h2 class="title"><a name="theresults">The Results</a></h2>
+				<p class="byline"><small><a href="#">Top</a></small></p>
+				<div class="entry">
+					<p align='justify'>At first, our tracking box was only 30 by 30 pixels with each of the nine boxes with dimensions 10 by 10 pixels. This initial design was able to track light movement, but it could only track very slow movement. It was not able to track faster movement well because the size of each of the nine boxes was too small and thus the light can easily move out of each square. Therefore, we thought of two possible solutions. We could either increase the tracking box size or increase the number of square divisions inside the tracking box from 9 to 25.</p>
+					<p align='justify'>After much thinking, we realized that increasing the number of square divisions from 9 to 25 would yield essentially the same results. It is the size of each square division and not the quantity of square divisions that affect how fast we can track light. The larger each square division is, the faster we can track light sources.</p>
+					<p align='justify'>In the end, we chose to increase the tracking box size to 90 by 90 pixels with nine interior boxes. Since each of these nine interior boxes was larger, it was easier to keep track of the light source within the tracking box. Also, we increased the shift amount for the tracking box to account for faster movements. This is essentially a minor form of movement prediction. With this increased shift amount, the tracking box was able to follow light sources slightly faster than before. The main situation where the tracking box frequently loses track of the light source is when a moving light source suddenly changes direction. During a sudden change of direction, the camera frames have somewhat of a lag. In the camera frame following the sudden direction change, the light source will have moved significantly from the previous position and the camera does not capture the intermediate movement. This significant position difference is out of the bounds of the tracking box and thus the tracking box loses track of the light source. However, the tracking box has no difficulties in keeping track of slower and steadier direction changes. In addition, our light tracker works better at tracking larger sources of light. Light sources that are too small frequently do not meet our minimum threshold for identifying a valid light source and at times, light sources bent at an angle lose its intensity in the camera image and thus will not be detected.</p>
+<p align='justify'>Before we reached this conclusion, we investigated different aspects that might have created this bottleneck in our system. We looked into how fast the camera was being written into SDRAM; how fast it took to process the whole image to track the light; and how fast we could read out of SDRAM and into SRAM to be displayed onto the VGA. But all in all, it came out that the real bottleneck was in the camera. The camera just did not capture enough frames per second to accurately track a fast moving point on the screen. If the point was in the tracking box in one frame but by the next frame the point had already moved outside of the tracking box then it would lose lock on it.<p>
+<p>The fastest time we achieved in moving a single dot across a 640*480 resolution screen was 5.35 seconds. Any faster and the camera would lose track of the the dot.</p>
+				</div>			
+			</div>
+			<div class="post">
+				<h2 class="title"><a name="thescreenshots">The Screenshots</a></h2>
+				<p class="byline"><small><a href="#">Top</a></small></p>
+				<div class="entry">
+					<ul>
+					<li><a href="graphics/DSC06279.JPG">Screenshot 1</a></li>
+					<li><a href="graphics/DSC06280.JPG">Screenshot 2</a></li>
+					<li><a href="graphics/DSC06281.JPG">Screenshot 3</a></li>
+					<li><a href="graphics/DSC06282.JPG">Screenshot 4</a></li>
+					<li><a href="graphics/DSC06283.JPG">Screenshot 5</a></li>
+					<li><a href="graphics/DSC06284.JPG">Screenshot 6</a></li>
+					<li><a href="graphics/DSC06285.JPG">Screenshot 7</a></li>
+					<li><a href="graphics/DSC06286.JPG">Screenshot 8</a></li>
+					<li><a href="graphics/DSC06287.JPG">Screenshot 9</a></li>
+					</ul>
+				</div>			
+			</div>
+		</div>
+		<!-- end content -->
+		<!-- start sidebar -->
+		<div id="sidebar">
+			<ul>
+				<li>
+					<h2>Sub Headers</h2>
+					<ul>
+						<li><a href="#theresults">The Results</a></li>
+						<li><a href="#thescreenshots">The Screenshots</a></li>
+					</ul>
+				</li>
+			</ul>
+		</div>
+		<!-- end sidebar -->
+		<div style="clear: both;">&nbsp;</div>
+	</div>
+</div>
+<!-- end page -->
+<div id="footer">
+	<p>A Cornell University ECE 576 Project.</p>
+</div>
+</body>
+</html>

@@ -1,0 +1,532 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<!--
+	This document provides the basis of a semantically structured web page 
+	authored in XHTML 1.0 Transitional using established Cornell University
+	naming conventions.
+-->
+
+<head>
+	<title>ECE 5760 - Evolutionary Algorithms: Tic Tac Toe</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+	<meta http-equiv="Content-Language" content="en-us" />
+	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+	
+<!--
+	All layout and formatting should be controlled through Cascading Stylesheets (CSS).
+	The following link tag should appear in the head of every page in the website. see
+	styles/screen.css.
+-->
+
+	<link rel="stylesheet" type="text/css" media="screen" href="styles/screen.css" />
+</head>
+
+<body class="onecolumn">
+
+<!--
+	The following link provides a way for people using text-based browsers and
+	screen readers to skip over repetitive navigation elements so that they can 
+	get directly to the content. It is hidden from general users through CSS.
+-->
+<div id="skipnav">
+	<a href="#content">Skip to main content</a>
+</div>
+
+<hr />
+
+<!-- The following div contains the Cornell University logo with unit signature -->
+<div id="cu-identity">
+
+	<div id="cu-logo">
+		<a id="insignia-link" href="../../../../../../../../www.cornell.edu/default.htm"><img src="images/unit_signature_unstyled.gif" alt="Cornell University" width="283" height="75" border="0" /></a>
+		<div id="unit-signature-links">
+			<a id="cornell-link" href="../../../../../../../../www.cornell.edu/default.htm">Cornell University</a>
+			<a id="unit-link" href="../../../../../../../../www.ece.cornell.edu/default.htm">School of Electrical and Computer Engineering</a>
+		</div>
+	</div>
+	
+	<!-- 
+		The search-form div contains a form that allows the user to search 
+		either pages or people within cornell.edu directly from the banner.
+	-->
+
+	<div id="search-form">
+		<form action="http://www.cornell.edu/search/" method="get" enctype="application/x-www-form-urlencoded">
+			<div id="search-input">
+				<label for="search-form-query">SEARCH CORNELL:</label>
+				<input type="text" id="search-form-query" name="q" value="" size="20" />
+				<input type="submit" id="search-form-submit" name="submit" value="go" />
+			</div>
+
+			<div id="search-filters">
+
+					<input type="radio" id="search-filters1" name="tab" value="" checked="checked" />
+					<label for="search-filters1">Pages</label>
+				
+					<input type="radio" id="search-filters2" name="tab" value="people" />
+					<label for="search-filters2">People</label>
+					
+					<a href="../../../../../../../../www.cornell.edu/search/default.htm">more options</a>
+			</div>	
+		</form>
+	</div>
+
+	
+	<!-- 
+		The search-form div contains a form that allows the user to search 
+		either the unit website or all of cornell.edu directly from the banner.
+	<div id="search-form">
+		<form action="#" method="post" enctype="application/x-www-form-urlencoded">
+			<div id="search-input">
+				<label for="search-form-query">SEARCH:</label>
+				<input type="text" id="search-form-query" name="query" value="" size="20" />
+				<input type="submit" id="search-form-submit" name="submit" value="go" />
+			</div>
+
+			<div id="search-filters">
+					<input type="radio" id="search-filters1" name="target" value="unit" checked="checked" />
+					<label for="search-filters1">Unit name</label>
+				
+					<input type="radio" id="search-filters2" name="target" value="cornell" />
+					<label for="search-filters2">Cornell</label>
+					
+					<a href="#">more options</a>
+			</div>	
+		</form>
+	</div>
+	-->
+	
+	<!--
+		The search-navigation div contains links that allow the user to search
+		either the unit website or all of cornell.edu.
+		These links will be displayed in the unit signature banner and will
+		be aligned with the right edge of the page.
+	<div id="search-navigation">
+		<ul>
+			<li><a href="#">Search Unit Name</a></li>
+			<li><a href="http://www.cornell.edu/search/">Search Cornell</a></li>
+		</ul>
+	</div>
+	-->
+</div>
+
+<!-- The header div contains the main identity and main navigation for the site -->
+<div id="header">	
+	<!--
+		The navigation div contains the site's main navigation. These
+		links will be displayed in a horizontal, gray navigation bar 
+		under the unit signature banner.
+	-->	
+	<div id="navigation">
+		<ul>
+			<li><a href="#introduction">Introduction</a></li>
+			<li><a href="#highleveldesign">High Level Design</a></li>
+			<li><a href="#progharddes">Program/Hardware Design</a></li>
+			<li><a href="#results">Results of the Design</a></li>
+			<li><a href="#conclusions">Conclusions</a></li>
+			<li><a href="#appendices">Appendices</a></li>
+			<li><a href="#references">References</a></li>
+		</ul>
+	</div>
+	
+	<hr />
+	
+	<!-- 
+		The identity div contains the name of a main site section
+	-->
+	<div id="identity">
+
+		<h1>Evolutionary Algorithms: Tic Tac Toe</h1>
+	</div>
+</div>
+
+<hr />
+
+<div id="wrap">
+
+<!-- The content div contains the main content of the page -->
+<div id="content">
+	<div id="main">
+
+<!------------------------------------------------------------------------------------------------->
+
+		<!--
+		* Introduction
+			o One sentence "sound bite" that describes your project.
+			o A summary of what you did and why.
+		-->
+
+		<a name="introduction"></a>
+		<h2>Introduction</h2>
+		<h3>
+		Our project attempts to model the random process of an evolution using how well the organism plays the classic game of Tic-Tac-Toe as a fitness function with the end goal to create the perfect Tic-Tac-Toe machine.
+		</h3>
+
+		<p>
+		Evolutionary algorthms can solve complex problems that may not be able to be solved in traditional analytical or numerical methods by using random chance to find a local maximum in a fitness function. Tic-Tac-Toe is a good example of this kind of a problem because games tend to have strategies buried behind massive amounts of data, in this case, thousands of boards and hundreds of thousands of possible paths through them <a href="../../../../../../../../www.mathrec.org/old/2002jan/solutions.html">[1]</a>. The aim of this project was to explore evolutionary algorithms on an FPGA using how well an organism plays the game of Tic-Tac-Toe as a fitness function.
+		</p>
+
+		<br>
+
+<!------------------------------------------------------------------------------------------------->
+
+		<!--
+		* High level design:
+			o rationale and sources of your project idea
+			o background math
+			o logical structure
+			o hardware/software tradeoffs
+			o Relationship of your design to available IEEE, ISO, ANSI, DIN, and other standards.
+			o Discuss existing patents, copyrights, and trademarks which are relevant to your project.
+		-->
+		
+		<a name="highleveldesign"></a>
+		<h2>High Level Design</h2>
+		
+		<h3>Rationale and Sources of our Project Idea</h3>
+		<p>
+		Machine learning algorithms have extensively been applied to solve simple games such as tic-tac-toe, checkers, go etc. Machine Learning essentially involves analyzing large amounts of data to find patterns or knowing the constraints of a problem beforehand. The idea behind using evolution to make an ideal tic-tac-toe player was to remove human cognition from the process of a creating a player. This method is in inspired by Darwin's theory of evolution. Just like in nature, the algorithm goes through multiple generations or organisms (that play games of tic-tac-toe). The population of each generation is a set of potential solutions and the organism that has a good solution, i.e. the best fit in the current population, is used to produce the population of the next generation of organisms. In this manner new potential solutions are created. After an certain number of generations average fitness begins to approach maximum fitness, ultimately producing a population of organisms that have the best solution to the problem.
+		</p>
+		
+		<div class="main-photo-large">
+			<img src="images/fig4.png" width=640 height=464/>
+		</div>
+		
+		<p>
+		The figure above shows a perfect example of how evolutionary algorithms can be used to find local maxima. The black lines are seen converging to points where the algorithm guesses are local maxima indicated by blue dots.
+		</p>
+		
+		<h3>Logical Structure</h3>
+		<p>
+		The simplicity of tic-tac-toe lies in the fact that, it is a two person zero sum game and each game has a definite outcome. Also, all possible board layouts that can be reached and all possible games that can be played, can be determined. In theory there are 362,880 (ie. 9!) different sequences for placing the Xs and Os on the board; that is, without taking into consideration winning combinations which would make many of them unreachable in an actual game; Conditions for feasibility of a board are :
+		</p>
+		
+		<p>
+		- Assuming X moves first, the number of X's in a board is always equal to or one more than the number of O's in the board. <br>
+		- A player does not make a move in case the other player wins.
+		</p>
+		
+		<h4>Representing a Strategy and a Solution</h3>
+		
+		<div class="main-photo-large">
+			<img src="images/fig3.png"/>
+		</div>
+		
+		<p>
+		A move is represented by a branch in the tree, and the path through the whole tree is a "strategy" towards completion (regardless of a victory, loss or a draw)
+		</p>
+		
+		<p>
+		When winning combinations are considered, there are 255,168 possible games. Assuming that X makes the first move every time:
+		</p>
+		
+		<p>
+		* 131,184 finished games are won by (X)<br>
+		* 77,904 finished games are won by (O)<br>
+		* 46,080 finished games are drawn
+		</p>
+		
+		<p>
+		The idea here is to evolve no-loss strategies i.e. paths through the tree that lead towards a win or a draw, as either player.
+		</p>
+		
+		<h4>Initialization of the Population</h4>
+		
+		<p>
+		We begin with 100 players; each player has 3^9 array indices, the array index itself corresponding to a unique board setup. Each array index contains an integer between 0 and 8 corresponding to a move on the board. The array is initialized with random numbers between 0 and 8, for the first generation.
+		</p>
+		
+		<h4>Gameplay</h4>
+		
+		<p>
+		Each player plays a game against every other player, making a total of 198 games per player per generation (99 as X and 99 as O). The algorithm takes a move, plugs that into the board and passes the new array index (i.e. the board setup) consequent to that particular move. The other player uses this index to determine the next move, which is located at that particular index in the array. The play proceeds until a winning board is reached, the board is filled or an invalid move is made. W win or a draw in yields 0 points and a loss yields a -1.
+		</p>
+		
+		<h4>Fitness Evaluation</h4>
+		</p>
+		
+		<p>
+		The scores from each game are totaled, giving us the total score for each player in each generation. The fitness function is the score, the highest score being the best fit.
+		</p>
+		
+		<h4>Evolution</h4>
+		
+		<p>
+		The genes here are the values stored in the player array and the organisms evolve through 2 distinct operations: selection and mutation.
+		</p>
+		
+		<p>
+		- selection: Keeping the algorithm in contention with Darwin's theory of evolution, the best fit from a generation is chosen as the singular parent for the whole next generation. This makes reproduction essentially unicellular and every other organism (i.e. ones that are not the best fit from the current generation) is 'killed', i.e. their genes are not passed on. The best fit is determined by the fitness function, which is detailed above.
+		</p>
+		
+		<p>
+		- mutation: Again, keeping the laws of nature in mind, it is not necessary that the genes from the parent are replicated exactly in the offspring. Random mutations might occur that cause offsprings to have genes slightly different from the ones in the parent. In this algorithm we have assumed a static 2.5% chance that a mutation might occur while passing the genes from the parent to the offspring between two successive generations.
+		</p>
+		
+		<br>
+
+<!------------------------------------------------------------------------------------------------->
+
+		<!--
+		* Program/hardware design:
+			o program details. What parts were tricky to write?
+			o hardware details. Could someone else build this based on what you have written?
+			o Be sure to specifically reference any design or code you used from someone else.
+			o Things you tried which did not work
+		-->
+		
+		<a name="progharddes"></a>
+		<h2>Program/Hardware Design</h2>
+		
+		<h3>Program Details</h3> <!-- What parts were tricky to write? -->
+		<p>
+		board[9] -<br>
+		Used as the start board in each game, initialized to all zeroes, indicating a blank board.
+		</p>
+		
+		<p>
+		organism[i][j] -<br>
+		The actual player population; 'i' indicates the player number and 'j' indicates the gene.
+		</p>
+		
+		<p>
+		randomize -<br>
+		Initializes the population with random values between 0 and 8.
+		</p>
+		
+		<p>
+		winningplayer -<br>
+		Performs the first operation, i.e. selection and also generates the statistics for each generation such as Worst player, best player and individual player scores.
+		</p>
+		
+		<p>
+		compete2 -<br>
+		For games between two computer players, the game starts with a blank board, i.e. all values are zeroes. X's are represented by 2's and O's are represented by 1's, hence blank slots on the board are represented by zeroes. ex: when X makes a move on the board the value stored in that location is a 2, or 1 if O makes a move. This is done only for simplicity of computation in the program, there is no particular significance to these assigned values to the evolutionary algorithm itself.
+		</p>
+				
+		<div class="main-photo-large">
+			<img src="images/fig7.png"/>
+		</div>
+		
+		<p>
+		mutate:
+		As the name suggests, this function performs the second operation necessary for evolution.
+		</p>
+		
+		<p>
+		board2int -<br>
+		Encodes a unique boardsetup to a unique integer value (between 0 and 19683), that is in turn used to index the player array.
+		</p>
+		
+		<p>
+		int2board -<br>
+		Decodes a integer from the player array index to a boardsetup, used only for diagnostic purposes.
+		</p>
+		
+		<p>
+		boarddisp -<br>
+		Displays the current board state, used when playing against a human player.
+		</p>
+		
+		<p>
+		competeasx -<br>
+		For the human player to play as X (the human player takes the first turn)
+		</p>
+		
+		<p>
+		competeaso -<br>
+		For the human player to play as O (the computer player takes the first turn)
+		</p>
+		
+		<h3>Hardware Details</h3> <!-- Could someone else build this based on what you have written? -->
+		<p>
+		For simplicity of operation, and ease of writing code, we instantiated a NIOS-II processor and did all of the coding on the NIOS-II IDE and we only used the actual hardware on the board for human-computer gameplay.
+		</p>
+		
+		<p>
+		Each switch in SW[8:0] correspond to a location on the tic-tac-toe board and turning the switch on makes the actual move.
+		</p>
+		
+		<p>
+		SW[17] - Continue evolution when on.<br>
+		SW[16] - Human plays as X when on, takes the first turn.<br>
+		SW[15] - Human plays as O when on, computer takes the first turn.<br>
+		</p>
+		
+		<br>
+
+<!------------------------------------------------------------------------------------------------->
+
+		<!--
+		* Results of the design:
+			o speed of execution (hesitation, filcker, interactiveness, concurrency)
+			o accuracy (numeric, music frequencies, video signal timing, etc)
+			o how you enforced safety in the design.
+			o interference with other people's designs (e.g. cpu noise, RF interference)
+			o usability by you and other people
+		-->
+		
+		<a name="results"></a>
+		<h2>Results of the Design</h2>
+		
+		<p>
+		As of writing, the algorithm has gone through 12,542 iterations. There has been a measurable improvement in performance from the earlier iterations. Our program punishes invalid moves (moves that involve a player trying to make a move where there is already a mark) by ending the game immediately and awarding a loss to that player. The organisms have evolved past this stage and are making valid moves, although they do not always make intelligent moves. Most of the times that the organism played against a human, it failed to block a winning move or make one itself. Still, even at this stage, it has demonstrated progress, even forcing a human player into a draw in a few test runs.
+		</p>
+		
+		<p>
+		Looking at the MATLAB histogram plot of scores shown below confirms our suspicions. This is a plot of the score achieved by the best organism as evolution progresses. There are two distinct bands, a small one centered at -90.7308 and a larger peak at -6.1448. This suggests that most of the time, there is a mutation that makes one or two organisms perform much better than their unluckier counterparts. It shows that the organisms are getting better in some measure than the previous generation.
+		</p>
+		
+		<div class="main-photo-large">
+			<img src="images/fig1.png"/>
+		</div>
+		
+		<div class="main-photo-large">
+			<img src="images/fig2.png"/>
+		</div>
+		
+		<h3>Speed of Execution</h3> <!-- hesitation, filcker, interactiveness, concurrency -->
+		<p>
+		Each generation lasted approximately 50 seconds, most of which was taken up by the 9,900 games played each round (each of the 100 organisms plays against the other 99). This allows for around 1,700 generations per day.
+		</p>
+		
+		<h3>Safety Considerations</h3> <!-- how you enforced safety in the design -->
+		<p>
+		There were no safety considerations neccesary.
+		</p>
+
+		<h3>Interference</h3> <!-- interference with other people's designs (e.g. cpu noise, RF interference) -->
+		<p>
+		There was no noticable interference affecting other peoples designs from our device. 
+		</p>
+
+		<h3>Usability</h3> <!-- usability by you and other people -->
+		<p>
+		When the user is playing against the evolved organisms, the design requires that only one switch at a time is flipped. This is somewhat of an inconvenience when only the switches since the setup is more appropriate for a keypad with a series of buttons arranged like a tic-tac-toe board.
+		</p>
+
+		<br>
+
+<!------------------------------------------------------------------------------------------------->
+
+		<!--
+			o Analyse your design in terms of how the results met your expectations. What might you do differently next time?
+			o How did your design conform to the applicable standards?
+			o Intellectual property considerations.
+				+ Did you reuse code or someone else's design? Did you use any of Altera's IP?
+				+ Did you use code in the public domain?
+				+ Are you reverse-engineering a design? How did you deal with patent/trademark issues?
+				+ Did you have to sign non-disclosure to get a sample part?
+				+ Are there patent opportunites for your project?
+			o Legal considerations. For instance, if you use a transmitter, you must discuss the appropriate FCC legal restrictions.
+		-->
+
+		<a name="conclusions"></a>
+		<h2>Conclusions</h2>
+		
+		<p>
+		Since we were modeling evolutionary algorithms, we expected it to be slow to converge but it turned out to be much slower than anticipated. This is most likely caused by two factors: we did not use cross-breeding to add genetic diversity to the organisms and we did not prune the game tree by taking into account symmetries or impossible boards. We chose not to use cross-breeding due to the fact that all of the organisms are close enough to each other that cross-breeding would be comparable to mutation. We also chose not to prune the tree because that would involve a good deal more computation to decode the tree into a chromosome that can be stored, adding a new level of complexity to the project.
+		</p>
+		
+		<div class="main-photo-large">
+			<img src="images/fig5.png"/>
+			<p class="caption">
+			Impossible boards
+			</p>
+		</div>
+		
+		<div class="main-photo-large">
+			<img src="images/fig6.png"/>
+			<p class="caption">
+			Symmetric boards
+			</p>
+		</div>
+		
+		<h3>Future Work</h3>
+		<p>
+		Possibilities for future work include pruning the game tree, adding the possibility to communicate between Altera development boards to add more organisms to the gene pool in order to speed evolution on, identifying a better metric (i.e. number of draws vs number of losses) with which to evaluate organism performance, or saving the genome to a file on the computer to have data backup as well as the ability to stop and start the simulation without worry.
+		</p>
+		
+		<br>
+
+<!------------------------------------------------------------------------------------------------->
+
+		<!--
+		* Appendices
+			o Commented Verilog and/or program listings. When posting code, you must comply with all Altera IP considerations.
+			o Schematics if you build hardware external to the DE2 board (you can download free software from expresspcb.com to draw schematics).
+			o List of the specific tasks in the project carried out by each team member.
+		-->
+
+		<a name="appendices"></a>
+		<h2>Appendices</h2>
+
+		<h3>Program Listings</h3>
+		<p>
+		<a href="files/prep2.m">prep2.m</a> (Matlab Evolutionary Algorithm Script)<br>
+		<a href="files/Evolve.v">Evolve.v</a> (Altera Verilog Code)<br>
+		<a href="files/Evolution.c">Evolution.c</a> (NIOS II C Code)
+		</p>
+
+		<h3>Work Breakdown</h3>
+
+		<table border="1" cellpadding="5" cellspacing="0">
+			<thead>
+				<tr>
+					<th>TASK</th>
+					<th>COMPLETED BY...</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr class="row1"><td>Conceptualization</td><td>Both</td></tr>
+				<tr class="row2"><td>Evolutionary Theory</td><td>Nathan</td></tr>
+				<tr class="row1"><td>Hardware Setup</td><td>Sajeev</td></tr>
+				<tr class="row2"><td>Algorithm Coding</td><td>Both</td></tr>
+				<tr class="row1"><td>Interface Coding</td><td>Both</td></tr>
+				<tr class="row2"><td>UART Coding</td><td>Both</td></tr>
+				<tr class="row1"><td>Website Setup</td><td>Nathan</td></tr>
+				<tr class="row2"><td>Website Content</td><td>Both</td></tr>
+			</tbody>
+		</table>
+
+		<br>
+
+<!------------------------------------------------------------------------------------------------->
+
+		<!--
+		* References you used:
+			o Data sheets
+			o Vendor sites
+			o Code/designs borrowed from others
+			o Background sites/paper
+		-->
+
+		<a name="references"></a>
+		<h2>References</h2>
+		
+		<p>
+		<a href="../../../../../../../../www.mathrec.org/old/2002jan/solutions.html">Tic-Tac-Toe Solutions</a><br>
+		<a href="../../../../../../../../en.wikipedia.org/wiki/Tic_tac_toe/default.htm">Tic-Tac-Toe - Wikipedia</a>
+		</p>
+
+<!------------------------------------------------------------------------------------------------->
+
+	</div>
+</div>
+
+</div>
+
+<hr />
+
+<div id="footer">
+<!-- The footer-content div contains the Cornell University copyright -->
+
+<div id="footer-content">
+	&copy;2009 <a href="../../../../../../../../www.cornell.edu/default.htm">Cornell University</a>
+</div>
+</div>
+
+</body>
+</html>

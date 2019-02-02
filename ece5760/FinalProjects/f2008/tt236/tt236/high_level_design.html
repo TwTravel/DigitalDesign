@@ -1,0 +1,269 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8" /><title>Brute Force Search of a DES Keyspace</title>
+
+<meta name="keywords" content="" />
+<meta name="description" content="" />
+<link href="default.css" rel="stylesheet" type="text/css" />
+<meta http-equiv="CONTENT-TYPE" content="text/html; charset=utf-8" />
+<meta name="GENERATOR" content="OpenOffice.org 2.4 (Linux)" />
+<style type="text/css">
+<!--
+@page { size: 8.5in 11in; margin: 0.79in }
+P { margin-bottom: 0.08in }
+--></style>
+<meta http-equiv="CONTENT-TYPE" content="text/html; charset=utf-8" />
+<meta name="GENERATOR" content="OpenOffice.org 2.4 (Linux)" />
+<style type="text/css">
+<!--
+@page { size: 8.5in 11in; margin: 0.79in }
+P { margin-bottom: 0.08in }
+--></style>
+<meta http-equiv="CONTENT-TYPE" content="text/html; charset=utf-8" />
+<meta name="GENERATOR" content="OpenOffice.org 2.4 (Linux)" />
+<style type="text/css">
+<!--
+@page { size: 8.5in 11in; margin: 0.79in }
+P { margin-bottom: 0.08in }
+-->
+</style><!-- Design by Free CSS Templates http://www.freecsstemplates.org Released for free under a Creative Commons Attribution 2.5 License Title : StandardIssue Version : 1.0 Released : 20070723 Description: A two-column, fixed-width and lightweight template ideal for 1024x768 resolutions. Suitable for blogs and small websites. -->
+<meta http-equiv="CONTENT-TYPE" content="text/html; charset=utf-8" />
+<meta name="GENERATOR" content="OpenOffice.org 2.4 (Linux)" />
+<style type="text/css">
+<!--
+@page { size: 8.5in 11in; margin: 0.79in }
+P { margin-bottom: 0.08in }
+-->
+</style>
+<meta http-equiv="CONTENT-TYPE" content="text/html; charset=utf-8" />
+<meta name="GENERATOR" content="OpenOffice.org 2.4 (Linux)" />
+<style type="text/css">
+<!--
+@page { size: 8.5in 11in; margin: 0.79in }
+P { margin-bottom: 0.08in }
+-->
+</style>
+<meta http-equiv="CONTENT-TYPE" content="text/html; charset=utf-8" />
+<meta name="GENERATOR" content="OpenOffice.org 2.4 (Linux)" />
+<style type="text/css"><big>
+<!--
+@page { size: 8.5in 11in; margin: 0.79in }
+P { margin-bottom: 0.08in }
+-->
+</big></style>
+<meta http-equiv="CONTENT-TYPE" content="text/html; charset=utf-8" />
+<meta name="GENERATOR" content="OpenOffice.org 2.4 (Linux)" />
+<style type="text/css">
+<!--
+@page { size: 8.5in 11in; margin: 0.79in }
+P { margin-bottom: 0.08in }
+-->
+</style>
+<meta http-equiv="CONTENT-TYPE" content="text/html; charset=utf-8" />
+<meta name="GENERATOR" content="OpenOffice.org 2.4 (Linux)" />
+<style type="text/css">
+<!--
+@page { size: 8.5in 11in; margin: 0.79in }
+P { margin-bottom: 0.08in }
+-->
+</style>
+</head>
+<body>
+<div id="header">
+<div id="logo" style="width: 850px;">
+<h1><small><small>Brute
+Force Search of a DES Keyspace</small></small></h1>
+<h2>Defeating LM Hashes Using <span style="color: rgb(255, 102, 102);">[</span>Red<span style="color: rgb(255, 102, 102);">]</span></h2>
+Tony Tsang &nbsp;&nbsp; tt236 at cornell.edu &nbsp;
+&nbsp;Cornell University<br />
+</div>
+<div><br />
+<div style="text-align: right;">
+<div style="text-align: right;" id="menu">
+<ul>
+<li><a href="index.html">
+intro</a></li>
+<li class="active"><a href="high_level_design.html">high
+level
+design</a></li>
+<li><a href="hardware_design.html">hardware
+design</a></li>
+<li><a href="results.html">results</a></li>
+<li><a href="conclusion.html">conclusion </a></li>
+<li><a href="code.html">code</a></li>
+<li><a href="final_remarks.html">final remarks</a></li>
+<li><a href="references.html">references</a></li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div id="page"><small> </small>
+<big>High Level Design</big><br />
+<br />
+<br />
+<div style="text-align: center;"></div>
+<p style="margin-bottom: 0in;">
+</p>
+<p style="margin-bottom: 0in;"><big>This project
+required an understanding
+of DES, the LM hash algorithm, an estimate on the time required to
+search the keyspace and some idea of how to put it all together.</big></p>
+<br />
+<br />
+<div style="text-align: center;"><img src="images/lmhash.png" width="850" /></div>
+<br />
+<br />
+<p style="margin-bottom: 0in;"><big>LM Hash[1]</big></p>
+<p style="margin-bottom: 0in;"><big>Several aspects
+of the LM hash
+algorithm makes it relatively easy to crack due to weaknesses in its
+implementation. Passwords have a maximum length of 14 characters,
+those that are shorter than 7 are padded with ASCII NULs (0x00). The
+14 bytes are converted to UPPER CASE, divided into two pieces, hashed
+separately and then concatenated to form the resulting LM hash.
+Changing all letters to upper case reduces the character set from 95
+to 69 which reduces the number of possible keys from 95^7 to 69^7. A
+brute force attack can be mounted on both halves of the hash to
+obtain the key in plain text. LM hash does not include a salt which
+makes it possible to use rainbow tables, a time-memory trade-off
+technique that utilizes precomputed plain text and hash pairs to
+search for the key. Salting a password would complicate any attack
+because a given plain text password could produce different hashes if
+the salt, which consists of random bits is appended to the password
+before hashing, greatly increasing the search space if the salt size
+is significant.</big></p>
+<p style="margin-bottom: 0in;"><big><br />
+</big></p>
+<p style="margin-bottom: 0in;"><big>The LM hash is
+computed as follows.</big></p>
+<ol>
+<li>
+<p style="margin-bottom: 0in;"><big>The user’s
+password as an OEM string is converted to uppercase.</big></p>
+<big> </big></li>
+<li>
+<p style="margin-bottom: 0in;"><big>This
+password is either null-padded or truncated to 14 bytes. </big></p>
+<big> </big></li>
+<li>
+<p style="margin-bottom: 0in;"><big>The
+“fixed-length” password is split into two 7-byte halves. </big></p>
+<big> </big></li>
+<li>
+<p style="margin-bottom: 0in;"><big>These values
+are used to create two DES keys, one from each 7-byte half, by
+converting the seven bytes into a bit stream, and inserting a zero bit
+after every seven bits. This generates the 64 bits needed for the DES
+key. </big></p>
+<big> </big></li>
+<li>
+<p style="margin-bottom: 0in;"><big>Each of
+these keys is used to DES-encrypt the constant ASCII string “<code>KGS!@#$%</code>”,
+resulting in two 8-byte ciphertext values. </big></p>
+<big> </big></li>
+<li>
+<p><big>These two ciphertext values are concatenated to
+form a 16-byte value, which is the LM hash. </big></p>
+</li>
+</ol>
+<p style="margin-bottom: 0in;"><big>Windows XP
+computes and stores a LM
+hash by default. From my experimentation with pwdump, XP does not
+create a LM hash if the password is longer than 14 characters. The
+method XP uses to authenticate a password during the login process is
+case sensitive. This means that <font color="#ff3366">[</font><font color="#000000">R</font>ed<font color="#ff3366">]</font>
+can only recover the password to a user account in its uppercase form
+if the LM hash is attacked. Note that we can tell immediately from
+the LM hash whether the password is length 7 or less since LM pads a
+password with NULs to 14 bytes and the hash of 7 NUL characters on
+“KGS!@#$%” is always AAD3B435B51404EE.</big></p>
+<p style="margin-bottom: 0in;"><big><br />
+</big></p>
+<p style="margin-bottom: 0in;"><big>DES</big></p>
+<p style="margin-bottom: 0in;"><big>The DES
+algorithm is very well
+explained in[5], which was the reference I used to implement DES in
+MATLAB and Verilog. DES was selected by NIST and approved as a
+federal standard in 1976. The Federal Information Processing
+Standards (FIPS) publication on it can be found in[6]. Since then,
+DES has been considered insecure and has been replaced by Advanced
+Encryption Standard (AES).</big></p>
+<p style="margin-bottom: 0in;"><big><br />
+</big></p>
+<p style="margin-bottom: 0in;"><big>DES is a block
+cipher algorithm. It
+uses a 56 bit key to transform 64 bit chunks of data into 64 bits of
+chipertext. The algorithm first takes the key and generates 16
+subkeys through circular left shifts and bit shuffling. These keys
+are applied to the data block with the Feistel function for 16
+rounds. The Feistel function consist of an expansion function, bit
+shuffling permutations, an XOR operation with the subkey and a
+nonlinear transformation using substitution boxes.</big></p>
+<p style="margin-bottom: 0in;"><big><br />
+</big></p>
+<p style="margin-bottom: 0in;"><big>LM Keyspace</big></p>
+<p style="margin-bottom: 0in;"><big>The LM keyspace
+is a subset of the
+entire DES space. Under LM, the key can only take on values equal to
+the concatenation of 7 ASCII characters. There are 69 characters to
+choose from in the character set which yields 69^7 such strings. </big></p>
+<p style="margin-bottom: 0in;"><big><br />
+</big></p>
+<p style="margin-left: 1.31in; margin-bottom: 0in;"><big>ABCDEFGHIJKLMNOPQRSTUVWXYZ
+0123456789
+</big></p>
+<p style="margin-left: 1.31in; margin-bottom: 0in;"><big>!@#$%^&amp;*()-_+=~`[]{}|\:;"'&lt;&gt;,.?/
+SPACE</big></p>
+<p style="margin-bottom: 0in;"><big><br />
+</big></p>
+<p style="margin-bottom: 0in;"><br />
+</p>
+<br />
+<br />
+<div style="text-align: center;"><img src="images/whole_schematic.png" width="700" /></div>
+<br />
+<br />
+<p style="margin-bottom: 0in;">
+</p>
+<p style="margin-bottom: 0in;"><big>Putting Things
+Together</big></p>
+<p style="margin-bottom: 0in;"><big>Modules needed
+in this design will be a
+key generator, a unit to compute DES hashes, a controller and a user
+interface. The idea is to generate a key, check to see if the
+resulting hash matches the one we are searching for and repeat until we
+find a match. After the user has configured the unit through the
+interface, the main controller activates the DES and key generator.
+Asynchronous communication will now occur between the two entities.
+Key generator will generate 40 keys at a time and hand them over to
+40 DES units to hash. While the DES units are busy applying the key
+to the data KGS!@#$%, the next 40 keys are generated. Once hashing is
+complete, the key generator is notified, it then checks the 40 DES
+units for any matches. If a DES unit matched the target hash, the key
+generator reports the plain text key that was used to generate that
+hash to the main controller for display. Otherwise, 40 new keys are
+handed to the DES units and the process repeats. Above is a schematic
+diagram detailing the design. Signals crossing the dotted line are
+external to the FPGA. These include the control lines connecting to
+the actual liquid crystal display, switches, pushbuttons and the 27
+MHz oscillator.</big></p>
+<p style="margin-bottom: 0in;"><big><br />
+</big></p>
+<p style="margin-bottom: 0in;"><big>DES and key
+generator were designed to
+work in parallel. Whichever one is slower will limit the rate at
+which <font color="#ff3366">[</font><font color="#000000">R</font>ed<font color="#ff3366">]
+</font><font color="#000000">can perform the brute
+force attack. A
+slow key generator will leave the DES unit idle. A slow DES unit will
+keep the key generator waiting.</font></big></p>
+<p style="margin-bottom: 0in;"></p>
+<br />
+<p style="margin-bottom: 0in;"><br />
+</p>
+</div>
+<div style="text-align: right; height: 100px;" id="page">
+<a href="hardware_design.html">hardware design
+</a></div>
+</body></html>

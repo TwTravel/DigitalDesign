@@ -1,0 +1,232 @@
+<html xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<title>Hardware Design</title>
+<link rel="File-List" href="hardware_design_files/filelist.xml">
+
+<!--[if !mso]>
+<style>
+v\:*         { behavior: url(#default#VML) }
+o\:*         { behavior: url(#default#VML) }
+.shape       { behavior: url(#default#VML) }
+</style>
+<![endif]--><!--[if gte mso 9]>
+<xml><o:shapedefaults v:ext="edit" spidmax="1027"/>
+</xml><![endif]-->
+<!--mstheme--><link rel="stylesheet" type="text/css" href="_themes/blends/blen1011.css"><meta name="Microsoft Theme" content="blends 1011">
+</head>
+
+<body>
+
+<div style="position: absolute; width: 872px; height: 345px; z-index: 1; left: 196px; top: 97px" id="layer1">
+	<p class="MsoNormal" align="center" style="text-align:center"><!--[if gte vml 1]><v:shapetype id="_x0000_t75"
+ coordsize="21600,21600" o:spt="75" o:preferrelative="t" path="m@4@5l@4@11@9@11@9@5xe"
+ filled="f" stroked="f">
+ <v:stroke joinstyle="miter"/>
+ <v:formulas>
+  <v:f eqn="if lineDrawn pixelLineWidth 0"/>
+  <v:f eqn="sum @0 1 0"/>
+  <v:f eqn="sum 0 0 @1"/>
+  <v:f eqn="prod @2 1 2"/>
+  <v:f eqn="prod @3 21600 pixelWidth"/>
+  <v:f eqn="prod @3 21600 pixelHeight"/>
+  <v:f eqn="sum @0 0 1"/>
+  <v:f eqn="prod @6 1 2"/>
+  <v:f eqn="prod @7 21600 pixelWidth"/>
+  <v:f eqn="sum @8 21600 0"/>
+  <v:f eqn="prod @7 21600 pixelHeight"/>
+  <v:f eqn="sum @10 21600 0"/>
+ </v:formulas>
+ <v:path o:extrusionok="f" gradientshapeok="t" o:connecttype="rect"/>
+ <o:lock v:ext="edit" aspectratio="t"/>
+</v:shapetype><v:shape id="Picture_x0020_3" o:spid="_x0000_s1029" type="#_x0000_t75"
+ style='width:477pt;height:242.25pt;visibility:visible;mso-wrap-style:square'>
+ <v:imagedata src="hardware_design_files/image001.emz" o:title=""/>
+</v:shape><![endif]--><![if !vml]><img border=0 width=636 height=323
+src="hardware_design_files/image002.gif" v:shapes="Picture_x0020_3"><![endif]></p>
+	<p class="MsoNormal"><span style="letter-spacing: 1pt">Hardware for the Virtual Paint can be broadly 
+	categorized into 4 modules</span></p>
+	<p class="MsoListParagraphCxSpFirst" style="text-indent: -.25in">
+	<span style="letter-spacing: 1pt">1.<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	</span>Frame grabber or camera</span></p>
+	<p class="MsoListParagraphCxSpMiddle" style="text-indent: -.25in">
+	<span style="letter-spacing: 1pt">2.<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	</span>Image processing and control unit</span></p>
+	<p class="MsoListParagraphCxSpMiddle" style="text-indent: -.25in">
+	<span style="letter-spacing: 1pt">3.<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	</span>Memory unit</span></p>
+	<p class="MsoListParagraphCxSpLast" style="text-indent: -.25in">
+	<span style="letter-spacing: 1pt">4.<span style="font:7.0pt &quot;Times New Roman&quot;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+	</span>Display unit</span></p>
+	<p class="MsoNormal">&nbsp;</p>
+	<p class="MsoNormal"><span style="letter-spacing: 1pt"><u><b>Camera module</b></u></span></p>
+	<p class="MsoNormal"><span style="letter-spacing: 1pt">We used TRDB_DC2 camera development kit from terasic to 
+	serve as the frame grabber. This kit consists of a 1.3 megapixel CMOS image 
+	sensor and an IDE cable to connect to GPIO port of the DE2 board. The prime 
+	reason for choosing this development kit was the ease of interfacing with 
+	the DE2 and also for the reason that since this kit is built around the 
+	development boards from Altera it comes with a VGA display reference design 
+	that be used to directly display the images captured by the camera on to the 
+	VGA module saving a lot of extra effort in making the image sensor – FPGA 
+	interface work. </span> </p>
+	<p class="MsoNormal" align="center" style="text-align:center">
+	<span style="letter-spacing: 1pt"><!--[if gte vml 1]><v:shape
+ id="Picture_x0020_7" o:spid="_x0000_s1028" type="#_x0000_t75" style='width:428.25pt;
+ height:258.75pt;visibility:visible;mso-wrap-style:square'>
+ <v:imagedata src="hardware_design_files/image003.emz" o:title=""/>
+</v:shape><![endif]--><![if !vml]><img border=0 width=571 height=345
+src="hardware_design_files/image004.gif" v:shapes="Picture_x0020_7"><![endif]></span></p>
+	<p class="MsoNormal"><span style="letter-spacing: 1pt">TRDB_DC2 kit has a 40 pin connect that connects with 
+	the GPIO on board. Out of the 40 pins 20 are reserved for the second sensor. 
+	In our project we used only a single sensor to capture the image so only 20 
+	pins were actually used to connect with FPGA board. PIN 1-10 are for DATA1 
+	that contains the actual pixel data as provided by the CMOS sensor. PIXCLK 
+	is the pixel clock, that is provided by the CMOS sensor inorder to sync the 
+	incoming pixel data and is normally the inverted master clock. PIN 14 is the 
+	master clock that has the maximum frequency of 25 MHz that was provided by 
+	DE2 on board oscillator. Pixel data is valid during the rising edge of the 
+	pixel clock. &nbsp;The Table below gives the complete PIN description for the 
+	camera-FPGA interface:</span></p>
+	<p class="MsoNormal" align="center" style="text-align:center">
+	<span style="letter-spacing: 1pt"><!--[if gte vml 1]><v:shape
+ id="Picture_x0020_5" o:spid="_x0000_s1027" type="#_x0000_t75" style='width:523.5pt;
+ height:389.25pt;visibility:visible;mso-wrap-style:square'>
+ <v:imagedata src="hardware_design_files/image005.emz" o:title=""/>
+</v:shape><![endif]--><![if !vml]><img border=0 width=698 height=519
+src="hardware_design_files/image006.gif" v:shapes="Picture_x0020_5"><![endif]></span></p>
+	<p class="MsoNormal"><span style="letter-spacing: 1pt"><u><b>Image Processing and Control Unit</b></u></span></p>
+	<p class="MsoNormal"><span style="letter-spacing: 1pt">This is the central unit of the whole system. All of 
+	the image processing and control is done on Altera DE2 on board FPGA fabric. 
+	&nbsp;The ports of the DE2 board that were used for the project were the USB 
+	Blaster Port for FPGA programming, VGA Port for connecting to VGA, GPIO1 was 
+	used by connecting a IDE cable between the camera module and the Expansion 
+	header 1. Toggle Switches on board were used to control the exposure 
+	settings of the image sensor but for new exposure settings to take place we 
+	need to reset the board first.</span></p>
+	<p class="MsoNormal" align="center" style="text-align:center">
+	<span style="letter-spacing: 1pt"><!--[if gte vml 1]><v:shape
+ id="Picture_x0020_4" o:spid="_x0000_s1026" type="#_x0000_t75" style='width:556.5pt;
+ height:300.75pt;visibility:visible;mso-wrap-style:square'>
+ <v:imagedata src="hardware_design_files/image007.emz" o:title=""/>
+</v:shape><![endif]--><![if !vml]><img border=0 width=742 height=401
+src="hardware_design_files/image008.gif" v:shapes="Picture_x0020_4"><![endif]></span></p>
+	<p class="MsoNormal" align="center" style="text-align:center">
+	<span style="font-size:9.0pt;line-height:115%; letter-spacing:1pt">Altera DE2 board description</span></p>
+	<p class="MsoNormal"><span style="letter-spacing: 1pt">Data coming from the image sensor is captured in the 
+	sensor capture module or CCD capture which is then fed to Bayer color 
+	pattern data to RGB conversion module. Sensor data is stored in the SDRAM 
+	via the SDRAM controller. The main module is the color detection and 
+	segmentation module which reads out the pixel value from the image buffer 
+	that is the SDRAM for processing. It then stores the corresponding color 
+	value for the pixel in the M4K block. The VGA controller reads the M4K 
+	memory location and sends the stored color information at the corresponding 
+	address to the VGA DAC of the display unit. RAW2RGB module is used to 
+	convert image data from Bayer format to RGB format. The details for the 
+	Bayer to RGB conversion was included in the CCD module that came with the 
+	terasic kit. For understanding the Bayer to RGB conversion we&nbsp; find
+	<a href="../../../../../../../../www.siliconimaging.com/Specifications/AN3%20-%20Bayer%20Color%20Processing.PDF">
+	this</a> link useful.</span></p>
+	<p class="MsoNormal"><span style="letter-spacing: 1pt">&nbsp;Below is the block diagram of the 
+	camera image sensor interface with the board and the VGA unit:</span></p>
+	<p class="MsoNormal">&nbsp;</p>
+	<p class="MsoNormal" align="center" style="text-align:center">
+	<span style="letter-spacing: 1pt"><!--[if gte vml 1]><v:shape
+ id="Picture_x0020_6" o:spid="_x0000_s1025" type="#_x0000_t75" style='width:716.25pt;
+ height:372.75pt;visibility:visible;mso-wrap-style:square'>
+ <v:imagedata src="hardware_design_files/image009.png" o:title=""/>
+</v:shape><![endif]--><![if !vml]><img border=0 width=955 height=497
+src="hardware_design_files/image010.jpg" v:shapes="Picture_x0020_6"><![endif]></span></p>
+<p class="MsoNormal"><span style="letter-spacing: 1pt">Color detection and 
+segmentation unit which is the main control unit can be further divided into 3 
+parts, the color detection &amp; segmentation unit, averaging &amp; center calculation 
+unit and the color selection &amp; paint unit.</span></p>
+	<p class="MsoNormal"><span style="letter-spacing: 1pt">For color detection 
+	and segmentation we used threshold comparison and relative intensity 
+	comparison of the RGB component of every pixel. This part took us a 
+	significant time as we tried out different color mappings to have a robust 
+	color detection scheme because right color detection is the core of the 
+	whole project. To keep it simple and robust we tried to fiddle with the RGB 
+	color space to detect the colored tapes correctly that we were using to wrap 
+	around our fingers while drawing.&nbsp; Finally we were able to have correct 
+	color detection with minimal noise. the RGB scheme that worked for us is as 
+	below:</span></p>
+	<p class="MsoNormal"><span style="letter-spacing: 1pt">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	if (R&gt;128 and R&gt; 2(G) and R &gt; 2(B) and G &lt; 128 and B &lt; 128) then&nbsp;&nbsp;&nbsp; 
+	RED color</span></p>
+	<p class="MsoNormal"><span style="letter-spacing: 1pt">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	if (R&gt;256and G &lt; 256 and B &lt; 128) then&nbsp;&nbsp;&nbsp; 
+	YELLOW color</span></p>
+	<p class="MsoNormal"><span style="letter-spacing: 1pt">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	if (R&lt;128 and G &gt; 320 and B &lt; 128) then&nbsp;&nbsp;&nbsp; 
+	GREEN color</span></p>
+	<p class="MsoNormal"><span style="letter-spacing: 1pt">The reason why we 
+	choose RED and YELLOW colors specifically were because of the high intensity 
+	of these colors while they are significantly different from the white color 
+	making us filter out the background noise. </span></p>
+	<p class="MsoNormal"><span style="letter-spacing: 1pt">In averaging &amp; center 
+	calculation unit we have counter value that counts the number of pixels for 
+	the detected color and also sums the X coordinates and Y coordinates&nbsp; 
+	and then takes an average of these coordinates to compute X center and Y 
+	center for the pixel.</span></p>
+	<p class="MsoNormal"><span style="letter-spacing: 1pt">Color selection &amp; 
+	paint was done using the onscreen color palette that was displayed on the 
+	screen and for displaying the color palette we modified the VGA controller 
+	so as to reserve a particular section of the screen and display specific 
+	colors there. This was done by attaching a mux at the input color stream of 
+	the VGA where whenever the address of the VGA pixel falls in a particular 
+	range we display a particular value.</span></p>
+	<p class="MsoNormal">Below is the block diagram showing various module 
+	interfaces:</p>
+	<p class="MsoNormal">
+	<img border="0" src="signals.jpg" width="956" height="425"></p>
+	<p class="MsoNormal"><span style="letter-spacing: 1pt"><u><b>Memory Unit</b></u></span></p>
+	<p class="MsoNormal"><span style="letter-spacing: 1pt">Image data sent by the CMOS sensor is stored in the 8MB 
+	of SDRAM which act as the frame buffer. &nbsp;We also used on chip M4K to store 
+	the color information corresponding required pixel addresses generated after 
+	the color segmentation of the frame. DE2 has 105 M4K RAM Blocks and 483,840 
+	RAM bits. For the purpose of detecting and storing color information for 2 
+	different colors we used upto 43% of the available M4K.</span></p>
+	<p class="MsoNormal">&nbsp;</p>
+	<p class="MsoNormal"><span style="letter-spacing: 1pt"><u><b>Display Unit</b></u></span></p>
+	<p class="MsoNormal"><span style="letter-spacing: 1pt">For the purpose of display we used the standard VGA 
+	port available on DE2 board and it was used to connect with both LCD display 
+	unit as well as the projector. Due to unavailability of the portable 
+	projector in due time we demonstrated the concept of Virtual Paint to draw 
+	colored images over any plain surface using a wall and over-head projector 
+	in one of the classrooms.</span></p>
+	<p>&nbsp;</div>
+
+<p align="center"><font size="6">Hardware Design</font></p>
+<p align="left">
+<!--webbot bot="Navigation" S-Type="sequence" S-Orientation="vertical" S-Rendering="graphics" B-Include-Home="FALSE" B-Include-Up="FALSE" U-Page="sid:1001" startspan --><script language="JavaScript"><!--
+MSFPhover = 
+  (((navigator.appName == "Netscape") && 
+  (parseInt(navigator.appVersion) >= 3 )) || 
+  ((navigator.appName == "Microsoft Internet Explorer") && 
+  (parseInt(navigator.appVersion) >= 4 ))); 
+function MSFPpreload(img) 
+{
+  var a=new Image(); a.src=img; return a; 
+}
+// --></script><script language="JavaScript"><!--
+if(MSFPhover) { MSFPnav1n=MSFPpreload("_derived/index.htm_cmp_blends010_vbtn.gif"); MSFPnav1h=MSFPpreload("_derived/index.htm_cmp_blends010_vbtn_a.gif"); }
+// --></script><a href="index.htm" language="JavaScript" onmouseover="if(MSFPhover) document['MSFPnav1'].src=MSFPnav1h.src" onmouseout="if(MSFPhover) document['MSFPnav1'].src=MSFPnav1n.src"><img src="_derived/index.htm_cmp_blends010_vbtn.gif" width="140" height="60" border="0" alt="Home" name="MSFPnav1"></a><br><script language="JavaScript"><!--
+if(MSFPhover) { MSFPnav2n=MSFPpreload("_derived/introduction.htm_cmp_blends010_vbtn.gif"); MSFPnav2h=MSFPpreload("_derived/introduction.htm_cmp_blends010_vbtn_a.gif"); }
+// --></script><a href="introduction.htm" language="JavaScript" onmouseover="if(MSFPhover) document['MSFPnav2'].src=MSFPnav2h.src" onmouseout="if(MSFPhover) document['MSFPnav2'].src=MSFPnav2n.src"><img src="_derived/introduction.htm_cmp_blends010_vbtn.gif" width="140" height="60" border="0" alt="Introduction" name="MSFPnav2"></a><br><script language="JavaScript"><!--
+if(MSFPhover) { MSFPnav3n=MSFPpreload("_derived/high_level_design.htm_cmp_blends010_vbtn.gif"); MSFPnav3h=MSFPpreload("_derived/high_level_design.htm_cmp_blends010_vbtn_a.gif"); }
+// --></script><a href="high_level_design.htm" language="JavaScript" onmouseover="if(MSFPhover) document['MSFPnav3'].src=MSFPnav3h.src" onmouseout="if(MSFPhover) document['MSFPnav3'].src=MSFPnav3n.src"><img src="_derived/high_level_design.htm_cmp_blends010_vbtn.gif" width="140" height="60" border="0" alt="High Level Design" name="MSFPnav3"></a><br><img src="_derived/hardware_design.htm_cmp_blends010_vbtn_p.gif" width="140" height="60" border="0" alt="Hardware Design"><br><script language="JavaScript"><!--
+if(MSFPhover) { MSFPnav4n=MSFPpreload("_derived/testing_and_debugging.htm_cmp_blends010_vbtn.gif"); MSFPnav4h=MSFPpreload("_derived/testing_and_debugging.htm_cmp_blends010_vbtn_a.gif"); }
+// --></script><a href="testing_and_debugging.htm" language="JavaScript" onmouseover="if(MSFPhover) document['MSFPnav4'].src=MSFPnav4h.src" onmouseout="if(MSFPhover) document['MSFPnav4'].src=MSFPnav4n.src"><img src="_derived/testing_and_debugging.htm_cmp_blends010_vbtn.gif" width="140" height="60" border="0" alt="Testing &amp; Debugging" name="MSFPnav4"></a><br><script language="JavaScript"><!--
+if(MSFPhover) { MSFPnav5n=MSFPpreload("_derived/results.htm_cmp_blends010_vbtn.gif"); MSFPnav5h=MSFPpreload("_derived/results.htm_cmp_blends010_vbtn_a.gif"); }
+// --></script><a href="results.htm" language="JavaScript" onmouseover="if(MSFPhover) document['MSFPnav5'].src=MSFPnav5h.src" onmouseout="if(MSFPhover) document['MSFPnav5'].src=MSFPnav5n.src"><img src="_derived/results.htm_cmp_blends010_vbtn.gif" width="140" height="60" border="0" alt="Results" name="MSFPnav5"></a><br><script language="JavaScript"><!--
+if(MSFPhover) { MSFPnav6n=MSFPpreload("_derived/conclusions.htm_cmp_blends010_vbtn.gif"); MSFPnav6h=MSFPpreload("_derived/conclusions.htm_cmp_blends010_vbtn_a.gif"); }
+// --></script><a href="conclusions.htm" language="JavaScript" onmouseover="if(MSFPhover) document['MSFPnav6'].src=MSFPnav6h.src" onmouseout="if(MSFPhover) document['MSFPnav6'].src=MSFPnav6n.src"><img src="_derived/conclusions.htm_cmp_blends010_vbtn.gif" width="140" height="60" border="0" alt="Conclusions" name="MSFPnav6"></a><br><script language="JavaScript"><!--
+if(MSFPhover) { MSFPnav7n=MSFPpreload("_derived/appendix.htm_cmp_blends010_vbtn.gif"); MSFPnav7h=MSFPpreload("_derived/appendix.htm_cmp_blends010_vbtn_a.gif"); }
+// --></script><a href="appendix.htm" language="JavaScript" onmouseover="if(MSFPhover) document['MSFPnav7'].src=MSFPnav7h.src" onmouseout="if(MSFPhover) document['MSFPnav7'].src=MSFPnav7n.src"><img src="_derived/appendix.htm_cmp_blends010_vbtn.gif" width="140" height="60" border="0" alt="Appendix" name="MSFPnav7"></a><br><script language="JavaScript"><!--
+if(MSFPhover) { MSFPnav8n=MSFPpreload("_derived/references.htm_cmp_blends010_vbtn.gif"); MSFPnav8h=MSFPpreload("_derived/references.htm_cmp_blends010_vbtn_a.gif"); }
+// --></script><a href="references.htm" language="JavaScript" onmouseover="if(MSFPhover) document['MSFPnav8'].src=MSFPnav8h.src" onmouseout="if(MSFPhover) document['MSFPnav8'].src=MSFPnav8n.src"><img src="_derived/references.htm_cmp_blends010_vbtn.gif" width="140" height="60" border="0" alt="References" name="MSFPnav8"></a><!--webbot bot="Navigation" i-checksum="23052" endspan --></p>
+
+</body>
+
+</html>

@@ -1,0 +1,74 @@
+
+<html>
+<head>
+<title>ee576 Lab 1</title>
+</head>
+
+<body>
+<h2>
+EE 576: Laboratory 1 </h2> 
+<h2> 1-dimensional Cellular Automaton (CA). </h2>
+<p>
+<b> Introduction. </b>
+
+<p> In this assignment you will build a circuit which runs a state machine to compute and display a  <a href="../../../../../../mathworld.wolfram.com/ElementaryCellularAutomaton.html">binary, nearest-neighbor, one-dimensional</a> CA on a VGA monitor. The DE2 switches will be used to enter the rule number. An <a href="../../../../../../www.alesdar.org/oldSite/IS/OneDCA/OneDCA.html">applet</a> shows a display similar to what you should program. The rule number in the applet is entered by clicking boxes along the right edge of the interactive region. 
+<p> <b> Procedures:</b>  
+<ol>
+  <li>  You must handle the boards only on on the ESD mat. These boards are expensive and you must be careful of them. 
+  <li>Make sure the Altera DE2 board is connected to power and to the PC as specified 
+    in the evaluation board description. Turn on the power supply with the red switch 
+    on the board. Make sure the toggle switch on the left edge of the board marked (<code>Run/Prog</code>) is in the <code>Run</code> position and <em>leave it there at all times</em>.
+The FPGA will program in the <code>Run</code> position. Putting the switch in the <code>Prog</code> position writes your design to flash memory, which you do not want to do.
+  <li> You will probably want to look through the VGA examples on the <a href="../../DE2/index.html">DE2 hardware examples</a> page to see one way of designing a memory state machine. Notice that you need to set up the address one cycle (at 27 MHz) before you read the data. The 61LV25616 SRAM <a href="../../DE2_Datasheets/Memory/61LV25616.pdf">memory data sheet</a> suggest that it requires &lt;20 nS to set up. 
+  <li>The <a href="../../DE2/DE2_TOP.v">default top level module</a> for the DE2 defines all of the logical i/o signals. 
+  <li>You can define the mapping from logical signal to FPGA pins (<em>pin assignment</em> in QuartusII) for all the pins at once by importing <a href="../../DE2/DE2_pin_assignments.csv">this file</a> using the menu item <code>Assignments... Import Assignments...</code> and specifying the file name. There is no need to define pins one-by-one.   
+<li>You may want to use the QuartusII SignalTap tool to verify your design. Here are the steps that seem to be necssary to get SignalTap working. For more information, read the Altera <a href="../../Verilog/tut_signaltapII_verilogDE2.pdf">tutorial</a> on using SignalTap, an on chip logic analyzer. 
+  <ol>
+    <li>Choose menu <code>Tools&gt;SignalTap</code></li>
+    <li>In the main SignalTap window, click <code>Hardware Setup...</code> (in the upper rigtht corner) <br>
+    and in the dialog box choose the hardware (USB-Blaster)</li>
+    <li>Choose menu <code>Edit&gt;AddNodes... </code>
+        <ol>
+          <li>Choose the appropriate <code>Filter</code> to simplify the list of nodes, the press <code>List</code></li>
+          <li>Highlight nodes and move to right-hand list using <strong><code>&gt;</code></strong> button </li>
+          <li>Click <code>OK</code> to get back to main SignalTap window </li>
+        </ol>
+    </li>
+    <li>In the main SignalTap window, click the <code>Clock ...</code> button and choose the clock signal as in AddNodes</li>
+    <li>In the node panel of the main window, set up trigger conditions.</li>
+    <li>Compile and then load the design onto the FPGA</li>
+    <li> In the main SignalTap window, toggle the <code>Data/Setup</code> button</li>
+    <li> Choose menu <code>Processing &gt;Run Analysis</code> </li>
+  </ol>  
+</ol>
+<hr>
+<b> Assignment </b> 
+<ul>
+  <li> You will design the system in Verilog and compile it to the FPGA using QuartusII. Don't use schematic entry or VHDL. </li>
+  <li>KEY0 will reset the state machine. The state machine will run at VGA clock rate. </li>
+  <li>The VGA resolution must be at least 320x240. </li>
+  <li>The initial state of the CA should be shown at the top of the VGA screen, each succeeding state should be shown on the next video line below.</li>
+  <li>When the screen fills, the CA should stop until KEY3 is pressed, then exactly one more screen should be filled as if time is proceeding. In ohter words, the bottom line of the first screen should be copied to the top line of the second screen, and used as the initial condition. </li>
+  <li>There should be no flickering, tearing, or other video artifacts caused by your state machine.</li>
+  <li>The initial state will be exactly one cell at the center, top of the screen, or a random binary vector across the top of the screen. The initial state (seed or random) will be entered using SW17 and cannot be changed except at reset. </li>
+  <li>The <a href="../../../../../../mathworld.wolfram.com/ElementaryCellularAutomaton.html">CA rule</a> will be entered in binary on SW[7:0] and cannot be changed except at reset. </li>
+  <li>As mentioned below, compare CA rules to natural phenomena. </li>
+  <li>Do not build a general purpose CPU for this lab.</li>
+</ul>
+<p>Be prepared to demo your design to your TA in lab.</p>
+<p> Your written lab report should include: 
+<ul>
+  <li>An RTL (register transfer level) block diagran of your design. 
+  <li>A state-transition diagram for the main CA update state machine. <li> A photograph of the VGA screen showing the evolution of an interesting CA.   
+  <li>A comparison of 1D cellular automata with natural phenomena.
+    <ul>
+      <li>Which rule(s) generate patterns which look like  <a href="../../../../../../www.rudyrucker.com/blog/2004/12/default.htm">seashells</a>? </li>
+      <li><a href="../../../../../../www.kathryncramer.com/kathryn_cramer/2005/09/cellular_automa.html">Caterpillars?</a></li>
+      <li>Use the web to find <a href="../../../../../../www5.geometry.net/detail/pure_and_applied_math/cellular_automata.html">other examples</a> of shells and <a href="../../../../../../www.msm.cam.ac.uk/phase-trans/dendrites.html">other growth systems</a>.</li>
+  </ul>
+  <li> A heavily commented listing of your Verilog design. 
+</ul>
+<hr>
+<small> <font size="-1">Copyright Cornell University July 2006</font></small> 
+</body> </html>
+

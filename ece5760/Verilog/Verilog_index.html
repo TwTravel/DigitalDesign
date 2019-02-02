@@ -1,0 +1,209 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Verilog</title>
+</head>
+
+<body>
+<h2 align="center">Verilog Summary<br />
+Cornell ece5760<br />
+</h2>
+<ul>
+</ul>
+<h3>Verilog Design</h3>
+<p>Verilog is one of several languages used to design hardware. It uses a C-like syntax to define wires, registers, clocks, i/o devices and all of the connections between them. Every useful Verilog design will include some sort of state machine(s) to control sequential behavior. We will be using only synthesizable Verilog-2001, except for simulation testbench code. What I want to do here is mostly to list some resources and some things to consider when writing Verilog.</p>
+<p><strong>Some other resources:</strong></p>
+<ul>
+  <li>I really enjoyed reading the Evans and Sutherland <a href="../../../../../www.sutherland-hdl.com/papers/2006-SNUG-Boston_standard_gotchas_presentation.pdf">Verilog Gotcha! article</a>. <br />
+  There is also an <a href="../../../../../www.sutherland-hdl.com/papers/2007-SNUG-SanJose_gotcha_again_paper.pdf">extended version</a>. </li>
+  <li><a href="../../../../../sutherland-hdl.com/pdfs/verilog_2001_ref_guide.pdf">Verilog   HDL Quick Reference Guide based on the Verilog-2001 standard</a> <br />
+  but note that this <em>includes non-synthesis simulation</em>.</li>
+  <li>Synthesizable Verilog. 
+    <ul>
+      <li><a href="../../../../../www.asic-world.com/verilog/synthesis2.html">Verilog Synthesis Tutorial</a> part 2</li>
+      <li><a href="../../../../../www.asic-world.com/verilog/synthesis3.html">Verilog Synthesis Tutorial</a> part 3</li>
+      <li><a href="../../../../../https@www.cl.cam.ac.uk/teaching/0910/ECAD+Arch/files/verilogcheatsheet.pdf">Summary of Synthesisable Verilog 2001</a></li>
+      <li>Verilog HDL Synthesis, A Practical Primer: J Bhasker (<a href="../../../../../https@www.amazon.com/Verilog-HDL-Synthesis-Practical-Primer/dp/0965039153">amazon</a>)</li>
+    </ul>
+  </li>
+  <li>This <a href="../../../../../https@ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-884-complex-digital-systems-spring-2005/lecture-notes/l02_verilog.pdf">presentation</a> from MIT is a very gentle intro to Verilog. </li>
+  <li>Chapters 11 and 12,  of the<a href="../../../../../https@www.altera.com/content/dam/altera-www/global/en_US/pdfs/literature/hb/qts/qts_qii5v1.pdf"> giant Quartus manual</a> has lots of good style hints.</li>
+  <li>Verilog driectives
+    <ul>
+      <li><a href="../../../../../https@www.csee.umbc.edu/portal/help/VHDL/verilog/compiler.html">General Verilog compiler directives</a></li>
+      <li><a href="../../../../../https@www.intel.com/content/www/us/en/programmable/quartushelp/17.0/hdl/vlog/vlog_file_dir.htm">Quartus Prime directives</a> (scroll to bottom of table for details)</li>
+    </ul>
+  </li>
+  <li>Quartus Prime supports <a href="../../../../../https@www.intel.com/content/www/us/en/programmable/quartushelp/17.0/hdl/vlog/vlog_list_sys_vlog.htm">System Verilog</a></li>
+</ul>
+<p><strong>Verilog looks like C but it is quite different</strong>:</p>
+<ul>
+  <li>Since we are assigning voltages to wires,<em> which each must always have a logic level</em>, the language is inherently parallel.
+    <ul>
+      <li>Every assign statement happens all the time. And see below for two different assignment operators.</li>
+      <li>Inside an always block (using blocking assign), statement order infers <a href="../../../../../https@image.slidesharecdn.com/lecture42014-150105073433-conversion-gate02/95/verilog-lecture4-2014-33-638.jpg@cb=1420443375">logic structure</a> <em>not</em> sequential execution!</li>
+      <li>Order of assignments is largely arbitrary -- make it readable!</li>
+      <li>C is sequential because someone built a state machine that enforces sequential fetch-execute logic from a program location. <br />
+      In Verilog, you have to build your own state machine, if you want any sequential actions to occur.</li>
+    </ul>
+  </li>
+  <li>Synthesized Verilog code is mapped to actual gates, not to abstract bit strings in computer memory.
+    <ul>
+      <li>Timing is determined by physical hardware, not delay notations used in simulation, or by any clock, unless in a clocked <em>always</em> block.</li>
+      <li>Module invocation implies building hardware connections, not a function call.<br />
+        This implies that you cannot instatiate a module in an always block.
+      </li>
+      <li>Syntax has hardware consequences!
+        <ul>
+          <li>Each plus sign instantiates a new <a href="../../../../../www.ece.lsu.edu/ee3755/2012f/l05.v.html">adder</a>. <br />
+          Grouping add operations into a tree will change timing, therefore operations do not completely commute.</li>
+          <li>Each multiply uses a <a href="../DE1_SOC/HPS_peripherials/DSP_index.html">DSP block</a> (unless you surpress it).</li>
+        </ul>
+      </li>
+      <li>Loops build copies of hardware, not sequential actions. <br />
+        The only sequential construct is a clocked state machine!
+        <br />
+        Use a <a href="generate_example.txt">generate statement</a> to control looping, page 21 in <a href="../../../../../sutherland-hdl.com/pdfs/verilog_2001_ref_guide.pdf">Verilog Guide</a></li>
+      <li>Conditional assignments
+        (if/else or case statements) must be complete. No missing cases!<br />
+        A wire cannot be in an undefined state and a wire has no memory!
+        <br />
+        Failure to follow this rule means <a href="latch_example.jpg">inferred latches</a>.<br />
+        (from http://www.asicguru.com)</li>
+      <li>There are no standard word sizes. You must specify the width of every wire, register, and literal. <br />
+        <a href="literal_format.txt">Literals</a> which are not specified are 32 bit, decimal constants. <br />
+        For example the constant 1 defaults to 32'd1.
+      It is a very good idea to control width.</li>
+      <li>Signed arithmetic has to be handled carefully. All signals default to <em>unsigned</em>!<br />
+      Mixing signed/unsigned can have <a href="../../../../../www.tumbush.com/published_papers/Tumbush DVCon 05.pdf">confusing consequences</a>. <br />
+      The general rule is if any operand is unsigned, the operation defaults to unsigned. <br />
+      This is devastating for signed compares and signed right-shift (&gt;&gt;&gt; operator)!  <br />
+      You may want to read <a href="../../../../../billauer.co.il/blog/2012/10/signed-arithmetics-verilog/default.htm">signed verilog</a>, <a href="../../../../../https@www.hdlworks.com/hdl_corner/verilog_ref/items/SignedArithmetic.htm">signed arithmetic</a>, <a href="../../../../../web.engr.oregonstate.edu/~traylor/ece474/beamer_lectures/verilog_number_literals.pdf">Representation of Number Literals</a>, </li>
+      <li>Cyclone5 has no 
+        automatic support for floats, but of course, you can write your own <a href="../DE1_SOC/HPS_peripherials/Floating_Point_index.html">floating point</a>.</li>
+      <li>The value of a wire bit can be 0, 1, x (don't care), or z (high Z). Be very careful using x or z. <br />
+        Here is an <a href="dont_care.txt">example</a> of a case statement using don't care. <br />
+        Only physical i/o pins on the Cyclone5 allow high impedance using tristate drivers.</li>
+    </ul>
+  </li>
+  <li>You can store variables in memory, but only if you<a href="../DE1_SOC/Memory/index.html"> build a memory</a> and <a href="sram_controller.txt">memory controller</a>.</li>
+  <li>Each signal (wire or register) may be assigned at only one location in a Verilog design, <br />
+    because you cannot connect multiple voltage sources to a wire.
+<ul>
+      <li>That means each wire is defined in one assign statement or one <em>always</em> block. </li>
+      <li>Statements within an <em>always</em> block which do multiple assignments, such as if/else or case statements, <br />
+      actually form <a href="../../../../../https@image.slidesharecdn.com/lecture42014-150105073433-conversion-gate02/95/verilog-lecture4-2014-33-638.jpg@cb=1420443375">multiplexers</a>.</li>
+    </ul>
+  </li>
+</ul>
+<p><strong>Blocking versus non-blocking assign</strong><br />
+There are two ways to assign a value, which have <em>different hardware consequences</em>. </p>
+<ul>
+  <li>Non-blocking assigns are indicated by the <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">&lt;=</span> operator. <br />
+  Use this assign in<strong> all clocked-logic always blocks</strong> to enforce simultaneous register writes on the clock edge.</li>
+  <li>Blocking assigns are indicated by the <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">=</span> operator. <br />
+  Use this assign in <strong>all combinatoral-logic always blocks</strong> to allow sequential statements to infer a logic structure.<br />
+  But remember that there is no sequential execution within the block.
+  </li>
+  <li>Never mix the two forms in one block! It becomes difficult to debug.</li>
+  <li><a href="../../../../../www.asic-world.com/tidbits/blocking.html">Example</a> blocking results in incorrect pipeline -- be sure to look at the <strong>synthesis</strong> part at the bottom of the page.</li>
+  <li><a href="../../../../../https@image.slidesharecdn.com/lecture2-verilog-130317202547-phpapp02/95/lecture-2-verilog-58-638.jpg@cb=1363551986">Example </a>blocking results in incorrect pipeline</li>
+  <li><a href="../../../../../https@image.slidesharecdn.com/lecture42014-150105073433-conversion-gate02/95/verilog-lecture4-2014-18-638.jpg@cb=1420443375">Example</a> using blocking to infer combinatorial logic</li>
+  <li><a href="blocking_nonblocking.PNG">Comparision</a> blocking/nonblocking for swapping two signals</li>
+</ul>
+<p><strong>Pay attention to warnings</strong> <strong>and read the synthesis report</strong></p>
+<ul>
+  <li>Inferred latches -- always search warnings for<span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace"> <em>inferred</em>.</span><br />
+    Makes timing analysis difficult or impossible and the design will probably not work.
+  </li>
+  <li>Implicit declaration of wires -- always search warnings for <em style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">implicit</em>.<br />
+    Using the command:<br />
+<span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">`default_nettype none</span> <br />
+will force undeclared signals to throw an error. <br />
+    An implicit declaration is legal by default, but results in a 1-bit wide wire signal. <br />
+  The killer is to misspell a reset signal or other control line. <br />
+  <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">wire reset;<br />
+  assign reset = ~KEY[0] ;<br />
+  my_cool_processor proc1(.reset(reste), ...);  </span></li>
+  <li> Read the synthesis report to verify actual use of DSP and memory blocks <br />
+  and to make sure nothing was optimized away which should be there.</li>
+</ul>
+<p><strong>Examples</strong></p>
+<ul>
+  <li><a href="../../../../../www.asic-world.com/examples/verilog/mux.html">Multiplexer</a> (asic-world) 3 different ways</li>
+  <li><a href="../ModelSim/index.html">Setting up a testbench</a> for a computational module and getting output to compare to matlab</li>
+  <li><a href="../DE1_SOC/Memory/index.html">Memory</a></li>
+  <li><a href="../../../../../quartushelp.altera.com/15.0/mergedProjects/hdl/vlog/vlog_pro_state_machines.htm">State machine</a> (Intel/Altera)</li>
+  <li><a href="../LABS/s2018/lab2_DDA_snippet.txt">State machine</a> (lab 1) <a href="../DDA/index.htm">DDA page</a></li>
+  <li>Direct Digital Synthesis (DDS) of sine wave state machine and inferred ROM (<a href="../DE2/DDS_Example/sine_wave.v">full code</a>)
+    
+	  <pre> ...
+// The data for the DACs
+wire signed [15:0] audio_outL, audio_outR ;
+
+// DDS sine wave generator
+// for two phase-locked outputs
+reg [31:0]	DDS_accum, DDS_incr;
+wire signed [15:0] sine_out, sine_out_90;
+
+// output two sine waves in quadrature
+assign audio_outR = sine_out;
+assign audio_outL = sine_out_90;
+
+// DDS accumulator at audio rate
+always@(posedge AUD_DACLRCK) begin
+	// generate variable frequency
+	// DDS F = (SW*2^14)*(audio clock rate)/(2^32)
+	// 
+	DDS_accum = DDS_accum + {SW[17:0], 14'b0} ;
+end
+
+//hook up the ROM table for sine generation
+sync_rom sineTable(CLOCK_50, DDS_accum[31:24], sine_out);
+//hook up the ROM table for 90 degrees phase shift (64/256)
+sync_rom sineTable_90(CLOCK_50, DDS_accum[31:24]+8'd64, sine_out_90);
+endmodule
+
+//////////////////////////////////////////////
+////////////	Sin Wave ROM Table	////////////
+//////////////////////////////////////////////
+// produces a 2's comp, 16-bit, approximation
+// of a sine wave, given an input phase (address)
+module sync_rom (clock, address, sine);
+input clock;
+input [7:0] address;
+output [15:0] sine;
+reg signed [15:0] sine;
+always@(posedge clock)
+begin
+    case(address)
+    		8'h00: sine = 16'h0000 ;
+			8'h01: sine = 16'h0192 ;
+			8'h02: sine = 16'h0323 ;
+			8'h03: sine = 16'h04b5 ;
+			8'h04: sine = 16'h0645 ;
+			8'h05: sine = 16'h07d5 ;
+			8'h06: sine = 16'h0963 ;
+			8'h07: sine = 16'h0af0 ;
+			8'h08: sine = 16'h0c7c ;
+			...
+			8'hfb: sine = 16'hf82b ;
+			8'hfc: sine = 16'hf9bb ;
+			8'hfd: sine = 16'hfb4b ;
+			8'hfe: sine = 16'hfcdd ;
+			8'hff: sine = 16'hfe6e ;
+	endcase
+end
+endmodule
+/////////////////////////////////////////////</pre>
+  </li>
+</ul>
+<p>&nbsp;</p>
+<hr />
+<p>Copyright Cornell University 
+  <!-- #BeginDate format:Am1 -->January 28, 2019<!-- #EndDate -->
+</p>
+<p>&nbsp;</p>
+</body>
+</html>

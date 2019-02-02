@@ -1,0 +1,30 @@
+// unsigned_mult.v
+// Performs unsigned multiplication on the inputs a and b
+module unsigned_mult (out, a, b);
+	output 	[21:0]	out;  // 5-bit integer, 17-bit fraction
+	input 	[21:0] 	a;	// 22-bit integer
+	input 	[21:0] 	b;    // 22-bit fraction shifted right by 15
+	
+	wire	[21:0]	out;	
+	wire 	[43:0]	mult_out;   // Multiplication result will be 44-bits
+
+	// 7-bit integer, 37-bit fraction
+	assign mult_out = a * b; 	// Perform multiplication
+	assign out = mult_out[41:20]; // Output useful bits
+	
+endmodule
+
+// signed_mult.v
+// Performs signed multiplication on the inputs a and b
+module fixed_mult (out, a, b);
+	output  	[21:0]	out;	// 6-bit integer, 16-bit fraction
+	input signed[16:0] 	a;	// 2-bit integer, 15-bit fraction
+	input signed[22:0] 	b;	// 6-bit integer, 17-bit fraction
+	wire	signed[21:0]	out;	// 6-bit integer, 16-bit fraction
+	wire 	signed[39:0]	mult_out; // 40-bit result
+	
+	// Multiply results in 8-bit signed integer, 32-bit fraction
+	assign mult_out = a * b;
+	assign out = {mult_out[39], mult_out[36:16]};
+
+endmodule

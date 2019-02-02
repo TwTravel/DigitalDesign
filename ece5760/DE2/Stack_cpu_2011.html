@@ -1,0 +1,553 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>stack machine</title>
+</head>
+
+<body>
+<h2 align="center">The Pancake Stack Machine<br />
+  ECE 5760 Cornell University <br />
+<img src="pancake.jpg" width="68" height="71" alt="pancake" /></h2>
+<p>&nbsp;</p>
+<p><strong>Introduction</strong><br />
+Nakano, K., et.al.(refs below) describe two versions of a small stack machine suitable for implementation on an FPGA and they give the Verilog source code on their <a href="../../../../../www.cs.hiroshima-u.ac.jp/~nakano/wiki/default.htm">web site</a>. The design was ported to the DE2 board and extended to have a richer set of opcodes and i/o ports. I wrote a simple assembler and compiler for the architecture and implemented serial communication routines. The compiler supports inline macros, functions, one dimensional array variables, and the usual if-then-else-endif and while-do-endwhile structured programming. Supplied functions allow you to send and receive integers to the serial interface and to send strings and integers to the LCD.. </p>
+<p><strong>CPU</strong><br />
+  The cpu is a stack machine. The registers are arranged in a stack with the usual range of arithmetic operators and stack manipulation instructions. There are no named registers except top-of-stack (named <code>top</code>) and next-to-top-of-stack (named <code>next</code>). 
+The CPU design is from http://www.cs.hiroshima-u.ac.jp/~nakano/wiki/  and is GPL licensed. I added load/store opcodes and program counter push/pop. Load and store enable <em>register indirect</em> addressing, while PC manipulations enable functions. The single cycle version with a stack size of 16 occupies about 1100 logic elements (out of 33,000 on the DE2). Reducing the stack size to 8 drops the size to 940 logic elements.  Setting QuartusII to optimize for speed (See <code>Tools...Advisors...Timing optimization advisor</code>) increases size to 1000 logic elements and increases the operating frequency to 74 MHz. </p>
+<p>The cpu was extended to allow for up to eight in/out ports, with four appearing outside the cpu module. I/O addressing is shown in the opcode table below. The remaining four will be used for internal i/o, perhaps with a timer peripheral. The architecture taken from Nakano, K., et.al is shown below, but modified for 8 i/o ports and with an extra connection from the PC to the data bus (dbus).</p>
+<p><img src="TinyCPU/Stack_machine_2010/ports/architecture.png" width="483" height="200" alt="architecture" /></p>
+<p><strong>CPU opcodes and instruction format</strong></p>
+<p>The cpu instruction set is shown below. 
+  Notation: </p>
+<ul>
+  <li><code>I</code> is a 12-bit signed integer</li>
+  <li> <code>A</code> is an unsigned 12-bit integer</li>
+  <li><code>n</code> is a 3 bit integer (used only as an i/o address)</li>
+  <li><code>top</code> is top-of-stack</li>
+  <li> <code>next</code> is second-to-top-of-stack</li>
+  <li><code>PC</code> is the program counter</li>
+  <li> <code>mem[A]</code> is the contents of memory location <code>A</code>.</li>
+  <li>For binary operations (e.g. add) the stack is <em>always popped</em> so that only the result is on the stack.<br />
+    </p>
+  </li>
+</ul>
+<table width="65%" border="1">
+  <tr>
+    <th width="11%" scope="col">Instruction</th>
+    <th width="11%" scope="col">Hex format</th>
+    <th width="78%" scope="col">Operation</th>
+  </tr>
+  <tr>
+    <th scope="col"><code>nop</code></th>
+    <th scope="col"><code>0000</code></th>
+    <th scope="col"><code>none</code></th>
+  </tr>
+  <tr>
+    <th scope="row"><code><strong>pushi</strong></code></th>
+    <td><div align="center"><code>1000 + I</code></div></td>
+    <td><div align="center"><code> [sign extended] I &rarr;  top </code></div></td>
+  </tr>
+  <tr>
+    <th scope="row"><code><strong>push A</strong></code></th>
+    <td><div align="center"><code>2000 + A</code></div></td>
+    <td><div align="center"><code>mem[A] &rarr;  top </code></div></td>
+  </tr>
+  <tr>
+    <th scope="row"><code>pop A</code></th>
+    <td><div align="center"><code>3000 + A</code></div></td>
+    <td><div align="center"><code>top &rarr;mem[A] </code></div></td>
+  </tr>
+  <tr>
+    <th scope="row"><code>jmp A</code></th>
+    <td><div align="center"><code>4000 + A</code></div></td>
+    <td><div align="center"><code>A &rarr; PC</code></div></td>
+  </tr>
+  <tr>
+    <th scope="row"><code>jz A</code></th>
+    <td><div align="center"><code>5000 + A</code></div></td>
+    <td><div align="center"><code>if (top==0) then A &rarr; PC</code></div></td>
+  </tr>
+  <tr>
+    <th scope="row"><code>jnz A</code></th>
+    <td><div align="center"><code>6000 + A</code></div></td>
+    <td><div align="center"><code>if (top!=0) then A &rarr; PC</code></div></td>
+  </tr>
+  <tr>
+    <th scope="row"><code>ld</code></th>
+    <td><div align="center"><code>7000</code></div></td>
+    <td><div align="center"><code>mem[top]  &rarr;  top </code></div></td>
+  </tr>
+  <tr>
+    <th scope="row"><code>st</code></th>
+    <td><div align="center"><code>8000</code></div></td>
+    <td><div align="center"><code>top   &rarr; mem[next]</code></div></td>
+  </tr>
+  <tr>
+    <th scope="row"><code>pushpc</code></th>
+    <td><div align="center"><code>9000</code></div></td>
+    <td><div align="center"><code>program counter   &rarr;  top</code></div></td>
+  </tr>
+  <tr>
+    <th scope="row"><code>poppc</code></th>
+    <td><div align="center"><code>9001</code></div></td>
+    <td><div align="center"><code>top &rarr; program counter </code></div></td>
+  </tr>
+  <tr>
+    <th scope="row"><code>in n</code></th>
+    <td><div align="center"><code>d00n</code></div></td>
+    <td><div align="center"><code>input[n] &rarr;  top </code></div></td>
+  </tr>
+  <tr>
+    <th scope="row"><code>out n</code></th>
+    <td><div align="center"><code>e00n</code></div></td>
+    <td><div align="center"><code>top &rarr; output[n]</code></div></td>
+  </tr>
+  <tr>
+    <th scope="row"><code>add</code></th>
+    <td><div align="center"><code>f000</code></div></td>
+    <td><div align="center"><code>next + top &rarr; top</code></div></td>
+  </tr>
+  <tr>
+    <th scope="row"><code>sub</code></th>
+    <td><div align="center"><code>f001</code></div></td>
+    <td><div align="center"><code>next - top &rarr; top</code></div></td>
+  </tr>
+  <tr>
+    <th scope="row"><code>mul</code></th>
+    <td><div align="center"><code>f002</code></div></td>
+    <td><div align="center"><code>next * top &rarr; top</code> (in 10.8 fixed point)</div></td>
+  </tr>
+  <tr>
+    <th scope="row"><code>shl</code></th>
+    <td><div align="center"><code>f003</code></div></td>
+    <td><div align="center"><code>next &lt;&lt; top &rarr; top</code></div></td>
+  </tr>
+  <tr>
+    <th scope="row"><code>shr</code></th>
+    <td><div align="center"><code>f004</code></div></td>
+    <td><div align="center"><code>next &gt;&gt; top &rarr; top</code></div></td>
+  </tr>
+  <tr>
+    <th scope="row"><code>band</code></th>
+    <td><div align="center"><code>f005</code></div></td>
+    <td><div align="center"><code>next &amp; top &rarr; top</code></div></td>
+  </tr>
+  <tr>
+    <th scope="row"><code>bor</code></th>
+    <td><div align="center"><code>f006</code></div></td>
+    <td><div align="center"><code>next | top &rarr; top</code></div></td>
+  </tr>
+  <tr>
+    <th scope="row"><code>bxor</code></th>
+    <td><div align="center"><code>f007</code></div></td>
+    <td><div align="center"><code>next ^ top &rarr; top</code></div></td>
+  </tr>
+  <tr>
+    <th scope="row"><code>and</code></th>
+    <td><div align="center"><code>f008</code></div></td>
+    <td><div align="center"><code>next &amp;&amp; top &rarr; top</code></div></td>
+  </tr>
+  <tr>
+    <th scope="row"><code>or</code></th>
+    <td><div align="center"><code>f009</code></div></td>
+    <td><div align="center"><code>next || top &rarr; top</code></div></td>
+  </tr>
+  <tr>
+    <th scope="row"><code>eq</code></th>
+    <td><div align="center"><code>f00a</code></div></td>
+    <td><div align="center"><code>next == top &rarr; top</code></div></td>
+  </tr>
+  <tr>
+    <th scope="row"><code>ne</code></th>
+    <td><div align="center"><code>f00b</code></div></td>
+    <td><div align="center"><code>next != top &rarr; top</code></div></td>
+  </tr>
+  <tr>
+    <th scope="row"><code>ge</code></th>
+    <td><div align="center"><code>f00c</code></div></td>
+    <td><div align="center"><code>next &gt;= top &rarr; top</code></div></td>
+  </tr>
+  <tr>
+    <th scope="row"><code>le</code></th>
+    <td><div align="center"><code>f00d</code></div></td>
+    <td><div align="center"><code>next &lt;= top &rarr; top</code></div></td>
+  </tr>
+  <tr>
+    <th scope="row"><code>gt</code></th>
+    <td><div align="center"><code>f00e</code></div></td>
+    <td><div align="center"><code>next &gt; top &rarr; top</code></div></td>
+  </tr>
+  <tr>
+    <th scope="row"><code>lt</code></th>
+    <td><div align="center"><code>f00f</code></div></td>
+    <td><div align="center"><code>next &lt; top &rarr; top</code></div></td>
+  </tr>
+  <tr>
+    <th scope="row"><code>neg</code></th>
+    <td><div align="center"><code>f010</code></div></td>
+    <td><div align="center"><code>-top &rarr; top</code></div></td>
+  </tr>
+  <tr>
+    <th scope="row"><code>bnot</code></th>
+    <td><div align="center"><code>f011</code></div></td>
+    <td><div align="center"><code>~top &rarr; top</code></div></td>
+  </tr>
+  <tr>
+    <th scope="row"><code>not</code></th>
+    <td><div align="center"><code>f012</code></div></td>
+    <td><div align="center"><code>!top &rarr; top</code></div></td>
+  </tr>
+  <tr>
+    <th scope="row"><code>dup</code></th>
+    <td><div align="center"><code>f013</code></div></td>
+    <td><div align="center"><code>copies top of stack -- stack: top &rarr; top top</code></div></td>
+  </tr>
+  <tr>
+    <th scope="row"><code>drop</code></th>
+    <td><div align="center"><code>f017</code></div></td>
+    <td><div align="center"><code>drops top of stack-- stack: next  top &rarr; next</code></div></td>
+  </tr>
+  <tr>
+    <th scope="row"><code>over</code></th>
+    <td><div align="center"><code>f01f</code></div></td>
+    <td><div align="center"><code>copies next to stack top -- stack: next  top &rarr; next top next</code></div></td>
+  </tr>
+  <tr>
+    <th scope="row"><code>dnext</code></th>
+    <td><div align="center"><code>f01b</code></div></td>
+    <td><div align="center"><code>drops next -- stack: next  top &rarr; top</code></div></td>
+  </tr>
+  <tr>
+    <th scope="row">&nbsp;</th>
+    <td>&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+</table>
+<p>See <a href="Stack_cpu_old.html">this page</a> for older versions and develpment sequence.</p>
+<hr />
+<p><strong>Simple Compiler</strong> (<strong>Syrup</strong>)<img src="pancake_syrup.jpg" width="54" height="54" alt="syrup" align="middle" hspace=5/></p>
+<p>A simple compiler, named <em>Syrup</em>, was written in matlab (also runs in Octave) to make programming easier. 
+   A  source code is assembled into a mif file, which can be read by the ram block. The link between the mif file and the Pancake cpu ram block is implemented with a synthesis directive in the same statement as the memory declaration and <strong>before</strong> the semicolon which terminates the declaration.<br />
+<code>reg [DWIDTH-1:0] mem [WORDS-1:0] /* synthesis ram_init_file = &quot; test_stack_machine.mif&quot; */ ;<br />
+</code>Search for 
+  
+<code>/* synthesis ram_init_file </code>in the verilog file containing the cpu and modify the mif name.</p>
+<p>If you change the<code> mif</code> file by recompiling (but keep the mif file name the same), then you can change the memory contents <em>without</em> having to rebuild the whole project: <br />
+  (1) Click <code>Update Memory Initialization File</code> on the <code>Processing</code> menu.    <br />
+  (2) After using this option, run the QuartusII Assembler (<code>Processing menu...Start...Start Assembler</code>) to generate new programming files for the device.<br />
+</p>
+<p>The <strong><a href="TinyCPU/Stack_machine_2010/compiler/stack_machine_compiler_v1_12.m">compiler_v1_12</a></strong> syntax is stack based and written in Matlab (<a href="TinyCPU/Stack_machine_2010/compiler/stack_machine_compiler.m">version 1.0</a>).  A description follows:</p>
+<ul>
+  <li>A program consists of up to 5 sections:
+    <ul>
+      <li>Constant declarations denoted by the <code>constant</code> keyword.<br />
+        Constants are interpreted as 18-bit 2's complement (roughly +/-131,000). <br />
+All constants are in integer decimal format.<br />
+Constants shorter than 12-bits generate more compact code.  Example:<br />
+        <code>constant <br />
+key3mask 8
+	; name -- value pair<br />
+        </code><code>redLEDs 3 ; port 3</code>        <br />
+      </li>
+      <li>Variable declarations denoted by the <code>variable</code> keyword. Example<br />
+        <code>variable <br />
+test   ; define a 1 word variable<br />
+particle 100 ; define array of length 100 </code>      </li>
+      <li>Inline function definitions denoted by the <code>inline</code> keyword. <br />
+        Each separate inline function starts/ends with <code>inline/endinline</code>. <br />
+        Inline   functions must be   defined  before they are used. <br />
+See the longer example below.        Example:<br />
+        <code>inline <br />
+        inc
+	1 add
+        <br />
+      endinline </code></li>
+      <li>Function declarations denoted by the <code>function</code> keyword. <br />
+        Called functions must be    declared before they are used. <br />
+See the longer example below.        Example:<br />
+        <code>function  	
+        <br />
+        getchar  	
+        <br />
+        putchar  	
+        <br />
+        delay_10  	
+        <br />
+        puthex </code></li>
+      <li>The program denoted by the <code>program</code> keyword. Example:<br />
+        <pre>program ; this section contains the actual program    
+main:  
+0 =count  
+; loop forever waiting for human input  
+while forever ; never exit  
+do  	
+   &quot;enter&gt; putstr gethex crlf  	
+   puthex space count puthex crlf  	
+   count 1 add =count  
+endwhile ; end of infinite loop</pre>
+      </li>
+    </ul>
+  </li>
+  <li>The program execution starts at the   label <code>main:</code> . <br />
+    A program section consists of a list of names, operators and structuring   statments. <br />
+    Space and end-of-line are delimiters and are otherwise completely ignored.<br />
+    A semicolon denotes the beginning of a comment, which extends to the end of the current line.
+    <br />
+  </li>
+  <li>Literal numbers in the code are interperted as 18-bit 2's complement (roughly +/-131,000) and pushed on the stack. <br />
+  All numbers are in integer decimal format.</li>
+  <li> Using the name of a constant or variable in the code places it's value   on the data stack.<br />
+    For example, using the definitions above<code> redLEDs key3mask add =test </code>puts the value 11 into the variable <code>test</code>. <br />
+    Using a form such as <code>var1[var2] </code>treats <code>var2</code> as an   index into <code>var1</code> and places the value of the indexed variable on the   stack. <br />
+    Using<code> =var</code> or <code>=var1[var2]</code> stores the value on the stack to the   appropriate location.  <br />
+    For example the following code increments the variable <code>count</code> by pushing the memory value onto the stack, pushing 1 onto the stack, adding them, and popping the stack back into memory.<br />
+    <code>count 1 add =count </code></li>
+  <li>Available stack operators are:<code> <br />
+    add, sub , shl, shr, band, bor, bxor,   and, or, eq, ne, ge, le, gt , lt, neg , bnot , not, drop, over</code>.  <br />
+    The   operators act  the same way as the respective assembly opcodes. </li>
+  <li><code>&quot;string</code> places  the <code>string</code> on the stack (with a character count) to be printed by <code>putstr </code>(see below). <br />
+    For example using <code>&quot;enter&gt;</code> places the characters <code>enter&gt;</code> on the stack with the <code>e</code> at next-to-top of stack and the character count at top-of-stack..<br />
+  The limit is about 12 characters before you overflow the stack! Always follow a quoted string with <code>putstr</code>.</li>
+  <li>Input and output are indicated by<code> in[const]</code> and <code>out[const].</code><br />
+  For example using the constant <code>redLEDs</code> defined above <code>out[redLEDs]</code></li>
+  <li>The entry point of a called function is indicated by <code>funct_entry:</code> <br />
+    You invoke   the function by using the name <code>funct_entry</code>. The exit point of a called function is indicated by <code>return</code>. <br />
+    Called functions must be declared as shown in the longer example linked below.<br />
+  </li>
+  <li>You invoke   an inline function by using its name. For example if the following inline is defined:<br />
+    <code>inline make_vga_addr <br />
+        8 shr 9 shl =temp<br />
+        8 shr temp add<br />
+      endinline</code><br />
+    Then later in the program you can use the inline function, in this case by pushing coordinate values on the stack<br />
+    and using the inline name
+    <br />
+    <code>y[count] x[count] make_vga_addr out[vga_addr]</code><br />
+    <br />
+  </li>
+  <li>Conditional operators are<code> if then else endif</code>. <br />
+    For example the following compares an array variable to 480 and resets it to a lower value if it is too large.<br />
+    <code>if x[count] 480  gt<br />
+      then 478  =x[count]<br />
+      endif</code><br />
+  </li>
+  <li>Repeat operators are <code>while do endwhile</code>. <br />
+    For example   the following compares <code>counter2</code> to zero and increments the counter until it overflows.<br />
+    <code>while counter2 0 ne<br />
+      do counter2 1 add =counter2 <br />
+      endwhile </code></li>
+  <li>The assembler is embedded within the compiler. The syntax is <code>opcode.operand</code> or <code>opcode.</code> if there is no operand. 
+    <br />
+  The <em>period</em> is required for assembler commands. The compiler merely inserts the assembler command into the code.</li>
+  <li>Error messages will indicate a unrecognized token (e.g. whilex instead of while), and various assemble errors, like unrecognized symbol, bad opcode, etc.</li>
+  <li>There are eight locations reserved for unnamed temporary results at memory addresses 4 to 11. An example follows which swaps the top-of-stack and next-on-stack.<br />
+    <code>inline swap<br />
+      pop.4 ; locs 4&amp;5 are hidden temp locations<br />
+      pop.5<br />
+      push.4<br />
+      push.5<br />
+      endinline</code><br />
+  </li>
+</ul>
+<p>The compiler generates code to initialize the return stack and then jumps   to <code>main</code>. <br />
+Code starts executing at memory location zero, but your   program starts at <code>main:.</code> <br />
+The return stack is allocated in high memory,   with variables just below. There is <em>no</em> collision detection between code   and variables. <br />
+Note that the parser is <em>really stupid</em>! No are spaces allowed between   equal sign and variable name. No spaces allowed in indexed variable   syntax.</p>
+<p><em>Compiler wish list:</em> Local variables, nested inlines, &quot;include&quot;, variable/array initialization, ashr (arithmetic shift right), mul and fixmul</p>
+<p><strong>Compiler Example</strong></p>
+<p>A <a href="TinyCPU/Stack_machine_2010/compiler/test1.cmp">short example</a> shows how to blink LEDs using <a href="TinyCPU/Stack_machine_2010/compiler/test1_tinyCPU.v">this hardware design</a>. It shows the five basic sections of a program: </p>
+<ol>
+  <li>constant section. This section assigns symbolic names to numerical constants.</li>
+  <li>variable section. This section defines memory locations to hold 18-bit variables. If a number follows the variable name, then the number defines the size of the array.</li>
+  <li>inline function definitions. This section allows you to associate arbitrary code with a name. There is no call-return overhead because the code is simply inserted in line.</li>
+  <li>function entry definitions. This section is necessary because the label handler in the compiler is really stupid. All called functions (not inline) need to be listed here.</li>
+  <li>program section. This section has the actual code, which in this program below just blinks some LEDs and responds to a button press. The if-then-else construct contains three assembler commands embedded in the compiler code.</li>
+</ol>
+<pre>; This program demos compiler
+; with LED output and button input
+; ==================================
+
+constant ; named constants
+	key3mask 8
+	key2mask 4
+	keys 1  ; port 1
+	keymask 15 ; 0x0f
+	pattern2 255 ; 0xff
+	pattern3 15 ; 0x0f
+	redLEDs 3 ; port 3
+	greenLEDs 2 ; port 2
+	forever 1 ; endless loop
+
+; ==================================
+
+variable
+	test   ; location to push test data
+	counter1   ; outer loop counter
+	counter2   ; inner loop counter
+ 
+; ==================================
+ 
+inline inc
+	1 add
+endinline
+
+; ================================
+
+function
+	evalkey
+	
+; =================================
+program ; this section contains the actual program
+
+main:
+0 out[greenLEDs]; reset the green LEDs
+0 =counter1 ; init counter
+
+while forever ; never exit
+do
+	counter1 inc ; get the counter and increment
+	dup ; copy stack top 
+	out[redLEDs] ;output one copy, one on stack to store
+	=counter1  ; save the counter
+
+	;slow it down with an inner loop counter
+	1 =counter2 ; reset and store inner counter
+	while counter2 0 ne ; compare stack top to zero
+		do counter2 inc =counter2 ; inc the counter
+	endwhile	;end of inner loop	
+
+	; detect some button presses
+	if ; is KEY[3] pressed?
+		key3mask evalkey ; detect 4th bit set
+	then ; key 3 is pressed
+		pushi.pattern2 out.greenLEDs   
+	else ; key 3 is not pressed
+		pushpc.  out[greenLEDs]
+	endif	
+endwhile ; end of outer loop
+
+;=== read keys function ====
+; enter with a switch selector bit on the stack
+; exits with a TRUE/FALSE for match/nomatch on stack
+evalkey: 
+	in[keys] bnot ; invert so key-down==1
+	keymask band ; use only lower 4 bits
+	eq ; compare to specific_keymask
+	return
+
+;===end of code ============================
+</pre>
+<p><strong>Serial input/output</strong></p>
+<p>I used serial hardware from John Loomis (see ref below) to add i/o to the stack cpu. The serial i/o will work up to 115200 baud, but is set in the example to 9600 baud. Connection was made to the PC from the RS-232 connector on the DE2. The PC is using the terminal emulator <a href="../../../../../www.chiark.greenend.org.uk/~sgtatham/putty/default.htm">PuTTY</a>, but you could use serial input to Matlab also. The <a href="TinyCPU/Stack_machine_2010/serial_interface/VGA_640x480_m4k_tinyCPU_serial.v">top level module</a> has the serial routines included, but be sure that the mif file name in the memory module matches that generated by the compiler. The <a href="TinyCPU/Stack_machine_2010/serial_interface/serial_gethex_puthex_putstr.cmp">source code</a> implements the low level interface routines <code>getchar</code> and <code>putchar</code>, then uses them to build <code>putstr, gethex</code> and <code>puthex</code>. <code>Gethex</code> and <code>puthex</code> read and write a single 18-bit number to/from the stack. The main routine prompts  the user to enter a number, then prints it, along with a sequence number. The code as implemented assumes a clock frequency of 50.4 MHz. You can change that in the RS232 modules. <a href="TinyCPU/Stack_machine_2010/serial_interface/VGA_m4k.zip">Zipped project</a>.</p>
+<p><strong>Serial input/output and LCD output</strong></p>
+<p>More hardware from John Loomis (see ref below) was used to add LCD output to the stack cpu. I modified the structure of his controller for serial character writing and to make the LCD reset a little more robust. The <a href="TinyCPU/Stack_machine_2010/LCD_and_serial/tinyCPU_serial_16sept11.v">top-level file</a> contains the spu definition the RS232 routines and the LCD routines. The compiler <a href="TinyCPU/Stack_machine_2010/LCD_and_serial/serial_lcd.cmp">source code</a> implements LCD reset, clear, putstr and puthex commands. When you modify the code, be sure that the <a href="TinyCPU/Stack_machine_2010/LCD_and_serial/serial_lcd.mif">mif file</a> name in the cpu memory module matches that generated by the compiler. <a href="TinyCPU/Stack_machine_2010/LCD_and_serial/Tiny_cpu_sept2011.zip">Zipped project</a>.</p>
+<p><strong>Graphics example</strong>s<br />
+</p>
+<p>The <a href="TinyCPU/Stack_machine_2010/Video__interface_1/VGA_640x480_m4k_tinyCPU.v">processor</a> was hooked up to the VGA display using M4K blocks, with one output port for address, one port for 1-bit data and one port for write-enable. A software 36-bit. linear feedback, shift register random number generator produces random single bits to simulate diffusion with 1800 particles. The computational frame rate is 75 fps with 1800 particles, running at the VGA clock frequency of 25.2 MHz. The timing analyser says that the cpu should run at 67 MHz, but it seems to run at 75.6 MHz, updating particle positions at 224 fps with 1800 particles, however, the video display wavers a little. At 50.4 MHz, 150 fps, the display is fine. The <a href="TinyCPU/Stack_machine_2010/compiler/stack_machine_vga_comp1.cmp">source code</a> shows a  longer computational example. The temporary <a href="TinyCPU/Stack_machine_2010/compiler/temp.asm">asm file</a> and <a href="TinyCPU/Stack_machine_2010/compiler/stack_machine_vga_comp1.mif">mif file</a> show the steps in getting the source code to the processor. <a href="TinyCPU/Stack_machine_2010/Video__interface_1/VGA_m4k_diffusion.zip">Zipped project</a>.</p>
+<p>The fast processor was hooked up to SRAM to control the VGA. The interface was arranged so that the VGA controller runs SRAM, except when VGA_BLANK is asserted (low). The source code has to detect and respect the status of VGA_BLANK, only doing read/write when VGA_BLANK is low. The  application computes a diffusion-limited aggregation. One thousand particles (in red below) are animated from cpu RAM, but collisions between the 1000 particles and the growing aggregate (in white below) are detected by reading back the position of aggregate particles from VGA SRAM. This means that the size of the aggregate is not limited by cpu memory, but only by the number of pixels on the VGA display. (<a href="TinyCPU/Stack_machine_2011/Fast_cpu_nov2011/DLA/VGA_640x480_sram_tiny_single_cycle.v">hardware</a>, <a href="TinyCPU/Stack_machine_2011/Fast_cpu_nov2011/DLA/stack_machine_vga_sram_test3.cmp">source</a>). A change in the source starts from a linear seed along the bottom of the screen. (<a href="TinyCPU/Stack_machine_2011/Fast_cpu_nov2011/DLA/VGA_640x480_sram_tiny_single_cycle.v">hardware</a>, <a href="TinyCPU/Stack_machine_2011/Fast_cpu_nov2011/DLA/stack_machine_vga_sram_dla.cmp">source</a>, <a href="TinyCPU/Stack_machine_2011/Fast_cpu_nov2011/DLA/VGA_sram.zip">zipped project</a>). The image shown to the middle has about 8000 particles in the tree-shaped white aggregates. Inlining the random number generator and eliminating the animation of the diffusing particles (and showing only the aggregate) speeds up execution by several times (<a href="TinyCPU/Stack_machine_2011/Fast_cpu_nov2011/DLA/stack_machine_vga_sram_dla_nodraw.cmp">source</a>). The right hand image has about 12,000 particles.<br />
+<a href="TinyCPU/Stack_machine_2011/Fast_cpu_nov2011/DLA/DLA1.jpg"><img src="TinyCPU/Stack_machine_2011/Fast_cpu_nov2011/DLA/DLA1.jpg" alt="dla1" width="166" height="160" hspace="9" /></a><a href="TinyCPU/Stack_machine_2011/Fast_cpu_nov2011/DLA/DLA2.jpg"><img src="TinyCPU/Stack_machine_2011/Fast_cpu_nov2011/DLA/DLA2.jpg" alt="dla2" width="227" height="159" hspace="9" /></a><a href="TinyCPU/Stack_machine_2011/Fast_cpu_nov2011/DLA/DLA3.jpg"><img src="TinyCPU/Stack_machine_2011/Fast_cpu_nov2011/DLA/DLA3.jpg" alt="dla3" width="228" height="159" hspace="9" /></a></p>
+<p><strong>Multiprocessor graphics</strong></p>
+<p>Three fast processors were hooked up to SRAM to control the VGA. A hardware SRAM memory multiplexer was built to give priority to reset, then to the VGA controller, then each of the three cpus. The source code has to signal that it wants SRAM access, then wait for SRAM available, then read/write and then signal completion. </p>
+<p>In the first pass of the design, SRAM access takes seven cpu cycles for a read or write because of sync overhead in the source code. Each cpu can only read/write when VGA_BLANK is asserted. The  application computes a diffusion-limited aggregation with 1000 particles per processor colored in green, yellow and cyan on the screen.  The image shown below-left has about 20000 particles in the tree-shaped white aggregates. All three cpus run the same code, with one input used to set the cpu id number. (<a href="TinyCPU/Stack_machine_2011/Fast_cpu_nov2011/DLA_multiproc/VGA_640x480_sram_tiny_3_cpu.v">hardware</a>, <a href="TinyCPU/Stack_machine_2011/Fast_cpu_nov2011/DLA_multiproc/stack_3_vga_sram_dla.cmp">source</a>, <a href="TinyCPU/Stack_machine_2011/Fast_cpu_nov2011/DLA_multiproc/VGA_3_proc.zip">zipped project</a>). The image in the middle has about 36,000 particles in the aggregate (<a href="TinyCPU/Stack_machine_2011/Fast_cpu_nov2011/DLA_multiproc/stack_3_vga_sram_dla_2.cmp">source</a>) took about 6 minutes to compute. </p>
+<p>In the second pass of the design, SRAM access is interleaved between the VGA controller and the three cpus. The VGA controller gets access on every VGA clock  high, while the cpus share every VGA clock  low. This works becuase memory is being clocked twice as fast as the VGA clock. On every VGA clock high, an address is set up based on the VGA address generator. On the VGA clock low, the SRAM data for the VGA is buffered into a register, while the address for the cpu read/write is set up. On the next VGA clock high, the SRAM data is buffered into a register for each cpu, while the next VGA controller read is set up. Execution time for the code speeds up by a factor of five for 1200 particles on each cpu producing an aggregate of around 32,000 particles (<a href="TinyCPU/Stack_machine_2011/Fast_cpu_nov2011/DLA_multiproc_2/VGA_640x480_sram_5F3cpu_fast_sw.v">hardware</a>, <a href="TinyCPU/Stack_machine_2011/Fast_cpu_nov2011/DLA_multiproc_2/stack_two_vga_sram_dla.cmp">source</a>, <a href="TinyCPU/Stack_machine_2011/Fast_cpu_nov2011/DLA_multiproc_2/VGA_3_proc_fast_sw.zip">zipped project</a>). </p>
+<p>A  ROM character generator for VGA was built, based on the data from <a href="../../../../../ece320web.groups.et.byu.net/labs/VGATextGeneration/VGA_Terminal.html">ECE 320 at BYU</a>. The file from BYU is <a href="TinyCPU/Stack_machine_2011/Fast_cpu_nov2011/char_gen/font_rom.txt">here</a>, and the matlab program to convert it to an Altera mif file is <a href="TinyCPU/Stack_machine_2011/Fast_cpu_nov2011/char_gen/char_rom_gen.m">here</a>, and the mif file is <a href="TinyCPU/Stack_machine_2011/Fast_cpu_nov2011/char_gen/font_rom.mif">here</a>. The ascii character code is multiplied by 16 to from the base index for a character. The data at the base index location is the top byte (of 16) of the character image. The high order bit of the byte is the left-most pixel of the top line of the character. The ROM was connected to i/o ports on the stack processor, cpu 1, where a small routine reads the ROM and outputs colors to the VGA SRAM interface. (<a href="TinyCPU/Stack_machine_2011/Fast_cpu_nov2011/char_gen/VGA_sram_5F3cpu_fast_sw_char.v">hardware</a>, <a href="TinyCPU/Stack_machine_2011/Fast_cpu_nov2011/char_gen/stack_three_vga_sram_char.cmp">source</a>, <a href="TinyCPU/Stack_machine_2011/Fast_cpu_nov2011/char_gen/VGA_char.zip">zipped project</a>)<br />
+  <a href="TinyCPU/Stack_machine_2011/Fast_cpu_nov2011/DLA_multiproc/DLA20k.jpg"><img src="TinyCPU/Stack_machine_2011/Fast_cpu_nov2011/DLA_multiproc/DLA20k.jpg" alt="dla20k" width="214" height="158" hspace="9" /></a><a href="TinyCPU/Stack_machine_2011/Fast_cpu_nov2011/DLA_multiproc/DLA32k.jpg"><img src="TinyCPU/Stack_machine_2011/Fast_cpu_nov2011/DLA_multiproc/DLA32k.jpg" width="222" height="158" alt="dla32k" /></a><a href="TinyCPU/Stack_machine_2011/Fast_cpu_nov2011/char_gen/char_image1.jpg"><img src="TinyCPU/Stack_machine_2011/Fast_cpu_nov2011/char_gen/char_image1.jpg" alt="char set" width="221" height="158" hspace="9" /></a><img src="TinyCPU/Stack_machine_2011/Fast_cpu_nov2011/char_gen/char_image2.jpg" width="640" height="105" alt="char 2" /></p>
+<p><strong><a name="dataShare" id="dataShare"></a>Multiprocessor data sharing</strong></p>
+<p>The SRAM interface to the VGA display actually has over 100,000 unused bytes which are not displayed, but the  unused memory is in small chunks. The biggest piece of available memory is from address 246,400 to 262,144, or about 16 kbytes. These unused locations can be used to share non-graphics data between processors. We need 16-bit read/write functions and a   mutex to lock memory. The SRAM switch used in the graphics functions above was extended with new functions to allow 16-bits to be written  (the graphics interface writes only single bytes). The mutex is implemented using  hardware test-and-set, clear, and read instructions. The hardware switch prioritizes memory access first, then mutex operations. On the processor side, the program must: (1) set up an sram read, write, or mutex operation, (2) assert a request, (3) wait for access achnowledgment, (4) do the read/write (5) de-assert request. The test program computes a diffusion-limited aggregation, as above, maintains a shared (mutex protected) count in sram, and maintains a shared run/done flag in sram. (<a href="TinyCPU/Stack_machine_2011/Fast_cpu_nov2011/multiproc_3/VGA_sram_5F3cpu_fast_sw_char.v">hardware</a>, <a href="TinyCPU/Stack_machine_2011/Fast_cpu_nov2011/multiproc_3/stack_three_vga_sram_access.cmp">software</a>, <a href="TinyCPU/Stack_machine_2011/Fast_cpu_nov2011/multiproc_3/VGA_multiproc.zip">zipped project</a>). And a <a href="TinyCPU/Stack_machine_2011/Fast_cpu_nov2011/multiproc_3/DLA1.MP4">video</a> of the aggregate growth. The image below shows two counters in the upper left. The green counter is from shared, mutex protected memory. The red counter from shared, unprotected memory. The unprotected count is almost always lower than the protected count because of rare (but inevitable) overlap of two cpus trying to update the count at the same time. Another set of mutexes<a href="TinyCPU/Stack_machine_2011/Fast_cpu_nov2011/multiproc_3/stack_three_vga_sram_access2.cmp"></a> guarantees that cpu 2 and 3 will finish before cpu 1 tries to print the final count. It does this by setting a lock for cpu 2/3, then having each cpu clear its lock when it finishes.<br />
+<a href="TinyCPU/Stack_machine_2011/Fast_cpu_nov2011/multiproc_3/DLA_counts.jpg"><img src="TinyCPU/Stack_machine_2011/Fast_cpu_nov2011/multiproc_3/DLA_counts.jpg" width="210" height="155" alt="dls with counts" /></a></p>
+<p>The processor interface to the memory switch uses several i/o ports: </p>
+<ul>
+  <li>out0 for sram address or mutex number</li>
+  <li>out1 for data to write to sram</li>
+  <li>out2 for control (see below)</li>
+  <li>in1 for data from sram or mutex</li>
+  <li>in2 for access acknowledge from the switch. </li>
+</ul>
+<p>The control word on out2 has the following format. The 4 request lines are mutually exclusive.</p>
+<ul>
+  <li>bit 0 low =&gt;write enable for sram </li>
+  <li> bit 1  =&gt; if 0 =&gt; write low byte; if 1 =&gt; write high byte</li>
+  <li>bit 2 high =&gt; request sram access</li>
+  <li>bit 3 high =&gt; full word read/write (low for VGA byte read/write)</li>
+  <li> bit 4 high =&gt; request mutex test and set</li>
+  <li> bit 5 high =&gt; request mutex read</li>
+  <li> bit 6 high =&gt; request mutex clear<br />
+  </li>
+</ul>
+<p>The seven functions to access shared memory/mutex are written as inline functions described in the table below. The test-and-set operation on a mutex is atomic. It is guaranteed that if two cpus both try to set a mutex at the same time, only one will succeed, and they both will agree which one has set it. </p>
+<table width="66%" border="1">
+  <tr>
+    <td width="21%"><strong>function</strong></td>
+    <td width="21%"><strong>input stack</strong></td>
+    <td width="16%"><p><strong>output stack</strong></p></td>
+    <td width="42%"><strong>effect</strong></td>
+  </tr>
+  <tr>
+    <td><code>vga_point</code></td>
+    <td><code>color y x (stack top)</code></td>
+    <td><code>--</code></td>
+    <td>Draws a point on the VGA display at (x,y)</td>
+  </tr>
+  <tr>
+    <td><code>vga_read</code></td>
+    <td><code>y x </code></td>
+    <td><code>color</code></td>
+    <td>Reads the 8-bit color of a point on the VGA display. Color code is explained in the hardware.</td>
+  </tr>
+  <tr>
+    <td><code>sram_write</code></td>
+    <td><code>data addr </code></td>
+    <td><code>--</code></td>
+    <td>Writes a 16 bit word to SRAM addr</td>
+  </tr>
+  <tr>
+    <td><code>sram_read</code></td>
+    <td><code>addr</code></td>
+    <td><code>data</code></td>
+    <td>Reads a 16 bit word from SRAM addr</td>
+  </tr>
+  <tr>
+    <td><code>mutex_test_set</code></td>
+    <td><code>mutex_number (0 to 7)</code></td>
+    <td><code>mutex_state (before setting)</code></td>
+    <td>Reads a mutex then sets it, <strong>if it is zero</strong></td>
+  </tr>
+  <tr>
+    <td><code>mutex_clear</code></td>
+    <td><code>mutex_number (0 to 7)</code></td>
+    <td><code>--</code></td>
+    <td>Clears a mutex to zero</td>
+  </tr>
+  <tr>
+    <td><code>mutex_read</code></td>
+    <td><code>mutex_number (0 to 7)</code></td>
+    <td><code>mutex_state</code></td>
+    <td>Reads a mutex state (1/0)</td>
+  </tr>
+</table>
+<hr />
+<p><strong>Slower, but smaller, multicycle version</strong></p>
+<p>This version of the processor (<a href="TinyCPU/Stack_machine_2011/Slow_cpu_nov2011/TINYCPU_multicycle_nov_2011.v">top_level</a>, <a href="TinyCPU/Stack_machine_2011/Slow_cpu_nov2011/cpu_pll.v">cpu_pll</a>) has the same instruction set architecture and runs code (<a href="TinyCPU/Stack_machine_2011/Slow_cpu_nov2011/test1.cmp">test1.cmp</a>) using the same compiler (version 1_11), but uses half the memory and about 80% of the logic elements. The processor cycle speed is 100 MHz, but the average instruction takes a little over 3 cycles, so the processor runs at about 30 MHz. To enable the design to run at 100 MHz, you need to optimize Quartus for speed using the timing advisor.</p>
+<p>Connecting this slower processor into the M4K-based <a href="TinyCPU/Stack_machine_2011/Slow_cpu_nov2011/VGA/VGA_640x480_m4k_tinyCPU_multicycle.v">VGA video circuit</a> and running the <a href="TinyCPU/Stack_machine_2011/Slow_cpu_nov2011/VGA/stack_machine_vga_comp1.cmp">diffusion source code</a> results in a frame rate of 78 frames/sec with 1800 particles and the cpu clocked at 94 MHz. Only binary color is available because of limited M4K blocks. <a href="TinyCPU/Stack_machine_2011/Slow_cpu_nov2011/VGA/VGA_m4k.zip">Zipped project</a>.</p>
+<a href="TinyCPU/Stack_machine_2011/Slow_cpu_nov2011/VGA/color_test_screen.jpg"><img src="TinyCPU/Stack_machine_2011/Slow_cpu_nov2011/VGA/color_test_screen.jpg" alt="test screen" width="193" height="146" hspace="9" align="left" /></a>I wanted convert the graphics examples to SRAM-based VGA circuitry to allow more colors. This <a href="TinyCPU/Stack_machine_2011/Slow_cpu_nov2011/VGA/VGA_640x480_sram_tinyCPU_multicycle.v">top-level module</a>, running this <a href="TinyCPU/Stack_machine_2011/Slow_cpu_nov2011/VGA/stack_machine_vga_sram_test1.cmp">source code</a>, produces a color display with 8-bit color and a user definable hardware color map. If the cpu respects VGA timing the 307,000 pixels take 2.5 seconds to write. Ignoring VGA sync allows a full screen write in about 300 mSec, but results in video noise. <a href="TinyCPU/Stack_machine_2011/Slow_cpu_nov2011/VGA/VGA_sram.zip">Zipped project</a>. Red and green each have three bits of intensity, while blue has two. Format is red encoded by bits 7:5, green by bits 4:2, blue by bits 1:0.<br clear=left>
+
+<p></p>
+<a href="TinyCPU/Stack_machine_2011/Slow_cpu_nov2011/VGA/colormap2/color_test_screen2.jpg"><img src="TinyCPU/Stack_machine_2011/Slow_cpu_nov2011/VGA/colormap2/color_test_screen2.jpg" alt="test 2" width="195" height="144" hspace="9" align="left" /></a> I modified the color map to enhance the red channel and rearranged the color display to patches showing colors and gray scale. At the bottom of the screen are two patches which have color set by SW[15:8] and SW[7:0] respectively. (<a href="TinyCPU/Stack_machine_2011/Slow_cpu_nov2011/VGA/colormap2/VGA_640x480_sram_tinyCPU_multicycle.v">top-module</a>, <a href="TinyCPU/Stack_machine_2011/Slow_cpu_nov2011/VGA/colormap2/stack_machine_vga_sram_test2.cmp">source</a>, <a href="TinyCPU/Stack_machine_2011/Slow_cpu_nov2011/VGA/colormap2/VGA_sram_cmap2.zip">zipped project</a>)<br clear=left>
+
+<p></p>
+<a href="TinyCPU/Stack_machine_2011/Slow_cpu_nov2011/VGA/colormap3/cmap3.jpg"><img src="TinyCPU/Stack_machine_2011/Slow_cpu_nov2011/VGA/colormap3/cmap3.jpg" alt="c3" width="194" height="144" hspace="9" align="left" /></a>Another modification to the colormap encodes intensity in two bits, and r, g, and b in two bits each. (<a href="TinyCPU/Stack_machine_2011/Slow_cpu_nov2011/VGA/colormap3/VGA_640x480_sram_tinyCPU_multicycle.v">top-module</a>, <a href="TinyCPU/Stack_machine_2011/Slow_cpu_nov2011/VGA/colormap3/stack_machine_vga_sram_test2.cmp">source</a>, <a href="TinyCPU/Stack_machine_2011/Slow_cpu_nov2011/VGA/colormap3/VGA_sram_c3.zip">zipped project</a>). The map has a larger intensity dynamic range, good saturation at high intensities and a more natural order. With the cpu clock set to 94 MHz, there was a tendency for the video to quiver a bit at high intensities. Setting the cpu clock to 50.4 MHz fixes the quiver.<br clear=left>
+<hr />
+<p><a href="Stack_cpu_old.html">Earlier versions and developmental sequence</a>.</p>
+<hr />
+<p><strong>References</strong>:</p>
+<p>Nakano, K.;    Ito, Y., <em>Processor, Assembler, and Compiler Design Education Using an FPGA</em>, Parallel and Distributed Systems, 2008. ICPADS '08. 14th IEEE International Conference on; 8-10 Dec. 2008 pages: 723 - 728 <strong> </strong> (Nakano, K.;    Ito, Y.;   Dept. of Inf. Eng., Hiroshima Univ., Higashi-Hiroshima, Japan)</p>
+   <p>Nakano, K.;    Kawakami, K.;    Shigemoto, K.;    Kamada, Y.;    Ito, Y. <em>A Tiny Processing System for Education and Small Embedded Systems on the FPGAs</em>, Embedded and Ubiquitous Computing, 2008. EUC '08. IEEE/IFIP International Conference, Dec. 2008 pages: 472 - 479 </p>
+   <p>John S. Loomis, <em>Digital Labs using the Altera DE2 Board</em>, <a href="../../../../../www.johnloomis.org/digitallab/default.htm">http://www.johnloomis.org/digitallab/,</a> Electrical and Computer Engineering, University of Dayton, Dayton, OH 45469-0232</p>
+   <hr />
+   <p>Copyright Cornell University 
+     <!-- #BeginDate format:Am1 -->March 11, 2013<!-- #EndDate --> 
+     Bruce Land<br />
+</p>
+</body>
+</html>

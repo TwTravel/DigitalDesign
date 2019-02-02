@@ -1,0 +1,403 @@
+﻿<!--@ Page Language="VB" AutoEventWireup="false" CodeFile="final_report_ece5760.html.vb" Inherits="final_report_ece5760" ->
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<!--HTML/CSS used with author's permission -->
+
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+<meta http-equiv="Content-Language" content="en-us"/>
+<title>ECE 5760 Sound Follower Robot </title>
+<link rel="stylesheet" type="text/css" media="all" href="stylesheets/cornell.css"/>
+<link rel="stylesheet" type="text/css" media="all" href="stylesheets/cornell2.css"/>
+<link rel="stylesheet" type="text/css" media="all" href="stylesheets/main.css"/>
+<meta name="author" content="Asmaa M'nebhi, Tejaswini Srinivasa, Sakshi Verma"/>
+<meta name="copyright" content="Copyright (c) 2012 , Asmaa M'nebhi,Tejaswini Srinivasa, Sakshi Verma"/>
+<meta name="description" content="Clap-E, A robot that follows clapping sound"/>
+<meta name="keywords" content="INSERT KEYWORDS HERE">
+    <style type="text/css">
+        .style1
+        {
+            width: 273px;
+            height: 364px;
+        }
+        .style2
+        {
+            width: 539px;
+            height: 198px;
+        }
+    table.MsoTableGrid
+	{border:solid windowtext 1.0pt;
+	font-size:12.0pt;
+	font-family:"Cambria","serif";
+	}
+    </style>
+</head>
+
+
+<body>
+
+
+<div id="header">
+  <!-- The following div contains the Cornell University logo and search link -->
+  <div id="cu-identity"> 
+		<div id="cu-logo"> 
+			<a href="../../../../../../../../www.ece.cornell.edu/default.htm"><img src="../../../../../ece4760/FinalProjects/f2012/oaq3_cig23_rk447/oaq3_cig23_rk447/images/cu_logo.gif" alt="Cornell University" width="340" height="75" border="0" /></a> 
+		</div> 
+  </div>
+  
+  <div class="linklist"> <a name="top"></a> </div>
+  <!-- The search-form div contains a form that allows the user to search 
+		either pages or people within cornell.edu directly from the banner.	-->
+  <div id="search-form">
+    <form action="http://www.cornell.edu/search/" method="get" enctype="application/x-www-form-urlencoded">
+      <div id="search-input">
+        <label for="search-form-query">SEARCH:</label>
+        <input type="text" id="search-form-query" name="q" value="" size="20">
+        <input type="submit" id="search-form-submit" name="submit" value="go">
+      </div>
+      <div id="search-filters">
+        <input type="radio" id="search-filters1" name="tab" value="" checked="checked">
+        <label for="search-filters1">Pages</label>
+        <input type="radio" id="search-filters2" name="tab" value="people">
+        <label for="search-filters2">People</label>
+        <a href="../../../../../../../../www.cornell.edu/search/default.htm">more options</a> </div>
+    </form>
+  </div>
+</div>
+
+<!-- The mainnav div contains links to jump to prominent sections in webpage -->
+<div id="mainnav">
+  <ul>
+    <li><a href="#design">High&nbsp;Level&nbsp;Design</a></li>
+    <li><a href="#hardware">Hardware</a></li>
+    <li><a href="#software">Software</a></li>
+    <li><a href="#results">Results</a></li>
+    <li><a href="#conclusions">Conclusions</a></li>
+    <li><a href="#appendices">Appendices</a></li>
+  </ul>
+</div>
+<!-- end mainnav -->
+<!-- end header -->
+<div id="sectiontitle">
+  <h4><a href="../../../../../ece4760/default.htm">ECE 5760</a>: <a href="../../../../../ece4760/FinalProjects/default.htm">Final Project</a></h4>
+  <h1>XO-Blue</h1>
+  <h2>A Color Follower Robot</h2>
+  
+  <h3>Asmaa M'nebhi (<a href="mailto:am2462@cornell.edu">am2462@cornell.edu</a>) </h3>
+    <h3>Tejaswini Srinivasa (<a href="mailto:ts599@cornell.edu">ts599@cornell.edu</a>)</h3>
+    <h3>Sakshi Verma (sv345@cornell.edu)</h3>
+
+</br>
+  </div>
+
+<div id="wrapper">
+  <div id="content">
+    <div id="maincontent" class="hub">
+      
+	  <!--EXAMPLE FOR PLACING AN IMAGE... DELETE LATER!
+      <div class="image"> <a href="./Time System/img/IMG_0318.JPG"><img src="./Time System/img/IMG_0318.JPG" width="672" height="604"></a>
+        <p class="caption">The finished product.</p>
+        </div>
+		-->
+      
+		<h2>An Introduction &nbsp;&nbsp;&nbsp;<font size="-1"><strong><a href="#top">top</a></strong></font></h2>
+		
+		<div id="introblurb">
+		<div id="pullquote">
+          <p class="quote">"XO-Blue, A color follower robot that detects and follows blue objects"</p>
+ 		<p class="source">Final Prototype of XO-Blue</p>
+        </div>
+		  
+		<p>For the ECE 5760 final project, we designed and built an autonomous robot named XO-Blue that detects and follows blue colored objects. Any blue object in the field of vision of the robot is a potential target. XO-Blue can detect blue at any distance from the camera as long as the hex value of blue resides within the threshold values set in the Verilog code. We have used a video camera that plays the role of the robot’s “eyes” and captures a video in real time. This video is processed in the FPGA where blue color is detected. The Robot then moves in the direction of the Blue colored surface. The movement of the robot is accomplished by using four continuous rotation servos attached at the four corners of a cardboard, which is used as the robot’s chassis. </p>
+		</div>
+      
+      <div class="linklist"> <a name="design"></a>
+			<h2>High Level Design &nbsp;&nbsp;&nbsp;<font size="-1"><strong><a href="#top">top</a></strong></font></h2>
+			<p>The design includes three main components: the video camera, FPGA unit and servo motors. The final design of the robot is shown in the picture below:
+</p>
+			<p align="center"> 
+			
+			    <img alt="" class="style1" src="Images/HighLevelDesignRobot.png" />
+                <p>The data read through the video camera is provided to the FPGA in a standard NTSC format. The FPGA processes the video to detect the desired blue color and displays the image on a monitor via VGA channels. Depending on the location of the blue object on the VGA screen, the motors can be actuated.
+A high-level diagram describing the interaction between the three components described previously is shown below:
+</p>
+            <p align = "center">
+             <img alt="" class="style2" src="Images/HighLevelDesign.png" />
+             </br>
+             <p> The servo motors are connected to the GPIO pins of the FPGA through an opto-isolator circuitry, which is explained further under the hardware section.
+We used Altera’s example module DE2_TV as our base design. </p>
+
+				
+		<h3>Copyrights</h3>
+          <p>
+			We hereby attest that we acknowledged and have listed all the documents used for this project in the reference section of the appendix.
+			</p>
+			
+       <div class="linklist"> <a name="hardware"></a>
+        <h2>Hardware &nbsp;&nbsp;&nbsp;<font size="-1"><strong><a href="#top">top</a></strong></font></h2>
+        
+		<p> An overview of the modules used in the Altera DE2 FPGA is shown in the figure below:</p>
+        <p align = "center">
+        <img alt="" class="style3" src="Images/Hardware.png" />
+        <p> The following modules were already present in the DE2_TV module provided by Altera as a part of their university program.</p>
+           <p> &nbsp;1.	ITU to YUV 4:2:2 </p>
+        <p>This module takes in the data from the video camera in a simple NTSC format and converts it to a YUV 4:2:2. This module is clocked at 27 MHz.
+        </p>
+        <p> 2.	SDRAM Controller </p>
+        <p>The SDRAM controller is used to write the YUV 4:2:2 into the DRAM memory slots. The DRAM Controller is clocked at 108MHz.</p>
+        <p>3.	Line Buffers </p>
+        <p>Line buffers read the information from the SDRAM controller and delay them by an entire line. </p>
+        <p>4.	YUV 4:2:2 to YUV 4:4:4 </p>
+        <p>This module converts the YCrCb information from the YUV 4:2:2 to the YUV 4:4:4 format. </p>
+        <p>5.	YUV 4:4:4 to RGB </p>
+        <p>This module converts the YUV 4:4:4 to an RGB format, with 10-bits of each Red, Green and Blue components. The input when directly connected to the VGA_Ctrl module, displays the video image on the VGA monitor.
+        Since we needed to tap the information before displaying the image on the VGA monitor, we decided to use the RGB information from this module and process it before passing it to the VGA_Ctrl. </p>
+        </p>
+		
+        <h2> ColorDetect Module <font size="-1"><strong><a href="#top">top</a></strong></font></h2>
+        <p> The robot has to detect the blue color before following it. Since the RGB components of an item depend extensively on the lighting of the surroundings, we decided to calculate the vector distance of the pixel from blue and compare it against a threshold to decide if the given pixel is blue or not. That is, if the given pixel has [R.G,B] we calculate its vector distance from [0,0,10’h3FFF] using the following formula: </p>
+        <p> VectorDist = R*R + G*G + (10’h3FFF – B)*(10’h3FFF – B) 	[reference to Cathy Chen and Matt Meister project in the appendix] </p>
+        <p> If the value of this vector distance is less than a threshold value TColor , then we assume that the pixel is blue. We calculated the value of TColor by manually adjusting the the hex value in the Verilog code. The value is plugged, computed and the output is observed on the VGA. The previous steps are repeated until the robot is able to detect the color of the desired object. In order to avoid stray blue pixels from being detected, we recognize the object only if 10 adjacent successive pixels were detected to be blue.  The moment we are certain that the pixels represent the desired object, X-Coordinate (defined as VGA_X) is captured to determine the  direction of the object’s position. </p>
+        <p> Though we implemented our own design, we borrowed the concept of vector distance for color detection from a 2008, ECE5760 project by Cathy Chen and Matt Meister.</p>
+
+        <h2> MotorControl Module <font size="-1"><strong><a href="#top">top</a></strong></font></h2>
+        <p> MotorControl module is used to convert the position of the object, in terms of the X-coordinate, to a PWM duty cycle value to actuate the motors.  As stated previously, we use continuous rotation servos for robot’s motion. The control signal (PWM input to the servo) determines the direction in which the motor rotates. </p>
+        <p> If we divide the VGA screen into 3 zones along the X-axis, we get three different directions in which the robot tracks the Blue Object, as shown below:</p>
+        <p align = "center">
+        <img alt="" class="style3" src="Images/MotorControl.png" />
+        <p> After setting the desired PWM value in the MotorControl module, we generate the actual PWM signal in the pwm.v module. </p>
+
+        <h2>PWM <font size="-1"><strong><a href="#top">top</a></strong></font></h2>
+        <p> This module is used to generate the PWM signals to actuate the motors. The PWM signals are generated at 4 GPIO pins, which are later connected to the motors through an opto-isolator circuit. The width of the duty cycle for the pwm signals is decided by the MotorControl module. One of the challenges we faced was to synchronize the PWM signals of the 4 motors. We achieved this by using the method of signaling between the two PWM signals. </p>
+
+        <h2>Motor Circuitry <font size="-1"><strong><a href="#top">top</a></strong></font></h2>
+        <p> Four continuous rotation servos were used to drive the chassis.  The servo circuitry is shown in the figure below. </p>
+        <p> We used the opto-isolator circuit from the 5760 project from 2008 by Cathy Chen and Matt Meister. </p>
+        <p align = "center">
+        <img alt="" class="style4" src="Images/MotorCircuitry.png" />
+        <p> GPIO_0[1] and GPIO_0[3] were used to drive the right back and the right front wheels while GPIO_0[2] and GPIO_0[4] were used to drive the left back and left front wheels. </p>
+		
+        <h2> Results <font size="-1"><strong><a href="#top">top</a></strong></font></h2>
+        <h3> Speed of Execution </h3>
+        <p> The motion of the robot is triggered by the pwm module at a clock frequency of 50 MHz and the color of a blue object is detected using the colorDetect module at the VGA clock frequency of 27 MHz. So the robot is very receptive to blue colored objects. Whenever, a blue object A is detected, the robot responds almost instantaneously to the color and starts readjusting its path towards A. The reaction time is in the order of milliseconds. What the robot “sees” is captured by a camera and displayed on a VGA monitor so that the user can keep track of where the robot is going. The video analysis is done in real time. The background of the VGA screen is set to a light transparent blue while the targeted blue object is the only element that maintains its original color on the VGA screen. To get a better grasp of what the VGA screen looks like, hereafter are two photos that show the light blue screen VGA monitor with and without a blue object. </p>
+        <p align = "center">
+        <img alt="" class="style5" src="Images/SpeedOfExecution1.png" />
+        <p align = "center">
+        <img alt="" class="style6" src="Images/SpeedOfExecution2.png" />
+        <p> The quality of the Verilog code as well as the resolution quality and field of view of the camera allows the robot to detect any blue object appearing on the VGA screen even though this object may be far from the viewing point. Analogously to humans who have forward-facing eyes, the robot can only detect blue colored objects in front of it. Therefore it can only make 3 decisions for motion when detecting an object in its field of view. It can go straight, turn left at 45 degrees or turn right at 45 degrees. </p>
+        <p> The robot focuses on the first blue object it detects from the left since the Verilog code was designed that way. Therefore, this constitutes a major difference with human thinking, where the closest object would attract attention rather than scanning blue objects from left to right. Therefore, to test the functionality of the robot, it is essential to put one singular blue object in the field of vision of the robot. </p>
+
+        <h2> Accuracy <font size="-1"><strong><a href="#top">top</a></strong></font></h2>
+        <p> The robot successfully moves toward the direction of the desired color. Figure 1 shows the field of vision of the robot as displayed on the VGA screen. The robot moves forward if it detects the blue object in zone 2 of the VGA screen as indicated in the table 1 and figure 1. XO-Blue moves left by 45 degrees if it detects the object in zone 1 and it turns right by 45 degrees when the blue object is situated in zone 3. </p>
+        <p align = "center">
+        <img alt="figure 1" class="style7" src="Images/Accuracy.png" />
+        <p align = "center"><h7>Figure 1– Field of vision of robot as displayed on VGA screen  </h7>
+           </p>
+           <p align = "center">
+               <table border="1" cellpadding="0" cellspacing="0" class="MsoTableGrid" style="border-collapse:collapse;border:none;mso-border-alt:solid windowtext .5pt;
+ mso-yfti-tbllook:191;mso-padding-alt:0in 5.4pt 0in 5.4pt">
+                   <tr style="mso-yfti-irow:0;mso-yfti-firstrow:yes">
+                       <td style="width:239.4pt;border:solid windowtext 1.0pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt" valign="top" width="319">
+                           <p class="MsoNormal">
+                               Location of blue object on screen</p>
+                       </td>
+                       <td style="width:239.4pt;border:solid windowtext 1.0pt;
+  border-left:none;mso-border-left-alt:solid windowtext .5pt;mso-border-alt:
+  solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt" valign="top" width="319">
+                           <p class="MsoNormal">
+                               Robot displacement</p>
+                       </td>
+                   </tr>
+                   <tr style="mso-yfti-irow:1">
+                       <td style="width:239.4pt;border:solid windowtext 1.0pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt" valign="top" width="319">
+                           <p class="MsoNormal">
+                               ZONE 1</p>
+                       </td>
+                       <td style="width:239.4pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt" valign="top" width="319">
+                           <p class="MsoNormal">
+                               Rotate 45 degrees left</p>
+                       </td>
+                   </tr>
+                   <tr style="mso-yfti-irow:2">
+                       <td style="width:239.4pt;border:solid windowtext 1.0pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt" valign="top" width="319">
+                           <p class="MsoNormal">
+                               ZONE 2</p>
+                       </td>
+                       <td style="width:239.4pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt" valign="top" width="319">
+                           <p class="MsoNormal">
+                               Move forward</p>
+                       </td>
+                   </tr>
+                   <tr style="mso-yfti-irow:3;mso-yfti-lastrow:yes">
+                       <td style="width:239.4pt;border:solid windowtext 1.0pt;
+  border-top:none;mso-border-top-alt:solid windowtext .5pt;mso-border-alt:solid windowtext .5pt;
+  padding:0in 5.4pt 0in 5.4pt" valign="top" width="319">
+                           <p class="MsoNormal">
+                               ZONE 3</p>
+                       </td>
+                       <td style="width:239.4pt;border-top:none;border-left:
+  none;border-bottom:solid windowtext 1.0pt;border-right:solid windowtext 1.0pt;
+  mso-border-top-alt:solid windowtext .5pt;mso-border-left-alt:solid windowtext .5pt;
+  mso-border-alt:solid windowtext .5pt;padding:0in 5.4pt 0in 5.4pt" valign="top" width="319">
+                           <p class="MsoNormal">
+                               Rotate 45 degrees right</p>
+                       </td>
+                   </tr>
+               </table>
+               <h7>  </h7></p>               <p align = "center"><h7>Table 1– Algorithm for Robot displacement </h7></p>               <p> The robot has the ability to recalculate the position of the blue object and changes direction accordingly whenever the location of the target is changed. So XO-Blue adjusts its trajectory based on the position of the target at any moment.</p>
+               <p> The motion of robot could be made more accurate by adding more angle rotations instead of just 45 degrees left and right. The robot could rotate every 5 degrees for example. This could easily be implemented on Verilog using a state machine.</p>
+               <p> The angle of rotation is decided in Verilog by the time it takes for the wheels to rotate. Therefore, this part was tested visually. We drew 45 degrees angle on the ground and estimated the time it takes for the wheels to rotate at the desired angle.</p>
+               <p></p>
+               <p>All input and output signals coming out of the I/O pins of the FPGA and the servo circuits were verified using the oscilloscope.</p>
+
+        <h2> Testing and Issues <font size="-1"><strong><a href="#top">top</a></strong></font></h2>
+        <h3> Part 1: Changing Projects </h3>
+        <p> The first idea for the ECE 5760 final project was very different from XO-Blue design. Initially, the purpose was to design a 3D real time video. Anaglyph 3D glasses would be used to visualize the 3D image on the VGA monitor. Many issues were confronted during the design and we highly encourage people to pursue this cool project in the future even if it may be tricky. Due to lack of time, the decision was made to stop debugging the code and investigating the 3D project to move on to a project that will be achieved in its entirety by the due date. Hereafter is a description of the achievements and steps undertaken for the 3D stereo with mirrors.
+4 mirrors were assembled as shown in figure to create a Digital Stereo.</p>
+        <p align = "center">
+        <img alt="" class="style8" src="Images/ChangingProject1.png" />
+        <p> The purpose was to split the image captured by the camera in 2 identical images as shown in figure. </p>
+        <p align = "center">
+        <img alt="" class="style9" src="Images/ChangingProject2.png" />
+        <p> This step was achieved successfully after adjusting the mirrors until obtaining a satisfying image that splits in the middle of the VGA screen.</p>
+        <p> The plan was to write a code on Verilog that colors the left half of the VGA screen red and the right part blue. Then, the 2 identical images of different colors would be superimposed to create a 3D effect. </p>
+        <p> To superimpose the images, the idea was to use SRAM to store red and blue pixels situated in the left and right part of the screen respectively. Then, the red and blue pixels would be placed alternatively on the VGA screen from left to right. All red pixels would be placed in even positions while all blue pixels would be placed in odd positions. The problem was a sync problem between VGA and SRAM so the image was flickering so much that it was impossible to discern the picture. Since we thought the problem might be coming from SRAM implementation, we decided to use simple registers to store blue and red pixels. However, the same problem was confronted again. It was complicated to determine the source of the problem since the code we wrote was very basic. And since we used as a base code the DE2-TV module available in the DE2 Board package, we think the solution may be to modify the VGA_Ctrl module. </p>
+        <p> Even if we confronted all these problems, we came up with another solution, which is to alternate between red and blue frames at a high rate in order to generate a 3D image. This goes without saying that the blue frame should be a little shifted from the red frame. This design worked successfully and gave an image that goes into the screen. The final 3D image is shown in the figure below: </p>
+        <p align = "center">
+        <img alt="" class="style10" src="Images/ChangingProject3.png" />
+        <p> However, this solution doesn’t satisfy the original purpose of making a single object in 3D since the entire frame is made in 3D. </p>
+
+        <h3> Part 2: XO-Blue Challenges </h3>
+        <p>First, a cheap low-resolution camera was used to detect the desired color. But colors displayed on the VGA screen were very inaccurate and not representative of reality. Therefore, it was very hard to set the threshold color in the Verilog code. For this reason, a better quality camera available in lab was selected. </p>
+        <p>After getting the camera to work with the color detection module, it was time to build the robot. A PWM module was created to drive 2 servo motors. Before connecting the motors to the GPIO pins of the FPGA, it is fundamental to build the appropriate circuits to be able to rotate the wheels both clockwise and anticlockwise. The circuits needed to be verified multiple times to get the desired PWM output. This output of the servo circuit was checked using the oscilloscope. The oscilloscope terminals were connected to ground and pin 4 of the optocoupler. The PWM wave is shown on figure.</p>
+        <p>The last difficulties confronted in the design was wiring and making the robot autonomous. In order to avoid tangling of the robot in the wires, it is necessary to make the circuits neat as well as make wires connecting supply voltage, VGA monitor and FPGA long enough so that the robot is able to move freely. All circuits as well as the FPGA and camera have to be mounted on XO-Blue so that it is autonomous. However, with just 2 motors, the camera and FPGA were too heavy for the wheels to rotate. Solving this issue required two additional servos to the design. The robot is now able to move at the desired speed without interruption. </p>
+
+        <h4> Safety </h4>
+        </br><p>
+        The robot as well as the procedures to build it are very safe. The voltage used doesn't exceed 6 Volts and the current needed is below 3 amps. With such low ratings for current and voltage, the user is safe from harm. All wires and circuits are isolated and mounted on the chassis of the robot to enable the user to modify circuitry when needed. The circuits are neat so that if the designer or user wants to make modifications to the circuit, it would be safe and easy. 
+        </p>
+
+        <h4> Usability </h4>
+        </br><p>
+        XO-Blue was mainly designed for tracking specific colors. The procedure is fairly simple; put XO-Blue on the ground and let it detect your colored object. This robot has the potential to track small objects that are hard to identify since it has a very high sensitivity to targeted colors. 
+        </p>
+
+        <div class="linklist"> <a name="conclusions"></a>
+        <h2>Conclusions &nbsp;&nbsp;&nbsp;<font size="-1"><strong><a href="#top">top</a></strong></font></h2>
+        
+        <h4>Did Our Design Meet Expectations?</h4>
+			<p> XO-Blue met the expectations knowing that he follows the desired color instructed by the Verilog code, which is blue. It is able to readjust its position to a position of the object to follow. However, the robot turns only at pre-defined angles, which make the motion less accurate. The robot’s detection of the color is fairly accurate while its displacement precision could be increased. This would mean adding more states in the state machine responsible of the motor rotation. The blue object detected by XO-Robot is displayed on the VGA and retains its original dark blue color while the background of the VGA is painted light blue.</p>
+            <p> XO-Blue has a lot of potential improvement that we would have been thrilled to implement. Here are some ideas to implement in the future. We wanted to write a program that would compute the distance from the robot to the blue object and based on that distance, the robot would decide if it reached its target. Have the robot follow a shapes rather than colors. Another very cool feature would be to make the robot follow light. This would be based on intensity rather than color so YCrCb is crucial for this approach. Since we wanted to finish the project in time, we restricted our objectives to blue color detection.  </p>
+            <p> This project was very fun. We learned so much about hardware especially timing and SRAM. We also learned the importance of time management and setting a whole plan before buying hardware or starting the coding. There was no restriction in the budget for this project but we still tried to minimize our expenses. The tools we bought are 4 mirrors, wood and 2 motors. </p>
+        
+        <h4>Did Our Design Conform to Standards?</h4>
+            <p>The Verilog code in our project abides by the IEEE 1364-2001 Standard. As engineers who design with Verilog, we received many benefits from the enhancements brought by Verilog-2001.</p>
+
+        <h4>Intellectual Property</h4>
+           <p>The design and implementation of this project was based on the knowledge we acquired from ECE 4760 at Cornell University as well as the project developed by Cathy Chen and Matt Meister for ECE 5760 in year 2008. The project is called “BALL-E: The The FPGA Autonomous Robot”. We thought that Cathy’s and Matt’s idea was cool and appropriate for our case since we already had a lot of experience with robots and servo motors. Their webpage for the project is listed in the references under the Appendix. We would like to give them credit for the color detection algorithm based on vector distance as well as their robot’s set up. The distance formula has a color threshold that enables the program to compare the targeted object color to the constant reference color. On the VGA, the screen is colored grey while a red object that their robot follows is colored red inside of a box.</p>
+           <p>However, we came up with a totally different algorithm that determines how the robot uses the detected color for motion. We designed the code for pwm and motor motion. Our program also uses DE2_TV as a basis for VGA control and interaction with SRAM. DE2_TV module is included in the DE2 board CD and has been listed under references in the appendix.  We used the datasheets of components such as the parallax motors and 4N35, which are attached to this report in the appendix section.</p>
+           <p>We used the website template from the Fall 2013 project named Clap-E Robot design by Tejaswini Srinivasa and Asmaa M’nebhi. The link to the website is included in the appendix.  We welcome any ECE 4760 project groups to use our project’s code or ideas for their final project as long as they mention intellectual property. We hope that you will make good usage of XO-Blue and give him more interesting features such as shape detection.</p>
+
+        <h4>Ethical Considerations</h4>
+        <p> The color following robot project is consistent with the IEEE Code of Ethics and does not harm one’s health, or safety or welfare of the public. It does not endanger the environment and is even made by recycling cardboard. We used all lab equipment accordingly with safety procedures. We are honest and realistic in all claims and data estimates we made in both this report and while working on this project. The color detection is done using a camera and VGA and the motor control is done using servo circuits and pwm.  We seek, accept and offer honest criticism of technical work and credit properly the papers, projects and codes made by others. The references are all attached in the appendix of this report. </p> <p> We also assisted classmates in their project when they had questions about our project or more general questions about certain tools used in the ECE 5760 class. We would like to thank Professor Bruce Land for all the help he has provided us with throughout this project as well as our previous 3D project. </p>
+
+        <h4>Legal Considerations</h4>
+        <p> There are no legal considerations for our project. All documentation and previous work used for this project have been properly cited in the appendix. Our project does not endanger or harm any individual or being. We do not plan to pursue patent at this time.</p>
+
+        			   
+	  
+	        
+      <div class="linklist"> <a name="appendices"></a>
+        <h2>Appendices &nbsp;&nbsp;&nbsp;<font size="-1"><strong><a href="#top">top</a></strong></font></h2>
+
+
+      		
+        <h3>C. Source Code</h3>
+        <ul>
+         <li><a href="XO-Blue code.zip"> XO-Blue Code </a></li>
+         <li><a href="3D_Mirror code.zip"> 3D-Mirror Code </a></li>
+        </ul>
+		
+         <div class="linklist"> <a name="references"></a>
+        <h2>References &nbsp;&nbsp;&nbsp;<font size="-1"><strong><a href="#top">top</a></strong></font></h2>
+
+        <div class="group1">
+          <h3>Datasheets</h3>
+          <ul>
+	    <li><a href="../../../../../../../../www.parallax.com/sites/default/files/downloads/900-00008-Continuous-Rotation-Servo-Documentation-v2.2.pdf"> Parallax Servo Motor Datasheet</a></li>
+	    <li><a href="../../../../../../../../www.jameco.com/Jameco/Products/ProdDS/2109624-spec.pdf">Wheel Datasheet </a></li>
+	          <li><a href="../../../../../../../../pdf1.alldatasheet.com/datasheet-pdf/view/98359/FAIRCHILD/4N35.html">4N35 Datasheet</a></li>
+
+	</ul>
+		  <h3>Vendors</h3>
+		  <ul>	  
+            <li><a href="../../../../../../../../www.digikey.com/default.htm">Digikey</a></li>
+	    <li><a href="../../../../../../../../www.jameco.com/webapp/wcs/stores/servlet/StoreCatalogDisplay@storeId=10001&catalogId=10001&langId=-1&rfr=1">Jameco</a></li>
+          </ul>
+        </div>
+        <div class="group2">
+          <h3>References</h3>
+          <ul>
+            <li><a href="../../../f2008/cc464_mrm58/FinalProjWebsite/index.html">Video Guided Ball following Robot</a></li>
+			<li><a href="../../../../../ece4760/FinalProjects/f2013/am2462_ts599/am2462_ts599/am2462_ts599/final_report_ece4760.html"> Webpage Layout</a></li>
+			<li><a href="../../../../../ece4760/labs/f2013/lab4.html"> Motor drive </a></li>		  
+	</ul>
+        </div>
+		</div>
+        </div>
+           
+        <div class="linklist"> <a name="ack"></a>
+        <h2>Acknowledgements &nbsp;&nbsp;&nbsp;<font size="-1"><strong><a href="#top">top</a></strong></font></h2>
+		<p>We would like to acknowledge and thank Professor Bruce Land for helping us 
+            throughout this project and helping us find a name suitable for our robot. We 
+            would also like to acknowledge the SPRING 2014 TAs for their support.</p>
+      </div>
+
+        
+           </div>
+    <!-- end maincontent -->
+  </div>
+  <!-- end content -->
+  <!--ipt type="text/javascript">
+
+      var _gaq = _gaq || [];
+      _gaq.push(['_setAccount', 'UA-22818013-1']);
+      _gaq.push(['_trackPageview']);
+
+      (function () {
+          var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+          ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+          var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+      })();
+
+</scri-->
+  <!-- content out -->
+  <hr>
+  <!-- footer in -->
+  <div id="footerwrap">
+    <div id="footer">
+      <div id="copyright">
+        <div class="copyright">&copy;2014 Asmaa M'nebhi,Tejaswini Srinivasa,Sakshi Verma </div>
+        <div class="copyright">Layout &copy;2012 Cornell University</div>
+      </div>
+    </div>
+    <!-- end footer -->
+  </div>
+  <!-- end footerwrap -->
+  <!-- footer out -->
+</div>
+<!-- end wrapper -->
+
+
+<embed type="application/x-shockwave-flash" width="0" height="0"></body></html>

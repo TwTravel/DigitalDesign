@@ -1,0 +1,290 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+<!--        <center><img src="images/web1_pmusketeers-rgb_6590529.jpg" width=400px alt="" /></center>-->
+		<title>ECE 5760: 3D Painting System</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<!--[if lte IE 8]><script src="assets/js/ie/html5shiv.js"></script><![endif]-->
+		<link rel="stylesheet" href="assets/css/main.css" />
+		<!--[if lte IE 8]><link rel="stylesheet" href="assets/css/ie8.css" /><![endif]-->
+	</head>
+	<body>
+
+		<!-- Header -->
+			<section id="header">
+				<header>
+					<span class="image avatar"><img src="images/FullSizeRender.jpg" alt="" /></span>
+					<h1 id="logo">3D Painting System</h1>
+					<p>ECE 5760 Final Project<br />
+					Spring 2017</p>
+				</header>
+				<nav id="nav">
+					<ul>
+						<li><a href="#two">High-level Design</a></li>
+						<li><a href="#three">Hardware/Program Details</a></li>
+                        <li><a href="#four">Software</a></li>
+						<li><a href="#five">Results</a></li>
+						<li><a href="#six">Conclusions</a></li>
+						<li><a href="#seven">Appendix</a></li>
+					</ul>
+				</nav>
+				<footer>
+				</footer>
+			</section>
+
+		<!-- Wrapper -->
+			<div id="wrapper">
+
+				<!-- Main -->
+					<div id="main">
+						
+						<!-- One: Overview -->
+							<section id="one">
+								<div class="container">
+									<header class="major">
+										<h2>3D Painting System</h2>
+										<p>Justin Selig <br/>Samir Durvasula <br/>Adarsh Jayakumar <br/>
+										</p>
+									</header>
+									<p>
+										We designed a system which takes in a real-time video feed of user 
+										brush-stroke movements to generate a 3D drawing. 
+
+										We designed the system such that a stylus with a green-colored tip is tracked in three dimensions by a Cyclone5 
+										FPGA recording x, y, and z coordinates of a centroid position of the tip. 
+										We extract depth by measuring the size of the tip which 
+										changes based on the relative position of the brush to the camera. In order to 
+										make this problem tractable, we have broken these tasks down into two parts 
+										involving the FPGA and HPS running Linux. While the FPGA accepts a video feed and thresholds the green tip,
+										the HPS runs a program which is used to offload division computations and communicate centroid data 
+										to a separate host over TCP. A second host acts as a server which uses centroid data to plot and interpolate
+										between collected samples in real-time to display a 3D image to the user. 
+
+									</p>
+
+								</div>
+							</section>
+
+						<!-- Two: High Level Design -->
+							<section id="two">
+								<div class="container">
+									<h3>High-Level Design</h3>
+																		
+										
+<!--									</ul>-->
+										
+										<h4>Details</h4>
+                                    
+									<p><span class="image right"><img src="images/FullSizeRender.jpg" width=400px alt="" /><i><a id="fig1">Figure 1: Final Design</a></i></span>At a high level, the 3D Plotter has three distinct outputs to a VGA terminal. The first output to the screen is the feed from the NTSC camera. This output allows users to see the exact direction of their motion as they paint. The second output is a rendering of the actual drawing. This is drawn by drawing green boxes in the location of the stylus. The size of the box is scaled based on the distance of the stylus to the camera. As such, the size of the box acts as a third dimension. The final output to the terminal serves primarily for debugging purposes. This image shows exactly which pixels have been filtered out in order to determine the centroid for the stylus.</p><p>There are several components in the flow of the program. We first have the FPGA fabric of the De1-SoC. On this fabric, we collect video input from the NTSC camera, threshold camera data appropriately to isolate the stylus, draw outputs to the VGA, and interface with the high performance system on the device to complete logic-element intensive arithmetic. Given the inputs from the FPGA, the HPS returns centroid calculations and drawing dimensions to the FPGA. Essentially, these dimensions are x,y,and z coordinates. These coordinates are sent with a TCP connection via Python to MATLAB in order to display in real time 3D plots of the drawings.</p>
+                                    
+                                        <h4>Flow Chart</h4>
+                                        <p><span class="image left"><img src="images/FlowChart.png" width=400px alt="" /><i>Figure 2: Flow Chart</i></span> 
+										The flowchart shows the overall block diagram of the 3D painter. Both the HPS and FPGA output to the VGA. The HPS is used to clear the screen initially, while the FPGA outputs the camera, the thresholding, and the boxes. The FPGA and HPS communicate through the external bus to complete all calculations. The HPS then sends X, Y, and Z coordinates over TCP/IP to Python. Python then writes a csv file which is read real-time by MATLAB. MATLAB then outputs 3D plots. 
+                                        </p>
+                                    
+                                    <h4>Hardware/Software Trade-offs</h4>
+                                        <p>
+										The primary hardware/software tradeoff for our project involved thresholding the stylus. Rather than adapting the tip of the stylus to be the least reflective and most ‘green’, we instead adapted our code to match the tip of the stylus. In our case, this worked out particularly well as we could quickly amend the thresholding values via our command terminal interface. However, a more robust system would involve a stylus perfectly adapted to the NTSC camera.
+										<br/><br/>
+										A secondary hardware/software tradeoff involved the background behind our stylus. We quickly discovered that a background that wasn’t pure white would have significant noise from the camera. Our hardware solution to this was to take a pure white piece of cardboard and lay that as our background. However, a software solution could have been attempted as well in order to threshold out any color outside the stylus tip.  
+										</p>
+									
+								</div>
+						</section>
+									
+						<!-- Three: Detailed Design -->
+						<section id="three">
+							<div class="container">
+									<h3>Hardware Design</h3>
+									<p>FPGA: Verilog and Qsys Design</p>
+									<div class="features">
+										<article>
+<!--											<div /*class="inner"*/>-->
+                                            <div>
+												<h4>FPGA Code</h4>
+                                                <p>On the FPGA Side, our goal was to display video input from the camera, determine the coordinates of the stylus, interface with the HPS, and draw outputs to the VGA. In order to do this, we needed to set up our bus addresses to allow for reading from the camera as well as writing to the VGA. This bus addresses were the base address offsets from Qsys summed with the x and y coordinate to either read or plot. In addition, we used vga_x_cood and vga_y_cood to determine which quadrant of the screen to draw to. </p> <p>The boxes displayed and the coordinates plotted were based on the centroid of all of the green pixels found. Green in this case was the color of the tip of the stylus. For centroid calculation, we first needed total number of green pixels from the camera at a single instant. In addition, we needed the sum of all x-coordinates and y-coordinates of these green pixels. On the HPS side, we divide the sum of x and y coordinates with the total number of green pixels found in order to determine the centroid of the x and y coordinates. </p><p><b> Green Pixel Detection</b></p><p>The input from the NTSC is 8-bit color. In 8-bit color, the three most significant bits (5-7) represent levels of red, the second three most significant bits (2-4) represent levels of green, and the two least significant bits (0-1) represent levels of blue. This allows us 8 total levels of red, 8 total levels of green, and 4 total levels of blue. In order to determine which pixels were green, we thresholded the video input with minimum and maximum intensities for each of red, green, and blue. These thresholds are inputted by the user on terminal, but the general goal of the thresholds are to minimize red and blue, and maximize green. However, due to noise from the camera, we have to still leave enough levels of red and blue so as to not limit the actual detection. After significant experimental testing, we found that thresholds of 0-2 for red, 2-7 for green, and 0-2 for blue were ideal for thresholding color. In our code, addition to wires for the threshold values, we held a flag determining whether individual pixels were green.</p><p>The thresholding was testing by observing the third quadrant on the VGA and observing whether all green pixels were indeed removed, and looking for white pixels at their locations.  </p> <p><b>Box Drawing</b></p><p>Our 3-D model on the VGA were boxes that were scaled based on the distance of the stylus from the screen. This distance is proportional to the number of green pixels found from the NTSC camera. In order to draw a box, we required two pieces of information. We required a center coordinate for x and y, and we required a radius that was scaled based on the number of pixels found. Since scaling and centroid calculation required division, this information came via PIO from the HPS. The radius determined the distance of the edges of the box from the center. </p><p>To draw a box, we created a condition to determine whether a pixel on the screen was part of the box. We created for different conditions based on the <i>video_in</i> coordinate that is being scanned to determine whether the coordinate is part of the right, left, top, or bottom wall of the box. If one of these conditions were met, then a green coordinate would be drawn in the second quadrant for this pixel. </p>
+												<p><b>Camera and VGA State Machine</b></p>
+												<p>Completing displaying the outputs required the use of a five-state state machine.</p>
+												<center><a <span="" class="image middle"><img src="images/VGAFSM.png" alt="" width="600px"><i>Figure 3: FPGA State Machine</i></a></center>
+												<br/><br/>
+												<p><i>Reset:</i></p><p>Upon reset, all variables are initialized to zero. Bus reading and writing enable signals are disabled. Drawing is set to upper left hand corner. The video input x and y coordinates that will be incremented are also set to zero. Finally, all accumulators are set to 0. </p><p><i>State 0: Initialize camera pixel reading</i></p><p>In state 0, we enable reading from the video input NTSC camera. The coordinate that is read is the video_in_bus_addr which is determined by the video input x and y coordinates. In this state, these x and y coordinates are incremented. The maximum video input x coordinate is 320 and the maximum video input y coordinate is 240. The y coordinate is only incremented when the x coordinate reaches its maximum. Whenever the y-coordinate reaches its maximum, the total number of green pixels is stored, as well as the total sum of x and y coordinates. These values are then reinitialized.</p><p><i>State 1: Camera read acknowledgement wait</i></p><p>In this state, we wait for the acknowledgement that the bus read has been completed. Once the acknowledgement is received, we store the color of the pixel found from the bus read, disable reading, and transition states.</p><p><i>State 8: Set Up for VGA Write</i></p><p>This state was separated from initial states 0 and 1 to mark that we are transitioning from input-mode to output-mode. In this state, we set up the conditions for the VGA write. If the pixel at the current camera read was green, we initialize our drawing at the third quadrant (for thresholds). This means that our base VGA coordinates are at x = 0 and y = 240. In addition, we increment the number of green pixels found and the sum of their x coordinates and y coordinates. If the pixel is on the edge of a box, as determined from the centroid, then we set the base VGA coordinates to the second quadrant (x = 320, y = 0). Otherwise, we will draw the camera pixel, in the first quadrant (x = 0, y = 0). </p><p><i>State 9: Initialize Write</i></p><p>In this state, we enable the VGA bus to write, and set the bus address found from the sum of the VGA base coordinates and the video input coordinates. In addition, if the coordinate from the camera was found to be green, then we set the pixel output color to white. If it is on the edge of a box, then the pixel color is set to green. Otherwise, the pixel color is whatever was found from the camera. Since the VGA base coordinates were set previously, these colors are drawn in their respective coordinates.</p><p><i>State 10: VGA Write Acknowledgement</i></p><p>In this state, we wait for the acknowledgement to return from the external bus after a pixel write. We then return to state 0 for the next pixel. </p>
+                                            
+											</div>
+										</article>
+                                            
+									</div>
+								</div>
+							</section>
+								
+				            <section id="four">
+							<div class="container">		
+								<h3><a href="code.html">Software Design</a></h3>
+									<h4>High Performance System (HPS)</h4>
+									<p>
+								On the HPS side, we first initialize all interfaces with the FPGA. This first includes the control pointers for the video input. We also include the PIO ports for the center x coordinate, center y coordinate, and radius, the threshold values, and the accumulated x coordinates and number of green pixels found. Finally, it initializes pointers to the VGA. We then define the hostname and port number of the TCP connection. 									</p>
+                                <p>In the main function, we first initialize all of the base addresses for the pointers previously initialized. These were all obtained from the address map set from Qsys. In addition, we set the camera for a resolution of 320 x 240. Upon initialization, we clear the VGA screen by drawing a black rectangle across the screen. </p>
+                                <p>Then we scan for inputs. We first scan for inputs for an x, y, and radius to draw a test box. Then, we prompt the user for minimum and maximum values for red, green, and blue. This allows for user calibration of the stylus and proper thresholding. </p>
+                                <p>In the infinite loop, we access the sum of x-coordinates and y-coordinates, as well as the total number of green pixels. Ensuring that there is no division by zero or no floating point error, we device the sum of x-coordinates by the number of green pixels, and the sum of the y-coordinates by the number of green pixels. We then scale down the number of green pixels by 125 in order to have appropriate radius size on the screen. The number of green pixels is then set as the z coordinate to send over TCP. </p>
+									Once the HPS finishes calculating the x, y, and z coordinates of the brush, it communicates this
+									this data to another host on the same Local Area Network. By establishing a TCP connection with 
+									a server running on another host, the HPS acts as a client on the network responsible for acquiring
+									centroid data alone.
+									<br/><br/>
+									<center><a <span="" class="image middle"><img src="images/HPSSetup.png" alt="" width="600px"><i>Figure 4: HPS Program Running</i></a></center>
+									<br/><br/>
+									<h4>QSys Interconnect</h4>
+									In order to integrate the FPGA and ARM HPS, we needed to use Altera’s System Integration Tool, QSys. By adapting the in-built Computer System, we were able to facilitate communication between a VGA screen, the FPGA, and the HPS. Below is the template of the QSys layout that we adapted.
+									<br/><br/>
+									<center><a <span="" class="image middle"><img src="images/qsys1.png" alt="" width="600px"><i>Figure 5: Qsys 1</i></a></center>
+									<br/><br/>
+									Data for each of the threshold values (minimum and maximum for RGB color) were sent from the HPS to the FPGA via six parallel memory-mapped I/O ports. The HPS serves as a bus master and the FPGA the bus slave in this configuration. Each of these PIO ports has a clock and reset input connected to the system clock and HPS reset outputs. Each port also has an Avalon mapped slave and external conduit which serve to connect to the light weight axi-master and data bus lines respectively. These PIO ports represented in QSys can be seen below.
+									<br/><br/>
+									<center><a <span="" class="image middle"><img src="images/qsys2.png" alt="" width="600px"><i>Figure 6: Qsys 2</i></a></center>
+									<br/><br/>
+									We also included 3 PIO ports to communicate the x-coordinate, y-coordinate, and radius, of the boxes generated from the FPGA. In this case, the FPGA serves as a bus master and the HPS the bus slave. These PIO ports represented in QSys can be seen below.
+									<br/><br/>
+									<center><a <span="" class="image middle"><img src="images/qsys3.png" alt="" width="600px"><i>Figure 7: Qsys 3</i></a></center>
+									<br/><br/>
+									In order to access these ports via memory I/O, we used QSys to generate HDL and synthesize the mapping between the FPGA and HPS. For each PIO port, we connected a 32 bit wire in verilog. On the HPS, we used the addresses generated by QSys as offsets to the lightweight virtual base h2p_lw_virtual_base. 
+									<br/><br/>
+									The main portion of the C program prompts the user for input for each thresholding value - one prompt for each PIO port. We scan in the input over the command terminal and then write to the memory offset described above. For the x-coordinate, y-coordinate, and radius value, the C program simply stores the data coming in from the FPGA into an integer, which we use to render our 3D image.
+
+									<br/><br/>
+									<h4>Python Server</h4>
+									On a second host laptop, we run a python server which receives incoming data from the HPS client.
+									In addition to remaining open for TCP connections, this server takes incoming centroid data and 
+									writes each coordinate to a new line of an output CSV file. This file acts as a database, or record
+									or the user's virtual 'painting.' This 'virtual painting' is then able to be parsed by any further software.
+									<br/><br/>
+									<center><a <span="" class="image middle"><img src="images/PythonSetup.png" alt="" width="600px"><i>Figure 8: Python Server Running</i></a></center>
+
+									<br/><br/>
+									<h4>Matlab Program</h4>
+									<p>
+									On the host laptop, we use the data collected as a 'virtual painting' to generate 3D renderings of the 
+									centroid data. We first scan for the output csv from the Python code. Since python repeatedly closes the csv, we are always allowed access to it. Every .1 seconds, we display four plots: a 3D line plot of the coordinates found, a 3D scatter plot, a 2D line plot, and a 2D scatter plot. The 2D line plot and 2D scatter plot are based off the x and y coordinates only. 
+                                    <br/><br/>
+									<center><a <span="" class="image middle"><img src="images/MATLABSetup.png" alt="" width="600px"><i>Figure 9: MATLAB Screen Capture</i></a></center>
+									</p>
+                                   
+							</div>
+							</section>
+<!--								</div>-->
+							
+						
+						<!-- Four -->
+							<section id="five">
+								<div class="container">
+								    <h3>Results and Error Analysis</h3>
+								    <p>
+									Overall, the entire flow completely worked. We were able to display boxes of significant different sizes as we drew on the VGA. All communications between the components worked. Finally, we were able to effectively see live plotting of the data on MATLAB. Although the code was highly sensitive to movement and incline, with a completely still motion, our thresholding was very accurate. In fact, in a given position, the x and y centroids would only vary by 4 pixels, with only a 1.25% error. In addition, the scaled down z-coordinate only varied by 4 pixels as well. This 4 pixels radius was about a 500 pixel count difference in total count. However, 500 pixels is only .65% of the total number of pixels that were being calculated. As a result, we can conclude that our 3D paint system was highly accurate to the drawing. 
+									<br/><br/>
+									<center><a <span="" class="image middle"><img src="images/completelystill.jpg" alt="" width="600px"><i>Figure 10: Error Checking for Completely Still Stylus</i></a></center>
+									<br/><br/>
+									The bigger issues with the results came primarily with sensitivity to motion. Based on the angle that the stylus is held and the general light in the surroundings, the results varied in success. At times, light would reflect differently off of the tip, which would result in less overall accuracy. The painting device requires some practice in order to use it effectively. 
+									<center><a <span="" class="image middle"><img src="images/spiral.jpg" alt="" width="600px"><i>Figure 11: Spiral Drawing</i></a></center>
+
+								    </p>
+									
+
+								    
+                                    <br/><br/>
+
+                                    </p>
+                                        
+                                    
+                                    <h4> Safety in Design</h4>
+                                    <p> Nobody was harmed in the making of this project.</p>
+                                    
+                                    <h4> Video Demonstration </h4>
+									<iframe width="640" height="360" src="../../../../../../../../https@www.youtube.com/embed/_DYayH-mK2M@ecver=1" frameborder="0" allowfullscreen></iframe>                                    
+                                
+<!--									</section>-->
+								</div>
+							</section>
+				
+						<section id="six">
+							<div class="container">
+								<h3>Conclusions</h3>
+								<p>
+								We met our expected functionality in producing a system which simulates a 3D painting 
+								experience. As for future improvements, there are several enhancements to our design that we would consider:
+								<ul>
+									<li>Create a smoothing filter which renders more seamless brushstrokes with less jitter.</li>
+									<li>Reduce system noise by improving tip-detection. We currently threshold for green values read in by the NTSC camera.
+									However, we could perform finer color detection by comparing, for instance, the ratio of green pixels to red.</li>
+									<li>Allow the user to paint in multiple colors. Using multiple brushes we would detect when a particular brush is introduced
+									and reflect the change in color by drawing the associated color box to the screen.</li>
+									<li>Eliminate the necessity of an external host and render a 3D image on the FPGA to display on the VGA screen.</li>
+								</ul>
+								</p>
+                                
+								
+								<h4>Standards</h4>
+								<p> The only applicable standard that applies to our project is RFC 793 - Transmission Control Protocol (TCP).
+								We implement a standard method for TCP communication between host machines accordingly. Our project meets all IEEE standards.</p>
+                                
+								<h4>Intellectual Property Considerations</h4>
+								<p>
+								We drew from some Verilog code written by Bruce Land for NTSC camera input. Additionally, we modified open source code for TCP communication in both C and Python. 
+								We look forward to working towards publishing our work. We ask that anyone who wants to use our work for any purposes first acquire our consent.</p>
+								</p>
+							    <h4>Legal Considerations</h4>
+							    <p>There are no legal considerations at play.</p>
+                            </div>		
+						</section>
+
+						<section id="seven">
+							<div class="container">
+								<h2>Appendix</h2>
+                                <p>The group approves this report for inclusion on the course website.
+                                    The group approves the video for inclusion on the course youtube channel.</p>
+								<ul class="actions">
+									<li><a href="DE1_SoC_Computer.v" download><input type="submit" class="special" value="Top-Level Verilog Code"></a></li>
+									<li><a href="enable_video_input_3_tcp_sending.c" download><input type="submit" class="special" value="HPS Code"></a></li>
+                                    <li><a href="address_map_arm_brl4.h" download><input type="submit" class="special" value="HPS Header File"></a></li>
+                                    <li><a href="contcsvread.m" download><input type="submit" class="special" value="Matlab Code"></a></li>
+									<br/><br/>
+									<li><a href="server.py" download><input type="submit" class="special" value="Python Code"></a></li>
+                                    
+								</ul>
+							</div>
+						</section>
+
+				
+					<section>
+						<div class="container">
+                            
+                            <h5>Tasks Carried Out By Team Members</h5>
+                            <ul>
+                                <li>Justin: TCP protocol implementation, network setup, tip detection and centroid calculation, python and matlab code.</li>
+                                <li>Samir: Matlab code, HPS code, tip thresholding and centroid calculation, VGA setup.</li>
+                                <li>Adarsh: FPGA and HPS cross-communication, tip thresholding.</li>
+                            </ul>
+						</div>
+					</section>
+
+				<!-- Footer -->
+					<section id="footer">
+						<div class="container">
+							<ul class="copyright">
+								<li>&copy; Untitled. All rights reserved.</li>
+								<li>Designed by <a href="../../../../../../../../www.justin-selig.com/default.htm">Justin Selig</a></li>
+							</ul>
+						</div>
+					</section>
+
+			</div>
+
+		<!-- Scripts -->
+			<script src="assets/js/jquery.min.js"></script>
+			<script src="assets/js/jquery.scrollzer.min.js"></script>
+			<script src="assets/js/jquery.scrolly.min.js"></script>
+			<script src="assets/js/skel.min.js"></script>
+			<script src="assets/js/util.js"></script>
+			<!--[if lte IE 8]><script src="assets/js/ie/respond.min.js"></script><![endif]-->
+			<script src="assets/js/main.js"></script>
+
+	</body>
+</html>

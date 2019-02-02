@@ -1,0 +1,550 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<STYLE>
+DIV {
+	COLOR: #000
+}
+TD {
+	COLOR: #000
+}
+.n A {
+	COLOR: #000
+}
+.n A:visited {
+	COLOR: #000
+}
+.ts TD {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; PADDING-TOP: 0px
+}
+.tc {
+	PADDING-RIGHT: 0px; PADDING-LEFT: 0px; PADDING-BOTTOM: 0px; PADDING-TOP: 0px
+}
+.ts {
+	BORDER-COLLAPSE: collapse
+}
+.tb {
+	BORDER-COLLAPSE: collapse
+}
+.f {
+	COLOR: #666
+}
+.flc {
+	COLOR: #77c
+}
+A.fl {
+	COLOR: #77c
+}
+.fl2 {
+	COLOR: #77c
+}
+.fl2:visited {
+	COLOR: #77c
+}
+A {
+	COLOR: #00c
+}
+.w {
+	COLOR: #00c
+}
+.q:visited {
+	COLOR: #00c
+}
+.q:active {
+	COLOR: #00c
+}
+.q {
+	COLOR: #00c
+}
+.b A {
+	COLOR: #00c
+}
+.b A:visited {
+	COLOR: #00c
+}
+.mblink:visited {
+	COLOR: #00c
+}
+A:visited {
+	COLOR: #551a8b
+}
+A:active {
+	COLOR: red
+}
+.t {
+	PADDING-RIGHT: 1px; PADDING-LEFT: 1px; BACKGROUND: #d5dff3; PADDING-BOTTOM: 4px; COLOR: #000; PADDING-TOP: 5px
+}
+.bb {
+	BORDER-BOTTOM: #36c 1px solid
+}
+.bt {
+	BORDER-TOP: #36c 1px solid
+}
+.j {
+	WIDTH: 34em
+}
+.h {
+	COLOR: #36c
+}
+.i {
+	COLOR: #a90a08
+}
+.a {
+	COLOR: green
+}
+.z {
+	DISPLAY: none
+}
+.bl {
+	DISPLAY: none
+}
+DIV.n {
+	MARGIN-TOP: 1ex
+}
+.n A {
+	FONT-SIZE: 10pt
+}
+.n .i {
+	FONT-SIZE: 10pt
+}
+.n .i {
+	FONT-WEIGHT: bold
+}
+.b A {
+	FONT-WEIGHT: bold
+}
+.b A {
+	FONT-SIZE: 12pt
+}
+#np {
+	CURSOR: hand
+}
+#nn {
+	CURSOR: hand
+}
+.nr {
+	CURSOR: hand
+}
+#logo SPAN {
+	CURSOR: hand
+}
+.ch {
+	CURSOR: hand
+}
+.ta {
+	PADDING-RIGHT: 3px; PADDING-LEFT: 5px; PADDING-BOTTOM: 3px; PADDING-TOP: 3px
+}
+#tpa2 {
+	PADDING-TOP: 9px
+}
+#tpa3 {
+	PADDING-TOP: 9px
+}
+#gbar {
+	PADDING-LEFT: 2px; FONT-WEIGHT: bold; FLOAT: left; HEIGHT: 22px
+}
+#gbh {
+	BORDER-TOP: #c9d7f1 1px solid; FONT-SIZE: 0px; RIGHT: 0px; WIDTH: 200%; POSITION: absolute; TOP: 24px; HEIGHT: 0px
+}
+#gbi {
+	BORDER-RIGHT: #36c 1px solid; BORDER-TOP: #c9d7f1 1px solid; FONT-SIZE: 13px; Z-INDEX: 1000; BACKGROUND: #fff; BORDER-LEFT: #a2bae7 1px solid; BORDER-BOTTOM: #36c 1px solid; TOP: 24px
+}
+#guser {
+	PADDING-BOTTOM: 7px! important
+}
+#gbar {
+	FONT-SIZE: 13px; PADDING-TOP: 1px! important
+}
+#guser {
+	FONT-SIZE: 13px; PADDING-TOP: 1px! important
+}
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>ECE 576: Real-Time Sobel Edge Detection by Andrew Chin and Gladys Chan</title>
+<style type="text/css">
+<!--
+.style3 {font-size: 36px}
+.style4 {
+	font-style: italic;
+	font-size: 18px;
+}
+.style5 {
+	font-size: 18px;
+	font-style: italic;
+	font-weight: bold;
+}
+.style9 {font-size: 36px}
+.style12 {font-size: 24px; font-family: "Gill Sans MT", Arial, sans-serif; }
+.style13 {font-family: "Gill Sans MT", Arial, sans-serif}
+.style14 {font-size: 32px}
+.style15 {font-family: "Gill Sans MT", Arial, sans-serif; font-size: 32px; }
+body {
+	background-color: #FFFFFF;
+}
+-->
+</style>
+</head>
+
+<body>
+<div align="center">  
+  <a name="top" id="top"></a>
+  <p><span class="style3 style9"><span class="style15"> Real-Time EdGe Detection</span><span class="style14">&nbsp;</span></span><br>
+    <span class="style13">Andrew Chin [ECE MEng, hc454 (at) cornell.edu] &amp; Gladys Chan [Systems MEng, gtc32 (at) cornell.edu]</span><br>
+    <br>
+  <a href="#Introduction">Introduction</a> | <a href="#high">High Level Design</a> | <a href="#design">Program/Hardware Design</a> | <a href="#result">Result</a> | <a href="#conclusion">Conclusion</a> | <a href="#appendix">Appendix</a></p>
+</div>
+<a name="Introduction" id="Introduction"></a><BR>
+<TABLE class="ft t bb bt" cellSpacing=0 cellPadding=0 width="100%" border=0>
+  <TBODY>
+  
+  <TR>
+    <TD align=left>       <span class="style12"> Introduction</span></TD>
+  </TR>
+  </TBODY>
+</TABLE>
+<p>For our ECE536 final project, we have implemented real-time sobel edge detection. Traditionally, sobel edge detection is done on still images. This project uses a 2MP camera to continuously capture an image stream, and sobel edge detection is performed real-time on an FPGA and displayed to a VGA monitor. Our motivation arose from our interest in computer vision and digital image processing. </p>
+<p><strong> </strong>Edge detection is extensively used in image segmentation to divide an image into areas corresponding to different objects. Edges occur in parts of the image with strong intensity contrast, which often represent object boundaries.</p>
+<p>Edges can be detected by applying a high pass frequency filter in the Fourier domain or by convolving the image with an appropriate kernel in the spatial domain. Edge detection is commonly performed in the spatial domain, because it is computationally less expensive and often yields better results. Since edges correspond to strong illumination gradients, the derivatives of the image are used for calculating the edges.</p>
+<p>The basic edge-detection operator is a matrix area gradient operation that determines the level of variance between different pixels. The edge-detection operator is calculated by forming a matrix centered on a pixel chosen as the center of the matrix area. If the gradient value of this matrix area is above a given threshold, the middle pixel is classified as an edge. Figure 1 shows the setup of the project.</p> 
+<p align="center"><img width="410" height="308" src="setup2.JPG"></p>
+<p align="center"> Figure 1: Setup of Real-Time Edge Detection System </p>
+<br>
+<a name="high" id="high"></a>
+<TABLE class="ft t bb bt" cellSpacing=0 cellPadding=0 width="100%" border=0>
+  <TBODY>
+    <TR>
+      <TD align=left><span class="style12"> High Level Design </span></TD>
+    </TR>
+  </TBODY>
+</TABLE>
+<br>
+The DE2 camera module captures the image through a 2MP CMOS image sensor. The raw image data is converted into an RGB color space. The image is then converted to grayscale to obtain the image intensity for edge detection. The grayscale image is mirrored to be displayed properly on the VGA, and stored in the SDRAM FIFO. Three rows of 640-wide pixels are continuously stored in the M4K blocks, and edge detection is initiated once the data is ready. The edge detection result is outputted to the SRAM, and the VGA controller continuously refreshes the screen to output the result on the VGA. The high level diagram of the project is as follows: </h1>
+<p align="center"><img width="294" height="657" src="high_level_diagram.PNG"></p>
+<p align="center"> Figure 2: High Level Diagram of Real-Time Edge Detection </p>
+<p align="left">&nbsp;</p>
+<p>In digital image processing, each image is quantized into pixels. The first step in edge detection is to convert the raw data to a grayscale image, where each pixel indicates the level of brightness of the image: from 0 representing black to 1023 representing white, with a 10-bit wide pixel. The image is then threshold-ed to create a clear gradient. Edge information for a particular pixel is obtained by exploring the brightness of pixels in its neighborhood. If all of the pixels in the neighborhood have the same brightness, it indicates that there is no edge in the area. However, if some of the neighbors are much brighter than the others, it indicates that there is an edge present. </p>
+<p>Measuring the relative brightness of pixels in a neighborhood is mathematically analogous to calculating the derivative of brightness. The Sobel edge detection algorithm uses a 3<em>x</em>3 convolution table to store a pixel and its neighbors to calculate the derivatives. The table is moved across the image, pixel by pixel. For a 640<em>x</em>480 image, the convolution table will move through 302964 (638<em>x</em>478) different locations because we cannot calculate the derivative for pixels on the perimeter of the image.</p>
+<p>The Sobel edge detection algorithm identifies both the presence of an edge and the direction of the edge. There are eight possible directions: north, northeast, east, southeast, south, southwest, west, and northwest.</p>
+<p>For a convolution table, calculating the presence and direction of an edge and is done in three major steps: (ref. #3)</p>
+<ol>
+  <li>Calculate the derivative along each of the four orientations. The equations for the derivatives are written in terms of elements of a 3<em>x</em>3 table. </li>
+</ol>
+<blockquote>
+  <blockquote>
+    <p>DerivNE_SW = &nbsp;(table[0,1]&nbsp;+&nbsp;2<em>*</em>&nbsp;table[0<em>,</em>2]&nbsp;+&nbsp;table[1<em>,</em>2])&nbsp;-&nbsp;(table[1<em>,</em>0]&nbsp;+&nbsp;2<em>*</em>&nbsp;table[2<em>,</em>0]&nbsp;+&nbsp;table[2<em>,</em>1]&nbsp;)<br>
+    DerivN_S &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; = &nbsp;(table[0<em>,</em>0]&nbsp;+&nbsp;2<em>*&nbsp;</em>table[0<em>,</em>1]&nbsp;+&nbsp;table[0<em>,</em>2]) <em>- </em>(table[2<em>,</em>0]&nbsp;+&nbsp;2<em>*</em>&nbsp;table[2<em>,</em>1]&nbsp;+&nbsp;table[2<em>,</em>2]&nbsp;) <br>
+    DerivE_W &nbsp; &nbsp;&nbsp;  = &nbsp;(table[0<em>,</em>2]&nbsp;+&nbsp;2<em>*</em>&nbsp;table[1<em>,</em>2]&nbsp;+&nbsp;table[2<em>,</em>2])<em>&nbsp;- </em>(table[0<em>,</em>0]&nbsp;+&nbsp;2<em>*&nbsp;</em>table[1<em>,</em>0]&nbsp;+&nbsp;table[2<em>,</em>0]&nbsp;) <br>
+    DerivNW_SE = &nbsp;(table[1<em>,</em>0]&nbsp;+&nbsp;2<em>*&nbsp;</em>table[0<em>,</em>0]&nbsp;+&nbsp;table[0<em>,</em>1])<em>&nbsp;-</em>&nbsp;(table[2<em>,</em>1]&nbsp;+&nbsp;2<em>*&nbsp;</em>table[2<em>,</em>2]&nbsp;+&nbsp;table[1<em>,</em>2]&nbsp;)</p>
+  </blockquote>
+</blockquote>
+<p>&nbsp; </p>
+<p> &nbsp;&nbsp;&nbsp;2. Find the value and direction of the maximum derivative, and the absolute value of the derivative that is perpendicular to the maximum derivative. </p>
+<blockquote>
+  <blockquote>
+    <p>&nbsp; </p>
+    <p> EdgeMax = Maximum of absolute values of four derivatives <br>
+    DirMax = Direction of EdgeMax <br>
+    EdgePerp = Absolute value of derivative of direction perpendicular to DirMax </p>
+  </blockquote>
+</blockquote>
+<p>&nbsp; </p>
+<p> 3. Check if the maximum derivative is above the threshold. When comparing the maximum derivative to the threshold, the Sobel algorithm takes into account both the maximum derivative and the derivative in the perpendicular direction. </p>
+<p>&nbsp; </p>
+<blockquote>
+  <blockquote>
+    <p> if EdgeMax + EdgePerp/8 <em>&gt;</em>= threshold then <br>
+    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Edge = true<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dir = DirMax <br>
+else <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Edge = false <br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Dir = 000 </p>
+  </blockquote>
+</blockquote>
+<h2>&nbsp; </h2>
+<span class="style4"><strong>Hardware-software tradeoff</strong></span>
+<p>We chose to implement our entire project in hardware because of limited memory resources and performance. The camera captures the image and stores in the SDRAM, while the edge detection and VGA display use SRAM.  First of all, the grayscale image is calculated by adding red component, blue component and 2 times the green component to avoid floating point computation. The heaviest computation is the convolution of gradient. However, this can be achieved by addition and subtraction operators. As a result, there are no complex computation that requires the use of NIOS II. If we were to use NOISII, we need to store the image into SRAM, so the software can be run on the SDRAM. It would require more time to save the image from SDRAM to SRAM than to compute the convolution directly from M4K blocks. In addition, not using NIOS II can speed up our development time. The time it takes to compile our hardware project takes around a minute, whereas implementing a NIOS II can easily take 5 to 10 minutes for everything to compile. </p>
+<p>There are also hardware design techniques such as parallelism and pipelining on a FPGA, which is not possible in software implementation. Pipeline has been considered but not implemented because a continuous stream of data is not available. The implementation of pipelining introduces timing complexity and hardware overheads, because the computation is continuous even when the hardware reads a new row of data. </p>
+
+<p>&nbsp;</p>
+<h1> <a name="design" id="design"></a> </h1>
+
+<TABLE class="ft t bb bt" cellSpacing=0 cellPadding=0 width="100%" border=0>
+  <TBODY>
+    <TR>
+      <TD align=left><span class="style12"> Detailed Design </span></TD>
+    </TR>
+  </TBODY>
+</TABLE>
+<p><br>
+Figure 3  shows the high-level overview of the interfacing between the different modules, where Table 1 gives the module description. </p>
+<p><img width="977" height="661" src="RTL.jpg"> </p>
+<p align="center">Figure 3: Hardware overview diagram <br>
+  <br>
+</p>
+<div align="center"><img width="492" height="250" src="moduleFunctions.PNG">
+<br>
+Table 1: Description of module functionality </div>
+<p class="style5"> Grayscale</p>
+<p> In order to perform edge detection, we would need to convert the RGB image from the camera to a grayscale image. In a grayscale image, the green component is required to be higher in intensity. We first tried to perform the conversion by scaling down the RGB image: </p>
+<p> Grayscale = 0.3*red + 0.6*green + 0.1*blue </p>
+<p> The closest that represents this to implement on hardware efficiently is as follows: </p>
+<p> Grayscale = red&gt;&gt;2 + green&gt;&gt;1 + blue&gt;&gt;2 </p>
+<p> However, the resulting image did not achieve enough contrast for edge detection. After several refinements, it is discovered that scaling up the green give the best result for the DE2 camera. </p>
+<p> grayscale = red + green&lt;&lt;1 + blue </p>
+<p>&nbsp;  </p>
+<p class="style5"> Memory Interface</p>
+<p> Since the camera result is outputted to the SDRAM fifo, we need to load the image into three M4K block sequentially as follows. The M4K blocks takes in 3 rows of pixels for edge detection computation </p>
+<img src="table01.PNG" width="677" height="83">
+<p>After three rows of pixels are inputted, edge detection state machine will begin to start computation on the first 3x3, as bolded below. </p>
+<img src="table02.PNG" width="669" height="83">
+<p>The edge detection result is then output to SRAM for VGA output. In the next iteration, the values are shifted to allow for next edge detection. </p>
+<img src="table03.PNG" width="556" height="83">
+<p>After one row of computation, we read one more row of M4K blocks. This time, we only need to read in row 4, and reusing the values of row 2 in the 2 nd M4K, and row 3 in the 3 rd M4K.</p>
+<img src="table04.PNG" width="684" height="83">
+<p>Extra care is taken in the edge detection state machine to ensure that we are doing computation with the correct data, so we are using the values b1, c1, d1 in the right order, and not d1, b1 and c1. In the next iteration, it becomes the following: </p>
+<img src="table05.PNG" width="670" height="83">
+<p>And then </p>
+<img src="table06.PNG" width="677" height="83">
+<p>The pattern repeats itself until the entire image is computed.  It then continues to compute the next frame.</p>
+<p>&nbsp;</p>
+<p><span class="style4"><strong> </strong><strong>State Machines</strong></span></p>
+<p>Figure 4 below shows the two state machines implemented in this project. The first state machine is responsible for reading the captured image from SDRAM (in black), and a second state machine is responsible for the edge detection algorithm (in red).  The arrows in blue shows the interaction between the two state machines.  Different cases are taken into consideration to correctly update the oldest row of pixels in the M4K blocks and to populate the convolution table in the correct order. </p>
+<p><img width="732" height="879" src="state_machinev2.jpg"></p>
+<p>Figure 4: Interaction between &quot;edge detection state machine&quot; and &quot;load camera data state machine&quot; </p>
+<p><strong> &nbsp;</strong></p>
+<p><strong>&nbsp;<span class="style4">Timing Diagram for Handshaking </span></strong></p>
+<p>The  timing diagram in Figure 5 below shows a partial operation of the edge operation. At the beginning of each row, the read data state machine reads 640 pixels from the SDRAM and writes to one of the three M4K blocks. While the state machine is reading data, load is set high and run_edge is low to disable the edge calculation state machine. When run_edge is high, the edge calculation begins with constructing the convolution table. It takes 3 cycles initially to populate the 3x3 convolution table from M4K blocks. The edge calculation begins when the convolution table has been updated. It takes four cycles to computer the maximum edge value. Then, the edge decision is saved into SRAM. One cycle latency is used to determine the next state. The next set of values will be read from M4K blocks if less than 640 have been read. </p>
+<p>&nbsp;</p>
+<p align="center"><img width="933" height="606" src="timing_diagram.jpg"></p>
+<p>Figure 5: timing diagram of edge detection operation </p>
+<p class="style4">&nbsp;</p>
+<p class="style4"><strong>Things we tried</strong></p>
+<p>1) Pipeline</p>
+<blockquote>
+  <p>Algorithm #1</p>
+  <ul>
+    <li>Read in first three lines of pixels</li>
+    <li>Construct convolution table</li>
+    <li>Start pipeline calculation, construct new convolution table </li>
+    <li>Loop until x-2 pixels have been populated in the convolution table</li>
+    <li>Read in one new line of pixels and repeat steps 2 to 4</li>
+    <li>Loop until y-2 lines have been calculated</li>
+  </ul>
+  <p>Algorithm #2</p>
+  <ul>
+    <li> Read in first three lines of pixels </li>
+    <li> Construct convolution table </li>
+    <li> Start pipeline calculation, construct new convolution table </li>
+    <li> Loop until x-2 pixels have been calculated </li>
+    <li> Read in one new line of pixels and repeat steps 2 to 4 </li>
+    <li> Loop until y-2 lines have been calculated</li>
+  </ul>
+  <p>&nbsp;Algorithm #3 </p>
+  <ul>
+      <li> Read in first two lines of pixels </li>
+      <li> Read in first three pixels of the third line </li>
+      <li> Construct convolution table </li>
+      <li> Start pipeline calculation </li>
+      <li> Read in next pixel </li>
+      <li> Loop until x-2 pixels have been populated in the convolution table </li>
+      <li> Read in first three pixels of the next line and repeat steps 3 to 6 </li>
+      <li> Loop until y-2 lines have been calculated </li>
+  </ul>
+</blockquote>
+<p>&nbsp; </p>
+<blockquote>
+  
+  <p>For algorithm 1 and 2, the FIFO state machine is in the same "always" block as the convolution table construction state machine, while the edge calculation is in a second "always" block and VGA output is in a third "always" block. For algorithm 1, the pipelining calculation continues when the FIFO state machine begins to read in new pixels. Precise handshaking is needed to stop the VGA output when all edge values have been calculated for the previous row. For algorithm 2, handshaking is simpler. However, it wasted couple cycles because the FIFO state machine needs to wait for the pipeline to complete. Algorithm 3 is the most efficient method, but it has a lot of timing issues. Handshaking is needed for reading new data, constructing convolution table, starting pipeline and stopping VGA display. The difficulty is more evident in the special cases for constructing the first edge output for every line, where it takes three cycles to populate the convolution table. This complicates the timing. </p>
+  <p>We have tried algorithm #1 and #2, but we could not display the correct image on the VGA. We tackled the problem by hand analysis and realized that there are many potential causes to the problem. We may not have register the correct values into the table before the pipeline begins, which results in calculation with the wrong values. We also find that an internal signal to activate the pipeline is needed. Also, certain registers were being calculated at the wrong stage (or clock cycle) in the pipeline because we may not have arranged registers at every stage to guide the propagation of all values correctly. This resulted in values being overwritten and an overall shifted image. Data was often being reused by successive clock cycles, and it is possible that the data can get overwritten by the next pixel before the edge calculations are completed. Although, we have tackled all these possibilities of problems, we could not successfully generate a perfect edge image within the time constraint of the project. </p>
+</blockquote>
+<p>&nbsp; </p>
+
+<p>2) clocking using camera clock</p>
+<blockquote>
+  <p>The demo of camera from Terrasic has set the camera clocking to CCD_PIXCLK. If the VGA clock equals the CCD_CLK, the VGA image flickers and continuously moving upward. </p>
+</blockquote>
+<p>&nbsp; </p>
+<p>3) memory register block</p>
+<blockquote>
+  <p>We tried using 3 arrays of memory of 640 pixels that are 10-bit wide. Although implementation with memory register blocks uses a lot of memory spaces as the registers are scattered in the memory, we could save a lot of computation cycles because we can assess the particular memory as an array directly (without the need of supplying the memory address 1 cycle before the data appears). Originally, we accessed the memory for the 3x3 convolution table as such: </p>
+  <p>Array1[index-1], Array1[index], array1[index+1]<br>
+Array2[index-1], Array2[index], array2[index+1]<br>
+Array3[index-1], Array3[index], array3[index+1]</p>
+
+  <p>However, the compiling time of the program is extremely slow and the program easily takes half an hour to compile. We concluded that there must be logic or logic syntax error in the program. After some trails, we found out that we accessing the memory block that is not the current x location is extremely slow. This defeats the purpose of using an array of registers. Thus, we continued the development of M4K blocks instead. Moreover, we tried to make the memory array size to 48 pixels that are 10-bit wide. The compilation time was a lot faster, which confirmed that we are using too much memory by setting up 3 arrays of 640 pixels.</p>
+</blockquote>
+<p>&nbsp; </p>
+<p>4) Things we chose not to implement:</p>
+<blockquote>
+<ul>
+    <li>decimal way to calculate grayscale (grayscale = 0.1blue + 0.6green + 0.3red)
+      <ul>
+        <li>We do not want to introduce floating point to the design because it is expensive in hardware<br>
+        </li>
+      </ul>
+    </li>
+    <li>use USB port to obtain image to SRAM from the GUI provided by Terrasic
+      <ul>
+        <li>This will only allow single image edge detection, as opposed to real-time edge detection with images coming from the camera continuously<br>
+        </li>
+      </ul>
+    </li>
+    <li>read FIFO to SRAM and compute from SRAM
+      <ul>
+        <li>Although it eliminates the use of M4K blocks, it requires 9 cycles initially to populate the convolution table and 3 cycles for each subsequent calculation. Moreover, it requires more timing handshaking. </li> 
+		<li> if the VGA updates before edge detection is completed, it will show a combination of edge-detected image and the grayscale image.  Since we are operating on a large 640x480 image, it is not likely that edge detection will finish computing on the entire image before VGA sync comes in to refresh the screen.</li>
+      </ul>
+    </li>
+  </ul>
+  
+</blockquote>
+<p><strong><em> <br>
+      <span class="style4">Validation</span></em></strong><br>
+    <br>
+Our validation plan consisted of a number of steps.&nbsp; Upon completing the design and implementation of the "read data from FIFO state machine", we made sure the state machine was operating correctly.  We validated that the registers were shifting properly from one state to another, and all pixels are stored in the M4K blocks correctly.  This is confirmed by displaying the image onto VGA after 480 rows of 640 xpixels have been read. We encountered little to no errors when doing so, with the majority of our errors stemming form simple syntax errors. </p>
+<p> Upon verifying that our state machine was correct, we then moved on to populate the convolution table state machine. We first verified that the first three rows are handled properly. Then we output the reference data pixel (pixel 2,2) from the 3x3 convolution table to the VGA to ensure the image is correctly populated into the convolution tables. This verified that the state transitions and handshaking between the state machines are functioning properly. We initially displayed a still image on the VGA followed by real time display. We experienced problems with clock synchronization. The image displayed from the convolution state machine was disjounted and rolled up the screen quickly. The problem was solved by using VGA_audio_PLL to convert CLOCK_27 to VGA_CTRL_CLK. This allows the SDRAM, M4K blocks, edge detection and VGA all reference to the VGA_CTRL_CLK. </p>
+<p> Afterwards, we moved on to testing the edge detection portion of our project. We used an 640 X 480 image captured by the camera and resulted in a lot of missed edges.&nbsp; Upon realizing this, we looked back to the memory operation process and were able to pinpoint the problem of doing edge detection on a grayscale image that has not been threshold. If we were to shine a light on the object, the edge detection would work better. Thus, we adjusted the camera exposure to its maximum. However, it did not make a big improvement on the quality of the edge image.  We subsequently set a threshold on the grayscale image to convert it into a black and white image.  This maximized the gradient and provided much better edge detection results. </p>
+<p> All the above realizations are obtained from displaying state of concern onto the LEDs of the FPGA board. We found that this method of validation was very helpful with understanding which state the FPGA may be stuck on. In addition, outputting the value of the registers on the LED allow us to pinpoint bugs very effectively.<br>
+    <br>
+</p>
+<p>&nbsp;</p>
+<p><a name="result"><br>
+</a></p>
+<TABLE class="ft t bb bt" cellSpacing=0 cellPadding=0 width="100%" border=0>
+  <TBODY>
+    <TR>
+      <TD align=left><span class="style12"> Results </span></TD>
+    </TR>
+  </TBODY>
+</TABLE>
+<p></p>
+<p>Overall, we are very pleased with the result of the lab. The following images show the result of the threshold grayscale image before edge detection, and the result after edge detection. </p>
+<table width="200" border="1" align="center">
+<tr>
+    <td>
+    <p align="center"> Threshold Image Before Edge Detection </p></td>
+    <td>
+    <p align="center"> After Edge Detection </p></td>
+  </tr>
+  <tr valign="middle">
+    <td><p><img width="410" height="308" src="both01.JPG"><br>
+      <br>
+   </p></td>
+    <td><p><img width="410" height="308" src="both02.JPG"><br>
+      <br>
+    </p></td>
+  </tr>
+    <tr>
+    <td><p><img width="335" height="251" src="index_clip_image002_0001.jpg"><br>
+      <br>
+    </p>
+      </td>
+    <td><p><img width="335" height="251" src="index_clip_image004_0000.jpg"><br>
+      <br>
+    </p>
+      </td>
+  </tr>
+    <tr>
+    <td><p><img width="431" height="323" src="gladys01.JPG"></p>
+    <br>
+
+    </td>
+    <td><p><img width="410" height="308" src="gladys02.JPG"> </p>
+      <br>
+   
+    </td>
+  </tr>
+ 
+
+</table>
+<p>&nbsp;</p>
+<p>We are pleased with the speed of execution. We are seeing a result of about 2-4 frames per second. The camera runs on a 25MHz clock, we are performing edge detection on a 640x480 image, and each pixel requires 4-5 clock operations for edge detection. </p>
+<p><em class="style4"><strong>Accuracy</strong></em></p>
+<p>The following image shows the camera pointing towards to the ceiling to edge detect the light. We can observe that the clear outline of the light is detected. It was unable to detect the details inside the light. This is due to the fact that edge detection is performed on a grayscale scale. In grayscale, it is difficult to threshold the difference between areas with high brightness.</p>
+<table width="200" border="1" align="center">
+ 
+    <tr>
+      <td><p align="center">Actual Image  </p></td>
+      <td><p align="center"> Edge Detection Image </p></td>
+    </tr>
+    <tr valign="middle">
+      <td><p><img width="410" height="308" src="accuracy02.JPG"><br>
+              <br>
+      </p></td>
+      <td><p><img width="410" height="308" src="accuracy01.JPG"><br>
+              <br>
+      </p></td>
+    </tr>
+</table>
+<p>The result can be compensated by adjusting the grayscale threshold value and the edge detection threshold value. Under different lighting conditions, we can adjust a different set of threshold values to obtain optimal results. As a result, we have set the switches on the FPGA as threshold values. SW[6:0] is the magnitude of the edge detection threshold value, and SW[16:7] is the magnitude of the threshold for grayscale image. As a result, we can optimize by adjusting these threshold values to achieve higher accuracy. We can also improve the frame rate by increasing the VGA clock.  Since all calculations is running on the VGA clock, increasing the clock speed can speed up the edge calculation before the VGA sync comes in to refresh the screen. </p>
+<ol>
+</ol>
+<p> <em class="style4"><strong>Hardware Usage</strong></em><strong><br>
+</strong><br>
+The use of M4K blocks greatly reduce our memory usage compared to using just registers. Table 2 below is the statistics from the compliation report of our final design. </p>
+<p align="center"><img src="result.PNG" width="309" height="178">
+  <br>
+Table 2: Result of hardware usage</p>
+<p><a name="conclusion" id="conclusion"></a></p>
+<TABLE class="ft t bb bt" cellSpacing=0 cellPadding=0 width="100%" border=0>
+  <TBODY>
+    <TR>
+      <TD align=left><span class="style12"> Conclusion </span></TD>
+    </TR>
+  </TBODY>
+</TABLE>
+<br>
+Our design shows great accuracy in edge detection, and we are pleased with the performance. This is party due to the limitations on the complexity of edge detection, which requires multiple read and write and the memory handoff from SDRAM to M4K blocks to SRAM.  With a 25MHz camera clock on a 640x480 image, the result is within expectation. We have used the demo code for Terrasic DC2 camera as the baseline of the project. Some improvements that we can make on our design are: 
+<ol><ul><ul>
+    <ul>
+        <li> Read in two complete M4K blocks and start computation when 3 pixels have been read for the third M4K blocks </li>
+        <li> Pipeline structure </li>
+        <li> Implement Canny Edge Detection for better quality </li>
+        <li> Read from FIFO when pipeline is ready for a read value </li>
+        <li> Use software to perform the edge calculation with greater accuracy by calculating derivatives and using floating point operations</li>
+      </ul>
+  </ul>
+ 
+</ul>
+</ol>
+<p><br>
+We have referenced the edge detection algorithm from online reference source #3. It discussed methods of calculating the direction gradients without the need of taking derivatives. Sobel edge detection has been done countless number of times, yet it is very challenging to perform fast Sobel on real-time display limited by the speed of the camera.<br>
+<a name="appendix" id="appendix"></a></p>
+<TABLE class="ft t bb bt" cellSpacing=0 cellPadding=0 width="100%" border=0>
+  <TBODY>
+    <TR>
+      <TD align=left><span class="style12"> Appendix </span></TD>
+    </TR>
+  </TBODY>
+</TABLE>
+<br>
+
+<p class="style5"> Source Code </p>
+<p> <a href="sobel.v">sobel.v</a><br>
+  <a href="DE2_CCD.v">DE2_CCD.v</a><br>
+  <a href="Mirror_Col.v">Mirror_Col.v</a><br>
+</p>
+<p><a href="sobel.zip">entire project zipped</a></p>
+<p><span class="style5">Setup</span></p>
+<p>Setup system shown in Figure 1, download sof file in <a href="sobel.zip">zip file</a> to FPGA board</p>
+<p>Hit KEY0 to reset and start the state machine (may require clicking a couple times to register)</p>
+<p>SW[6:0] &ndash; sets the edge detection threshold value, the higher the threshold, the less edge detection (set it to 7&rsquo;b000000 = low edge threshold)<br>
+SW[16:7] &ndash; threshold value for grayscale image, depends on light condition (ideal value 10&rsquo;b 0100011001 = 281)<br>
+SW[17] &ndash; turns on edge detection. (1&rsquo;b0 = off : no edge detection, shows grayscale image; 1&rsquo;b1= on: turns on edge detection)</p>
+<p><span class="style5">References</span></p>
+<p> 1. Track Me!, <a href="../../../../../../../../instruct1.cit.cornell.edu/courses/ece576/FinalProjects/f2006/AaronJimmy/576final/index.htm">http://instruct1.cit.cornell.edu/courses/ece576/FinalProjects/f2006/AaronJimmy/576final/index.htm</a></p>
+<p> 2. Terasic camera module documentation,<a href="../../../../../../../../www.terasic.com.tw/attachment/archive/50/TRDB_DC2_UserGuide_061017.pdf"> http://www.terasic.com.tw/attachment/archive/50/TRDB_DC2_UserGuide_061017.pdf</a></p>
+<p> 3. Edge Detection, <a href="../../../../../../../../www.ece.uwaterloo.ca/~ece327/old/2007t1/proj/doc/proj.pdf">http://www.ece.uwaterloo.ca/~ece327/old/2007t1/proj/doc/proj.pdf</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </p>
+<p> 4. Sobel Operator, <a href="../../../../../../../../en.wikipedia.org/wiki/Sobel_operator">http://en.wikipedia.org/wiki/Sobel_operator</a> </p>
+<p>&nbsp;</p>
+<p class="style5">Specific Tasks: </p>
+<p> Andrew Chin: high level design, grayscale optimization, edge detection design, debugging, report <br>
+Gladys Chan: high level design, memory organization, edge detection design, debugging, report </p>
+<p>&nbsp;</p>
+<p>ECE 576<br>
+  Cornell University </p>
+<p>&nbsp;</p>
+<p>&nbsp;</p>
+</body>
+</html>

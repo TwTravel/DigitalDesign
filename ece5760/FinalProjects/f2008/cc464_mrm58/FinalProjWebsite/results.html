@@ -1,0 +1,80 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+	<title>ECE 5760 Final Project :BALL-E</title>
+	<link href="style.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<div id="container">
+	<div id="main">
+		<div id="header"></div>
+		<div id="nav">
+			<ul>
+				<li><a href="index.html">Introduction</a></li>
+				<li><a href="highlevel.html">High Level Design</a></li>
+				<li><a href="hardware.html">Hardware </a></li>
+				<li><a href="results.html">Results </a></li>
+				<li><a href="conclusion.html">Conclusion</a></li>
+				<li><a href="appendix.html">Appendix</a></li>
+			</ul>
+		</div>
+		<div id="content">
+			<div id="full">
+				<div class="post">
+					<h1>Results</h1><span>BALL-E</span>
+					
+					<p>
+					<div style="text-align: center;">
+					<img src="images/VGA.JPG" width="683" height ="454">
+					<br>
+					<caption>Tracking of ball held by Cathy's arm, displayed on VGA screen</caption>
+				  </div>	
+					</p> 
+					<h3></h3>
+					<p>The above picture shows what the camera on the FPGA sees. The images is presented in black and white, and puts a bounding box around the
+					ball. The center of this box is used in the neural network to calculate the x distance from the center and thus how quickly the ball should move.
+					The picture shows Cathy holding the lacrosse ball in the lab, which is highlighted in red while everything else has been grayed out. 
+					Overall BALL-E performed as we had hoped. It tracked the ball in real time and would follow it. At peak speed, we estimate it was
+					going at a foot a second. The turning was a little less precise. As one can see from the video, BALL-E had a few issues with traction
+					when turning left. We speculate that is due to a lack of friction with the ground and the power, or lack thereof of the servo motors we
+					used. The motors were fairly stable, but not as powerful as we would've liked to get maximum traction. This was due to the motors that we used. We used approximately 9% of the board, the following are our hardware configuration statistics
+					<div style="text-align: center;">
+					<img src="images/hardwarestats.JPG" >
+					<caption>Hardware Statistics</caption>
+					</div>	
+					</p>
+					<h3>Videos</h3>
+					<br>
+					<p>The best way to show our results are with video. They are available as follows:
+					<br>
+					<a href="../BallEVideoProcess.MP4"> BALL-E's view of the world</a>
+					<br>
+					<a href="../BallEFloor.MP4">Video from our demo day in December 2008</a>
+					<br>
+					</p>
+					
+					
+				</div>
+			
+			</div>
+			
+			<div class="clear"></div>
+		</div>
+	</div>
+	<div id="footer">
+		<ul>
+			<li><a href="index.html">Introduction</a></li> | 
+			<li><a href="highlevel.html">High Level Design</a></li> | 
+			<li><a href="hardware">Hardware </a></li> | 
+			<li><a href="results.html">Results</a></li> | 
+			<li><a href="conclusion.html">Conclusion</a></li> | 
+			<li><a href="appendix.html">Appendix</a></li>
+		</ul>
+		<span>&copy;<a href="../../../../../../../../www.csl.cornell.edu/~cathy">Cathy Chen</a><a href="mailto:cc464@cornell.edu">(cc464@cornell.edu)</a> and Matt Meister <a href="mailto:mrm58@cornell.edu">(mrm58@cornell.edu)</a> </span>
+		<span> Information from this site may not be used without the permission of Cathy Chen and Matt Meister</span>
+	</div>
+</div>
+</body>
+</html>

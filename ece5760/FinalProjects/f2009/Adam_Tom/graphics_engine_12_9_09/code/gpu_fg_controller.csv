@@ -1,0 +1,6 @@
+#include !"gpu_inst_controller.csv"
+
+GPU_FG_MEM_DEPTH,GPU_DISP_WIDTH*GPU_DISP_HEIGHT/32,Foreground state memory depth (in 32b words).
+GPU_FG_ADDR_WIDTH,max_width(GPU_FG_MEM_DEPTH-1),Foreground state memory address width.
+GPU_FG_ADDR_RANGE,range(GPU_FG_ADDR_WIDTH),Foreground state memory address bit range.
+GPU_FG_WORDS_PER_ROW,GPU_Y_WIDTH'd(GPU_DISP_WIDTH/32),Number of 32b memory words per row (y-axis value).

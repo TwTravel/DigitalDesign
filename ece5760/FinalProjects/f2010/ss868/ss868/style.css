@@ -1,0 +1,565 @@
+/****************************************
+ * Skyler Schneider
+ * Web Template CSS Rules
+ ****************************************/
+
+/*
+    This stylesheet controls the formatting of all pages on the
+    website.
+*/
+
+
+
+/****************************************
+ * General Formatting
+ ****************************************/
+/* 
+    Global properties: font family and color, page margin and padding,
+    background color of footer, etc.
+    
+    Note the font-size declaration. Its purpose is to reset the 
+    default font size to 10px instead of 16px, allowing font sizes to 
+    be specified in ems throughout the stylesheet (1.0em = 10px, 
+    1.3em = 13px, etc.). It is important to specify font sizes in ems 
+    instead of pixels, because IE/Win does not allow text to be resized
+    by the user if it is specified in pixels.    
+*/
+body {
+    margin: 0;
+    padding: 0;
+    font-family: arial, verdana, helvetica, sans-serif;
+    font-size: 63.125%;     /* translate 1.0em to 10px, 1.5em to 15px, etc. */
+    color: #000000;
+    background: #100800 repeat-y top center;
+    text-align:justify;
+}
+
+
+
+/****************************************
+ * Logo Banner
+ ****************************************/
+/* 
+    Controls the appearance of the topmost banner on the page.
+*/
+
+#banner-bg {
+    height: 128px;
+    background: #100800 url('bannerbg.png') no-repeat top center;
+}
+
+#banner-link {
+    width: 800px;
+    height: 128px;
+}
+
+
+
+/****************************************
+ * Content Sections
+ ****************************************/
+/*
+    The following set of rules controls the most general layout elements 
+    used throughout the templates. Every page must have these elements, 
+    with the exception of #section-navigation and #secondary, which are 
+    only required on two-column pages.
+    
+    #content-bg encodes a content body background color across the whole screen.
+    #content-pos specifies the content body width and position (center)
+    #main and #secondary are the right and left vertical columns of
+    content, respectively (one-column pages only use #main).
+*/
+
+#content-bg {
+    float: left;
+    width: 100%;
+    background: #002020
+}
+
+#content-pos {
+    margin: 0 auto;
+    width: 800px;
+}
+
+#main {
+    float: none;
+    padding: 10px 10px;
+    width: 100%;
+    background: #002020;
+}
+
+/* two-column pages */
+
+.twocol #content-bg {
+    /* see IE6/Win hack at bottom */
+    background: #000040 url('twocol_bg.png') repeat-y top center;
+}
+
+.twocol #main {
+    float: right;
+    width: 580px;
+    background: #F5E49C;
+}
+
+#section-navigation, #secondary {
+    float: left;
+    clear: left;
+    width: 200px;
+}
+
+
+
+/****************************************
+ * Section Navigation
+ ****************************************/
+/*
+    Controls the section navigation column on two-column pages.
+        It's a vertical stack of links at the top of the left column.
+*/
+
+#section-navigation {
+    margin-bottom: 25px;
+}
+
+#section-navigation ul {
+    margin: 0;
+    padding: 0;
+    font-size: 1.2em;
+    font-weight: bold;
+    color: #FFFFFF;
+}
+
+#section-navigation li {
+    float: left;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    background: none;
+}
+
+#nav_inert {
+    display: block;
+    padding: 4px 4px;
+    border: none;    
+    width: 191px;
+    border-bottom: 1px solid #000000;
+    color: #F5E49C;
+}
+
+#nav_active {
+    display: block;
+    padding: 8px 4px;
+    border: none;    
+    width: 191px;
+    background: #C02020;
+    border-bottom: 1px solid #000000;
+}
+
+#section-navigation a {
+    display: block;
+    padding: 4px 4px;
+    border: none;    
+    width: 191px;
+    border-bottom: 1px solid #000000;
+}
+
+#section-navigation a:visited {
+    color: #80F0F0;
+}
+
+#section-navigation a:hover {
+    background: #C02020;
+    color: #FFFFFF;
+}
+
+#section-navigation a:active {
+    color: #FFFFFF;
+    background: none;
+}
+
+
+
+/****************************************
+ * Text Styles
+ ****************************************/
+/*
+    Controls font sizes, colors, and weights, 
+    line spacing, margins, bullets, and borders. 
+*/
+
+/* first item on the page gets no top margin */
+.first {
+    margin-top: 0;
+}
+
+/* 
+    Headlines 
+    -------------------------
+    Headlines introduce sections of text, and they should be used in a 
+    way that consistently represents the hierarchy of information on a page.
+*/
+
+h1 {
+    margin: 0 0 15px 0;
+    font-size: 2.4em;
+    font-weight: normal;
+}
+
+h2 {
+    margin: 0 0 15px 0;
+    font-size: 1.8em;
+    font-weight: normal;
+}
+
+h2.compact {
+    margin: 0 0 0 0;
+    font-size: 1.8em;
+    font-weight: normal;
+}
+
+h3 {
+    clear: both;
+    margin: 0 0 15px 0;
+    font-size: 1.3em;
+    line-height: 1.4em;
+    font-weight: bold;
+}
+
+h3.compact {
+    clear: both;
+    margin: 0 0 0 0;
+    font-size: 1.3em;
+    line-height: 1.4em;
+    font-weight: bold;
+}
+
+h3.compact-invisible {
+    clear: both;
+    margin: 0 0 0 0;
+    font-size: 1.3em;
+    line-height: 1.4em;
+    font-weight: bold;
+        color: #808080;
+}
+
+h4 {
+    margin: 15px 0 3px 0;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+/* 
+    Text
+    -------------------------
+    Paragraphs of text, extended quotations, and captions
+*/
+
+font.invisible {
+    color: #808080;
+}
+
+p {
+    margin: 0 0 15px 0;
+    font-size: 1.3em;
+    line-height: 1.4em;
+}
+
+p.compact {
+    margin: 0 0 0 0;
+    font-size: 1.3em;
+    line-height: 1.4em;
+}
+
+tt {
+    margin: 0 0 15px 0;
+    font-size: 1.3em;
+    line-height: 1.4em;
+}
+
+code {
+    margin: 0 0 15px 0;
+    font-size: 1.3em;
+    line-height: 1.4em;
+}
+
+pre {
+    margin: 0 0 15px 0;
+    font-size: 1.5em;
+    line-height: 1.4em;
+}
+
+blockquote {
+    margin: 0 30px;
+}
+
+/* captions */
+
+.caption {
+    font-size: 1.1em;
+    line-height: 1.5em;
+    color: #606060;
+}
+
+/* 
+    Lists 
+    -------------------------
+    Unordered lists (ul) are displayed with a square bullet to the left
+    of each list item (li).
+    
+    Ordered lists (ol) are displayed with a number to the left of each
+    list item (li).
+    
+    Definition lists (dl) represent a set of terms (dt) and definitions (dd).
+    Each term should be followed by one or more definitions. Definition lists
+    are very useful for marking up a series of links, each of which has an
+    explanatory passage of text.
+*/
+
+ul, ol {
+    margin: 0 0 15px 0;
+    padding: 0;
+    font-size: 1.3em;
+    line-height: 1.4em;
+}
+
+ul ul, ul ol, ol ol, ol ul {
+    font-size: 1.0em;
+}
+
+ul li {
+    margin: 0px 0;
+    background: url('small_square.png') no-repeat 9px 0.55em;; list-style-type:none; padding-left:18px; padding-right:0; padding-top:0; padding-bottom:0
+}
+
+ul.compact {
+    margin: 0 0 0 0;
+    padding: 0;
+    font-size: 0.8em;
+    line-height: 1.0em;
+}
+
+ul.compact li {
+    margin: 5px 0;
+    background: url('small_square.png') no-repeat 9px 0.35em;; list-style-type:none; padding-left:18px; padding-right:0; padding-top:0; padding-bottom:0
+}
+
+ul.compact-dotless {
+    margin: 0 0 0 0;
+    padding: 0;
+    font-size: 0.8em;
+    line-height: 1.0em;
+}
+
+ul.compact-dotless li {
+    margin: 5px 0;
+    background: none; list-style-type:none; padding-left:18px; padding-right:0; padding-top:0; padding-bottom:0
+}
+
+ol li {
+    margin: 5px 0 5px 30px;
+}
+
+dl {
+    margin: 0 0 15px 0;
+    line-height: 1.4em;
+}
+
+dt {
+    margin: 0 0 3px 0;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+dd {
+    margin: 0 0 15px 0;
+    font-size: 1.3em;
+    line-height: 1.4em;
+}
+
+/*
+    Links 
+    -------------------------
+        Self-explanatory.  The commented code can create colored underlines.
+*/
+
+a {
+    color: #F5E49C;
+    text-decoration: none;
+}
+
+a:visited {
+    color: #80F0F0;
+}
+
+a:hover {
+    color: #F00000;
+}
+
+a:active {
+    color: #800000;
+}
+
+#main a {
+    color: #0000C0;
+    text-decoration: none;
+}
+
+#main a:visited {
+    color: #000080;
+}
+
+#main a:hover {
+    color: #F00000;
+}
+
+#main a:active {
+    color: #800000;
+}
+
+
+/* 
+    Secondary text 
+    -------------------------
+    Controls how the left sidebar of a two-column page appears.
+    Font sizes and margins are slightly smaller, and colors may be different
+    than in the main section.
+    
+    The .secondary-section class provides sections of secondary content
+    with padding from the edges of the sidebar. Secondary content should be
+    organized and grouped into .secondary-section divs.
+    
+    If the two-column page is used without a section navigation, the first
+    .secondary-section div should have its ID attribute set to 
+    secondary-section-first; i.e.
+    <div class="secondary-section" id="secondary-section-first">. This 
+    creates a margin between the top edge of the sidebar and the first section.
+*/
+
+#secondary {
+    color: #F0F0F0;
+}
+
+.secondary-section {
+    margin: 0 0 25px 0;
+    padding: 0 10px;
+}
+
+#secondary-section-first {
+    margin-top: 25px;
+}
+
+#secondary h2 {
+    margin: 0 0 10px 0;
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+#secondary p {
+    margin: 0 0 10px 0;
+    font-size: 1.2em;
+    line-height: 1.3em;
+}
+
+#secondary ul {
+    margin: 0 0 10px 0;
+    font-size: 1.2em;
+}
+
+#secondary ul li {
+    padding-left: 9px;
+    background-position: 0 0.55em;
+}
+
+
+
+/****************************************
+ * Images
+ ****************************************/
+/*
+    Controls the appearance of images.
+*/
+
+img {
+    border: 0px none;
+}
+
+/*
+    Large photos
+    -------------------------
+    Large photos are as wide as the entire main section of a two-column page.
+*/
+
+#large-photo {
+    float: none;
+    margin: 10px 10px 15px 0;
+    width: 580px;
+}
+
+/*
+    Small photos
+    -------------------------
+    Small photos are aligned with the right edge of the page, and text wraps
+    around them to the left.
+*/
+
+#small-photo {
+    float: right;
+    margin: 5px 0 15px 25px;
+    width: 200px;
+}
+
+
+
+/****************************************
+ * Footer
+ ****************************************/
+/* 
+    Controls the appearance of the footer at the bottom of the page.
+*/
+
+#footer {
+    float: left;
+    width: 100%;
+    background: #100800;
+}
+
+#footer-pos {
+    margin: 0 auto;
+    width: 800px;
+}
+
+#footer-content {
+    float: none;
+    padding: 15px 0 15px 0;
+    width: 100%;
+    background: #000000;
+    font-size: 1.2em;
+    color: #806040;
+}
+
+
+
+/****************************************
+ * IE6/Windows Hacks
+ ****************************************/
+ 
+/*
+    Shifting Background Bug:
+    IE/Windows calculates "center" (for a background image position) differently
+    than it does "50%" or "margin: 0 auto" (for foreground content) when the 
+    page is an odd number of pixels wide.
+*/
+
+.twocol #content-pos {
+    background: #402000 url('twocol_bg.png') repeat-y top center;
+}
+
+.twocol #content-bg {
+    background: #402000;
+}
+
+/* unhack for other browsers */
+.twocol>#content-bg {
+    background: #402000 url('twocol_bg.png') repeat-y top center;
+}
+

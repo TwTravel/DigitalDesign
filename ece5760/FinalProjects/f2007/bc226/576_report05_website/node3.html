@@ -1,0 +1,88 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Hardware Design</TITLE>
+<META NAME="description" CONTENT="Hardware Design">
+<META NAME="keywords" CONTENT="576_report05">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="576_report05.css">
+
+<LINK REL="next" HREF="node7.html">
+<LINK REL="previous" HREF="node2.html">
+<LINK REL="up" HREF="576_report05.html">
+<LINK REL="next" HREF="node4.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation"><!--Navigation Panel-->
+<A NAME="tex2html61"
+  HREF="node4.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="next.png"></A> 
+<A NAME="tex2html59"
+  HREF="576_report05.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="up.png"></A> 
+<A NAME="tex2html53"
+  HREF="node2.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="prev.png"></A>   
+<BR>
+<B> Next:</B> <A NAME="tex2html62"
+  HREF="node4.html">Object Pipeline</A>
+<B> Up:</B> <A NAME="tex2html60"
+  HREF="576_report05.html">576_report05</A>
+<B> Previous:</B> <A NAME="tex2html54"
+  HREF="node2.html">High Level Design</A>
+<BR>
+<BR></DIV>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION00030000000000000000">
+Hardware Design</A>
+</H1>
+<P>
+<BIG CLASS="LARGE">As described in the high level design, there are three pipelines to generate the edges to objects, to compute transformations on the points, and to rasterize the computed elements.
+Since the DE2 hardware also drives the VGA signal through the third rastering pipeline, which must modifies VGA screen buffer and must be clocked to the VGA control clock, the other two pipelines are also clocked to the VGA control clock.
+</BIG>
+<P>
+<BIG CLASS="LARGE">The first two pipelines need to store all its data in M4K blocks in order to make them to the pipeline downstream.
+Since the last pipeline also serves the VGA controller, the third pipeline stores its data in SRAM.
+</BIG>
+<P>
+<BIG CLASS="LARGE">Prior considerations to quickly and simply verify the Verilog for any of these pipelines led to the division between any two producer-consumer pipelines.
+It is much simpler to test the first two pipelines, which operate in constant/O(1) complexity, without having deal with the data stalls imposed by the rastering pipeline, which currently operates with O(n) complexity and behaves sequentially.
+</BIG>
+<P>
+<BR><HR>
+<!--Table of Child-Links-->
+<A NAME="CHILD_LINKS"><STRONG>Subsections</STRONG></A>
+
+<UL CLASS="ChildLinks">
+<LI><A NAME="tex2html63"
+  HREF="node4.html">Object Pipeline</A>
+<LI><A NAME="tex2html64"
+  HREF="node5.html">Computation Pipeline</A>
+<LI><A NAME="tex2html65"
+  HREF="node6.html">Rastering pipeline</A>
+</UL>
+<!--End of Table of Child-Links-->
+<BR><HR>
+<ADDRESS>
+
+2007-12-02
+</ADDRESS>
+</BODY>
+</HTML>

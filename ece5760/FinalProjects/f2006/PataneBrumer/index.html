@@ -1,0 +1,73 @@
+<html>
+<head><title>ECE 576 - HRTF - Brett Patane & Eric Brumer</title></head>
+<body bgcolor='#AABBEE'>
+
+<table width=900 align=center border=1 cellspacing=0 cellpadding=4 bgcolor=white><tr><td>
+<div align='center'>
+<font size=+3>
+Head Related Transfer Function<br>
+ECE 576 - Fall 2006<br>
+Brett Patane & Eric Brumer<br>
+</font>
+<hr>
+<a href='index.html'>Introduction & Architecture</a> &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+<a href='index_d.html'>Design</a> &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+<a href='index_ac.html'>Analysis & Conclusion</a> &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+<a href='index_a.html'>Appendix</a>
+</div>
+</td></tr></table>
+
+<br>
+
+<table width=900 align=center border=1 cellspacing=0 cellpadding=4 bgcolor=white><tr><td>
+<h2>Introduction</h2>
+
+<p>Our final project is a real-time head related transfer function (HRTF) system. The goal of the HRTF
+is sound spatialization, where a sound source is 'positioned' such that a user wearing headphones
+will interpret the sound as coming from a location in space around their head. The HRTF is accomplished
+by filtering the left and right outputs of the music separately, through different FIR filters.</p>
+
+<p>Our project allows for real-time positioning of multiple input sound sources, where the user (listening to
+music through headphones) can <i>position</i> an input source through the use of a graphical user interface.</p>
+
+<h2>System Architecture</h2>
+<p>The following diagram shows our system architecture:</p>
+
+<div align='center'><img src='system.gif'></div>
+
+<p>On the PC, Windows Media Player plays a music track which is input (through a 1/8inch to 1/8inch
+audio cable) to the audio ADC on the DE2 board. We perform stereo to mono conversion (averaging
+the left and right channels), and perform our HRTF filtering. For more audio streams, we send 16-bit
+digital audio samples over ethernet to our HRTF filtering unit. This output is sent through the audio DAC and is played
+for the user through a set of headphones.</p>
+
+<p>To position the sound in real-time, we change the filter coefficients in the left & right HRTF
+filters when the user requests it. The user enters an azimuth and elevation (horizontal and vertical
+angles, respectively) into the GUI running on the PC. The azimuth and elevation are sent over an
+RS-232 port through to the DE2, where the FPGA control code intercepts the new azimuth and elevation,
+and changes the filter coefficients accordingly.</p>
+
+<p>Since we have a large set of filter coefficients, we store them on the off-chip 512kB SRAM chip on
+the DE2 board.</p>
+
+<h2>HRTF</h2>
+<p>Our work is a real-time implementation of the work done by the <a href="../../../../../../../interface.cipic.ucdavis.edu/CIL_html/CIL_whatis.htm">UC Davis sound spatialization group</a>.
+Their work involved the study of sound spatialization and gathering audio impulse responses for a multitude of patients, by putting
+microphones in either ear, and playing a sound from a certain azimuth and elevation.</p>
+
+<h3>Coordinate System</h3>
+<p>The coordinate system is best explained through a series of points. Each of these points is of the form
+(azimuth, elevation) and all numbers are in degrees.</p>
+
+<pre>
+      (0, 0)   is directly ahead
+      (90, 0)  is directly to the right
+      (-90, 0) is directly to the left
+      (0, -90) is directly underneath
+      (0, 90)  is directly above
+      (0, 180) is directly behind
+</pre>
+
+</td></tr></table>
+</body>
+</html>

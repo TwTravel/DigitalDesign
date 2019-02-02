@@ -1,0 +1,63 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+	<title>ECE 5760 Final Project</title>
+	<link href="style.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<div id="container">
+	<div id="main">
+		<div id="header">
+			<div width=1024 height=285><a href="index.html"><img src="images/ECE5760_05.png" width=1024 height=245 margin-left=25></a></div>
+			<div class="highlevel"><a href="highlevel.html">HIGH LEVEL DESIGN</a></div> 
+			<div class="hardware"><a href="hardware.html">HARDWARE/SOFTWARE</a></div> 
+			<div class="results"><a href="results.html">RESULTS</a></div> 
+			<div class="conclusion"><a href="conclusion.html">CONCLUSION</a></div> 
+			<div class="appendix"><a href="appendix.html">APPENDIX</a></div> 
+		</div>
+
+
+
+		<div id="content">
+			<div id="left">
+				<div class="post">
+				
+					<h1>Introduction</h1><span></span>
+
+					<p>The goal of this project was to track the motion of a human face and to display a projection of a cube on a VGA monitor that would change according to the motion of the user’s face.  We wanted it to seem as if the user was actually looking at a 3D cube, so if the user moved their head to the right for example, the projection should be displayed as if the user were actually looking at a cube from the right, and if the user gets closer to the camera, then the cube should get larger.  The cube was chosen for simplicity and as a proof of concept, but this project could potentially be extended to more complicated objects or virtual reality environments.</p>
+
+					<p>In this project, we connected a video camera to the FPGA and determined the location of the user’s face in each frame by examining the color content of each pixel and determining which ones could represent human skin.  The face’s offset from the center of the camera’s field of view, as well as its size, was then used to draw the appropriate projection.</p>
+					
+					<br>
+										
+				</div>
+				
+			</div>
+
+			<div id="right"><img src="images/DSCN1757.JPG">
+			</div>
+			<div class="clear"></div>
+
+		</div>
+	</div>
+	<div id="footer">
+		<br>
+		<ul>
+			<li><a href="index.html">Introduction</a></li> | 
+			<li><a href="highlevel.html">High Level Design</a></li> | 
+			<li><a href="hardware.html">Hardware/Software </a></li> | 
+			<li><a href="results.html">Results</a></li> | 
+			<li><a href="conclusion.html">Conclusion</a></li> | 
+			<li><a href="appendix.html">Appendix</a></li>
+
+		</ul>
+		<br>
+		<p><a href="mailto:ty244@cornell.edu">Chuck Yang</a> and <a href="mailto:jgs33@cornell.edu">Jasper Schneider</a></p>
+		
+	</div>
+
+</div>
+</body>
+</html>

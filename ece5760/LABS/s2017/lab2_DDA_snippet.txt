@@ -1,0 +1,66 @@
+//in the top-level module ///////////////////
+//2nd order system state variables
+wire signed [17:0] v1, v2 ;
+//signed mult output
+wire signed [17:0] v1xK_M, v2xD_M 
+
+// clock divider to get system into the audio range
+reg [4:0] count;
+// analog update divided clock
+always @ (posedge CLOCK_50) 
+begin
+        count <= count + 1; 
+end	
+assign AnalogClock = (count==0);	
+	
+////////////////////////////////////////////
+// wire the integrators
+// time step: dt = 2>>9
+// v1(n+1) = v1(n) + dt*v2(n)
+integrator int1(v1, v2, 0,9,AnalogClock,AnalogReset);
+	
+// v2(n+1) = v2(n) + dt*(-k/m*v1(n) - d/m*v2(n))
+signed_mult K_M(v1xK_M, v1, 18'h1_0000); //Mult by k/m
+signed_mult D_M(v2xD_M, v2, 18'h0_0800); //Mult by d/m
+integrator int2(v2, (-v1xK_M-v2xD_M), 0,9,AnalogClock,AnalogReset);
+    
+/////////////////////////////////////////////////
+//// integrator /////////////////////////////////
+
+module integrator(out,funct,InitialOut,dt,clk,reset);
+	output [17:0] out; 		//the state variable V
+	input signed [17:0] funct;      //the dV/dt function
+	input [3:0] dt ;		      // in units of SHIFT-right
+	input clk, reset;
+	input signed [17:0] InitialOut;  //the initial state variable V
+	
+	wire signed	[17:0] out, v1new ;
+	reg signed	[17:0] v1 ;
+	
+	always @ (posedge clk) 
+	begin
+		if (reset==0) //reset	
+			v1 <= InitialOut ; // 
+		else 
+			v1 <= v1new ;	
+	end
+	assign v1new = v1 + (funct>>>dt) ;
+	assign out = v1 ;
+endmodule
+
+//////////////////////////////////////////////////
+//// signed mult of 2.16 format 2'comp////////////
+
+module signed_mult (out, a, b);
+	output 		[17:0]	out;
+	input 	signed	[17:0] 	a;
+	input 	signed	[17:0] 	b;
+	
+	wire	signed	[17:0]	out;
+	wire 	signed	[35:0]	mult_out;
+
+	assign mult_out = a * b;
+	//assign out = mult_out[33:17];
+	assign out = {mult_out[35], mult_out[32:16]};
+endmodule
+//////////////////////////////////////////////////

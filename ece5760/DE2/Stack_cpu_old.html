@@ -1,0 +1,452 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>stack machine</title>
+</head>
+
+<body>
+<h2 align="center">Stack Machine<br />
+  ECE 5760 Cornell University </h2>
+<p>&nbsp;</p>
+<p><strong>Stack machine -- multicycle.</strong><br />
+Nakano, K., et.al.(refs below) describe two versions of a small stack machine suitable for implementation on an FPGA and they give the Verilog source code on their <a href="../../../../../www.cs.hiroshima-u.ac.jp/~nakano/wiki/default.htm">web site</a>. The first verion of the cpu is a multicycle machine. The registers are arranged in a stack with the usual range of arithmetic operators and stack manipulation instructions. On the DE2, the cpu runs at 95 MHz clock (verilog for <a href="TinyCPU/Stack_machine_2010/DE2_TINYCPU_multicycle.v">cpu</a>, <a href="TinyCPU/Stack_machine_2010/cpu_pll.v">pll</a>). The cpu verilog also includes a memory initialization block to implement a counter on the red LEDs. When switch SW[0] is on, the cpu halts. Adding load/store opcodes and program counter push/pop to the multicycle version  is <a href="TinyCPU/Stack_machine_2010/DE2_TINYCPU_multicycle_added_opcodes.v">here</a>. Load and store enable <em>register indirect</em> addressing, while PC manipulations enable subroutines.</p>
+<p>The CPU design is from http://www.cs.hiroshima-u.ac.jp/~nakano/wiki/  and is GPL licensed.<br />
+  <br />
+  <strong>Stack machine -- single cycle.</strong> The Nakano, K, et.al. single cycle design is <a href="TinyCPU/Stack_machine_2010/DE2_miniCPU.v">here</a>, running at 65 MHz. Adding the opcodes to  push and pop the program counter is in <a href="TinyCPU/Stack_machine_2010/DE2_miniCPU_add_opcodes.v"><strong>this single cycle version</strong></a>. The single cycle version with a stack size of 16 occupies about 1300 logic elements (out of 33,000 on the DE2). Reducing the stack size to 8 drops the size to 940 logic elements. The test program is hard-coded into the ram block specification with a initialization block. Setting QuartusII to optimize for speed (See <code>Tools...Advisors...Timing optimization advisor</code>) increases size to 1000 logic elements and increases the operating frequency to 74 MHz.<br />
+</p>
+<p><strong>Extended cpu and assembler</strong><br />
+The cpu was extended to allow for up to eight in/out ports, with four appearing outside the cpu module. I/O addressing is shown in the opcode table below. The remaining four will be used for internal i/o, perhaps with a timer peripheral. This modification requires  changes  verilog <a href="TinyCPU/Stack_machine_2010/ports/DE2_miniCPU_add_opcodes_ports.v">top level module</a>. This version also converts the <code>halt</code> opcode to a <code>nop</code> opcode and corrects a decoder error in the <code>bnot/not</code> instructions. The architecture below is slightly modifed from Nakano, K., et.al. by adding more i/o and a connection from the program counter to the data bus. The cpu requires about 1020 logic elements on the FPGA and runs at 74 MHz.</p>
+<p><img src="TinyCPU/Stack_machine_2010/ports/architecture.png" width="483" height="200" alt="architecture" /></p>
+<p>A simple assembler was written in matlab (also runs in Octave) to make programming easier. 
+   A sample <a href="TinyCPU/Stack_machine_2010/assembler/test_stack_machine.asm">source code</a> shows the syntax, and is assembled into a <a href="TinyCPU/Stack_machine_2010/assembler/test_stack_machine.mif">mif file</a>, which can be read by the ram block. The link between the mif file and the ram block is implemented with a synthesis directive in the same statement as the memory declaration and <strong>before</strong> the semicolon which terminates the declaration.<br />
+  <code>reg [DWIDTH-1:0] mem [WORDS-1:0] /* synthesis ram_init_file = &quot; test_stack_machine.mif&quot; */ ;<br />
+  </code> If you change the<code> mif</code> file by reassembling assembler source, then you can change the memory contents <em>without</em> having to rebuild the whole project. Click <code>Update Memory Initialization File</code> on the <code>Processing</code> menu.    After using this option, run the QuartusII Assembler (<code>Processing menu...Start...Start Assembler</code>) to generate new programming files for the device.<br />
+  <br />
+  The assembler includes macro substitution (one level) and structured programming constructs.
+The assembler is <a href="TinyCPU/Stack_machine_2010/struct_asm/TinyASM_stack_machine_macros_ports_structure.m">here</a>. A sample <a href="TinyCPU/Stack_machine_2010/struct_asm/test_stack_machine_5a.asm">source code</a> shows the macro and structuring syntax (also see below), and is assembled into a <a href="TinyCPU/Stack_machine_2010/struct_asm/test_stack_machine_5a.mif">mif file</a>.  The macro facility allows definition of pseudo-opcodes to streamline programming. The macros include a simple subroutine call/return mechanism to enable calling named functions with operands on the stack. The structuring extensions allow support of <code>while-do-endwhile</code> and <code>if-then-else-endif</code> constructions. Macro and structure syntax are further explained in the assembler program header. The assembler expands macros during its first pass over the source file, and produces an intermediate file <code>temp.asm</code> which can be inspected with a text editor. The assembler then takes a pass across the <code>temp.asm</code> file to generate two tables; a symbol table which contains the names and values of all constants, data names and code label names, and a table of opcodes and arguments. The assembler then traverses the code table, refering to the symbol table to expand the symbolic arguments into actual numbers, then converting the opcodes and numeric arguements (if any) into hex as a mif file.</p>
+<p>There are four sections to an assembler program: </p>
+<ol>
+  <li>The define section names constants as symbol-value pairs. The define section starts with the assembler directive `<code>define</code>. Example:<pre>`define ; named constants
+	    pattern3 15 ; 0x0f
+	    redLEDs 0 ; port 0
+	    greenLEDs 1 ; port 1
+	    forever 1 ; endless loop</pre></li>
+  <li>The data section names variables held in memory as name-length pairs. A length of one implies one 16-bit word of storage. The data section requires that you choose the starting address for storing data. The data section starts with the assembler directive `<code>data</code> followed by an address in decimal. Example:<pre>`data 128 ;decimal start of data in memory
+ 	temp 1 ; for stack DUP function
+	    pctemp 1 ; for subroutine link
+	    test 1 ; location to push test data</pre></li>
+  <li> Each macro definition starts with the assembler directive <code>`macro</code> followed by the macro name and the number of arguments. Each macro ends with the assembler directive <code>`endmacro</code>. Within the body of the macro, arguments are refered to using <code>%n</code> where n the argument number. Labels for jump targets may be used within a macro, must be local to the macro, and are modified to be unique for each instance of the macro. Example:<pre>`macro call 1 ; subroutine call (one parameter)
+   pushpc
+   jmp %1
+`endmacro</pre>
+  </li>
+  <li>The actual program starts with the<code> `code</code> directive. Code is written as one opcode (and possibly label and argument) per line. Macro names, structuring directives and native opcodes can all be used.Structuring directives must be on their own line. The code following the <code>`if</code> and<code> `while</code> must leave a logical value on the stack to indicate execution path to the<code> `then</code> or <code>`do</code> respectively. An<code> `else</code> is optional after the <code>if-then</code>. A short excerpt is below. Structuring directives may be arbitrarily nested, but error checking is not robust for poorly nested structuring. <a href="TinyCPU/Stack_machine_2010/struct_asm/test_stack_machine_6.asm">Full Example.</a>
+    <pre>`while
+	pushi 1 ; never exit, leaves a TRUE on the stack
+`do
+	push counter1 ; get the counter
+	call inc ; add one to the outer counter 
+	dup ; copy stack top 
+	out redLEDs ;output one copy, one on stack 
+	pop counter1  ; save the counter
+
+	;slow it down with an inner loop counter
+	store_imm 1 counter2 ; reset and store inner counter
+	`while 
+		push counter2
+		push 0 ; compare stack top to zero
+		ne ; returns a TRUE if next != top
+	`do
+		push counter2 ; get the coutner
+		call inc ; increment the inner counter
+		pop counter2 ; save the counter
+	`endwhile	;end of inner loop
+`endwhile	;end of outer loop	</pre>
+  </li>
+</ol>
+<p><strong>CPU opcodes and instruction format</strong></p>
+
+  <p>The cpu instruction set is shown below. 
+  Notation: </p>
+  <ul>
+    <li><code>I</code> is a 12-bit signed integer</li>
+    <li> <code>A</code> is an unsigned 12-bit integer</li>
+    <li><code>n</code> is a 3 bit integer (used only in the extended i/o version of the cpu)</li>
+    <li><code>top</code> is top-of-stack</li>
+    <li> <code>next</code> is second-to-top-of-stack</li>
+    <li><code>PC</code> is the program counter</li>
+    <li> <code>mem[A]</code> is the contents of memory location <code>A</code>.<br />
+      </p>
+    </li>
+  </ul>
+<table width="54%" border="1">
+     <tr>
+       <th width="22%" scope="col">Instruction</th>
+       <th width="23%" scope="col">Hex format</th>
+       <th width="55%" scope="col">Operation</th>
+  </tr>
+     <tr>
+       <th scope="col"><code>nop</code></th>
+       <th scope="col"><code>0000</code></th>
+       <th scope="col"><code>none</code></th>
+     </tr>
+     <tr>
+       <th scope="row"><code><strong>pushi</strong></code></th>
+       <td><div align="center"><code>1000 + I</code></div></td>
+       <td><div align="center"><code> [sign extended] I &rarr;  top </code></div></td>
+     </tr>
+     <tr>
+       <th scope="row"><code><strong>push A</strong></code></th>
+       <td><div align="center"><code>2000 + A</code></div></td>
+       <td><div align="center"><code>mem[A] &rarr;  top </code></div></td>
+     </tr>
+     <tr>
+       <th scope="row"><code>pop A</code></th>
+       <td><div align="center"><code>3000 + A</code></div></td>
+       <td><div align="center"><code>top &rarr;mem[A] </code></div></td>
+     </tr>
+     <tr>
+       <th scope="row"><code>jmp A</code></th>
+       <td><div align="center"><code>4000 + A</code></div></td>
+       <td><div align="center"><code>A &rarr; PC</code></div></td>
+     </tr>
+     <tr>
+       <th scope="row"><code>jz A</code></th>
+       <td><div align="center"><code>5000 + A</code></div></td>
+       <td><div align="center"><code>if (top==0) then A &rarr; PC</code></div></td>
+     </tr>
+     <tr>
+       <th scope="row"><code>jnz A</code></th>
+       <td><div align="center"><code>6000 + A</code></div></td>
+       <td><div align="center"><code>if (top!=0) then A &rarr; PC</code></div></td>
+     </tr>
+     <tr>
+       <th scope="row"><code>ld</code></th>
+       <td><div align="center"><code>7000</code></div></td>
+       <td><div align="center"><code>mem[top]  &rarr;  top </code></div></td>
+     </tr>
+     <tr>
+       <th scope="row"><code>st</code></th>
+       <td><div align="center"><code>8000</code></div></td>
+       <td><div align="center"><code>top   &rarr; mem[next]</code></div></td>
+     </tr>
+     <tr>
+       <th scope="row"><code>pushpc</code></th>
+       <td><div align="center"><code>9000</code></div></td>
+       <td><div align="center"><code>program counter   &rarr;  top</code></div></td>
+     </tr>
+     <tr>
+       <th scope="row"><code>poppc</code></th>
+       <td><div align="center"><code>a000</code></div></td>
+       <td><div align="center"><code>top &rarr; program counter </code></div></td>
+     </tr>
+     <tr>
+       <th scope="row"><code>in</code></th>
+       <td><div align="center"><code>d00n</code></div></td>
+       <td><div align="center"><code>input[n] &rarr;  top </code></div></td>
+     </tr>
+     <tr>
+       <th scope="row"><code>out</code></th>
+       <td><div align="center"><code>e00n</code></div></td>
+       <td><div align="center"><code>top &rarr; output[n]</code></div></td>
+     </tr>
+     <tr>
+       <th scope="row"><code>add</code></th>
+       <td><div align="center"><code>f000</code></div></td>
+       <td><div align="center"><code>next + top &rarr; top</code></div></td>
+     </tr>
+     <tr>
+       <th scope="row"><code>sub</code></th>
+       <td><div align="center"><code>f001</code></div></td>
+       <td><div align="center"><code>next - top &rarr; top</code></div></td>
+     </tr>
+     <tr>
+       <th scope="row"><code>mul</code></th>
+       <td><div align="center"><code>f002</code></div></td>
+       <td><div align="center"><code>next * top &rarr; top</code></div></td>
+     </tr>
+     <tr>
+       <th scope="row"><code>shl</code></th>
+       <td><div align="center"><code>f003</code></div></td>
+       <td><div align="center"><code>next &lt;&lt; top &rarr; top</code></div></td>
+     </tr>
+     <tr>
+       <th scope="row"><code>shr</code></th>
+       <td><div align="center"><code>f004</code></div></td>
+       <td><div align="center"><code>next &gt;&gt; top &rarr; top</code></div></td>
+     </tr>
+     <tr>
+       <th scope="row"><code>band</code></th>
+       <td><div align="center"><code>f005</code></div></td>
+       <td><div align="center"><code>next &amp; top &rarr; top</code></div></td>
+     </tr>
+     <tr>
+       <th scope="row"><code>bor</code></th>
+       <td><div align="center"><code>f006</code></div></td>
+       <td><div align="center"><code>next | top &rarr; top</code></div></td>
+     </tr>
+     <tr>
+       <th scope="row"><code>bxor</code></th>
+       <td><div align="center"><code>f007</code></div></td>
+       <td><div align="center"><code>next ^ top &rarr; top</code></div></td>
+     </tr>
+     <tr>
+       <th scope="row"><code>and</code></th>
+       <td><div align="center"><code>f008</code></div></td>
+       <td><div align="center"><code>next &amp;&amp; top &rarr; top</code></div></td>
+     </tr>
+     <tr>
+       <th scope="row"><code>or</code></th>
+       <td><div align="center"><code>f009</code></div></td>
+       <td><div align="center"><code>next || top &rarr; top</code></div></td>
+     </tr>
+     <tr>
+       <th scope="row"><code>eq</code></th>
+       <td><div align="center"><code>f00a</code></div></td>
+       <td><div align="center"><code>next == top &rarr; top</code></div></td>
+     </tr>
+     <tr>
+       <th scope="row"><code>ne</code></th>
+       <td><div align="center"><code>f00b</code></div></td>
+       <td><div align="center"><code>next != top &rarr; top</code></div></td>
+     </tr>
+     <tr>
+       <th scope="row"><code>ge</code></th>
+       <td><div align="center"><code>f00c</code></div></td>
+       <td><div align="center"><code>next &gt;= top &rarr; top</code></div></td>
+     </tr>
+     <tr>
+       <th scope="row"><code>le</code></th>
+       <td><div align="center"><code>f00d</code></div></td>
+       <td><div align="center"><code>next &lt;= top &rarr; top</code></div></td>
+     </tr>
+     <tr>
+       <th scope="row"><code>gt</code></th>
+       <td><div align="center"><code>f00e</code></div></td>
+       <td><div align="center"><code>next &gt; top &rarr; top</code></div></td>
+     </tr>
+     <tr>
+       <th scope="row"><code>lt</code></th>
+       <td><div align="center"><code>f00f</code></div></td>
+       <td><div align="center"><code>next &lt; top &rarr; top</code></div></td>
+     </tr>
+     <tr>
+       <th scope="row"><code>neg</code></th>
+       <td><div align="center"><code>f010</code></div></td>
+       <td><div align="center"><code>-top &rarr; top</code></div></td>
+     </tr>
+     <tr>
+       <th scope="row"><code>bnot</code></th>
+       <td><div align="center"><code>f011</code></div></td>
+       <td><div align="center"><code>~top &rarr; top</code></div></td>
+     </tr>
+     <tr>
+       <th scope="row"><code>not</code></th>
+       <td><div align="center"><code>f012</code></div></td>
+       <td><div align="center"><code>!top &rarr; top</code></div></td>
+     </tr>
+</table>
+   <hr />
+   <p><strong>Adding more opcodes<br />
+   </strong>A <a href="TinyCPU/Stack_machine_2010/more_opcodes/DE2_miniCPU_more_opcodes_ports.v">updated processor</a> adds a few opcodes and changes the hex representation of pushpc and poppc. The <a href="TinyCPU/Stack_machine_2010/more_opcodes/TinyASM_stack_machine_macros_ports_structure.m">assembler</a> was modifed, as was the <a href="TinyCPU/Stack_machine_2010/more_opcodes/test_stack_machine_7.asm">test code</a> and <a href="TinyCPU/Stack_machine_2010/more_opcodes/test_stack_machine_7.mif">mif</a>. This version of the assembler also has better error reporting for mismatched opcodes and arguments. Argument types are table-driven for checking and the text of the line containing the error is reported.<br />
+   Added/modified opcodes are mostly aimed at stack manipulation.</p>
+   <table width="74%" border="1">
+     <tr>
+       <th width="18%" scope="col">Instruction</th>
+       <th width="14%" scope="col">Hex format</th>
+       <th width="68%" scope="col">Operation</th>
+     </tr>
+     <tr>
+       <th scope="row"><code>pushpc</code></th>
+       <td><div align="center"><code>9000</code></div></td>
+       <td><div align="center"><code>program counter   &rarr;  top</code></div></td>
+     </tr>
+     <tr>
+       <th scope="row"><code>poppc</code></th>
+       <td><div align="center"><code>9001</code></div></td>
+       <td><div align="center"><code>top &rarr; program counter </code></div></td>
+     </tr>
+     <tr>
+       <th scope="row"><code>dup</code></th>
+       <td><div align="center"><code>f013</code></div></td>
+       <td><div align="center"><code>copies top of stack -- stack: top &rarr; top top</code></div></td>
+     </tr>
+     <tr>
+       <th scope="row"><code>drop</code></th>
+       <td><div align="center"><code>f017</code></div></td>
+       <td><div align="center"><code>drops top of stack-- stack: next  top &rarr; next</code></div></td>
+     </tr>
+     <tr>
+       <th scope="row"><code>over</code></th>
+       <td><div align="center"><code>f01f</code></div></td>
+       <td><div align="center"><code>copies next to stack top -- stack: next  top &rarr; next top next</code></div></td>
+     </tr>
+     <tr>
+       <th scope="row"><code>dnext</code></th>
+       <td><div align="center"><code>f01b</code></div></td>
+       <td><div align="center"><code>drops next -- stack: next  top &rarr; top</code></div></td>
+     </tr>
+</table>
+<hr />
+<p><strong>Graphics example</strong>s<br />
+The <a href="TinyCPU/Stack_machine_2010/FixedPoint/DE2_miniCPU_more_opcodes_ports_18bit.v">processor was modified</a> to support 18-bit operations (and instructions) and the multiply opcode was modified for 10.8 fixed point multiply. A <a href="TinyCPU/Stack_machine_2010/FixedPoint/test_stack_machine_8.asm">test program</a> (and <a href="TinyCPU/Stack_machine_2010/Video__interface_1/TinyASM_stack_machine_macros_ports_structure_18bit.m">modified assembler</a>) validates the 18-bit registers and another <a href="TinyCPU/Stack_machine_2010/FixedPoint/stack_machine_mult_test.asm">program</a> tests the multiply instruction.  </p>
+<p>Next, the <a href="TinyCPU/Stack_machine_2010/Video__interface_1/VGA_640x480_m4k_tinyCPU.v">processor</a> was hooked up to the VGA display with one output port for address, one port for 1-bit data and one port for write-enable. An 18-bit. linear feedback, shift register random number generator produces random single bits to simulate diffusion. The shift register is too short for long term simulation. The diffusion only appears reasonable for a few seconds with 800 particles. The <a href="TinyCPU/Stack_machine_2010/Video__interface_1/stack_machine_vga_test.asm">program source</a> was structured so that reading/writing arrays is done using macros.</p>
+<p>Another <a href="TinyCPU/Stack_machine_2010/Video__interface_1/stack_machine_vga_test_2.asm">program</a> computes the position of 800 particles in a simulated gravitational field with viscous damping (air friction). The random number generator produces 18-bit pseudorandom numbers which are used to dither the starting location of the particles into a square region.</p>
+<p>The diffusion <a href="TinyCPU/Stack_machine_2010/Video__interface_1/stack_machine_vga_test3.asm">program</a> was upgraded to a 36-bit random number generator which has a sufficiently long repeat time to enable a much longer diffusion simulation with 1800 particles. The computational frame rate is 75 fps with 1800 particles, running at the VGA clock frequency of 25.2 MHz. The timing analyser says that the cpu should run at 67 MHz, but it seems to run at 75.6 MHz, updating particle positions at 224 fps with 1800 particles, however, the video display wavers a little. At 50.4 MHz, 150 fps, the display is fine.</p>
+<p>Coding the diffusion program suggested that it would be nice to streamline computational descriptions in the assembler, so a new structure directive was invented. The<code> `calc</code> directive allows serveral constant names, variable names, numerical constants, and opcodes to be placed on one line. Within the<code> `calc</code>, <em>using the name of a varialble places it's value on the stack</em>. Using a form such as <code>var1[var2]</code> treats var2 as an index into var1 and places the value of the indexed variable on the stack. Using =var or =var1[var2] stores the value on the stack to the appropriate location. Only opcodes with no operands (hex codes starts with Fxxx) can be used. The enhanced assembler is <a href="TinyCPU/Stack_machine_2010/calc_asm/TinyASM_stack_machine_structure_calc.m">here</a> and the particle example is <a href="TinyCPU/Stack_machine_2010/calc_asm/stack_machine_vga_test4.asm">here</a>. Note that the parser is really stupid! No are spaces allowed between equal sign and variable name. No spaces allowed in indexed variable syntax. Examples:</p>
+<table width="100%" border="1">
+  <tr>
+    <td width="39%"><code>`calc 478 8 shl =x[count]</code></td>
+    <td width="61%">pushes 478 on the stack, then pushes 8, computes 478&lt;&lt;8 and pops the stack into the indexed variable x</td>
+  </tr>
+  <tr>
+    <td><code>`calc frame_toggle bnot dup =frame_toggle</code></td>
+    <td>pushes the value of frame_toggle onto the stack, bitwise inverts it, duplicates it, stores one copy and leaves the other on the stack.</td>
+  </tr>
+  <tr>
+    <td><code>`calc scale shl x[count] add =x[count]</code></td>
+    <td>takes the value already on the stack shifts it by the value stored in scale, gets the value of the indexed variable x, adds the scaled value to x, then stores the value back into x</td>
+  </tr>
+  <tr>
+    <td><code>`calc x[count] 480 8 shl gt</code></td>
+    <td>pushes the value of x indexed by count, pushes 480 and 8, computes 480&lt;&lt;8, and compares the values, leaving the logical 1/0 on the stack</td>
+  </tr>
+</table>
+<hr />
+<p><strong>Simple Compiler</strong></p>
+<p>I wrote a small compiler which hides the assembly language somewhat.  A program consists of a list of names, operators and structuring   statments. Space and end-of-line are delimiters.  Constants and   variables must be declared. Inline and called functions must be   specified before they are used. The program execution starts at the   label <code>main:.</code><br />
+</p>
+<ul>
+  <li>Using the name of a constant or variable in the code places it's value   on the data stack. Using a form such as <code>var1[var2] </code>treats <code>var2</code> as an   index into <code>var1</code> and places the value of the indexed variable on the   stack. Using<code> =var</code> or <code>=var1[var2]</code> stores the value on the stack to the   appropriate location.  For example the following code increments the variable <code>count</code> by pushing the memory value onto the stack, pushing 1 onto the stack, adding them, and popping the stack back into memory.<br />
+  <code>count 1 add =count  </code></li>
+  <li>Available stack operators are:<code> add, sub , shl, shr, band, bor, bxor,   and, or, eq, ne, ge, le, gt , lt, neg , bnot , not, drop, over</code>.  <br />
+  The   operators act  the same way as the respective assembly opcodes. </li>
+  <li>Input and output are indicated by<code> in[const]</code> and <code>out[const].</code></li>
+  <li>The entry point of a called function is indicated by <code>funct_entry:.</code> You invoke   the function by using the name <code>funct_entry</code>. The exit point of a called function is indicated by <code>return</code>. Foward references to called functions must be declared as shown in the longer example linked below.<br />
+  </li>
+  <li>You invoke   an inline function by using its name. For example if the following inline is defined:<br />
+    <code>inline make_vga_addr <br />
+8 shr 9 shl =temp<br />
+8 shr temp add<br />
+endinline</code><br />
+Then later in the program you can use the inline function, in this case by pushing coordinate values on the stack<br />
+<code>y[count] x[count] make_vga_addr out[vga_addr]</code><br />
+<br />
+  </li>
+  <li>Conditional operators are<code> if then else endif</code>. For example the following compares an array variable to 480 and resets it to a lower value if it is too large.<br />
+    <code>if x[count] 480  gt<br />
+then 478  =x[count]<br />
+endif</code><br />
+  </li>
+  <li>Repeat operators are <code>while do endwhile</code>. For example   the following compares <code>counter2</code> to zero and increments the counter until it overflows.<br />
+    <code>while counter2 0 ne<br />
+do counter2 1 add =counter2 <br />
+endwhile    </code></li>
+  <li>The assembler is embedded within the compiler. The syntax is <code>opcode.operand</code> or <code>opcode.</code> if there is no operand. The <em>period</em> is required for assembler commands. The compiler merely inserts the assembler command into the code.</li>
+  <li>Error messages will indicate a unrecognized token (e.g. whilex instead of while), and various assemble errors, like unrecognized symbol, bad opcode, etc.</li>
+  <li>There are four locations reserved for unnamed temporary results at memory addresses 4 to 7. An example follows which swaps the top-of-stack and next-on-stack.<br />
+    <code>inline swap<br />
+pop.4 ; locs 4&amp;5 are hidden temp locations<br />
+pop.5<br />
+push.4<br />
+push.5<br />
+endinline</code><br />
+  </li>
+</ul>
+<p>The compiler generates code to initialize the return stack and then jump   to <code>main</code>. Code starts executing at memory location zero, but your   program starts at <code>main:.</code> The return stack is allocated in high memory,   with variables just below. There is no collision detection between code   and variables. Note that the parser is really stupid! No are spaces allowed between   equal sign and variable name. No spaces allowed in indexed variable   syntax. The <a href="TinyCPU/Stack_machine_2010/compiler/stack_machine_compiler.m">complier</a> and the <a href="TinyCPU/Stack_machine_2010/compiler/stack_machine_vga_comp1.cmp">diffusion  code</a> described in the last section serves as a longer example, running on the <a href="TinyCPU/Stack_machine_2010/Video__interface_1/VGA_640x480_m4k_tinyCPU.v">same processor</a> (but with  mif file <code>/* synthesis ram_init_file = &quot;stack_machine_vga_comp1.mif&quot; */</code>  specified in the memory module). <a href="TinyCPU/Stack_machine_2010/compiler/VGA_m4k_tinycpu.qar">Quartus archive</a>.</p>
+<p>Another, <a href="TinyCPU/Stack_machine_2010/compiler/test1.cmp">shorter example</a> uses a slightly modified <a href="TinyCPU/Stack_machine_2010/compiler/test1_tinyCPU.v">verilog interface</a> to enable LEDs and replace the mif file with <a href="TinyCPU/Stack_machine_2010/compiler/test1.mif">test1.mif</a>. The test code is below. It shows the five basic sections of a program: </p>
+<ol>
+  <li>constant section. This section assigns symbolic names to numerical constants.</li>
+  <li>variable section. This section defines memory locations to hold 18-bit variables. If a number follows the variable name, then the number defines the size of the array.</li>
+  <li>inline function definitions. This section allows you to associate arbitrary code with a name. There is no call-return overhead because the code is simply inserted in line.</li>
+  <li>function entry definitions. This section is necessary because the label handler in the compiler is really stupid. All called functions (not inline) need to be listed here.</li>
+  <li>program section. This section has the actual code, which in this program below just blinks some LEDs and responds to a button press. The if-then-else construct contains three assembler commands embedded in the compiler code.</li>
+</ol>
+<pre>; This program demos compiler
+; with LED output and button input
+; ==================================
+
+constant ; named constants
+	key3mask 8
+	key2mask 4
+	keys 1  ; port 1
+	keymask 15 ; 0x0f
+	pattern2 255 ; 0xff
+	pattern3 15 ; 0x0f
+	redLEDs 3 ; port 3
+	greenLEDs 2 ; port 2
+	forever 1 ; endless loop
+
+; ==================================
+
+variable
+	test   ; location to push test data
+	counter1   ; outer loop counter
+	counter2   ; inner loop counter
+ 
+; ==================================
+ 
+inline inc
+	1 add
+endinline
+
+; ================================
+
+function
+	evalkey
+	
+; =================================
+program ; this section contains the actual program
+
+main:
+0 out[greenLEDs]; reset the green LEDs
+0 =counter1 ; init counter
+
+while forever ; never exit
+do
+	counter1 inc ; get the counter and increment
+	dup ; copy stack top 
+	out[redLEDs] ;output one copy, one on stack to store
+	=counter1  ; save the counter
+
+	;slow it down with an inner loop counter
+	1 =counter2 ; reset and store inner counter
+	while counter2 0 ne ; compare stack top to zero
+		do counter2 inc =counter2 ; inc the counter
+	endwhile	;end of inner loop	
+
+	; detect some button presses
+	if ; is KEY[3] pressed?
+		key3mask evalkey ; detect 4th bit set
+	then ; key 3 is pressed
+		pushi.pattern2 out.greenLEDs   
+	else ; key 3 is not pressed
+		pushpc.  out[greenLEDs]
+	endif	
+endwhile ; end of outer loop
+
+;=== read keys function ====
+; enter with a switch selector bit on the stack
+; exits with a TRUE/FALSE for match/nomatch on stack
+evalkey: 
+	in[keys] bnot ; invert so key-down==1
+	keymask band ; use only lower 4 bits
+	eq ; compare to specific_keymask
+	return
+
+;===end of code ============================
+</pre>
+<hr />
+<p><strong>Serial input/output</strong></p>
+<p>I used serial hardware from John Loomis (see ref below) to add i/o to the stack cpu. The serial i/o will work up to 115200 baud, but is set in the example to 9600 baud. Connection was made to the PC from the RS-232 connector on the DE2. The PC is using the terminal emulator <a href="../../../../../www.chiark.greenend.org.uk/~sgtatham/putty/default.htm">PuTTY</a>, but you could use serial input to Matlab also. The <a href="TinyCPU/Stack_machine_2010/serial_interface/VGA_640x480_m4k_tinyCPU_serial.v">top level module</a> has the serial routines included, but be sure that the mif file name in the memory module matches that generated by the compiler. </p>
+<p>One new structure was added to the compiler:<code> &quot;string</code> places  the <code>string</code> on the stack to be printed by <code>putstr</code>. The limit is about 12 characters before you overflow the stack! Always follow a quoted string with <code>putstr</code>! The compiler is <a href="TinyCPU/Stack_machine_2010/serial_interface/stack_machine_compiler.m">here</a>. The <a href="TinyCPU/Stack_machine_2010/serial_interface/serial_gethex_puthex_putstr.cmp">source code</a> implements the low level interface routines <code>getchar</code> and <code>putchar</code>, then uses them to build <code>putstr, gethex</code> and <code>puthex</code>. <code>Gethex</code> and <code>puthex</code> read and write a single 18-bit number to/from the stack. The main routine prompts  the user to enter a number, then prints it, along with a sequence number.</p>
+<hr />
+<p><strong>References</strong>:</p>
+<p>Nakano, K.;    Ito, Y., <em>Processor, Assembler, and Compiler Design Education Using an FPGA</em>, Parallel and Distributed Systems, 2008. ICPADS '08. 14th IEEE International Conference on; 8-10 Dec. 2008 pages: 723 - 728 <strong> </strong> (Nakano, K.;    Ito, Y.;   Dept. of Inf. Eng., Hiroshima Univ., Higashi-Hiroshima, Japan)</p>
+   <p>Nakano, K.;    Kawakami, K.;    Shigemoto, K.;    Kamada, Y.;    Ito, Y. <em>A Tiny Processing System for Education and Small Embedded Systems on the FPGAs</em>, Embedded and Ubiquitous Computing, 2008. EUC '08. IEEE/IFIP International Conference, Dec. 2008 pages: 472 - 479 </p>
+   <p>John S. Loomis, <em>Digital Labs using the Altera DE2 Board</em>, <a href="../../../../../www.johnloomis.org/digitallab/default.htm">http://www.johnloomis.org/digitallab/,</a> Electrical and Computer Engineering, University of Dayton, Dayton, OH 45469-0232</p>
+   <p><br />
+</p>
+</body>
+</html>

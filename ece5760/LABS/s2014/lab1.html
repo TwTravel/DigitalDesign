@@ -1,0 +1,133 @@
+
+<html>
+<head>
+<title>ece5760 Lab 1</title>
+</head>
+
+<body>
+<h2>
+ECE 5760: Laboratory 1 </h2> 
+<h2> 1-dimensional Cellular Automaton (CA). </h2>
+<p>
+<b> Introduction. </b>
+
+<p> In this assignment you will build a circuit which runs a state machine to compute and display a  <a href="../../../../../../mathworld.wolfram.com/ElementaryCellularAutomaton.html">binary, nearest-neighbor, one-dimensional</a> CA on a VGA monitor. The DE2 switches will be used to enter the rule number. An <a href="../../../../../../www.hostsrv.com/webmaa/app1/MSP/webm1010/onedca">applet</a> shows a display similar to what you should program. The rule number in the applet is entered by clicking boxes along the right edge of the interactive region. 
+<p> <b> Procedures:</b>  
+<ol>
+  <li> You must handle the boards only on on the ESD mat. These boards are expensive
+    and you must be careful of them. 
+  <li>Make sure the Altera DE2 board is connected to power and to the PC as specified
+    in the <a href="../../DE2/tut_initialDE2.pdf">board description</a>. Turn
+    on the power supply with the red switch on the board. Make sure the toggle
+    switch on the left edge of the board marked (<code>Run/Prog</code><strong>) is in
+    the <code>Run</code> position and <em>leave it there at all times</em></strong>. The
+    FPGA will program in the <code>Run</code> position. Putting the switch in
+    the <code>Prog</code> position writes your design to flash memory, which
+    you do not want to do.
+  <li>QuartusII does <strong>not</strong> recognize any project file with a SPACE character in the path name. This includes &quot;my documents&quot;, &quot;lab user&quot;, etc. The error thrown is obscure, as usual:  &quot;can't modify project database&quot;.    
+    <br>
+    <em>Always store your project on your Z drive or a flash drive, never on the C drive.</em>
+  <li>The <a href="../../DE2/DE2_TOP.v">default top level module</a> for the
+    DE2 defines all of the logical i/o signals from the FPGA. A <a href="../../DE2/DE2_TOPjsc59.v">cleaned
+    up version</a> of the top module was written by Jordan Crittenden (2008).
+     A <a href="../../StudentWork/AdamShapiro/template.zip">complete project
+     template</a> by
+  Adam Shapiro (2009) has a cleaned version of the top-level module, the pin assignments,
+  and an empty project.  I suggest that you use Adam's version.<br>
+  <li>A student (Skyler Schneider 2010) has written an improved <a href="../../StudentWork/ss868/ss868_VGA_Controller.zip">VGA control module</a>. His useage notes:
+    <ol>
+      <li> Suppose an outer module M instantiates the VGA_Controller module with clock signal VGA_CTRL_CLK. oCoord_X and oCoord_Y specify a pixel. Upon a rising edge of VGA_CTRL_CLK, signaling a new clock cycle, their values are set. During that next clock cycle, module M should use the values of oCoord_X and oCoord_Y to determine what the color of that pixel should be, but module M should not yet report that color back to VGA_Controller. After the next rising edge of VGA_CTRL_CLK, module M should assert the values of iRed, iGreen, and iBlue. Upon the next rising edge of VGA_CTRL_CLK after that, the VGA_Controller buffers the asserted RGB input and reports it to the VGA screen. So, the timing goes like this:
+        <ol>
+          <li>TICK oCoord_X and oCoord_Y are set. </li>
+          <li>TICK iRed, iGreen, and iBlue are set.</li>
+          <li>TICK oVGA_R, oVGA_G, and oVGA_B are set. The process is pipelined, so the current values of iRed, iGreen, and iBlue will not correspond to the current values of oCoord_X and oCoord_Y, nor the current value of oVGA_R, oVGA_G, and oVGA_B. </li>
+        </ol>
+      </li>
+      <li> Although the calculation of oAddress should be correct theoretically, I did not use it in Lab 1 and therefore did not test it.</li>
+      <li> The behavior when using iCursor inputs has not been tested and may be incorrect. </li>
+      <li> The timing parameters specified in VGA_Param.h have been modified from their previous values to better work with the DELL screens in lab. The front and back porch lengths have been changed to try to center the screen at default settings. The horizontal sync pulse length has also been shortened, which helps remove some jitter.</li>
+  </ol>    
+  <li>You can define the mapping from logical signal to FPGA pins (<em>pin assignment</em> in
+    QuartusII) for all the pins at once by importing <a href="../../DE2/DE2_pin_assignments.csv">this
+    file</a> using the menu item <code>Assignments... Import Assignments...</code> and
+    specifying the file name. There is no need to define pins one-by-one. And
+    a note about pin assignments:<br>
+    <pre>Here is the reason why PIN_AE24 will not assign. The physical pin on
+the cyclone chip corresponding to PIN_AE24 is a dual-purpose pin. Quartus 
+must be told to use this as regular i/o (instead of a programming pin) 
+after programming.
+Solution:
+In quartus go to--
+Assignments >> Device...
+Device and Pin Options...
+Dual-Purpose Pins (tab)
+choose: "Use as regular i/o" for entry: nCEO
+Solution was adapted from here:
+http://forum.eaw.com.cn/thread/7617/1
+Tony Tsang</pre>
+  <li>Read the Altera <a href="../../Verilog/tut_quartus_intro_verilog.pdf">tutorial</a> on
+    using Verilog with QuartusII.
+  <li>You may want to use the QuartusII SignalTap tool to verify your design.
+    Here are the steps that seem to be necssary to get SignalTap working. For
+    more information, read the Altera <a href="../../Verilog/tut_signaltapII_verilogDE2.pdf">tutorial</a> on
+    using SignalTap, an on chip logic analyzer.
+    <ol>
+      <li>Choose menu <code>Tools&gt;SignalTap</code></li>
+      <li>In the main SignalTap window, click <code>Hardware Setup...</code> (in
+        the upper rigtht corner) <br>
+        and in the dialog box choose the hardware (USB-Blaster)</li>
+      <li>Choose menu <code>Edit&gt;AddNodes... </code>
+        <ol>
+          <li>Choose the appropriate <code>Filter</code> to simplify the list
+            of nodes, the press <code>List</code></li>
+          <li>Highlight nodes and move to right-hand list using <strong><code>&gt;</code></strong> button </li>
+          <li>Click <code>OK</code> to get back to main SignalTap window </li>
+        </ol>
+      </li>
+      <li>In the main SignalTap window, click the <code>Clock ...</code> button
+        and choose the clock signal as in AddNodes</li>
+      <li>In the node panel of the main window, set up trigger conditions.</li>
+      <li>Compile and then load the design onto the FPGA</li>
+      <li> In the main SignalTap window, toggle the <code>Data/Setup</code> button</li>
+      <li> Choose menu <code>Processing &gt;Run Analysis</code></li>
+  </ol>  
+  <li> You will probably want to look through the VGA examples on the <a href="../../DE2/indexVGA.html">VGA examples</a> page to see one way of designing a memory state machine. Notice that you need to set up the address one cycle (at 27 MHz) before you read the data. The 61LV25616 SRAM <a href="../../DE2_Datasheets/Memory/61LV25616.pdf">memory data sheet</a> suggest that it requires &lt;20 nS to set up.
+</ol>
+<hr>
+<p><strong>Student Examples</strong></p>
+<p>Rohan Sharma and Tejas 	Sapre (Fall 2010) added hue interpolation to their state machine, coding generation number.<br>
+<img src="../../StudentWork/RohanSharma/ColorInterpolation.jpg" width="685" height="480" alt="rule 30"></p>
+<hr>
+<p>&nbsp;</p>
+<p><b>Assignment </b> 
+</p>
+<ul>
+  <li> You will design the system in Verilog and compile it to the FPGA using QuartusII. Don't use schematic entry or VHDL. </li>
+  <li>KEY0 will reset the state machine. The state machine will run at VGA clock rate. </li>
+  <li>The VGA resolution must be at least 320x240. </li>
+  <li>The initial state of the CA should be shown at the top of the VGA screen, each succeeding state should be shown on the next video line below.</li>
+  <li>When the screen fills, the CA should stop until KEY3 is pressed, then exactly one more screen should be filled as if time is proceeding. In other words, the bottom line of the first screen should be copied to the top line of the second screen, and used as the initial condition to refill the screen. </li>
+  <li>There should be no flickering, tearing, or other video artifacts caused by your state machine.</li>
+  <li>The initial state will be exactly one cell at the center, top of the screen, or a random binary vector across the top of the screen. The initial state (seed or random) will be entered using SW17 and cannot be changed except at reset. </li>
+  <li>The <a href="../../../../../../mathworld.wolfram.com/ElementaryCellularAutomaton.html">CA rule</a> will be entered in binary on SW[7:0] and cannot be changed except at reset. </li>
+  <li>As mentioned below, compare CA rules to natural phenomena. </li>
+  <li>Do not build a general purpose CPU for this lab.</li>
+</ul>
+<p>Be prepared to demo your design to your TA in lab.</p>
+<p> Your written lab report should include the sections mentioned in the <a href="../../policy.html">policy page</a>, and :
+<ul>
+  <li>An RTL (register transfer level) block diagran of your design. 
+  <li>A state-transition diagram for the main CA update state machine. <li> A photograph of the VGA screen showing the evolution of an interesting CA.   
+  <li>A comparison of 1D cellular automata with natural phenomena.
+    <ul>
+      <li>Which rule(s) generate patterns which look like  <a href="../../../../../../www.rudyrucker.com/blog/2004/12/default.htm">seashells</a>?  <a href="../../../../../../algorithmicbotany.org/papers/shells.sig92.pdf">more</a> </li>
+      <li><a href="../../../../../../www.kathryncramer.com/kathryn_cramer/2005/09/cellular_automa.html">Caterpillars?</a></li>
+      <li>Use the web to find <a href="../../../../../../www5.geometry.net/detail/pure_and_applied_math/cellular_automata.html">other examples</a> of shells and <a href="../../../../../../www.msm.cam.ac.uk/phase-trans/dendrites.html">other 1D growth systems</a>.</li>
+  </ul>
+  <li> A heavily commented listing of your Verilog design. 
+</ul>
+<hr>
+<small> <font size="-1">Copyright Cornell University  </font></small> 
+<!-- #BeginDate format:Am1 -->January 22, 2014<!-- #EndDate -->
+</body> </html>
+

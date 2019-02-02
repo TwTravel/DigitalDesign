@@ -1,0 +1,200 @@
+
+<html>
+<head>
+<title>ece5760 Lab 2</title>
+<style type="text/css">
+<!--
+.red {	color: #F00;
+}
+-->
+</style>
+</head>
+
+<body>
+<h2>
+ECE 5760: Laboratory 2 </h2> 
+<h2> Artillery Duel</h2>
+<p>
+<b> Introduction. </b>
+
+<p>You will produce a version of the classic video game artillery duel (<a href="../../../../../../www.youtube.com/watch@v=Z0SiMJEWelk">example</a> and <a href="../../../../../../www.funnygames.eu/game/cannon_duel.html">another</a>). 
+  The cannon firing will be controlled by an push button, and the cannon angle 
+by two button pushes.  There will be an automatic opponent cannon fire back. Display will be at VGA resolution. 
+<p> <b> Procedures:</b>  
+<ol>
+  <li>  You must handle the boards only on on the ESD mat. These boards are expensive and you must be careful of them. <p></p>
+  <li>Make sure the Altera DE2 board is connected to power and to the PC as specified 
+    in the evaluation board description. Turn on the power supply with the red switch 
+    on the board. Make sure the toggle switch on the left edge of the board marked (<code>Run/Prog</code>) is in the <code>Run</code> position and <em>leave it there at all times</em>.
+The FPGA will program in the <code>Run</code> position. Putting the switch in the <code>Prog</code> position writes your design to flash memory, which you do not want to do.<p></p>
+  <li>The <a href="../../DE2/DE2_TOP.v">default top level module</a> for the DE2 defines all of the logical i/o signals. <p></p>
+  <li>You can define the mapping from logical signal to FPGA pins (<em>pin assignment</em> in QuartusII) for all the pins at once by importing <a href="../../DE2/DE2_pin_assignments.csv">this file</a> using the menu item <code>Assignments... Import Assignments...</code> and specifying the file name. There is no need to define pins one-by-one.   
+    <p></p>
+  <li>The cpu you will use is either a NoisII or Pancake. Pancake is described on the <a href="../../DE2/Stack_cpu.html">stack cpu page</a>.  A compiler is also described there which uses a stack language. The cpu I built has a multiplier designed for 10:8 fixed point. 
+  To get solid VGA timing using Pancake you need to use the timing advisor<code> (menu tools&gt;advisors&gt;timing)</code> to optimize <em>every chance</em> for faster design.   A student group in 2013 wrote a <a href="../../StudentWork/bresenham/vga_line.cmp">Brensenham line drawing routine</a> (thanks Matheus Ogleari, Aadeetya Shreedhar, Chris Fairfax) for Pancake.<br>
+  The links for NiosII are given below.<br>
+  <li>
+  <p>You are going to be programming in the equations of motion for each projectile. Each projectile is affected by gravity and by air resistance. Remeber that the video coordinate system has x increasing 
+    to the right and y increasing downward. If &theta; is the angle of the cannon 
+    from the horizontal (and measured positive counterclockwise) then the initial velocity
+    is:
+  <p><code>v<sub>x</sub>(0)=Vo*cos(&theta;)</code> and <code>v<sub>y</sub>(0)=Vo*sin(&theta;)</code>
+ Where you will pick Vo to make the game playable and interesting. <br>
+ Clearly, at t=0, the position of each projectile will be at the muzzle of its respective cannon.
+  <p>At all times:
+  <p><code>a<sub>x</sub>=-d*v<sub>x</sub></code> and <code>a<sub>y</sub>=g-d*v<sub>y</sub></code>
+  where d is a air drag coefficient, which will be a small fraction of g.<br>
+  The gravitational acceleration, g, should be scaled to make the game playable.<p>Computing the velocity change over a short time (by the Euler method)
+  <p><code>v<sub>x</sub>(t+dt)=v<sub>x</sub>(t)+a<sub>x</sub>*dt</code> and <code>v<sub>y</sub>(t+dt)=v<sub>y</sub>+a<sub>y</sub>*dt </code>
+  <p>Computing the position change over a short time (by the Euler method)
+  <p><code>x(t+dt)=x(t)+v<sub>x</sub>*dt</code> and<code> v(t+dt)=y(t)+v<sub>y</sub>*dt </code>
+  <p>The game is over when you hit the automatic cannon or it hits you.</li>
+</ol>
+<p><strong>--For NiosII See also:</strong></p>
+<ul>
+  <li><a href="../../NiosII_doc/Video_q11.pdf">VGA for NiosII</a> -- <a href="video_core-use_notes.html">Use notes for 640x480 resolution</a></li>
+  <li><a href="../../../../../../ftp@ftp.altera.com/up/pub/Altera_Material/12.1/Tutorials/Verilog/SignalTap.pdf">Signal Tap logic analyser tutorial</a> (on chip)</li>
+  <li><a href="../../NiosII_doc/Quartus11_nios/Introduction_to_the_Altera_SOPC_Builder.pdf">Intro to SOPC builder</a></li>
+  <li><a href="../../NiosII_doc/Quartus11_nios/Using_the_SDRAM.pdf">Using SDRAM</a></li>
+  <li><a href="../../NiosII_doc/Quartus11_nios/Nios2_introduction.pdf">NiosII introduction</a></li>
+  <li><a href="../../NiosII_doc/Quartus11_nios/Altera_Monitor_Program.pdf">Altera Monitor Program</a></li>
+  <li><a href="../../NiosII_doc/Quartus11_nios/HAL_tutorial.pdf">HAL in Altera Monitor</a></li>
+  <li><a href="../../NiosII_doc/Quartus11_nios/Getting_Started_Nios_IDE.pdf">Getting started with the NiosII EDS</a></li>
+  <li><a href="../../../../../../www.altera.com/literature/lit-nio2.jsp">NiosII Literature</a></li>
+  <li><a href="../../../../../../www.altera.com/literature/tt/tt_nios2_hardware_tutorial.pdf">NiosII hardware tutorial</a></li>
+  <li><a href="../../../../../../www.altera.com/literature/hb/nios2/edh_ed51004.pdf">NiosII 10.0 command shell</a></li>
+  <li><a href="../../NiosII_doc/Nios_SW_handbook.pdf">Nios Software handbook</a>.</li>
+  <li><a href="../../../../../../www.altera.com/literature/ug/ug_embedded_ip.pdf">Embedded Peripheral Users Guide</a></li>
+  <li><a href="../../../../../../www.altera.com/literature/hb/qts/qts_qii51015.pdf">Incremental compilation for QuartusII</a></li>
+  <li>The Nios II IDE is based on the Eclipse IDE project and the Eclipse C/C++ Development Tools&nbsp;(CDT). See Eclipse Project at <a href="../../../../../../www.eclipse.org/default.htm">www.eclipse.org</a>.</li>
+  <li>Once you have initialized and built a BSP project in the Nios IDE, you can find:<br>
+    (1) peripheral macro definitions in your_proj_bsp...drivers...inc<br>
+    (2) header code in your_proj_bsp...alt_sys_init.c then right-click on   specific includes such as "sys/alt_irq.h" and ask to "open declaration"<br>
+    (3) full HAL API in<br>
+    &nbsp;<a href="../../../../../../https@exchange.mail.cornell.edu/owa/redir.aspx@C=68454e0cd3dd439c83bb9f6a5ae4de94&URL=http_253a_252f_252fwww.altera.com_252fliterature_252fhb_252fnios2_252fn2sw_nii5v2_04.pdf" target="_blank">http://www.altera.com/literature/hb/nios2/n2sw_nii5v2_04.pdf</a></li>
+</ul>
+<p><strong>--Setting up Altera Monitor System</strong></p>
+<ol>
+  <li>Altera moniotr is installed on the lab computers. On your own computer, download the executable from <a href="../../../../../../www.altera.com/education/univ/software/monitor/unv-monitor.html">http://www.altera.com/education/univ/software/monitor/unv-monitor.html</a>. <br>
+  Make sure that you choose the version that matches the version of QuartusII which is installed.</li>
+  <li>Install the executable. You will not be able to run it unless you ave previously installed QuartusII and the NiosIDE tools.</li>
+  <li>When you run the monitor program in the lab, it may tell you that QuartusII is not installed. If so, open <code>control panel&gt;system&gt;advanced&gt;environment variables</code> and add a variable with name <code>QUARTUS_ROOTDIR</code> and value <code>c:\altera\11.0\quartus</code>.</li>
+  <li>Follow the directions for setting up a new project in <a href="../../NiosII_doc/Quartus11_nios/Altera_Monitor_Program.pdf">Altera Monitor Program</a>. Choose the C option which uses <code>program with device driver support</code>.</li>
+</ol>
+<p><strong>---Setting up a new project in the NiosII IDE:</strong><span class="red"> <strong>USE <a href="../../../../../../www.altera.com/literature/hb/nios2/n2sw_nii52017.pdf">THIS REFERENCE</a> for version 10.0 EDS</strong></span></p>
+<ol>
+  <li>When using the IDE there must be <strong>no space characters in the path</strong> you choose to your workspace! </li>
+  <li>Start the IDE and specify a workspace. When you designed the cpu and top-level module, the design was stored in a folder. In the Workspace selection dialog box, browse for that folder, then add the string <code>\software</code> to the folder path. This new folder will be used to store all of the software projects associated with the specific cpu you built in the SOPC. After you press OK, you may need to click on the <code>workbench</code> icon to do anything useful. </li>
+  <li>Create a new software project. Select <code>File&gt;New&gt;project</code>. A series of dialog boxes will open.
+    <ol>
+      <li>In the <code>Altera NiosII item</code>, choose <code>NiosII C/C++</code> application, then click <code>Next</code>. </li>
+      <li>Give the project a <code>name</code>, specify the <code>ptf</code> file from SOPC builder, use the <code>default location</code>, and specify a <code>blank project</code>. <br>
+        Then click <code>Next</code>.</li>
+      <li>Select <code>creat new system library</code> then click <code>finish</code>. </li>
+    </ol>
+  </li>
+  <li>Back in the main IDE window, right-click on the <code>syslib</code> entry in the <code>C/C++ Projects </code>pane, then select <code>Properties</code>.
+    <ol>
+      <li>In the dialog box, select <code>system library</code> on the left. </li>
+      <li>Associate the desired device with <code>stdout</code>, <code>stdin</code>, and <code>stderr</code>. These will usually default to the JTAG UART. </li>
+      <li>From the pulldown menu, select whether you are going to use <code>single threaded</code> or <code>microC/OS</code>. Note that the web-version of the IDE does not support the operating system. </li>
+      <li>Select the memory location, usually defaults to SDRAM. </li>
+      <li>Click <code>OK</code> to proceed. </li>
+    </ol>
+  </li>
+  <li>Back in the main IDE window, right-click on the <code>syslib</code> entry in the <code>C/C++ Projects </code>pane, then select <code>Build Project</code>. <br>
+    Wait for it to finish. </li>
+  <li>Create header files using <code>File&gt;New&gt;headerfile </code>and C files using<code> File&gt;New&gt;file. </code>The project (not the syslib) <em>should be highlighted before creating</em> the new source file.</li>
+  <li>In <code>Run...</code> menu item be sure that the download option points to the actual project (not the syslib project). In the Run... dialog double-click the NiosII hardware option to find the USB-blaster device and download to the software to the NiosII.</li>
+  <li>If you get the following message when downloading your program to the NiosII (when using SDRAM for the program):<br>
+    <pre>Using cable "USB-Blaster [USB-0]", device 1, instance 0x00
+Pausing target processor: not responding.
+Resetting and trying again: FAILED
+Leaving target processor paused&gt; </pre>
+    Then some suspects come to mind:
+    <ol type="a">
+      <li>You forgot to assign pins to the QuartusII project. </li>
+      <li>There is an incorrect or missing PLL file for SDRAM delay (use the megawizard to rebuild or generate a new PLL module as described in the <a href="../../DE2/tut_DE2_sdram_verilog.pdf">SDRAM tutorial</a>.) <strong>Special Note</strong>: The component <code>altpll</code> has changed between release 7 and 8 of Quartus. When defining a PLL for the phase-shifted SDRAM clock <code>c0</code> (as explained in the <a href="../../DE2/tut_DE2_sdram_verilog.pdf">SDRAM tutorial</a>), you need to add an <code>c1</code> output to the PLL with zero phase-shift and use this signal for the NiosII clock! If you don't do this, the program will load normally, with no error messages, <strong>but the program will not run</strong>! A new, corrected project is zipped <a href="../../NiosII_C/NiosSDRAMv8.zip">here</a>.</li>
+      <li>There is a misspelled control line in the Nios module interface, usually the clock or reset signal. </li>
+      <li>The reset line is being held low/high by incorrect logic. <br>
+      Using <code>reset=~KEY[0]</code> will <em>kill</em> the processor! Whereas using <code>reset=KEY[0]</code> is fine.<em></em></li>
+      <li>Check the size of the compiled hardware design. If the size is less than about 2000 logic blocks, then the Nios was probably optimized away. Check all the warnings to make sure no NiosII registers were <em>reduced</em>.</li>
+    </ol>
+  </li>
+</ol>
+<p><strong>--Opening a downloaded, zipped project from the course site</strong></p>
+<ol>
+  <li>Unzip the file.</li>
+  <li>Open the QuartusII project then:
+    <ol>
+      <li>Regenerate the NiosII in SPOC builder.</li>
+      <li>Close the SOPC builder.</li>
+      <li> Resynthesize the Verilog design. </li>
+      <li>Download the <code>sof</code> file to the DE2. </li>
+    </ol>
+  </li>
+  <li>Start the Nios II IDE. The path to the IDE is approximately <code>C:\altera\kits\nios2_60\bin\eclipse\nios2-ide.exe</code>.
+    <ol>
+      <li>The folder heirarchy will have a folder with all the SOPC-generated stuff in it. In that folder will be a folder entitled <code>software</code>. In the Nios II IDE menu <code>File</code>, choose <code>Switch Workspace...</code> and point the workspace to the <code>software</code> folder. The Nios IDE will appear to close itself, then reopen in the specified workspace. Some folders should appear in the left panel of the IDE. </li>
+      <li>In the menu <code>Project</code>, choose <code>Clean...,</code> and in the dialog box choose <code>All projects</code>. This action will remove any dependencies on older versions of the Nios IDE or libraries.</li>
+      <li>Rebuild all the project parts by selecting the <code>Run</code> menu, choosing <code>Run as...,</code> and then <code>NiosII hardware</code>. </li>
+    </ol>
+  </li>
+</ol>
+<p><strong>--Using   QuartusII SignalTap tool to verify your design.</strong></p>
+<p>From the <a href="../../../../../../ftp@ftp.altera.com/up/pub/Altera_Material/12.1/Tutorials/Verilog/SignalTap.pdf">Altera Tutorial</a>: The SignalTap II Embedded Logic Analyzer is a system-level debugging tool that captures and displays signals in circuits designed<br>
+for implementation in Altera’s FPGAs. SignalTap II  can be used to capture and display signals in real time in any FPGA design (some M4K blocks are used).<br> 
+You can:</p>
+<ul>
+  <li>Probe signals using the SignalTap software.</li>
+  <li>Set up triggers to specify when data is to be captured.</li>
+  <li>Configure  Sample Depth and Buffer Acquisition Modes using on-chip memory.</li>
+  <li>Configure QuartusII to keep registers which are otherwise optimized away.<br>
+  </li>
+</ul>
+<p>&nbsp;</p>
+<hr>
+<b> Assignment </b> 
+<ul>
+  <li>
+    <p>Design a system to display the game. You may use a NiosII or Pancake microcontroller. Write a program for the microcontroller with these specifications: 
+    <ul>
+      <li>At start, the program should:
+        <ul>
+          <li>Video resolution should be 640x480 pixels.</li>
+          <li>Draw an elementary landscape at the bottom of the TV screen. There should be at least two flat areas wiith an raised area between them.<br>
+            The landscape (cannon positions, mountain position and height) should be different every time the system is restarted.</li>
+          <li>The human-controlled cannon should be on the left flat area. The automartic cannon should be on the right flat area.</li>
+          <li>Both cannons should start with an initial altitude of 45 degrees.</li>
+        </ul>
+      <li>At each frame, update the  velocity and position of each projectile, 
+        and redraw the cannons. The drawing of the cannon need not be complicated, 
+        but must include an indication of the direction of the barrel. Each projectile can be just a single point.</li>
+      <li>Cannon altitude should be changed by two pushbuttons (clockwise and counterclockwise) 
+        with each press changing the attitude, &theta;, by 5 degrees. Attitude should 
+        be limited to zero to 85 degrees.</li>
+      <li>Cannon is fired using another button.</li>
+      <li>The automatic cannon will fire once every few seconds at a rate you determine makes the game playable.</li>
+      <li>The automatic cannon control algorithm can be fairly stupid. For instance, random altitude changes between firings.</li>
+      <li>The game ends when you hit the automatic cannon, or it hits you. 
+        There should be appropriate winner/loser messages displayed. </li>
+      <li>There should be no video artifacts (rolling, tearing, flickering) during 
+        operation.</li>
+    </ul>
+    <p>When you demonstrate the program to a staff member, you should exercise all 
+      the program functions. <br>
+      You should be able to actually hit the other cannon. Your program should not need
+      to be reset during the demo.          </p>
+</li>
+</ul>
+<p> Your written lab report should include the sections mentioned in the <a href="../../policy.html">policy page</a>, and :
+<ul>
+  <li>A video of the game being played, sent to your TA using dropbox.cornell.edu
+  <li>The arithmetic system you used (fixed, floating).
+  <li> A heavily commented listing of your Verilog design and  code.
+</ul>
+<hr>
+<small> <font size="-1">Copyright Cornell University </font></small>
+<!-- #BeginDate format:Am1 -->January 31, 2014<!-- #EndDate -->
+</body> </html>
+

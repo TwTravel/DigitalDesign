@@ -1,0 +1,487 @@
+<!-- HTML code adapted from http://people.ece.cornell.edu/land/courses/ece4760/FinalProjects/f2012/oaq3_cig23_rk447/oaq3_cig23_rk447/index.html
+   Hand-Motion Chess with Accelerometers by Omeo Quddus, Roland Krieger, and Cameron Glass -->
+
+<html>
+<head>
+
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta http-equiv="Content-Language" content="en-us">
+	<link rel="stylesheet" type="text/css" media="all" href="style.css" />
+	<title>ECE5760 An FPGA Based Robotic Rubik's Cube Solver</title>
+	<meta name="author" content="Alex Whiteway, Sungjoon Park, Rameez Qurashi">
+	<meta name="copyright" content="Copyright (c) 2015 Alex Whiteway, Sungjoon Park, Rameez Qurashi">
+	<meta name="description" content="An FPGA based robotic rubik's cube solver with automatic cube recognition">
+	<meta name="keywords" content="robot, robotic, rubik's, cube, FPGA">
+</head>
+<!-- end header -->
+
+<body>
+<div id="main">
+   <div id="top"><img height="240px" src="img/rubiksTop.png" /></div>
+
+	<div id="wrapper">
+		<div id="maincontent">
+			<div class="insidemain">
+			
+			<h4><a href="../../../../default.htm">ECE 5760</a>: <a href="../../../default.htm">Final Projects</a></h4>
+			<h1>An FPGA-Based Robotic Rubik's Cube Solver</h1>
+			<h4>Alex Whiteway(<a href="mailto:akw62@cornell.edu">akw62@cornell.edu</a>)</h4>
+			<h4>Sungjoon Park (<a href="mailto:sp2283@cornell.edu">sp2283@cornell.edu</a>)</h4>
+			<h4>Rameez Qurashi (<a href="mailto:rq35@cornell.edu">rq35@cornell.edu</a>)</h4><br>
+			
+			<h2 id="intro">Introduction</h2>
+			
+			<p>We tasked ourselves with designing a mechanical Rubik’s cube solver. The mechanical arms rotate the cube to show each cube face of the cube to the camera. After each face is scanned, the cube faces are passed into the Rubik’s cube solving algorithm. The algorithm computes the moves that will be needed to solve the cube using a <a href="../../../../../../../../https@www.altera.com/products/processors/overview.html">Nios II processor</a>. The instructions are then fed to the FPGA, which in turn sends PWM signals to the servos to rotate the cube accordingly in order to solve the cube.</p>
+			
+			<h5><a href="#top">[top]</a></h5>
+		  
+			
+			<h2 id="high_level">High Level Design</h2>
+				<p>A variety of Rubik’s cube solvers (including a few FPGA implementations) have been created as hobby projects, but there are as of now no FPGA implementations that physically solve a cube. The other FPGA implementations merely give the user instructions on how to solve a specific cube. The most efficient Rubik’s cube solvers used more complex and efficient algorithms than we did, but because of time constraints we used a less efficient, but still effective algorithm detailed below. We sped up certain stages of this algorithm by creating lookup tables to look up the most effective combination of moves instead of computing a possibly suboptimal solution. We could have used a fourth arm to improve our solving time by decreasing the number of moves necessary to solve the cube, but we chose not to purchase a fourth arm due to budget constraints. Since the servos take up to a few seconds per move, the Nios has usually completed the solving algorithm before the arms are able to complete the first move.</p><br>
+            
+				<a href="img/FinalBlockDiagram.png"><img width="50%" src="img/FinalBlockDiagram.png" /></a>
+            <p class="caption">System block diagram</p><br>            
+            
+			<h3>Background Algorithm</h3>
+				<p>There are many Rubik’s cube solving algorithms out there. One of the popular algorithms for computing is <a href="../../../../../../../../www.jaapsch.net/puzzles/thistle.htm">Thistlethwaite's</a> algorithm. It can solve the cube at most with 52 moves but it requires large number of very big lookup tables so we decided to go for the <a href="../../../../../../../../https@www.rubiks.com/blog/how-to-solve-the-rubiks-cube">basic algorithm</a> that Rubik’s cube website provides.  It contains 5 stages:</p><br>
+            
+				<a href="img/stage1.jpg"><img width="50%" src="img/stage1.jpg" /></a>
+            <p class="caption">Stage 1: Solve the white cross</p><br>
+            
+            <a href="img/stage2.jpg"><img width="50%" src="img/stage2.jpg" /></a>
+            <p class="caption">Stage 2: Solve the white corners</p><br>
+            
+            <a href="img/stage3.jpg"><img width="50%" src="img/stage3.jpg" /></a>
+            <p class="caption">Stage 3: Solve the middle layer</p><br>
+            
+            <a href="img/stage4.jpg"><img width="50%" src="img/stage4.jpg" /></a>
+            <p class="caption">Stage 4: Solve the top layer</p><br>
+            
+            <a href="img/stage5.jpg"><img width="50%" src="img/stage5.jpg" /></a>
+            <p class="caption">Stage 5: Position the yellow corners</p><br>
+
+            <p>This algorithm takes an average of ~170 moves, but it does not require big look-up tables. We tested our program based upon this algorithm during most of the development period. It may have been slow and inefficient, but it was able to solve every cube we tested. <br>We wanted fewer moves to solve the cube, however, so we took parts of the <a href="../../../../../../../../https@www.speedsolving.com/wiki/index.php/CFOP">CFOP</a> (Cross-F2L-OLL-PLL) method. The stages are:<br>
+            
+            <br>Cross: Solve the white cross
+            <br>&nbsp;&nbsp;&nbsp;- This is basically same as the basic method)
+            <br>F2L: Solve the first two layers
+            <br>&nbsp;&nbsp;&nbsp;- This essentially combines the stage 2 and stage 3 for the basic method and this is the major fact to reduce the number of moves to solve the cube
+            <br>OLL: Orienting the last later
+            <br>&nbsp;&nbsp;&nbsp;- Functionally same as the stage 4 of the basic method
+            <br>PLL: Permuting the last layer
+            <br>&nbsp;&nbsp;&nbsp;- Functionally same as the stage 4 of the basic method
+            <br><br>
+            For F2L, OLL and PLL, there are a limited numbers of cases: F2L has 41 for each corner, OLL has 57, and PLL has 27. We were able to successfully implement the CFOP method by generating separate look-up tables for each stage. CFOP reduced the average number of moves by ~100, resulting in an average of 60-70 moves to solve the cube.</p><br>
+            
+			<h3>Logical Structure</h3>
+				<p>The user places a cube into the claws and uses the terminal to tell the Nios to begin solving. The NTSC camera data is then interpreted to look for cubes. Once the Nios is confident in the cube detection, it commands the servos to rotate the cube to expose another face to the camera. This sequence repeats until the full cube is scanned. Once the full cube is scanned, error correcting code attempts to locate and correct invalid configurations. After the full cube state has been determined, the Nios runs the solving algorithm to compute the move sequence, sending each move to the FPGA as it is determined. At this point, the servos begin to execute the move sequences and run until the last command. A flow chart can be seen below.</p><br>
+				
+			<h4>Software Tradeoffs</h4>
+				<p>The main software tradeoff came with speed vs. complexity. Algorithms exist to solve any cube in approximately 20 moves. We studied these algorithms for days without being able to fully comprehend them. Because of this, we went with more basic algorithms requiring up to 10x the moves, but we fully understood it and were able to implement it without any major issues. Algorithm speed was not an issue for us since the algorithm usually finishes before the robot has completed the first move.</p><br>
+            
+         <h4>Hardware Tradeoffs</h4>
+            <p>When designing our system, we had to choose between three (the minimum needed) or four (one on each side except top and bottom) claws. Three claws provided a lower cost, but it made solving the cube much slower. First, up to two full cube rotations are necessary to rotate a face at the cost of approximately 4 seconds per rotation. The contrasts with the four claw option, requiring a maximum of one full rotation. Second, we are not able to rotate the cube in certain directions since a single gripper cannot hold the cube when the gripper is horizontal. This problem would have been solved using four arms. Ultimately we chose to construct three claws due to cost constraints.</p><br>
+			
+			<h4>Standards</h4>
+				<p>We had to follow a few standards for this project. For the video system, we had to use <a href="../../../../../../../../en.wikipedia.org/wiki/NTSC">NTSC</a> and <a href="../../../../../../../../en.wikipedia.org/wiki/Video_Graphics_Array">VGA</a>, both of which are well-know protocols. We also had to follow a standard for the servo communication, outlined in the hardware section.</p><br>
+			
+			<h4>Relevant Copyrights</h4>
+				<p>The name Rubik's Cube and its logo are currently trademarked, however the patent has expired.</p>
+				
+			<h5><a href="#top">[top]</a></h5><br>
+				
+			<h2 id="software">Software</h2>
+			
+			<h4>Cube Scanning</h4>
+         
+				<p>The software consists of code for cube scanning and solving. The cube scanning works by reading in the raw YUV 444 data from a pixel buffer that the Altera IP video cores use to store data our camera and output it to a VGA screen. The scanning code creates 9 lowpass filter kernels at uniform locations corresponding to the expected location of cubies on each face of the cube. We use these filters on each channel of the YUV data. We chose to do this lowpass filtering to mitigate the effect of noise in individual pixels. We then created threshold values to assign a color value to each cubie based on the result of the lowpass filter of each channel. In order to reduce color misidentifications, we take 25 samples of each kernel and use the mode as the final result. For further error-checking, we compare the total amount of color values for each cubie and check it against the total number of colors of each cubie for a normal Rubik’s cube (9/color) and we rescan the cube if these numbers do not match. Because of limitations with our three arm setup only allowing us to scan 4 faces we have to use the arms to creatively rotate certain faces to present all of the cubies to the scanner, slightly scrambling the original cube orientation more in the process. This method will not allow us to present the left and right center cubies, but these are inferred in software. After the cube is finished scanning, it sends the color values of the faces to the cube solving code.</p><br>
+				
+			<h4>Cube Solving</h4>
+				
+				<p>Our first version was based on the beginner’s guide on <a href="../../../../../../../../https@www.rubiks.com/default.htm">Rubik’s Cube homepage</a> but the final version was based on the <a href="../../../../../../../../https@www.speedsolving.com/wiki/index.php/CFOP">CFOP method</a>. The algorithm code was first implemented with the manual input of the scrambled cube. The algorithm prints out the original state of the cube, the moves take for the each stage, and then finally solved state of the cube. Please see below for the implementation of the both methods.</p><br>
+            
+            <a href="img/ssbasic.png"><img width="75%" src="img/ssbasic.png" /></a><br>
+            
+				<p>This is a screenshot of the old method which is the basic method for beginner’s from the Rubik’s cube website.<br><br>Stage 1:<br>It checks each of the four edges on the top face and solve it one edge at a time. If it is already solved, it is going to skip this stage. Otherwise, it solves one edge then rotates the cube and solve for the next edge and so on for the rest of them. When the cross on the top is done, the program will move on to the next stage.<br><br>Stage 2:<br>Again, this checks each corner piece on top and if it is not the right piece, the program solves it one corner at a time. This function detects where the right corner piece is first, then moves it to the right place with the correct orientation one corner at a time.<br><br>Stage 3:<br>First, it flips the cube upside down and finds the right edge piece one at a time. It then solves the side cubies. Very similar to Stage 1 and 2, it locates the right edge piece first and solves one, rotates the cube and solves for another one using the same method. This continues until all the side edges are placed correctly.<br><br>Stage 4:<br>There are two steps in Stage 4. First we need to make a cross on the top (This is a different cross from the Stage 1 because we flipped the cube upside down right before stage 3). Depending on how the top is oriented, a sequence is applied to solve for the cross. Of course, this stage would be skipped if the cross was already there. For the second step, depending on how the corner pieces are oriented, pre-patterned sequences are applied to achieve the full color completion on the top layer.<br><br>Stage 5:<br>This stage also has two steps. In the first step, all four corner pieces are oriented correctly and in the second step, all the edge pieces are oriented correctly. The cube is then finally fully solved. These two steps are done by separate pre-patterned sequences.</p><br>
+            
+            <p><u>CFOP Method</u></p>
+            <a href="img/sscfop.png"><img width="75%" src="img/sscfop.png" /></a>
+            
+            <p>This is a screenshot of the new method which is CFOP method that is much better than the basic one. If you see the total move count of this new method, it is significantly better than the old one. The old one had 137 moves (which is one of the better cases) and this one has only 72 moves.<br><br>Cross:<br>It checks each of the four edges on the top face and solves it one edge at a time. If it is already solved, it is going to skip this stage. This is pretty much same as the Stage 1 in the basic method.<br><br>F2L:<br>This is a combination of the Stage 2 and the Stage 3 from the basic method. Instead of solving one edge and corner at a time, it checks every single case of the corner and edge pieces, and solves both of them together. This is done by creating a large look-up table that contains 41 unique cases for each edge/corner. This stage mainly reduces the move count compared to the basic method.<br><br>OLL / PLL:<br>These two steps contain large look-up tables ascwell. OLL has 57 different cases and PLL has 27. It checks how the cube is orientated first then goes to the look-up table to find the most efficient sequence to solve the cube. Since these moves are optimized, and it is not solving one corner/edge at a time, it can reduce a large number of moves.<br><br>For versions of the code, there is an optimization at the end before it passes the moves to the FPGA. This part of the code removes unnecessary or redundant moves from the solutions such as RR’, UU’ or HHHH etc. After all these, all the moves are stored in an array which is ready to pass to the FPGA for the robot arm movements.</p>
+		  
+			<h5><a href="#top">[top]</a></h5>
+			
+			<h2 id="hardware">Hardware</h2>
+				<p>Since the servos need a consistent PWM source, it was implemented in hardware so the Nios did not have to have many different timer interrupts. The hardware can be broken into multiple stages: mechanical hardware. servo control, Nios communication, and move execution.</p><br>
+			
+            <h4>Mechanical Hardware</h4>
+               <p>Robotically solving a Rubik’s cube required at least three mechanical arms. Though we would have preferred a fourth, it was cost prohibitive. The mechanical portion consists of three arms like the one pictured below. Each arm is built with a vertical metal support bar holding a servo. This servo provides the rotation. Attached to this servo is a mechanical claw. Each claw has a servo to control the grip position. This allows the two degrees of freedom needed to grab and rotate the cube. The servos are connected to the FPGA through the 40-pin GPIO header via a breakout board.</p><br>
+               
+               <a href="img/clawassembly.jpg"><img width="75%" src="img/clawassembly.jpg" /></a> 
+               <p class="caption">Assembled Claw</p><br>  
+            
+            <h4>Servo Control</h4>
+               <p>The servos need a constant PWM-like signal. The servos need a 20ms cycle time. Within that cycle, a 7.5% duty cycle represents -90 degrees, while a 12.5% duty cycle represents +90 degrees. Anything in between these values will produce a proportional angle. Since the servos have a PID controller built in, they will not drift from their commanded values, even under load. The servo control hardware uses a 3.277 MHz clock from the PLL to create these signals. This clock speed was chosen because a 16-bit counter will overflow every 20ms. The move execution hardware assigns each servo a specific 16-bit value corresponding to the desired duty cycle. If the counter is less than the assigned value, the output is high. Once the timer is greater than the assigned value, the pin is set to low, creating the desired effect. This occurs for each of the 6 servos.</p>
+            
+            <h4>Nios Communication</h4>
+               <p>Since the Nios processor runs the solving algorithm, it must somehow communicate the results to the hardware. We created an 8-bit bus to accomplish this task, with the bit definitions shown in the table below. There are 16 total move possibilities, thus we needed four bits to represent this. Once the Nios decides on one of these moves, it is written to the output port with the clock low, then written again with the clock high, both with the WE pin high. This clock pin provides the clock to an M9K block that stores the move sequences. The Nios keeps track of the address. This prevents the Nios from needing a wider or additional output port. Each time a move is clocked into memory, the address is incremented. Before the Nios begins to solve the cube, the reset pin is pulsed to alert the hardware to reset the writing address to 0. The final pin is the finished pin. This tells the move execution hardware that no more instructions will be written, allowing it to release the cube when it is finished. </p><br>
+               
+            <h4>Nios Communication Protocol</h4>   
+               <table border="1" style="width:40%">
+               <thead>
+                 <tr>
+                   <th>Bits</th>
+                   <th>Function</th> 
+                 </tr>
+              </thead>
+              <tbody>
+                 <tr>
+                   <td>0-3</td>
+                   <td>Move Type</td> 
+                 </tr>
+                 <tr>
+                   <td>4</td>
+                   <td>Clock</td> 
+                 </tr>
+                 <tr>
+                   <td>5</td>
+                   <td>Reset</td> 
+                 </tr>
+                 <tr>
+                   <td>6</td>
+                   <td>Write Enable</td> 
+                 </tr>
+                 <tr>
+                   <td>7</td>
+                   <td>Finished</td> 
+                 </tr>
+               </tbody>
+               </table><br>
+               
+            <h4>Move Command Definitions</h4>
+               <table border="1" style="width:80%">
+               <thead>
+                 <tr>
+                   <th>Move Type</th>
+                   <th>Function</th> 
+                 </tr>
+               </thead>
+               <tbody>
+                 <tr>
+                   <td>0</td>
+                   <td>Up Face Clockwise</td> 
+                 </tr>
+                 <tr>
+                   <td>1</td>
+                   <td>Up Face Counterclockwise</td> 
+                 </tr>
+                 <tr>
+                   <td>2</td>
+                   <td>Down Face Clockwise</td> 
+                 </tr>
+                 <tr>
+                   <td>3</td>
+                   <td>Down Face Counterclockwise</td> 
+                 </tr>
+                 <tr>
+                   <td>4</td>
+                   <td>Back Face Clockwise</td> 
+                 </tr>
+                 <tr>
+                   <td>5</td>
+                   <td>Back Face Counterclockwise</td> 
+                 </tr>
+                 <tr>
+                   <td>6</td>
+                   <td>Front Face Clockwise</td> 
+                 </tr>
+                 <tr>
+                   <td>7</td>
+                   <td>Front Face Counterclockwise</td> 
+                 </tr>
+                 <tr>
+                   <td>8</td>
+                   <td>Left Face Clockwise</td> 
+                 </tr>
+                 <tr>
+                   <td>9</td>
+                   <td>Left Face Counterclockwise</td> 
+                 </tr>
+                 <tr>
+                   <td>10</td>
+                   <td>Right Face Clockwise</td> 
+                 </tr>
+                 <tr>
+                   <td>11</td>
+                   <td>Right Face Counterclockwise</td> 
+                 </tr>
+                 <tr>
+                   <td>12</td>
+                   <td>Horizontally Rotate (Pointers Only)</td> 
+                 </tr>
+                 <tr>
+                   <td>13</td>
+                   <td>Vertically Rotate (Pointers Only)</td> 
+                 </tr>
+                 <tr>
+                   <td>14</td>
+                   <td>Horizontally Rotate (Physical Rotation)</td> 
+                 </tr>
+                 <tr>
+                   <td>15</td>
+                   <td>Vertically Rotate (Physical Rotation)</td> 
+                 </tr>
+                </tbody>
+               </table><br><br>
+            
+            <h4>Move Execution</h4>
+               <p>This is the most complex piece of hardware. The move execution hardware consists of a large state machine with the following states: <i>startup, idle, move, moveDelay, startMove, determineFace, determineRotation, determineRotateCommand, and moveFinished.</i><br><br><i>startup:</i> This is the default state when the FPGA powers on. Here, the state variables are reset and the claws are set to vertical positions with open grips. This prevents the claws from hitting each other. From here the state transitions to <i>idle</i>.<br><br><i>idle:</i> This state waits for a move to be put into memory. It does this by keeping track of the address of the last move executed and comparing it to the last address written. If the addresses are the same, there are no moves to execute and the state machine waits here. If there is a difference between these addresses, that means at least one move is in memory that has not been executed. This causes the state to transition to <i>startMove</i>.<br><br><i>startMove:</i> This state retrieves the next move from memory and increments the read address. It also adds to the total move counter. This counter is also used to determine if the servos should be recalibrated, meaning they turn in a specific way to readjust the cube position in the claws to prevent cube drift. The state then transitions to <i>determineFace</i>.<br><br><i>determineFace:</i> This state checks the move to be executed and determines which face of the cube needs to be rotated and in which direction. Alternatively, the entire cube may need to be rotated, which is also accounted for and calculated in this stage. Once it knows which face to turn in which direction, the state transitions to <i>determineRotation</i>.<br><br><i>determineRotation:</i> This state determines where the face to be rotated currently resides. The Nios may command it to rotate the front face, but due to optimizations we made, the front face may be physically represented by any face, not a face in a specific location. This state figures out if the full cube must be rotated to get that face inside of a claw since the claws only grip three faces at once. In addition, some moves may require no physical movement at all. One of the main features of the solving algorithms is rotating the cube with respect to the person solving. This does not require a physical movement, however, and only pointers need to be updated in memory. This state handles all of these updates. The state then transitions to <i>determineRotateCommand</i>.<br><br><i>determineRotateCommand:</i> After the previous state updates the pointers in memory (if needed), this state determines the physical rotation needed to complete the move. This includes determining which claw to rotation in which direction. After this is determined, the <i>move</i> state executes the moves.<br><br><i>move:</i> Rotating the cube or a face on the cube requires multiple servo actions. For example, rotating the front face requires: rotating the claw, releasing the claw, returning the claw to vertical, and closing the claw. These move sequences for all six servos are stored in a large array. This state iterates through the array completing one step at a time. Since the servos take up to 0.5s to complete a move, the state transitions to <i>moveDelay</i> after each step.<br><br><i>moveDelay:</i> This step is basically a counter that waits until a certain number of clock cycles have elapsed. Once the desired amount of time has elapsed, the state returns to move if there are more moves to execute in the sequence. If the moves are complete for the current sequence, the state transitions to <i>moveFinished</i>.<br><br><i>moveFinished:</i> This step simply cleans up any variables it needs to before returning to <i>idle</i> to wait for the next command from the Nios.</p>
+		
+			<h5><a href="#top">[top]</a></h5>
+			  
+			<h2 id="results">Results</h2>
+				<p>Each claw action (grab an edge, release an edge, rotate an edge) takes ~.5s and each move needs 2-10 claw actions. To completely scan all faces of the cube takes 20 moves. The amount of time to scan each individual face is negligible. The cube can be solved in 60-70 moves on average using the improved CFOP method. This gives a range of 20-100s to scan the cube and a range of 60-350s to solve. The solving is 100% accurate, meaning a correct cube is generated every time. The scanning is around 98% accurate, meaning often one cubie out of 54 scanned is read incorrectly necessitating a cube rescan. There is an issue where sometimes a white cube will be incorrectly scanned as blue, or very rarely a green cube will be read in as white. For safety and practicality reasons, SW[0] on the FPGA is used to instantly deactivate the claws. This is necessary because sometimes due to drift the cube will not align well with the claws and the cube could break because of shear forces applied by the servos. This is also a valuable safety feature in case a person gets a body part trapped in the claws. The setup is very easy to use in optimal circumstances: the user places the cube in the claws oriented so the white center cubie points up and the red center cubie faces directly away from the camera, presses enter in the terminal, activates the servo switch, and then the cube solver works its magic. After the cube is finished solving, the cube is dropped by the servos and the user can press enter in the terminal again to start the process over. One issue with usability is that our scanner is sensitive to changes in light intensity even though we used YCbCr color space which is less sensitive to changes in light intensity than RGB color space, so the user must take care to use the solver in a well and consistently lit area and to not get close enough to the camera to darken the light intensity too much. The user can use an optional VGA screen to check if the lighting is interfering with cube scanning because a box will appear on the VGA screen showing the cubie that the scanner is having issues trying to read. There is nothing in our design which could interfere with other technologies.</p>
+			
+			<h5><a href="#top">[top]</a></h5><br>
+			
+			<h2 id="conclusions">Conclusions</h2>
+			
+			<h4>Did Our Design Meet Expectations?</h4>
+				<p>The results did not quite meet our expectations (100% solve rate, 100% scanning accuracy, a solve time of under 3 minutes not including scanning time). We met the solve rate criteria and were close with scanning accuracy, but our design is much slower than our original goal solve time. Given more time, we would like to implement more efficient algorithms in order to reduce solve time even further. The most efficient algorithms solve a cube in 20 moves or less, however these are difficult to implement in such a short amount of time. We also would like to increase our scanning accuracy to 100%. With our current setup, the whole cube has to be rescanned if the scanned cube is incorrect. We will change this to only rescan those faces which contain a color that is detected more than expected, or to infer aberrant cubies based on the color of its neighbors. We also would have liked to add a fourth arm since it will reduce the amount of actions needed by the claws to perform a move which would decrease total solving time, and reduce the scanning time since we could scan the whole cube with only 6 rotations. Though the solver did not meet all expectations, it performs reasonably well.</p><br>
+				
+			<h4>Did Our Design Conform to Standards?</h4>
+				<p>Our video system had to conform to NTSC and VGA standards. IP modules implementing these standards were provided by the Altera University Program.</p><br>
+				
+			<h4>Intellectual Property Considerations</h4>
+				<p> In our scanning setup we used Altera University Program Video IP cores and example code provided by the Altera University Program.</p><br>
+				
+			<h4>Legal Considerations</h4>
+				<p>Patents for the Rubik's Cube have expired, only the logo and name remain trademarked.</p><br>
+			
+			<h5><a href="#top">[top]</a></h5><br>
+				
+			
+			<h2 id="appendicies">Appendices</h2>
+         <h3 id="gallery">A. Image Gallery</h3>
+         <!-- http://www.dynamicdrive.com/style/csslibrary/item/css-image-gallery/ -->
+            <div class="gallerycontainer">
+            
+               <table style="width:25%">
+                 <tr>
+                   <td><a class="thumbnail" href="#thumb"><img src="img/gallery0.jpg" width="100px" height="66px" border="0" /><span><img src="img/gallery0.jpg" /><br />Claw holding solved cube</span></a></td>
+                   <td><a class="thumbnail" href="#thumb"><img src="img/gallery1.jpg" width="100px" height="66px" border="0" /><span><img src="img/gallery1.jpg" /><br />Claw ready to be mounted</span></a></td>
+                 </tr>
+                 <tr>
+                   <td><a class="thumbnail" href="#thumb"><img src="img/gallery2.jpg" width="100px" height="66px" border="0" /><span><img src="img/gallery2.jpg" /><br />Gluing angles onto clamps to hold cube</span></a></td>
+                   <td><a class="thumbnail" href="#thumb"><img src="img/gallery4.jpg" width="100px" height="66px" border="0" /><span><img src="img/gallery4.jpg" /><br />Rotating cube face during early testing</span></a></td>
+                 </tr>
+                 <tr>
+                   <td><a class="thumbnail" href="#thumb"><img src="img/gallery5.jpg" width="100px" height="66px" border="0" /><span><img src="img/gallery5.jpg" /><br />Scanning cube</span></a></td>
+                   <td><a class="thumbnail" href="#thumb"><img src="img/gallery7.jpg" width="100px" height="66px" border="0" /><span><img src="img/gallery7.jpg" /><br />Aligning cube claws</span></a></td>
+                 </tr>
+                 <tr>
+                   <td><a class="thumbnail" href="#thumb"><img src="img/gallery8.jpg" width="100px" height="66px" border="0" /><span><img src="img/gallery8.jpg" /><br />Ready to mount third arm</span></a></td>
+                   <td><a class="thumbnail" href="#thumb"><img src="img/gallery9.jpg" width="100px" height="66px" border="0" /><span><img src="img/gallery9.jpg" /><br />Complete system</span></a></td>
+                 </tr>
+                 <tr>
+                   <td><a class="thumbnail" href="#thumb"><img src="img/gallery13.jpg" width="100px" height="66px" border="0" /><span><img src="img/gallery13.jpg" /><br />View of the cube from the camera</span></a></td>
+                   <td></td>
+                 </tr>
+               </table>
+
+            </div>
+         
+			<h3 id="code">B. Code</h3>
+				<h4>Video</h4>
+				<ul>
+					<li><a href="code/sw/rubiksread.c">rubiksread.c</a></li>
+					<li><a href="code/sw/rubiksread.h">rubiksread.h</a></li>
+				</ul>
+				<h4>Solving<h4>
+				<ul>
+					<li><a href="code/sw/main.c">main.c</a></li>
+					<li><a href="code/sw/main.h">main.h</a></li>
+					<li><a href="code/sw/moveComputations.c">moveComputations.c</a></li>
+					<li><a href="code/sw/moveComputations.h">moveComputations.h</a></li>
+					<li><a href="code/sw/printFunctions.c">printFunctions.c</a></li>
+					<li><a href="code/sw/printFunctions.h">printFunctions.h</a></li>
+					<li><a href="code/sw/OLLPLL.c">OLLPLL.c</a></li>
+				</ul>
+				<h4>Hardware</h4>
+				<ul>
+					<li><a href="code/hw/Main.v">Main.v</a></li>
+					<li><a href="code/hw/MoveSequences.h">MoveSequences.h</a></li>
+					<li><a href="code/hw/PerformMove.h">PerformMove.h</a></li>
+					<li><a href="code/hw/Positions.h">Positions.h</a></li>
+				</ul><br>
+
+			<h3 id="parts">C. Parts List and Costs</h3>
+			<table width="100%" border="1">
+			<thead>
+				<tr>
+					<th>Part</th>
+					<th>Vendor</th>
+					<th>Cost/Unit</th>
+					<th>Quantity</th>
+					<th>Total Cost</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr>
+					<td>1.5" Aluminum Channel</td>
+					<td>Sparkfun</td>
+					<td>$2.99</td>
+					<td>3</td>
+					<td>$8.97</td>
+				</tr>
+				<tr>
+					<td>4.5" Aluminum Channel</td>
+					<td>Sparkfun</td>
+					<td>$4.99</td>
+					<td>3</td>
+					<td>$14.97</td>
+				</tr>
+				<tr>
+					<td>Servo Hub</td>
+					<td>Sparkfun</td>
+					<td>$3.99</td>
+					<td>3</td>
+					<td>$11.97</td>
+				</tr>
+            <tr>
+               <td>Servo Mount</td>
+               <td>Sparkfun</td>
+               <td>$6.99</td>
+               <td>3</td>
+               <td>$20.97</td>
+            </tr>
+				<tr>
+					<td>Gripper Kit</td>
+					<td>Sparkfun</td>
+					<td>$9.95</td>
+					<td>3</td>
+					<td>$29.85</td>
+				</tr>
+					<td>Servo</td>
+					<td>Sparkfun</td>
+					<td>$9.95</td>
+					<td>6</td>
+					<td>$59.70</td>
+				</tr>
+					<td>Base Board</td>
+					<td>Lowes</td>
+					<td>$10</td>
+					<td>1</td>
+					<td>$10</td>
+				</tr>
+				<tr>
+					<td>Screws</td>
+					<td>Lowes</td>
+					<td>$5</td>
+					<td>--</td>
+					<td>$5</td>
+				</tr>
+				<tr>
+					<td></td><td></td><td></td>
+					<td><b>TOTAL:</b></td>
+					<td><b>$161.43</b></td>
+				</tr>
+			</tbody>
+			</table><br>
+
+			<h3 id="labor">D. Division of Labor</h3>
+			<p>Though the following was our agreed upon division of labor, we all helped each other significantly.</p>
+			
+			<div class="group1">
+				<h4>Alex Whiteway</h4>
+				<ul>
+					<li>Hardware</li>
+					<li>Code Integration</li>
+				</ul>
+				<h4>Sungjoon Park</h4>
+				<ul>
+					<li>Solving Algorithm</li>
+					<li>Optimizations</li>
+				</ul>
+			</div>
+			<div class="group2">
+				<h4>Rameez Qurasi</h4>
+				<ul>
+					<li>Cube Scanning</li>
+				</ul>
+			</div>
+			 
+			<h5><a href="#top">[top]</a></h5><br>
+			
+			<h2>References</h2>
+
+			<div class="group1">
+				<h3>Datasheets</h3>
+				<ul>
+					<li><a href="../../../../../../../../cdn.sparkfun.com/datasheets/Robotics/hs422-31422S.pdf">Servos</a></li>
+				</ul>
+				<h3>Vendors</h3>
+				<ul>	  
+					<li><a href="../../../../../../../../www.lowes.com/default.htm">Lowes</a></li>
+					<li><a href="../../../../../../../../www.sparkfun.com/default.htm">Sparkfun</a></li>
+				</ul>
+			</div>
+			<div class="group2">
+				<h3 id="references">References</h3>
+				<ul>
+					<li><a href="../../../../../../../../https@www.speedsolving.com/wiki/index.php/List_of_cube_solving_robots">Cube Solving Robots</a></li>
+					<li><a href="../../../../../../../../ftp@ftp.altera.com/up/pub/Altera_Material/9.1/University_Program_IP_Cores/Audio_Video/Video.pdf">Altera IP Cores</a></li>
+					<li><a href="../../../../../../../../ftp@ftp.altera.com/up/pub/Altera_Material/12.1/Boards/DE2-115/DE2_115_User_Manual.pdf">DE2-115 Datasheet</a></li>
+					<li><a href="../../../../../../../../en.wikipedia.org/wiki/Rubik_2527s_Cube#/media/File:Rubik%27s_cube.svg">Wikipedia Rubik's Cube Image</a></li>
+				</ul>
+			</div>
+			
+			<h5><a href="#top">[top]</a></h5>  
+		</div>
+		<!-- end maincontent -->
+		
+		</div>
+		<!--insidemain -->
+	  
+	</div>
+	<!-- end wrapper -->
+
+	<!-- The mainnav div contains links to jump to prominent sections in webpage -->
+	<div id="mainnav">
+   <div class="insidemain">
+		<h3><a href="index.html#intro">Introduction</a></h3>
+		<h3><a href="index.html#high_level">High Level Design</a></h3>
+		<h3><a href="index.html#software">Software</a></h3>
+		<h3><a href="index.html#hardware">Hardware</a></h3>
+		<h3><a href="index.html#results">Results</a></h3>
+		<h3><a href="index.html#conclusions">Conclusions</a></h3>
+		<h3><a href="index.html#appendicies">Appendicies</a></h3>
+		  <ul>
+			<li><a href="index.html#gallery">A: Image Gallery</a></li>
+			<li><a href="index.html#code">B: Code</a></li>
+			<li><a href="index.html#parts">C: Parts List and Cost</a></li>
+			<li><a href="index.html#labor">D: Division of Labor</a></li>   
+		  </ul>
+		<h3><a href="index.html#references">References</a></h3>
+	</div>
+   </div>
+	<!-- end mainnav -->
+
+	
+	
+	  <!-- content out -->
+	  <hr>
+	  <!-- footer in -->
+	  <div id="footerwrap">
+		<div id="footer">
+		  <div id="copyright">
+			<div class="copyright">&copy;2015 Alex Whiteway, Sungjoon Park, Rameez Qurasi</div>
+		  </div>
+		</div>
+		<!-- end footer -->
+	  </div>
+	  <!-- end footerwrap -->
+	  <!-- footer out -->
+</div>
+</body>
+</html>

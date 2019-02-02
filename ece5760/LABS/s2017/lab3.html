@@ -1,0 +1,114 @@
+
+<html>
+<head>
+<title>ece5760 Lab 3</title>
+</head>
+
+<body>
+<h2> ECE 5760: Laboratory 3 </h2> 
+<h2> Multiprocessor Drum Synthesis. </h2>
+
+<b> Introduction. </b> 
+<p> For this exercise, you will simulate the 2D wave equation on a square mesh in realtime to produce drum-like sounds. <br>
+  This year we will add a <a href="MarognaAvanziniBank_tension_modulation.pdf">nonlinear effect</a> related to the instantaneous tension in the mesh.
+<b><hr>
+Procedure:</b> 
+<p> Read <a href="WaveFDsoln.pdf"><em>Study Notes on Numerical Solutions of the Wave Equation with the Finite Difference Method</em></a>. The main result you will need to simulate is equation 2.18. A <a href="FDfreeEdge2order.m">matlab program</a> gives a sequential version of the algorithm and plots the Fourier modes of the drum. Another <a href="FDfreeEdgeMiddleC.m">version</a> is tuned to middle C (261 Hz). You can see in the figure below that the simulated sound spectrum (blue) matches the theoretical drum modes (red) up to about mode 8 or 9 (see <a href="vanduyne93physical.pdf"><em>Physical modeling with a 2D waveguide mesh </em></a>for details) .  The theoretical square drum mode frequencies follow the ratio sequence: <br>
+  <code>sqrt(m+n) where m,n=1,2,3,...</code><br>
+  Where the first term (<code>sqrt(2)</code>) corresponds to the fundamental mode of the drum.<br>
+  The first few modes are <code>sqrt(2), sqrt(5), 2*sqrt(2), sqrt(10), sqrt(13), sqrt(17), sqrt3*sqrt(2)</code>.<br>
+  <a href="MiddleCspectrum.png"><img src="MiddleCspectrumSmall.png" width="400" height="178" border="0"></a>
+<p>Modifying the boundary conditions, damping, wave speed, drum size, and distrubution of input energy can modifiy the sound of the simulation from <a href="BassDrum.wav">drum-like</a>, to <a href="chime.wav">chime-like</a>, to <a href="Gong.wav">gong-like</a> or <a href="bell.wav">bell-like</a>. You can modify the program further to include frequency-dependent damping and other effects. This <a href="FD2orderXY.m">version</a> simluates a long, thin bar struck at one end. 
+<p>Adding tension modulation allows pitch bending observed in a real drum after a large amplitude input. The large amplitude means that the membrane is stretched more, and therefore the speed of propagation (and therefore pitch) is increased. This <a href="FDfreeEdge_tension_mod.m">matlab code</a> produces an exagerated pitch effect with initial high amplitude. See also <a href="../../../../../../dafx09.como.polimi.it/proceedings/papers/paper_77.pdf">PHYSICALLY-BASED SYNTHESIS OF NONLINEAR CIRCULAR MEMBRANES</a> equation 10.<p>You will probably want to read 
+<ul>
+  <li><a href="FPGAfd.pdf"><em>IMPLEMENTATION OF FINITE DIFFERENCE SCHEMES FOR THE WAVE EQUATION</em></a><em> <a href="FPGAfd.pdf">ON FPGA</a></em> </li>
+  <li><a href="FPGAparallel.pdf"><em>PARALLEL IMPLEMENTATION OF FINITE DIFFERENCE SCHEMES FOR THE PLATE EQUATION ON A FPGA-BASED MULTI-PROCESSOR ARRAY</em></a> </li>
+  <li><a href="../../../../../../ieeexplore.ieee.org/stamp/stamp.jsp@arnumber=1508533">Time Domain Numerical Simulation for Transient Wave Equations on Reconfigurable Coprocessor Platform</a></li>
+  <li><a href="../../../../../../ieeexplore.ieee.org/xpls/abs_all.jsp@arnumber=4359511">Design Methodology for Real-Time FPGA-Based Sound Synthesis</a></li>
+</ul>
+<p>for ideas on parallelization. </p>
+<p>Also read documentation on <a href="Incremental_compile.pdf">incremental compilation</a>. Some compile times may be <em>very</em> long.<br>
+  To avoid long compile read <a href="../../ModelSim/index.html">Using ModelSim</a> to test node computations <br>
+You may want to read the <a href="../../../../../../www.sutherland-hdl.com/pdfs/verilog_2001_ref_guide.pdf">Evans and Sutherland HDL guide</a>, chapter 9, for info on using generate statement.</p>
+<p>The hardware audio interface is a <a href="../../DE2_Datasheets/Audio CODEC/WM8731_WM8731L.pdf">Wolfson
+  WM8731</a> codec which is controlled by an I2C interface. <br>
+This hardware is hidden behind Altera IP called the <a href="../../DE1_SOC/Audio_core.pdf">University Audio Core</a> for Qsys. <br>
+An example using the audio core is near the bottom of the <a href="../../DE1_SOC/HPS_peripherials/Bus_master_slave_index.html">Avalon Bus master</a> page.<br>
+<br>
+Cyclone5 <a href="../../DE1_SOC/cyclone5_handbook.pdf">handbook</a> describing available hardware, <strong>but here is a <a href="../../DE1_SOC/CycloneV_SE_A5.PNG">summary</a></strong>.<br>
+<br>
+Using <a href="../../DE1_SOC/ug_ram_rom.pdf">Cyclone5 memory blocks</a>.<br>
+Cyclone5 <a href="../../DE1_SOC/DSP_wp-01159-arriav-cyclonev-dsp.pdf">DSP blocks description</a> and <a href="../../DE1_SOC/ug_lpm_alt_mfug.pdf">arithmetic megafunctions</a> <br>
+<a href="../../DE1_SOC/HDL_style_qts_qii51007.pdf">HDL style</a> -- inferring memory and DSP blocks, and a <a href="../../../../../../https@piazza.com/class/iwxtrp0baxh1z@cid=50">post</a> from Mohammad<br>
+<a href="../../../../../../quartushelp.altera.com/15.0/mergedProjects/hdl/vlog/vlog_file_dir.htm">Verilog HDL Synthesis Attributes and Directives</a><br>
+<a href="../../../../../../quartushelp.altera.com/15.0/mergedProjects/hdl/vlog/vlog_file_dir_ram.htm">-- RAM-style synthesis parameter</a><br>
+<a href="../../../../../../quartushelp.altera.com/15.0/mergedProjects/hdl/vlog/vlog_file_dir_multstyle.htm">-- MULT-style synthesis parameter</a> </p>
+<p>Testing:</p>
+<ol>
+  <li>Simulate one node with four zero-value boundary conditions.<br>
+    Result should be simple harmonic motion. Remember that rho&lt;0.5. Start with 0.25.<br>
+    Assuming1:17 fixed point, start with initial conditions, u<sup>n</sup>=u<sup>n-1</sup> and amplitude about 1/8 full scale.
+  </li>
+  <li>Simulate about 9 copies of the node, connected as a 3x3 array.<br>
+  Listen to output in Matlab.</li>
+  <li>Get generate statement running and simulate 10x10 array for demo in first lab.<br>
+  Required Matlab output.</li>
+  <li>Get 10x10 array running using the audio codec on the FPGA for demo in second lab.<br>
+    Required audio output 
+  with nonlinear rho.</li>
+  <li>Scale up parallel processor to 16x16 or greater.</li>
+</ol>
+<p>Student examples running on FPGA:</p>
+<ul>
+  <li>2008: Matt Meister and Cathy Chen <a href="../../StudentWork/CathyChen/DrumExample.wav">wav file</a>. </li>
+  <li>2008: Parker Evans and Jordan  Crittenden <a href="../../StudentWork/ParkerEvans/beatlab4.wav">wav1</a>, <a href="../../StudentWork/ParkerEvans/beat2lab4.wav">wav2</a> </li>
+  <li>2010: Skyler Schneider <a href="../../StudentWork/ss868/drum/bass.wav">wav</a> base drum <br>
+  with n = 16 ,rho = 0.05,  eta = 2e-4, alpha = 0.1, boundaryGain = 0.0, node hit = (8, 8), node probed = (8, 8)</li>
+  <li>2010: Peter Kung and  	 Jsoon Kim, rho bit shifted =<a href="../../StudentWork/pfk5/Rho6.wma"> 6</a>, <a href="../../StudentWork/pfk5/Rho8.wma">8</a>, <a href="../../StudentWork/pfk5/Rho10.wma">10</a>, <a href="../../StudentWork/pfk5/Rho11.wma">11</a>, <a href="../../StudentWork/pfk5/Rho14.wma">14</a></li>
+  <li>2010: Kerran Flanigan, Tom Gowing, Jeff Yates, <a href="../../StudentWork/kaf42/chickenCan.wav">chickencan</a>, <a href="../../StudentWork/kaf42/glassHit.wav">glasshit</a>, <a href="../../StudentWork/kaf42/littleBongo.wav">littlebongo</a>, <a href="../../StudentWork/kaf42/miniBell.wav">minibell</a></li>
+  <li>2011: Jinda Cui and Jiawei Yang, <a href="../../StudentWork/drum2011/drum.wma">drum</a>, <a href="../../StudentWork/drum2011/bass_drum.wma">bass drum</a>, <a href="../../StudentWork/drum2011/knock_a_bowl.wma">bowl</a></li>
+  <li>2011: Weiqing Li and Luke 	Ackerman, <a href="../../StudentWork/drum2011/low.wma">low</a>, <a href="../../StudentWork/drum2011/high.wma">high</a></li>
+  <li>2011: Jo&atilde;o Diogo Falc&atilde;o, <a href="../../StudentWork/drum2011/growinggrig.wav">growing grid</a>, <a href="../../StudentWork/drum2011/oldmacd.wav">old MacDonald</a>. <br>
+  The growing grid starts at 7*34*4=952 nodes, (#columns*#lines*symmetry), and ends at 254*34*4=34544 nodes. This is with Rho=0.5 and Eta=0.000244.</li>
+  <li>2014 <span aria-label="Saisrinivasan Mohankumar _3Csm2354_40cornell.edu>. Press Enter key to open contact card" role="heading" tabindex="0" autoid="_n_L1">Saisrinivasan Mohankumar</span>, Ackerley Tng, Ankur Thakkar, eta = 0.0002, rho = 0.5 and  0.25, boundary gain =0, Number of nodes = 89x257x2 ( rows x colums x symmetry) = 45746 nodes.<br>
+  <a href="../../StudentWork/sm2354/lower_pitch.wav">Lower</a>, <a href="../../StudentWork/sm2354/higher_pitch.wav">Higher</a></li>
+  <li>Christine Soong, <a href="../../StudentWork/C_Soong/lamb.wav">Mary had a little lamb</a></li>
+</ul>
+<p></p>
+<hr>
+<b> Assignment</b>
+<ol>
+  <li>  Build a realtime drum solver which produces sound from the audio interface. 
+    <br>
+    Minimum grid size is 16x16 finite difference  grid.
+    The grid should have no more than 4:1 aspect ratio.<br>
+    Grid expansion via symmetry does not count for size.
+  <li>The solver should solve the 2d wave equation to produce selectable effects. <br>
+    A minimum of three buttons on the DE1-SoC should produce different timbers.<br>
+  Timber can be set by boundary condition, eta, rho, tension modulation, or number of nodes. <br>
+  At least one timber must include audible nonlinear tension modulation effects.
+  <li><strong>Part of your grade will be determined by how many nodes</strong> you can solve in realtime at an audio sample rate of 48KHz. <br>
+    There should be exactly one computational update of all the drum nodes for each audio sample. Last year the highest number of nodes was around 300,000 on DE1-SoC.<br>
+    Each sample that you calculate must be output to the audio codec. <br>
+    Each node simulated will require around 10 additions/multiplications. You may be able to use clever shifting schemes to avoid multiplys. Thus the computation rate will be about <br>
+ <code> 10*(number of wave equation nodes)*(audio sample frequency)</code> . <br>
+ For a minimal  16x16 grid you will need ~<code>123x10<sup>6</sup></code>
+operations/sec. Clearly some parallel processing will be necessary as you go to higher numbers of nodes. 
+  <li>You can use fine-grained parallelism or course-grained multiprocessors. You can use HPS or FPGA, or a combination, as you wish.  
+  <li>Record the audio output back into matlab to show that your simulation matches drum modes (under the correct boundary conditions, etc). 
+</ol>
+    
+<p>Be prepared to demo your design to your TA in lab. </p>
+<p> Your written lab report should include the sections mentioned in the <a href="../../policy.html">policy page</a>, and :
+<ul>
+  <li>Mathematical considerations (what you actually implemented) 
+  <li> Your parallelization scheme   
+  <li>A plot of the power spectrum of your drum sounds 
+  for each different timber
+  <li> A heavily commented listing of your Verilog design (if you write a bus-master) and GCC  code (if you use HPS).  
+</ul>
+<hr>
+<br>
+<small> <font size="-1">Copyright Cornell University </font></small><!-- #BeginDate format:Am1 -->March 20, 2017<!-- #EndDate -->
+</body> </html>
+

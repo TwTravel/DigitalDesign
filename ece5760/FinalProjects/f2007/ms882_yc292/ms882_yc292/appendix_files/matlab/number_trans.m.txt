@@ -1,0 +1,8 @@
+clear all;
+
+img_2 = imread('C:\Documents and Settings\yc292\Desktop\Num_base.bmp');
+
+figure(1);
+imshow(img_2);
+
+img_8 = img_2/255;

@@ -1,0 +1,112 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Potential Improvements</TITLE>
+<META NAME="description" CONTENT="Potential Improvements">
+<META NAME="keywords" CONTENT="576_report05">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="576_report05.css">
+
+<LINK REL="next" HREF="node15.html">
+<LINK REL="previous" HREF="node13.html">
+<LINK REL="up" HREF="576_report05.html">
+<LINK REL="next" HREF="node15.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation"><!--Navigation Panel-->
+<A NAME="tex2html174"
+  HREF="node15.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="next.png"></A> 
+<A NAME="tex2html172"
+  HREF="576_report05.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="up.png"></A> 
+<A NAME="tex2html166"
+  HREF="node13.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="prev.png"></A>   
+<BR>
+<B> Next:</B> <A NAME="tex2html175"
+  HREF="node15.html">Code</A>
+<B> Up:</B> <A NAME="tex2html173"
+  HREF="576_report05.html">576_report05</A>
+<B> Previous:</B> <A NAME="tex2html167"
+  HREF="node13.html">Documentation</A>
+<BR>
+<BR></DIV>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION00070000000000000000">
+Potential Improvements</A>
+</H1>
+<P>
+<BIG CLASS="LARGE">This project allows room for more improvements and features.
+</BIG>
+<P>
+
+<UL>
+<LI>Formally create a graphics operation cache that would be manipulated on the fly from software running on a NIOS II.
+</LI>
+<LI>Create a NIOS II specifically to generate edges for more complicated objects, and to place them directly into the edge list.
+</LI>
+<LI>Improve the computation pipeline's speed by collapsing all pending transformations into one matrix, and then finding a way to fit all the necessary multipliers.
+This may involve computing only one point in one edge at a time, which requires fewer multipliers to be synthesized.
+</LI>
+<LI>Create an abstract model in order to be able to use Flash, SRAM, and SDRAM.
+The state machines in the pipelines may need to be modified to support waiting for results from memory to return, since M4K blocks respond with one cycle later.
+For slow memories, multiple read ports can be wired and a cache can be created, amortizing most of the delay in the memory accesses.
+</LI>
+<LI>After such an abstract memory model is implemented, then the edge list can be transformed into indices into a point list.
+This would reduce the number of transformations needed for objects that are highly connected such as spheres.
+</LI>
+<LI>Implement a structure to update parametrized values for each frame.
+</LI>
+<LI>Compress the bits in the screen buffer.  Currently, we use 16 bits per pixel, which, for a wireframe, is 16 times more than necessary.
+</LI>
+<LI>If frames are to be implemented, then at least an additional VGA display buffer would be needed - one to serve current requests from the VGA controller, and another to be rasterized from the new points coming from the three pipelines.
+</LI>
+</UL>
+<P>
+
+<DIV CLASS="navigation"><HR>
+<!--Navigation Panel-->
+<A NAME="tex2html174"
+  HREF="node15.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="next.png"></A> 
+<A NAME="tex2html172"
+  HREF="576_report05.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="up.png"></A> 
+<A NAME="tex2html166"
+  HREF="node13.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="prev.png"></A>   
+<BR>
+<B> Next:</B> <A NAME="tex2html175"
+  HREF="node15.html">Code</A>
+<B> Up:</B> <A NAME="tex2html173"
+  HREF="576_report05.html">576_report05</A>
+<B> Previous:</B> <A NAME="tex2html167"
+  HREF="node13.html">Documentation</A></DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+
+2007-12-02
+</ADDRESS>
+</BODY>
+</HTML>

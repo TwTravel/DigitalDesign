@@ -1,0 +1,51 @@
+constant ; named constants
+  LEDS 0 ; port nop
+  CPUDONE 1; cpu done port
+  N 128
+
+variable
+
+  vect1 vector 500
+  vect2 vector 500
+  count
+  doublecount
+  maccval
+
+; ==========
+function
+  testFunct1
+  forever1
+
+
+program
+
+main:
+ 8 out[LEDS]
+ 0 =count
+ while count N lt 
+ do
+ 	 count =vect1[count]
+ 	 doublecount =vect2[count]
+ 	 count 1 add =count	
+     doublecount 2 add =doublecount
+ endwhile
+
+;0 =count 
+;0 =maccval
+; while count N lt
+; do
+;   vect1[count] vect2[count] mul maccval add =maccval
+;   count 1 add =count
+; endwhile
+
+ vect1 vect2
+ macc.N
+ 1 out[CPUDONE] 
+ nop. nop. nop. nop. nop. nop. nop. nop.
+ testFunct1
+ while 1 do endwhile
+
+testFunct1:
+  5 out[LEDS]
+  forever1: jmp.forever1
+return

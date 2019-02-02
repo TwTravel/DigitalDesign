@@ -1,0 +1,79 @@
+<link rel="stylesheet" type="text/css" href="web.css" />
+<head> 
+	<title>Video Production Module for Altera DE2 Board</title> 
+</head> 
+
+<body>
+<h1 align="center">Video Production Module for Altera DE2 Board</h1>
+<center><img src="Images/titlepic.jpg" width=600 height=400></center>
+<p align="center">James Du (jsd46)<br>Peter Greczner (pag42)<br></p>
+
+<table width=100%<tr><td width="10"></td><td>
+<ul id="navlist">
+	<li><a href="index.html">Introduction</a></li>
+	<li><a href="high_level_design.html">High Level Design</a></li>
+	<li><a href="hardware_design.html">Hardware Design</a></li>
+	<li><a href="software_design.html">Software Design</a></li>
+	<li><a href="results.html">Results of Design</a></li>
+	<li><a href="conclusion.html">Conslusions</a></li>
+	<li><a href="appendix.html">Appendix</a></li>
+	<li class="last"><a href="references.html">References</a></li>
+</ul>
+</td></tr>
+</table>
+
+<h2>Results of Design</h2>
+<table width=100%>
+	<tr>
+		<td width="10"></td>
+		<td>
+			The green screen is very stable. There is no noticeable flickering in it. When testing the green detection using a green image on a VGA monitor, there was a one or two pixel green border around the edge of objects in front of the green screen. We tried to fix this by adjusting thresholds; the border was reduced from what we had originally, but we could not completely get rid of the border. However, when we ran our implementation on the actual green screen we ended up using, the green border was completely gone except when shadows were cast on the green screen.
+			<br><br>
+			Reverse Green Screen works perfectly since we know the exact color of the green in our uploaded image, but the video quality and image quality are not as high as they can be due to limits in upload speed. We attempted to transfer video instead of just images to SRAM but could not get frame rate to exceed a few frames per second, even with only black and white video.
+			<br><br>
+			The fading effect works but looks strange. Text starts fading in as strange colors before settling in as their final text color. We had originally wanted to implement more features with writing text to the screen but ran out of time. Once text is on the screen, it appears completely stable. Keystroke recognition works well immediately after uploading our design to the DE2 board but starts to malfunction if random keys are spammed.
+			<br>
+			<h3>Serial Interface Result</h3>
+			The result of this part of the project are two modules that can be configured at any baudrate to work with another serial receiver and transmitter pair that follow RS-232 protocol and have specified 8 data bits, 1 start bit, 1 stop bit, no flow control, and no parity bits.
+			<br><br>
+			It packages data into packets of 16 bytes that have a CRC type check performed on them to ensure accuracy of delivery and can also detect timeout failures and send a timeout NACK to the other receiver.
+			<br><br>
+			Sample tests of the transmission indicated that we get on average a single bit error every 1 million bits sent approximately.  From research we have found that “acceptable” error rates for RS-232 at a baud around 9600 should be from every 1 billion bits to every 1 trillion bits.  However because we are running at an extremely high baud rate and our module has the ability to perform error detection this is not really a problem because we can always resend the data.
+			<br><br>
+			Transmission of the data for a 640x480 image took approximately 36 seconds to perform, and transmission of a 320x240 black and white image took approximately 1 second to perform.  Theoretical results at a baud of 115200 indicate that we should expect it to take 35.6 seconds and 1.1 seconds respectively.  Therefore it appears that our serial transfer incurs almost no lag and is performing almost as fast as theoretically possible.
+			<br><br>
+			The C executables that we created are very easy to use and the user only has to specify an image name following the executable name.  Transmission will take place immediately and accurately.
+			<h3>Images</h3>
+			<img src="Images/DSC00333.JPG" width=600 height=400><br><br>
+			<img src="Images/DSC00327.JPG" width=600 height=400><br><br>
+			<img src="Images/DSC00326.JPG" width=600 height=400><br><br>
+			<img src="Images/DSC00325.JPG" width=600 height=400><br><br>
+			<img src="Images/DSCN1740.JPG" width=600 height=400><br><br>
+			<img src="Images/DSCN1743.JPG" width=600 height=400><br><br>
+			<img src="Images/DSCN1745.JPG" width=600 height=400><br><br>
+			<img src="Images/DSCN1748.JPG" width=600 height=400><br><br>
+			<img src="Images/DSCN1749.JPG" width=600 height=400><br><br>
+			<img src="Images/DSCN1750.JPG" width=600 height=400>
+			<h3>Videos</h3>
+			<embed src="Videos/MOV00335.MPG" autostart="false" width=700 height=550><br><br>
+			<embed src="Videos/MOV00334.MPG" autostart="false" width=700 height=550>
+		</td>
+	</tr>
+</table>
+<br><br>
+
+<table width=100%<tr><td width="10"></td><td>
+<ul id="navlist">
+	<li><a href="index.html">Introduction</a></li>
+	<li><a href="high_level_design.html">High Level Design</a></li>
+	<li><a href="hardware_design.html">Hardware Design</a></li>
+	<li><a href="software_design.html">Software Design</a></li>
+	<li><a href="results.html">Results of Design</a></li>
+	<li><a href="conclusion.html">Conslusions</a></li>
+	<li><a href="appendix.html">Appendix</a></li>
+	<li class="last"><a href="references.html">References</a></li>
+</ul>
+</td></tr>
+</table>
+
+</body>

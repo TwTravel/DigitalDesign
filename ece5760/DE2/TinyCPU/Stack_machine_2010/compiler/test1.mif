@@ -1,0 +1,73 @@
+DEPTH = 4096;
+WIDTH = 18;
+  
+ADDRESS_RADIX = HEX;
+DATA_RADIX = HEX;
+   
+CONTENT
+BEGIN
+[000..FFF]	:	0000;
+000	:	1FF1;	%  pushi 4081 % 
+001	:	1FFF;	%  pushi 4095 % 
+002	:	8000;	%  st  % 
+003	:	4012;	%  jmp main % 
+004	:	d001;	% evalkey: in keys % 
+005	:	f011;	%  bnot  % 
+006	:	100F;	%  pushi keymask % 
+007	:	f005;	%  band  % 
+008	:	f00a;	%  eq  % 
+009	:	2FF1;	%  push 4081 % 
+00a	:	7000;	%  ld  % 
+00b	:	2FF1;	%  push 4081 % 
+00c	:	1001;	%  pushi 1 % 
+00d	:	f000;	%  add  % 
+00e	:	3FF1;	%  pop 4081 % 
+00f	:	1002;	%  pushi 2 % 
+010	:	f000;	%  add  % 
+011	:	9001;	%  poppc  % 
+012	:	1000;	% main: pushi 0 % 
+013	:	e002;	%  out greenLEDs % 
+014	:	1000;	%  pushi 0 % 
+015	:	3FEE;	%  pop counter1 % 
+016	:	0000;	% L1: nop  % 
+017	:	1001;	%  pushi forever % 
+018	:	503F;	%  jz L6 % 
+019	:	2FEE;	%  push counter1 % 
+01a	:	1001;	%  pushi 1 % 
+01b	:	f000;	%  add  % 
+01c	:	f013;	%  dup  % 
+01d	:	e003;	%  out redLEDs % 
+01e	:	3FEE;	%  pop counter1 % 
+01f	:	1001;	%  pushi 1 % 
+020	:	3FED;	%  pop counter2 % 
+021	:	0000;	% L2: nop  % 
+022	:	2FED;	%  push counter2 % 
+023	:	1000;	%  pushi 0 % 
+024	:	f00b;	%  ne  % 
+025	:	502C;	%  jz L3 % 
+026	:	2FED;	%  push counter2 % 
+027	:	1001;	%  pushi 1 % 
+028	:	f000;	%  add  % 
+029	:	3FED;	%  pop counter2 % 
+02a	:	4022;	%  jmp L2 % 
+02b	:	0000;	% L3: nop  % 
+02c	:	1008;	%  pushi key3mask % 
+02d	:	2FF1;	%  push 4081 % 
+02e	:	1001;	%  pushi 1 % 
+02f	:	f001;	%  sub  % 
+030	:	f013;	%  dup  % 
+031	:	3FF1;	%  pop 4081 % 
+032	:	9000;	%  pushpc  % 
+033	:	8000;	%  st  % 
+034	:	4004;	%  jmp evalkey % 
+035	:	503A;	%  jz L4 % 
+036	:	10FF;	%  pushi pattern2 % 
+037	:	e002;	%  out greenLEDs % 
+038	:	403D;	%  jmp L5 % 
+039	:	0000;	% L4: nop  % 
+03a	:	9000;	%  pushpc  % 
+03b	:	e002;	%  out greenLEDs % 
+03c	:	0000;	% L5: nop  % 
+03d	:	4017;	%  jmp L1 % 
+03e	:	0000;	% L6: nop  % 
+END ;	

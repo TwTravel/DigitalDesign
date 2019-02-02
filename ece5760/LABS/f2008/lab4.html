@@ -1,0 +1,54 @@
+
+<html>
+<head>
+<title>ee576 Lab 4</title>
+</head>
+
+<body>
+<h2> EE 576: Laboratory 4 </h2> 
+<h2> Multiprocessor Drum Synthesis. </h2>
+
+<b> Introduction. </b> 
+<p> For this exercise, you will simulate the 2D wave equation on a square mesh in realtime to produce drum-like sounds. 
+<b><hr>
+Procedure:</b> 
+<p> Read <a href="WaveFDsoln.pdf"><em>Study Notes on Numerical Solutions of the Wave Equation with the Finite Difference Method</em></a>. The main result you will need to simulate is equation 2.18. A <a href="FDfreeEdge2order.m">matlab program</a> gives a sequential version of the algorithm and plots the Fourier modes of the drum. Another <a href="FDfreeEdgeMiddleC.m">version</a> is tuned to middle C (261 Hz). You can see in the figure below that the simulated sound spectrum (blue) matches the theoretical drum modes (red) up to about mode 8 or 9 (see <a href="vanduyne93physical.pdf"><em>Physical modeling with a 2D waveguide mesh </em></a>for details) .  <br>
+  <a href="MiddleCspectrum.png"><img src="MiddleCspectrumSmall.png" width="400" height="178" border="0"></a>
+<p>Modifying the boundary conditions, damping, wave speed, drum size, and distrubution of input energy can modifiy the sound of the simulation from <a href="BassDrum.wav">drum-like</a>, to <a href="chime.wav">chime-like</a>, to <a href="Gong.wav">gong-like</a> or <a href="bell.wav">bell-like</a>. You can modify the program further to include frequency-dependent damping and other effects. This <a href="FD2orderXY.m">version</a> simluates a long, thin bar struck at one end. 
+<p>You will probably want to read 
+<ul>
+  <li><a href="FPGAfd.pdf"><em>IMPLEMENTATION OF FINITE DIFFERENCE SCHEMES FOR THE WAVE EQUATION</em></a><em> <a href="FPGAfd.pdf">ON FPGA</a></em> </li>
+  <li><a href="FPGAparallel.pdf"><em>PARALLEL IMPLEMENTATION OF FINITE DIFFERENCE SCHEMES FOR THE PLATE EQUATION ON A FPGA-BASED MULTI-PROCESSOR ARRAY</em></a> </li>
+</ul>
+<p>for ideas on parallelization. </p>
+<p>Student examples running on FPGA:</p>
+<ul>
+  <li>2008: Matt Meister and Cathy Chen <a href="../../StudentWork/CathyChen/DrumExample.wav">wav file</a>. </li>
+  <li>2008: Parker Evans and Jordan  Crittenden <a href="../../StudentWork/ParkerEvans/beatlab4.wav">wav1</a>, <a href="../../StudentWork/ParkerEvans/beat2lab4.wav">wav2</a> </li>
+</ul>
+<p></p>
+<hr>
+<b> Assignment</b>
+<ol>
+  <li>  Build a realtime drum simulator which produces sound from the audio interface. 
+  <li>The simulator should solve the 2d wave equation to produce selectable effects. A minimum of two buttons on the DE2 should produce different timbers.
+  <li>Part of your grade will be determined by how many nodes you can simulate in realtime. The grade will be based on the product of <code><br>
+    (number of wave equation nodes)*(audio sample frequency)</code>.
+ Each node simulated will require around 10 additions/multiplications. You may be able to use clever shifting schemes to avoid multiplys. Thus the computation rate will be about <br>
+ <code> 10*(number of wave equation nodes)*(audio sample frequency)</code> . For a minimal 10x10 grid at 44 kHz, you will need <code>1000x44000=44x10<sup>6</sup></code>  operations/second. For a more accurate 20x20 grid you will need ~<code>200x10<sup>6</sup></code>
+operations/sec. Clearly some parallel processing will be necessary. <li>You can use fine-grained parallelism or course-grained multiprocessors. You can use NiosIIs or not, as you wish.  
+  <li>Record the audio output back into matlab to show that your simulation matches drum modes (under the correct boundary conditions, etc). 
+</ol>
+    
+<p>Be prepared to demo your design to your TA in lab. </p>
+<p> Your written lab report should include: 
+<ul>
+  <li>Mathematical considerations (what you actually implemented) 
+  <li> You parallelization scheme 
+  <li> A heavily commented listing of your Verilog design and GCC  code (if you use NiosIIs).  
+</ul>
+<hr>
+<br>
+<small> <font size="-1">Copyright Cornell University June 2008</font></small>
+</body> </html>
+

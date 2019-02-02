@@ -1,0 +1,69 @@
+<title>ECE 576 - SimpleGPU</title>
+
+<head><style>
+a:link {color: #6666CC; text-decoration: overline; }     /* unvisited link */
+a:visited {color: #666666; text-decoration: overline; }  /* visited link */
+a:hover {color: #222222; text-decoration: underline; }   /* mouse over link */
+a:active {color: #5555FF; text-decoration: overline; }   /* selected link */ 
+</style></head>
+
+<body bgcolor="#DDDDDD">
+
+<table style="border-width: 15pt; border-collapse: separate; " ><tr><td colspan=2>
+
+<table width=792><tr><td align=center style="border: 1px solid black; padding: 1em; background-color: white;">
+<b><big><big><big>SimpleGPU</big>
+<br>ECE 576 - Fall 2007</big>
+<br>John Sicilia (jas328) & Austin Lu (asl45)
+</td></tr></table>
+
+</td></tr>
+<tr><td width=150 valign=top>
+<table width=150><tr><td valign=top style="border: 1px solid black; padding: 1em; background-color: white; height=700;"> 
+<p><a href="index.htm">Home</a>
+<p><a href="intro.htm">Introduction</a>
+<p><a href="sdesign.htm">Software Design</a>
+<p><a href="hdesign.htm">Hardware Design</a>
+<p><a href="results.htm">Results</a>
+<p><a href="issues.htm">Issues</a>
+<p><a href="conclusion.htm">Conclusion</a>
+<p><a href="pics.htm">More Pictures</a>
+<br><br><br><br><br><br><br>
+</td></tr></table>
+
+</td><td valign=top>
+<table width=600 ><tr><td style="border: 1px solid black; padding: 1em; background-color: white;">
+<b><big><big>Results</big></big></b><br><br>
+
+<p> At the end of the day, we were able to create a room with four walls and spin the viewer around in 360 degrees. Running at the highest clock speed, we were able to output 8 to 10 frames per second and transmit 4 polygons per second. There was a lot of artifacting, however everything looked reasonable. Below is a picture of a wall sloping away from us:<br><br>
+
+<img src="images/wall.JPG" width=600><br><br>
+
+<p>We also ran tests that did not use the perspective projection and relied purely on the hardware's Z-buffer and point-in-polygon algorithms. The picture below shows two triangles with varying depths intersecting and only the lighter colors (the nearer Z-coordinates) are shown.
+
+<p><img src="images/depth.JPG" width=603 height="451"><br>
+  <br>
+
+<p> Other tests that we ran included moving multiple polygons and noting the differences between the frames per second and polygons. A table of results is shown below:
+<center>
+<table style="border-style: 1px solid black;">
+<col style="border: 1px solid black;">
+<tr>
+<td align=center style="border-bottom: 2px solid black;"><b># of polygons</td><td align=center style="border-bottom: 2px solid black;"><b>fps</td></tr>
+<tr><td align=center>6</td><td align=center>	12 to 13</td></tr>
+<tr><td align=center>5</td><td align=center>	14</td></tr>
+<tr><td align=center>4</td><td align=center>	16 to 17</td></tr>
+<tr><td align=center>3</td><td align=center>	19 to 20</td></tr>
+<tr><td align=center>2</td><td align=center>	24 to 25</td></tr>
+<tr><td align=center>1</td><td align=center>	32 to 33</td></tr>
+</table></center>
+
+<p>The following information describes our final usage of the FPGA:
+<p><center><img src="images/creport.gif"></center>
+<p>We ended up using 42% of the FPGA. Our compilation time was about 18 minutes: its length was due in no small part, to the fact that we were using 69 of the 70 available 9-bit multipliers. We chose to limit ourselves to using the onboard multipliers only instead of generating them out of logic, because multiplication time was a key issue with our project. Interestingly enough, despite the fact that we were constantly running into memory issues, we only used 15% of the M4K blocks. The reason for this is that we often needed large amounts of memory: for example, a typical Z-buffer routine as opposed to our modified one would have needed 304K of memory. Our solution to this, however, only used a single register. Hence, at the end of the project, we were left with the majority of MK4 blocks free.
+
+
+</td></tr></table>
+
+
+</td></tr></table>

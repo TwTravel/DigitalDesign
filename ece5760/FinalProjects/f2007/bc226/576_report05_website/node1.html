@@ -1,0 +1,119 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+
+<!--Converted with LaTeX2HTML 2002-2-1 (1.71)
+original version by:  Nikos Drakos, CBLU, University of Leeds
+* revised and updated by:  Marcus Hennecke, Ross Moore, Herb Swan
+* with significant contributions from:
+  Jens Lippmann, Marek Rouchal, Martin Wilck and others -->
+<HTML>
+<HEAD>
+<TITLE>Introduction</TITLE>
+<META NAME="description" CONTENT="Introduction">
+<META NAME="keywords" CONTENT="576_report05">
+<META NAME="resource-type" CONTENT="document">
+<META NAME="distribution" CONTENT="global">
+
+<META NAME="Generator" CONTENT="LaTeX2HTML v2002-2-1">
+<META HTTP-EQUIV="Content-Style-Type" CONTENT="text/css">
+
+<LINK REL="STYLESHEET" HREF="576_report05.css">
+
+<LINK REL="next" HREF="node2.html">
+<LINK REL="previous" HREF="576_report05.html">
+<LINK REL="up" HREF="576_report05.html">
+<LINK REL="next" HREF="node2.html">
+</HEAD>
+
+<BODY >
+
+<DIV CLASS="navigation"><!--Navigation Panel-->
+<A NAME="tex2html41"
+  HREF="node2.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="next.png"></A> 
+<A NAME="tex2html39"
+  HREF="576_report05.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="up.png"></A> 
+<A NAME="tex2html33"
+  HREF="576_report05.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="prev.png"></A>   
+<BR>
+<B> Next:</B> <A NAME="tex2html42"
+  HREF="node2.html">High Level Design</A>
+<B> Up:</B> <A NAME="tex2html40"
+  HREF="576_report05.html">576_report05</A>
+<B> Previous:</B> <A NAME="tex2html34"
+  HREF="576_report05.html">576_report05</A>
+<BR>
+<BR></DIV>
+<!--End of Navigation Panel-->
+
+<H1><A NAME="SECTION00010000000000000000">
+Introduction</A>
+</H1>
+<P>
+<BIG CLASS="LARGE">The goal of this final project was to create a programmable graphics processing unit with as many aspect as possible to be coded in hardware, even with object and edge generation.
+The main feature of the organization of this graphics unit is to be able to represent transformation operations parametrically, creating a graphics co-processor capable of rendering procedural motion.
+The graphics unit takes operations in a very-long instruction word format that has a one-to-one representation to a high-level scripting language, which provides a mean to moving objects and features in a scene to dynamically during run-time.
+The original inspiration was to create a physics simulator on an FPGA that followed Lagrangian constraints, which, if there were to have been more hardware than software, would have required being able to manipulate a set of objects in a parametric fashion.
+The high-level design shares many similarities multi-cycle pipelines, such as intermediate memories and registers.
+However, unlike a regular processor, the co-processor has one pipeline that operates on multiple pieces of data in parallel, much like a vector processor does in a single-instruction multiple-data fashion.
+</BIG>
+<P>
+<BIG CLASS="LARGE">There are three components of the circuit: an object generation pipeline to generate edges of the target shape; a transformation pipeline that performed transformations on the unit objects<A NAME="tex2html1"
+  HREF="footnode.html#foot20"><SUP><SPAN CLASS="arabic">1</SPAN></SUP></A>; and a rastering pipeline that generates the points for the VGA controller to display.
+The design has made certain tradeoffs due to the constraints imposed by the FPGA we used to synthesize the circuit.
+First, the transformation pipeline does not employ a generalized 4x4 matrix multiply because the limited number of multipliers on the FPGA.
+Instead, the transformation pipeline is currently designed as a operate-and-accumulate module, with intermediate data values stored in registers.
+This most definitely impacts the performance of the overall system since <SPAN CLASS="MATH"><IMG
+ WIDTH="13" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img1.png"
+ ALT="$ n$"></SPAN>
+ transformations take <SPAN CLASS="MATH"><IMG
+ WIDTH="13" HEIGHT="13" ALIGN="BOTTOM" BORDER="0"
+ SRC="img1.png"
+ ALT="$ n$"></SPAN>
+ operations per data set.
+Alternatively with more available multipliers, by first generating a reduced matrix transformation, one data set can be transformed in one cycle.
+Second, the available memory on the FPGA is limited to 8.5 megabytes at most, of which about 512 kilobytes are available memory that are designed to be read from within a single cycle of exerting the desired address.
+If a different memory type that provides more storage is made available, several key points of the circuit would have to be redesigned to adhere to <TT>Valid</TT> memory lines.
+</BIG>
+<P>
+<BIG CLASS="LARGE">Since this lab was the final project of a one semester course, due to the limited time available, many other decisions were made to favor rapid development and testing.
+We present the decisions that, if were made differently, have the most potential to improve the efficiency of the circuit.
+One such decisions was to represent the inter-pipeline data using an exhaustive edges list.
+This simplified the memory organization at the cost of increase memory usage, simplified the object generation modules used in the first pipeline<A NAME="tex2html2"
+  HREF="footnode.html#foot22"><SUP><SPAN CLASS="arabic">2</SPAN></SUP></A>, and reduced the complexity of the data fetching mechanisms for each pipeline.
+</BIG>
+<P>
+
+<DIV CLASS="navigation"><HR>
+<!--Navigation Panel-->
+<A NAME="tex2html41"
+  HREF="node2.html">
+<IMG WIDTH="37" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="next"
+ SRC="next.png"></A> 
+<A NAME="tex2html39"
+  HREF="576_report05.html">
+<IMG WIDTH="26" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="up"
+ SRC="up.png"></A> 
+<A NAME="tex2html33"
+  HREF="576_report05.html">
+<IMG WIDTH="63" HEIGHT="24" ALIGN="BOTTOM" BORDER="0" ALT="previous"
+ SRC="prev.png"></A>   
+<BR>
+<B> Next:</B> <A NAME="tex2html42"
+  HREF="node2.html">High Level Design</A>
+<B> Up:</B> <A NAME="tex2html40"
+  HREF="576_report05.html">576_report05</A>
+<B> Previous:</B> <A NAME="tex2html34"
+  HREF="576_report05.html">576_report05</A></DIV>
+<!--End of Navigation Panel-->
+<ADDRESS>
+
+2007-12-02
+</ADDRESS>
+</BODY>
+</HTML>

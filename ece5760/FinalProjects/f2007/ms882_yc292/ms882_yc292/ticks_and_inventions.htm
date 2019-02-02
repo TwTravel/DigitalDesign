@@ -1,0 +1,321 @@
+<html xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" xmlns="http://www.w3.org/TR/REC-html40">
+
+<head>
+<meta http-equiv="Content-Language" content="en-au">
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<link rel="File-List" href="ticks_and_inventions_files/filelist.xml">
+
+<title>Appendix</title>
+<script language="JavaScript">
+<!--
+function FP_preloadImgs() {//v1.0
+ var d=document,a=arguments; if(!d.FP_imgs) d.FP_imgs=new Array();
+ for(var i=0; i<a.length; i++) { d.FP_imgs[i]=new Image; d.FP_imgs[i].src=a[i]; }
+}
+
+function FP_swapImg() {//v1.0
+ var doc=document,args=arguments,elm,n; doc.$imgSwaps=new Array(); for(n=2; n<args.length;
+ n+=2) { elm=FP_getObjectByID(args[n]); if(elm) { doc.$imgSwaps[doc.$imgSwaps.length]=elm;
+ elm.$src=elm.src; elm.src=args[n+1]; } }
+}
+
+function FP_getObjectByID(id,o) {//v1.0
+ var c,el,els,f,m,n; if(!o)o=document; if(o.getElementById) el=o.getElementById(id);
+ else if(o.layers) c=o.layers; else if(o.all) el=o.all[id]; if(el) return el;
+ if(o.id==id || o.name==id) return o; if(o.childNodes) c=o.childNodes; if(c)
+ for(n=0; n<c.length; n++) { el=FP_getObjectByID(id,c[n]); if(el) return el; }
+ f=o.forms; if(f) for(n=0; n<f.length; n++) { els=f[n].elements;
+ for(m=0; m<els.length; m++){ el=FP_getObjectByID(id,els[n]); if(el) return el; } }
+ return null;
+}
+// -->
+</script>
+<!--[if !mso]>
+<style>
+v\:*         { behavior: url(#default#VML) }
+o\:*         { behavior: url(#default#VML) }
+.shape       { behavior: url(#default#VML) }
+ li.MsoNormal
+	{mso-style-parent:"";
+	margin-bottom:.0001pt;
+	font-size:12.0pt;
+	font-family:"Times New Roman";
+	margin-left:0cm; margin-right:0cm; margin-top:0cm}
+</style>
+<![endif]--><!--[if gte mso 9]>
+<xml><o:shapedefaults v:ext="edit" spidmax="1027"/>
+</xml><![endif]-->
+</head>
+
+<body onload="FP_preloadImgs(/*url*/'button15.jpg',/*url*/'button18.jpg',/*url*/'button12.jpg',/*url*/'button11.jpg',/*url*/'button14.jpg',/*url*/'button13.jpg',/*url*/'button17.jpg',/*url*/'button16.jpg',/*url*/'button1B.jpg',/*url*/'button1A.jpg',/*url*/'button21.jpg',/*url*/'button20.jpg',/*url*/'button1E.jpg',/*url*/'button1D.jpg')" background="yello002.gif">
+
+<div style="position: absolute; width: 1060px; height: 489px; z-index: 2; left: 103px; top: 188px" id="layer2">
+	<h3><font face="Tahoma" color="#FF3300">Tricks &amp; Inventions</font></h3>
+	<hr color="#FF3300">
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">We would 
+	like to list all the tricks we learned during our work for this project. 
+	These tricks will prove very helpful for all the students of digital design 
+	and specially the users of NIOS II IDE, Quartus II and VGA Controller by 
+	Terasic.</font></p>
+	<ul>
+		<li>
+		<p class="MsoNormal" style="text-align:justify"><font face="Tahoma"><b>Hardware/SoftwareInterface:</b></font></p>
+		</li>
+	</ul>
+	<blockquote>
+		<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">One 
+		of the basic problems students usually encounter when communicating 
+		between the software and the hardware. That is to send and receive some 
+		data from software to hardware or vice versa.</font></p>
+		<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">We 
+		developed a very basic two handshaking protocol that can be used to 
+		communicate between the software and hardware. This protocol works 
+		irrespective to the clock speeds of NIOS II and hardware modules.</font></p>
+		<blockquote>
+			<p class="ListParagraphCxSpMiddle" style="text-align: justify; margin-left: 0cm">
+			<span style="font-size: 12.0pt; line-height: 115%; font-family: Tahoma; font-style:italic; font-weight:700">2 
+	WAY HANDSHAKING PROTOCOL</span></p>
+			<p class="ListParagraphCxSpMiddle" style="text-align: justify; margin-left: 0cm">
+			<span style="font-size: 12.0pt; line-height: 115%; font-family: Tahoma">The 
+	handshaking works like this:</span></p>
+			<p class="ListParagraphCxSpLast" style="text-align: justify; margin-left: 0cm">
+			<span style="font-size: 12.0pt; line-height: 115%; font-family: Tahoma">The 
+	hardware state machine asserts a ready flag which means that it is ready to 
+	accept the data. The CPU provides the data, address and a valid signal. The 
+	valid signal is the indication to write. As soon as the hardware gets the 
+	valid signal it writes the data at the address provided by the CPU and after 
+	writing it asserts a flag which tells the CPU that data has been written. 
+	The state machine than goes back to its initial state and asserts its ready 
+	for accepting another data. The CPU after getting the writing done signal 
+	clears the Valid so that same data is not written again.&nbsp; </span></p>
+			<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">The code 
+	for hardware stat machine and software function is available in the 
+	appendix.</font></p>
+		</blockquote>
+	</blockquote>
+	<ul>
+		<li>
+		<p class="MsoNormal" style="text-align:justify"><font face="Tahoma"><b>How 
+	to Display any Colored Image in VGA Controller:</b></font></p></li>
+	</ul>
+	<blockquote>
+		<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">We 
+	developed a project that can be used to display any image on the VGA 
+	Monitor. It is to be noted that the each pixel will only represent two fifty 
+	five colors because of the limited size of the SRAM. Image needs to be 
+	converted into a text file using the MATLAB program provided in the 
+	appendix. After converting it into the text file please copy paste it into 
+	an array of our software program <b>write_sram.c . </b>Remember to remove 
+	the multiple commas generated by the MATLAB by using any editor. Just run 
+	the program it will write an image into the SRAM. The whole project is 
+	provided into the APPENDIX.</font></p>
+	</blockquote>
+	<ul>
+		<li>
+		<p class="MsoNormal" style="text-align:justify"><font face="Tahoma"><b>Changing the Resolution of the VGA Monitor:</b></font></p>
+		</li>
+	</ul>
+	<blockquote>
+		<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">It is 
+	always better to have a good resolution. Initially the VGA Controller 
+	provided by &nbsp;the Terasic is of very low resolution of 320 x 240. One can 
+	change the resolution to 640 x 480 in a flick of an eye. There is file 
+	called <b>VGA_Param.h&nbsp; </b>in the same directory where all the VGA 
+	controller files are stored. Remove the contents of that file and copy paste 
+	the contents below.</font></p>
+		<p class="MsoNormal"><font face="Tahoma">//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Horizontal Parameter&nbsp; ( 
+	Pixel )</font></p>
+		<p class="MsoNormal"><font face="Tahoma">parameter&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; H_SYNC_CYC&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	=&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 96;</font></p>
+		<p class="MsoNormal"><font face="Tahoma">parameter&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; H_SYNC_BACK&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	=&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 45+3;</font></p>
+		<p class="MsoNormal"><font face="Tahoma">parameter&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; H_SYNC_ACT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	=&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 640;&nbsp;&nbsp;&nbsp;&nbsp; //&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 646</font></p>
+		<p class="MsoNormal"><font face="Tahoma">parameter&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; H_SYNC_FRONT=&nbsp;&nbsp; 
+	13+3;</font></p>
+		<p class="MsoNormal"><font face="Tahoma">parameter&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; H_SYNC_TOTAL=&nbsp;&nbsp; 
+	800;</font></p>
+		<p class="MsoNormal"><font face="Tahoma">//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Virtical 
+	Parameter&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ( Line )</font></p>
+		<p class="MsoNormal"><font face="Tahoma">parameter&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V_SYNC_CYC&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	=&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 2;</font></p>
+		<p class="MsoNormal"><font face="Tahoma">parameter&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V_SYNC_BACK&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	=&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 30+2;</font></p>
+		<p class="MsoNormal"><font face="Tahoma">parameter&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V_SYNC_ACT&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	=&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 480;&nbsp;&nbsp;&nbsp;&nbsp; //&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 484</font></p>
+		<p class="MsoNormal"><font face="Tahoma">parameter&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V_SYNC_FRONT=&nbsp;&nbsp; 
+	9+2;</font></p>
+		<p class="MsoNormal"><font face="Tahoma">parameter&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V_SYNC_TOTAL=&nbsp;&nbsp; 
+	525;</font></p>
+		<p class="MsoNormal"><font face="Tahoma">//&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Start Offset</font></p>
+		<p class="MsoNormal"><font face="Tahoma">parameter&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; X_START&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	=&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; H_SYNC_CYC+H_SYNC_BACK+4;</font></p>
+		<p class="MsoNormal"><font face="Tahoma">parameter&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Y_START&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 
+	=&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; V_SYNC_CYC+V_SYNC_BACK;</font></p>
+		<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">You have 
+	640 x 480 resolution </font><span style="font-family: Tahoma">J</span><font face="Tahoma">. 
+	You can further change the resolution but for that you need to calculate the 
+	timings with respect to your clock. Please note that above figures with the 
+	VGA controller provided by Terasic only.</font></p>
+	</blockquote>
+	<ul>
+		<li>
+		<p class="MsoNormal" style="text-align:justify"><font face="Tahoma"><b>How 
+	to Generate an MIF File:</b></font></p></li>
+	</ul>
+	<blockquote>
+		<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">Do you 
+	know that you can initialize your RAM or ROM with any kind of numeric data 
+	you have in a text file. The MIF or Memory initialization file is used to 
+	initialize the memory with any kind of numeric text data. For that you need 
+	to generate a MIF file. One thing you can do is to understand the MIF format 
+	and write a C code to translate the text file into MIF file. The shorter way 
+	to do is to get the text data into a .txt file. Open Quartus II. Go to File 
+	menu and select new. A window will appear .Click on the Other Files tab. 
+	Select Memory initialization file. Specify the word size of your memory and 
+	number of words in it. You will get a window like this:</font></p>
+	</blockquote>
+	<p class="MsoNormal"><font face="Tahoma">&nbsp;</font></p>
+	<p class="MsoNormal" align="center"><font face="Tahoma"><!--[if gte vml 1]><v:shapetype id="_x0000_t75"
+ coordsize="21600,21600" o:spt="75" o:preferrelative="t" path="m@4@5l@4@11@9@11@9@5xe"
+ filled="f" stroked="f">
+ <v:stroke joinstyle="miter"/>
+ <v:formulas>
+  <v:f eqn="if lineDrawn pixelLineWidth 0"/>
+  <v:f eqn="sum @0 1 0"/>
+  <v:f eqn="sum 0 0 @1"/>
+  <v:f eqn="prod @2 1 2"/>
+  <v:f eqn="prod @3 21600 pixelWidth"/>
+  <v:f eqn="prod @3 21600 pixelHeight"/>
+  <v:f eqn="sum @0 0 1"/>
+  <v:f eqn="prod @6 1 2"/>
+  <v:f eqn="prod @7 21600 pixelWidth"/>
+  <v:f eqn="sum @8 21600 0"/>
+  <v:f eqn="prod @7 21600 pixelHeight"/>
+  <v:f eqn="sum @10 21600 0"/>
+ </v:formulas>
+ <v:path o:extrusionok="f" gradientshapeok="t" o:connecttype="rect"/>
+ <o:lock v:ext="edit" aspectratio="t"/>
+</v:shapetype><v:shape id="_x0000_s1025" type="#_x0000_t75" style='width:431.25pt;
+ height:258.75pt'>
+ <v:imagedata src="ticks_and_inventions_files/image001.png" o:title=""/>
+</v:shape><![endif]--><![if !vml]><img border=0 width=575 height=345
+src="ticks_and_inventions_files/image002.jpg" v:shapes="_x0000_s1025"><![endif]></font></p>
+	<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Copy 
+	paste the whole text file in that window. If you know the format of the MIF 
+	file it would become really easy to understand this concept.</font></p>
+	<ul>
+		<li><font face="Tahoma"><b>How to display the same image in different 
+		location:</b></font></li>
+	</ul>
+	<blockquote>
+		<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">Take 
+		advantage of the facts that the VGA controller reads each pixel 
+		according to the H_Cont and V_Cont.&nbsp; That is, it reads from left to 
+		right and top to bottom.&nbsp; By keeping a separate address counters x &amp; y 
+		for the image updated the same way as H_Cont and V_Cont, one can read 
+		the image at any position on VGA screen.</font></p>
+		<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">To 
+		display multiple images of same kind, set x &amp; y address reset signal 
+		wisely.&nbsp; For example to display two <!--[if gte vml 1]><v:shape
+ id="_x0000_s1026" type="#_x0000_t75" style='width:30.75pt;height:29.25pt'>
+ <v:imagedata src="ticks_and_inventions_files/image003.png" o:title="Ð"/>
+</v:shape><![endif]--><![if !vml]><img border=0 width=41 height=39
+src="ticks_and_inventions_files/image004.jpg" v:shapes="_x0000_s1026"><![endif]>in 
+		a row in the display area, the x address should be reset after each 
+		horizontal line of one image.&nbsp; The y address however should not reset 
+		till the row of the images are done, instead it should be increment 
+		every time the V_Cont increases.<br>
+		<br>
+		x----&gt; &nbsp; Reset&nbsp;&nbsp; x----&gt;&nbsp;&nbsp; Reset</font></p>
+		<p class="MsoNormal"><font face="Tahoma">&nbsp;<!--[if gte vml 1]><v:shape
+ id="_x0000_s1027" type="#_x0000_t75" style='width:30.75pt;height:29.25pt'>
+ <v:imagedata src="ticks_and_inventions_files/image003.png" o:title="Ð"/>
+</v:shape><![endif]--><![if !vml]><img border=0 width=41 height=39
+src="ticks_and_inventions_files/image004.jpg" v:shapes="_x0000_s1027"><![endif]>&nbsp; 
+		&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <!--[if gte vml 1]><v:shape
+ id="_x0000_s1028" type="#_x0000_t75" style='width:30.75pt;height:29.25pt'>
+ <v:imagedata src="ticks_and_inventions_files/image003.png" o:title="Ð"/>
+</v:shape><![endif]--><![if !vml]><img border=0 width=41 height=39
+src="ticks_and_inventions_files/image004.jpg" v:shapes="_x0000_s1028"><![endif]></font></p>
+	</blockquote>
+	<ul>
+		<li>
+		<p class="MsoNormal"><font face="Tahoma"><b>How to make images overlap 
+		each other:</b></font></li>
+	</ul>
+	<blockquote>
+		<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">By 
+		using a priority encoder mux, we decide which image’s pixel should be 
+		displayed.&nbsp; To make sure different images can overlap each other, we 
+		treated the color white, 255, as the transparent color. The transparent 
+		color would disable the image’s pixel display and let the next image’s 
+		pixel in the priority order to be displayed.</font></p>
+		<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">Each 
+		different image should have its own address counter, and should always 
+		be updating regardless the enabling or disabling of the image display.&nbsp; 
+		The address counters should consist of x and y parts of the image and 
+		updates when H_Cont and V_Cont of the vga controller updates.&nbsp; This way, 
+		the image’s data of that specific pixel is always passed to the priority 
+		encoder mux to be chosen for display. &nbsp;&nbsp;</font></p>
+	</blockquote>
+	<ul>
+		<li>
+		<p class="MsoNormal" style="text-align:justify"><font face="Tahoma"><b>
+		How to detect continues holding of a mouse button and perform the action 
+		desired:</b></font></li>
+	</ul>
+	<blockquote>
+		<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">Look 
+		at the mouse.c of the DE2 Example, there is a do-while loopis the 
+		play_mouse function, which would lead one to think that to place the 
+		action desired in that loop, the action will be performed repeatedly.&nbsp; 
+		However, this is not true.&nbsp; Inside the do-while loop there is a function 
+		called send_int().&nbsp; This function is inside ptd.c.</font></p>
+		<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">The 
+		send_int() function has another do-while loop.&nbsp; The program only gets 
+		out of the loop if there is an active_bit change or timer runs out.&nbsp; 
+		Sadly, holding of a mouse button does not qualify for active_bit 
+		change.&nbsp; It might be temping to reduce the timer to get out the loop 
+		faster.&nbsp; Unfortunately, such attempt would result a weird mouse movement 
+		behavior.</font></p>
+		<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">The 
+		correct way to solve this problem is to declare one’s desired function 
+		in an external function in mouse.c.&nbsp; And, call the function in the 
+		do-while loop in the send_int() function in ptd.c.&nbsp; One may need to 
+		declare some global variables in mouse.c.&nbsp; </font></p>
+		<p class="MsoNormal" style="text-align:justify"><font face="Tahoma">
+		Remember, although holding mouse does not count as active_bit, movement 
+		of the mouse does.&nbsp; Thus, if one wants the desired action to be repeated 
+		regardless mouse moves or not.&nbsp; One should declare the function in the 
+		do-while loop in mouse.c too.</font></p>
+	</blockquote>
+	<p class="MsoNormal" style="text-align:justify">&nbsp;</p>
+	<h3 style="text-align:justify"><font face="Tahoma"><b>Tips</b></font></h3>
+	<ul>
+		<li><font face="Tahoma">It is very usual to get an error indicating <b>
+		Processor Pause </b>while running the NIOS II IDE. The processor is 
+		paused because of two reasons. One is that it is being reset at the time 
+		of programming and second there is some problem with the PLL file. Try 
+		to check the reset of the processor and the remove the unnecessary PLL 
+		files generated by the Altera</font></li>
+		<li><font face="Tahoma">The SRAM stores data until the power is removed. 
+		Programming FPGA with different .sof files does not make any change to 
+		the data of SRAM unless that particular .sof file writes into the SRAM.
+		</font></li>
+	</ul>
+</div>
+
+<div style="position: absolute; width: 1055px; height: 186px; z-index: 1; left: 104px; top: 1px; background-image: url('orange-block.jpg'); background-position:   center; " id="layer1">
+	<h1 align="center"><font face="Tahoma" size="5" color="#FF3300">FPGA BBQ Stick</font></h1>
+	<h1 align="center"><font face="Tahoma" size="4" color="#FF3300">Muhammad Bilal Shahid &amp; 
+	Yang-Ching Cheng</font></h1>
+	<hr color="#FF3300">
+	<h2 align="center"><a href="index.htm">
+	<img border="0" id="img7" src="button10.jpg" height="25" width="160" alt="Introduction" onmouseover="FP_swapImg(1,0,/*id*/'img7',/*url*/'button11.jpg')" onmouseout="FP_swapImg(0,0,/*id*/'img7',/*url*/'button10.jpg')" onmousedown="FP_swapImg(1,0,/*id*/'img7',/*url*/'button12.jpg')" onmouseup="FP_swapImg(0,0,/*id*/'img7',/*url*/'button11.jpg')" fp-style="fp-btn: Soft Rectangle 3; fp-proportional: 0; fp-orig: 0" fp-title="Introduction"></a><a href="high_level_design.htm"><img border="0" id="img13" src="button15.jpg" height="25" width="160" alt="High Level  Design" onmouseover="FP_swapImg(1,0,/*id*/'img13',/*url*/'button13.jpg')" onmouseout="FP_swapImg(0,0,/*id*/'img13',/*url*/'button15.jpg')" onmousedown="FP_swapImg(1,0,/*id*/'img13',/*url*/'button14.jpg')" onmouseup="FP_swapImg(0,0,/*id*/'img13',/*url*/'button13.jpg')" fp-style="fp-btn: Soft Rectangle 3; fp-proportional: 0; fp-orig: 0" fp-title="High Level  Design"></a><a href="program_hardware_design.htm"><img border="0" id="img14" src="button18.jpg" height="25" width="160" alt="Program/Hardware Design" fp-style="fp-btn: Soft Rectangle 3; fp-proportional: 0; fp-orig: 0" fp-title="Program/Hardware Design" onmouseover="FP_swapImg(1,0,/*id*/'img14',/*url*/'button16.jpg')" onmouseout="FP_swapImg(0,0,/*id*/'img14',/*url*/'button18.jpg')" onmousedown="FP_swapImg(1,0,/*id*/'img14',/*url*/'button17.jpg')" onmouseup="FP_swapImg(0,0,/*id*/'img14',/*url*/'button16.jpg')"></a><a href="results_and_conclusion.htm"><img border="0" id="img15" src="button19.jpg" height="25" width="160" alt="Results &amp; Conclusion" fp-style="fp-btn: Soft Rectangle 3; fp-proportional: 0; fp-orig: 0" fp-title="Results &amp; Conclusion" onmouseover="FP_swapImg(1,0,/*id*/'img15',/*url*/'button1A.jpg')" onmouseout="FP_swapImg(0,0,/*id*/'img15',/*url*/'button19.jpg')" onmousedown="FP_swapImg(1,0,/*id*/'img15',/*url*/'button1B.jpg')" onmouseup="FP_swapImg(0,0,/*id*/'img15',/*url*/'button1A.jpg')"></a><a href="ticks_and_inventions.htm"><img border="0" id="img17" src="button1F.jpg" height="25" width="160" alt="Tricks &amp; Inventions" fp-style="fp-btn: Soft Rectangle 3; fp-proportional: 0; fp-orig: 0" fp-title="Tricks &amp; Inventions" onmouseover="FP_swapImg(1,0,/*id*/'img17',/*url*/'button20.jpg')" onmouseout="FP_swapImg(0,0,/*id*/'img17',/*url*/'button1F.jpg')" onmousedown="FP_swapImg(1,0,/*id*/'img17',/*url*/'button21.jpg')" onmouseup="FP_swapImg(0,0,/*id*/'img17',/*url*/'button20.jpg')"></a><a href="appendix.htm"><img border="0" id="img16" src="button1C.jpg" height="25" width="160" alt="Appendix" fp-style="fp-btn: Soft Rectangle 3; fp-proportional: 0; fp-orig: 0" fp-title="Appendix" onmouseover="FP_swapImg(1,0,/*id*/'img16',/*url*/'button1D.jpg')" onmouseout="FP_swapImg(0,0,/*id*/'img16',/*url*/'button1C.jpg')" onmousedown="FP_swapImg(1,0,/*id*/'img16',/*url*/'button1E.jpg')" onmouseup="FP_swapImg(0,0,/*id*/'img16',/*url*/'button1D.jpg')"></a></h2>
+	<hr color="#FF3300">
+	</div>
+
+</body>
+
+</html>

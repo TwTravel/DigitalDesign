@@ -1,0 +1,257 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<!--
+    How to use the toggle script:
+
+    1. Put a link that users will click to show/hide the material.
+        <a href="#" onclick="toggledisplay('box_id'); return false;">Click here to read the spoiler</a>
+
+    2. Somewhere else, give something the id box_id. 
+        <div id="box_id" class="toggle-off">Snape kills Dumbledore!</div>
+
+    3. Profit.
+
+
+    Note, no two things can have the same box_id, or bad things will happen.
+
+-->
+
+
+
+
+<!--
+	This document provides the basis of a semantically structured web page 
+	authored in XHTML 1.0 Transitional using established Cornell University
+	naming conventions.
+-->
+
+<head>
+	<title>ECE5760 Robot Navigation Using Sound Localization</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+	<meta http-equiv="Content-Language" content="en-us" />
+
+	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+	
+<!--
+	All layout and formatting should be controlled through Cascading Stylesheets (CSS).
+	The following link tag should appear in the head of every page in the website. see
+	styles/screen.css.
+-->
+	<link rel="stylesheet" type="text/css" media="screen" href="styles/screen.css" />
+	
+	<style type="text/css">
+	<!--
+	div.main-photo-large {
+		width: 100%;
+	}
+	div.main-photo-large ul.photo-caption-float li 
+	{
+		padding-left: 0;
+		margin-right: 20px;
+		background: none; /* list-style-type replacement */
+		float: left;
+	}
+	div.clear {
+		clear: both;
+	}
+	.photo-caption-float .caption {
+		background: none;
+		padding: 0;
+	}
+	img.img-float-text {
+		float: right;
+		margin: 0 0 2em 2em;
+	}
+	.toggle-on {
+		display: ;
+	}
+	.toggle-off {
+		display: none;
+	}
+	-->
+	</style>
+
+	<script type="text/javascript">
+	<!--
+	function toggledisplay(id) {
+		if (!document.getElementById) return;
+		var elem = document.getElementById(id);
+		if (elem.className != "toggle-on")
+			elem.className = "toggle-on";
+		else
+			elem.className = "toggle-off";
+		return;
+	}
+	//-->
+	</script>
+
+
+</head>
+
+<body class="onecolumn">
+
+<!--
+	The following link provides a way for people using text-based browsers and
+	screen readers to skip over repetitive navigation elements so that they can 
+	get directly to the content. It is hidden from general users through CSS.
+-->
+<div id="skipnav">
+	<a href="#content">Skip to main content</a>
+</div>
+
+<hr />
+
+<!-- The following div contains the Cornell University logo with unit signature -->
+<div id="cu-identity">
+	<div id="cu-logo">
+		<a id="insignia-link" href="../../../../../../../../../www.cornell.edu/default.htm"><img src="images/unit_signature_unstyled.gif" alt="Cornell University" width="416" height="88" border="0" /></a>
+
+		<div id="unit-signature-links">
+			<a id="cornell-link" href="../../../../../../../../../www.cornell.edu/default.htm">Cornell University</a>
+			<a id="unit-link1" href="../../../../../../../../../instruct1.cit.cornell.edu/Courses/ece576/default.htm">ECE5760</a>
+		</div>
+	</div>
+	
+	<!-- 
+		The search-form div contains a form that allows the user to search 
+		either pages or people within cornell.edu directly from the banner.
+	-->
+	<div id="search-form">
+		<form action="http://www.cornell.edu/search/" method="get" enctype="application/x-www-form-urlencoded">
+
+			<div id="search-input">
+				<label for="search-form-query">SEARCH CORNELL:</label>
+				<input type="text" id="search-form-query" name="q" value="" size="20" />
+				<input type="submit" id="search-form-submit" name="submit" value="go" />
+			</div>
+
+			<div id="search-filters">
+					<input type="radio" id="search-filters1" name="tab" value="" checked="checked" />
+					<label for="search-filters1">Pages</label>
+
+				
+					<input type="radio" id="search-filters2" name="tab" value="people" />
+					<label for="search-filters2">People</label>
+					
+					<a href="../../../../../../../../../www.cornell.edu/search/default.htm">more options</a>
+			</div>	
+		</form>
+	</div>
+	
+	<!-- 
+		The search-form div contains a form that allows the user to search 
+		either the unit website or all of cornell.edu directly from the banner.
+	<div id="search-form">
+		<form action="#" method="post" enctype="application/x-www-form-urlencoded">
+			<div id="search-input">
+				<label for="search-form-query">SEARCH:</label>
+				<input type="text" id="search-form-query" name="query" value="" size="20" />
+				<input type="submit" id="search-form-submit" name="submit" value="go" />
+			</div>
+
+			<div id="search-filters">
+					<input type="radio" id="search-filters1" name="target" value="unit" checked="checked" />
+					<label for="search-filters1">Unit name</label>
+				
+					<input type="radio" id="search-filters2" name="target" value="cornell" />
+					<label for="search-filters2">Cornell</label>
+					
+					<a href="#">more options</a>
+			</div>	
+		</form>
+	</div>
+	-->
+	
+	<!--
+		The search-navigation div contains links that allow the user to search
+		either the unit website or all of cornell.edu.
+		These links will be displayed in the unit signature banner and will
+		be aligned with the right edge of the page.
+	<div id="search-navigation">
+		<ul>
+			<li><a href="#">Search Unit Name</a></li>
+			<li><a href="http://www.cornell.edu/search/">Search Cornell</a></li>
+		</ul>
+	</div>
+	-->
+
+</div>
+
+<!-- The header div contains the main identity and main navigation for the site -->
+<div id="header">	
+	<!--
+		The navigation div contains the site's main navigation. These
+		links will be displayed in a horizontal, gray navigation bar 
+		under the unit signature banner.
+	-->		
+<hr />
+	
+	<!-- 
+		The identity div contains the name of a main site section
+	-->
+	<div style="text-align: center;">
+		<div class="identity">
+				<h1 class="title" style="font-family:helvetica;">ECE5760 Robot Navigation Using Sound Localization</h1>
+				
+				<h2>Developed by and Allison Smyth and Jonathan Diamond</h2>
+
+					
+		</div>
+	</div>		
+<hr />
+
+
+
+<div id="navigation-wrapper">
+	<div id="navigation" >
+		<ul>
+			<a href="index.html">Introduction</a>
+			<a href="highlevel.html">High Level Design</a>
+			<a href="hardware.html">Hardware</a>
+			<a href="software.html">Software</a>	
+			<a href="results.html">Results</a>
+			<a href="appendices.html">Appendices</a>		
+		</ul>
+
+	</div>
+	<div class="clear"></div>
+</div>
+
+<div id="wrap">
+
+<!-- The content div contains the main content of the page -->
+<div id="content">
+	<div id="main">
+  <OBJECT width="425" height="344" ><PARAM name="movie" value="MPFLVPlayer.swf" /><PARAM name="allowFullScreen" value="true" /><PARAM name="FlashVars" value="fn=../../../../../../../../../www.youtube.com/watch@v=4FUFWfnNqOc&flvskin=MPFLVSkin.swf" /><EMBED src="MPFLVPlayer.swf"  width="425" height="344" type="application/x-shockwave-flash" allowFullScreen="true" FlashVars="fn=../../../../../../../../../www.youtube.com/watch@v=4FUFWfnNqOc&flvskin=MPFLVSkin.swf"></EMBED></OBJECT>;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; If  all sound readings were taken perfectly and all other factors were ignored, it  is possible to say that our system is accurate to within 2x10-5 ft  due to the resolution of the counter we are using to monitor sound pulses.&nbsp; Although this accuracy can be achieved in the  FPGA hardware, it is not possible to achieve this accuracy using our current  method of detecting sound.&nbsp; Due to  variations in the sound source and the microphone sensitivity, the time it  takes to trigger a particular microphone is not constant.&nbsp; The average deviation in time count readings  recorded in the system was 1737.378, which corresponds to 3.474756x10-5s  or about 0.039 ft.&nbsp; The maximum deviation  recorded was 2798.062, which corresponds to 5.596124x10-5s or about  0.0629 ft.&nbsp; Therefore, our actual  accuracy is a little less than 0.1 ft for distance values.<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The  accuracy of the angle values relies heavily on the accuracy of the distance  values calculated.&nbsp;&nbsp; As long as the  microphones do not vary with accuracy to each other during a single reading,  the angle calculated should be accurate.&nbsp;  Furthermore, the accuracy of the angle calculated relies on the robot  correctly facing the DE2 board.&nbsp; If all  these external factors are ignored, the angle calculator has a worst-case resolution  of 0.8953 degrees.&nbsp; This is for really  small (angles less than 5 degrees) or really large angles (angles greater than  175 degrees).&nbsp; The resolution for angles  close to 90 degrees is around 0.014 degrees.&nbsp;  Our goal was to make the system accurate to within 1 degree; therefore,  this setup meets the requirement.<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The  accuracy of the Cartesian coordinate calculation rounds the angle to the  nearest degree in order to calculate the cosine and sine value.&nbsp; For the short distances that our robot  operates over, this rounding does not make a large difference.&nbsp; At 10 ft away from the FPGA (the maximum distance  that our robot currently moves from the FPGA), the resolution of the Cartesian  coordinate calculation is within 0.001523ft, which meets are requirement of  being accurate to within 1 ft.<br />
+  	&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;We were very satisfied by the usability of the system. A lay operator could scan a room with only a brief explanation of how the system worked. While calibration is relatively time consuming it is not necesary for normal operation.<br />
+  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;There are a few aspects of our  design that worked adequately, but we had initially hoped to perform better.  For one thing in order to ensure the accuracy we desired we need to take a  large number of readings to produce one sample. This means that we need to  spend more time pinging. While each ping can be processed quickly having to  perform dozens for each sample slows the process down. Another issue was with  the requirement to take our samples facing the Nios. It would improve the speed  of movement if we could produce non-directional pings. Also while our system does not interfere with anyone elses project, it does produce quite a bit of noise pollution. We originally desired to make the system out of human hearing, but needed to lower the frequency to satisfy the microphone requirements.<br />
+        </p>
+      <h1>Conclusions</h1>
+	    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Overall,  this project met our expectations in terms of performance.&nbsp; We were able to reliably track a sound source  as it moved throughout a room.&nbsp;  Furthermore, we were able to direct the motion of the sound source based  on data collected and analyzed.&nbsp; We were  also able to capture data from the sound source regarding alcohol levels  present in the room.<br />
+	      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;The most significant achievement of this project  is that we developed a very cheap relatively robust way to figure out our  robots location. It would be trivial to expand this system to include many more  robots with many more sensors. This navigation could be useful for controlling  swarms doing mapping, or performing cooperatively on a task.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; There  are many things that we would do differently if we were to repeat this project  in the future.&nbsp; First of all we would  have used different microphones that were less varying and could collect higher  frequency sounds.&nbsp; This leads to the next  difference, which would be to use a different sound frequency (preferably one  that is not detectable by humans).&nbsp; One  difference that would dramatically improve the behavior of our system would be  to make the system dynamically adjust its sensor calibration based on room  conditions.&nbsp; In other words, the system  would include temperature and humidity sensors in order to detect the  conditions of the air.&nbsp; The slope and  y-intercept values of the microphone calibration lines would then be adjusted  as appropriate (to compensate for the varying speed of sound and varying  behavior of the electrical components in the sound receiving system).<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The  final change that would be made given more time or another opportunity to work  on this project would be to use a more stable robot.&nbsp; Our current design is a tissue box with  treads and Tupperware on top.&nbsp; Although  this design worked for our testing purposes, it is not very sturdy.&nbsp; Furthermore, we believe that the accuracy of  the robot behavior, especially turn behavior, would be improved with a more  robust design (one where the treads do not constantly loosen due to wear on the  tissue box).<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Our design does  conform to the applicable standards.
+	      The  only standard that applies to our robot is FCC due to the wireless  communication between the robot and the sound receiving system.&nbsp; This communication was done with XBee  modules, which are FCC approved.&nbsp; These  devices are sold as FCC licensed devices; therefore, no other legal approval is  required to use them in our design.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Overall,  this project met our expectations in terms of performance.&nbsp; We were able to reliably track a sound source  as it moved throughout a room.&nbsp;  Furthermore, we were able to direct the motion of the sound source based  on data collected and analyzed.&nbsp; We were  also able to capture data from the sound source regarding alcohol levels  present in the room.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; The design for  this project was strictly of our own creation.&nbsp;  The only code that we did not engineer was for the Nios II processor,  floating point to integer conversion, floating point divide, PLL, and reset  delay functions.&nbsp; This code was created  by the Altera SOPC builder and Altera MegaFunction wizard.&nbsp; We do not take credit for these  functions.&nbsp; We only claim the code that  surrounds these functions in our system as well as the code written for the  Nios II processor.<br />
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; In summary, in  order to demonstrate our abilities to perform sound localization, we created a roving  robot system.&nbsp; The robot acts as a slave  to the FPGA where all actions performed by the robot are explicitly controlled  by the FPGA.&nbsp; The FPGA performs functions  in order to determine the location of the robot as well as what alcohol levels  the robot is seeing at a particular location.&nbsp;  From this data, it creates a diagram on a VGA screen to show where the  robot has been and what it has seen.&nbsp; The  goal of the FPGA system is to get the robot to a target specified by the  user.&nbsp; All this was accomplished in this  project to a reasonable accuracy.&nbsp; For  this reason, this project was a success.</p>
+    </div>
+</div>
+</div>
+
+<hr />
+
+<div id="footer">
+<!-- The footer-content div contains the Cornell University copyright -->
+<div id="footer-content">
+	&copy;2009 <a href="../../../../../../../../../www.cornell.edu/default.htm">Cornell University</a>
+</div>
+</div>
+
+</body>
+</html>

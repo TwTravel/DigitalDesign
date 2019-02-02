@@ -1,0 +1,150 @@
+<html>
+
+<head>
+<meta http-equiv="Content-Language" content="en-us">
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<title>High Level Design</title>
+<!--mstheme--><link rel="stylesheet" type="text/css" href="_themes/blends/blen1011.css"><meta name="Microsoft Theme" content="blends 1011">
+</head>
+
+<body>
+
+<p align="center"><font face="Verdana" size="6">High Level Design</font></p>
+<div style="position: absolute; width: 746px; height: 547px; z-index: 1; left: 197px; top: 107px" id="layer1">
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal"><img border="0" src="high_l1.gif" width="854" height="284"></p>
+<p class="MsoNormal"><span style="letter-spacing: 1pt"><u><b>High Level Description of 
+different module</b></u></span></p>
+<p class="MsoNormal"><span style="letter-spacing: 1pt"><b>CCD_Capture</b>: This 
+is the module which handle the pixel data coming from the CMOS sensor. The main function of CCD_Capture is to 
+generate the Horizontal, Vertical and Frame counter for the data inserted from 
+camera to GPIO1.</span></p>
+<p class="MsoNormal"><span style="letter-spacing: 1pt"><b>RAW2RGB</b>: This module 
+is used to convert the image from Bayer format to RGB format and gives out 10 
+bits each for Red, Green and Blue values. Conversion has been discussed in more 
+details in the hardware description</span></p>
+<p class="MsoNormal"><span style="letter-spacing: 1pt"><b>Mirror_Col</b>: Since the 
+frame captured from the sensor in 
+the camera is reversed left side and right side, so we need this mirror module 
+to change it back and match with the real situation.</span></p>
+<p class="MsoNormal"><span style="letter-spacing: 1pt"><b>SDRAM</b>: In this design, we use the SDRAM 
+to act as frame buffer and to store all 
+the RGB value for each pixel. Since RGB in total are 30 bits, so we need two 
+lines in SDRAM to store the data for one pixel address. The main control part is 
+reading from the SDRAM directly and doing the computation. The clock frequency 
+for this module is 50 MHz.</span></p>
+<p class="MsoNormal"><span style="letter-spacing: 1pt"><b>Main ctrl</b>: This part is the most important part in 
+our design and responsible for color detection and segmentation. It reads out 
+the SDRAM frame buffer pixel by pixel and computes the RGB value of each pixel 
+and based on relative intensity of each component detects different colors. It 
+also computes the center of the color marker and writes down the selected color 
+values to M4K as we paint on screen. This is discussed further below.</span></p>
+<p class="MsoNormal"><span style="letter-spacing: 1pt"><b>M4K</b>: This memory is used to store the value of RGB 
+for each pixel address and the VGA controller reads the RGB values directly from 
+M4K. We can select 
+up to three colors when we are drawing by different values in M4K. And the width 
+of the data in this memory is 2 bits.</span></p>
+<p class="MsoNormal"><span style="letter-spacing: 1pt"><b>VGA</b>: VGA part contains the VGA controller and 
+VGA display. The VGA controller is responsible for receiving RGB data from host side 
+that is from the memory 
+and sending out RGB data for each pixel to VGA DAC. Besides, that VGA controller 
+is also used to display the color palette on the screen to select different 
+colors while painting.</span></p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal"><span style="letter-spacing: 1pt"><b><u>Description for the Main control part</u></b></span></p>
+<p class="MsoNormal"><span style="letter-spacing: 1pt">We have all the main 
+computation in this part as well as the line drawing and averaging module. For 
+the line drawing module, we draw lines by drawing the center pixel fo the 
+detected color psace and also for smoothening we computed a center pixel between 
+the two pixels for the consecutive image frames. For the basic computation 
+part, first and most fundamental thing we need to implement for our design is to 
+detect colors like red, yellow and green. We implement this by comparing RGB 
+value with a threshold and also computing relative RGB values for every pixel 
+under scan. After detecting the specific color, we need to store specified value 
+corresponding to the detected color into the memory. And the address we store in the memory should be 
+determined by the line drawing part. For the reading part from the M4K, we just 
+keep reading and sending the value to VGA continuously. </span></p>
+<p class="MsoNormal"><span style="letter-spacing: 1pt">The yellow color is for drawing and selecting color, while 
+the RED color is for control that is for penup and pendown operation, so when 
+RED color is detected penup mode is triggered and we stop drawing. In order to get rid 
+of some noise on the screen, we specified that the previous and current pixel 
+address stored in memory should with a square with length of 20.</span></p>
+<p class="MsoNormal">&nbsp;</p>
+<p align="center"><img border="0" src="high_l2.gif"></p>
+<p>&nbsp;</p>
+<p class="MsoNormal"><span style="letter-spacing: 1pt">Data stored in M4K is a 
+two-bit color selection value. It indicates which color we are using for drawing 
+the picture that gives us the color selection functionality. In total, we have four colors for drawing, Red, Green, Blue and 
+white color for erasing. The size of the eraser is 3x3 square pixels. And we use 
+red color detection value to control drawing or not. The address of each value 
+stored in M4K corresponds to the pixel address in the VGA monitor.</span></p>
+<p class="MsoNormal"><span style="letter-spacing: 1pt">When 
+we are reading from the M4K, we output specific color RGB value according to the 
+data read-out from memory. We output Red color for value 01, Green color for 
+value 10, Blue color for value 11, and white color for value 00. The 
+VGA_controller module read these value and output them in the screen. We have 
+the color bar output in monitor, and by moving your cursor to a specified 
+region, we can select color by pen-down and then pen-up the red color. It’s just 
+like a click in the mouse, click down and release.</span></p>
+<p class="MsoNormal">&nbsp;</p>
+<p class="MsoNormal">
+<span style="line-height: 115%; letter-spacing: 1pt; font-weight: 700; text-decoration: underline">
+Using the System</span></p>
+<p class="MsoNormal"><span style="line-height: 115%; letter-spacing: 1pt">As 
+stated in the objective, in this project the user draws on a surface with 
+detection of his hand movement in space. Here we use two fingers of the user, 
+say index and little, to control all functionalities of the application.</span></p>
+<p class="MsoNormal"><span style="line-height: 115%; letter-spacing: 1pt">
+Whenever both finger tips are detected by the sensor a cursor appears on the 
+screen to help the user locate where he is on the screen. This gesture is just 
+used for movement control on the screen and no drawing or activity happens while 
+this gesture is maintained.</span></p>
+<p class="MsoNormal"><span style="line-height: 115%; letter-spacing: 1pt">As 
+soon as the user folds his little finger which then stops being detected the 
+cursor begins to paint on the screen. Hence this gesture is used for painting on 
+the screen.</span></p>
+<p class="MsoNormal"><span style="line-height: 115%; letter-spacing: 1pt">As 
+demonstrated in the video the user can simply switch between these two hand 
+gestures to paint the picture and control the cursor. For color selection or for 
+selection of the eraser the user needs to move the cursor onto the color he 
+wants to pick on the color pallet on the left side of the screen. He then needs 
+to use the little finger in a gesture intended to duplicate the click of a 
+mouse. He needs to fold his little finger and unfold it again as demonstrated in 
+the video to then select the color. He can then proceed to drawing with the 
+selected color on the screen. The switch between the eraser and the color is 
+also done in a similar manner.</span><span style="font-size:14.0pt;line-height:115%"> 
+&nbsp;</span></p>
+<p>&nbsp;</p>
+<p>&nbsp;</div>
+<p align="left">
+<!--webbot bot="Navigation" S-Type="sequence" S-Orientation="vertical" S-Rendering="graphics" B-Include-Home="FALSE" B-Include-Up="FALSE" U-Page="sid:1001" startspan --><script language="JavaScript"><!--
+MSFPhover = 
+  (((navigator.appName == "Netscape") && 
+  (parseInt(navigator.appVersion) >= 3 )) || 
+  ((navigator.appName == "Microsoft Internet Explorer") && 
+  (parseInt(navigator.appVersion) >= 4 ))); 
+function MSFPpreload(img) 
+{
+  var a=new Image(); a.src=img; return a; 
+}
+// --></script><script language="JavaScript"><!--
+if(MSFPhover) { MSFPnav1n=MSFPpreload("_derived/index.htm_cmp_blends010_vbtn.gif"); MSFPnav1h=MSFPpreload("_derived/index.htm_cmp_blends010_vbtn_a.gif"); }
+// --></script><a href="index.htm" language="JavaScript" onmouseover="if(MSFPhover) document['MSFPnav1'].src=MSFPnav1h.src" onmouseout="if(MSFPhover) document['MSFPnav1'].src=MSFPnav1n.src"><img src="_derived/index.htm_cmp_blends010_vbtn.gif" width="140" height="60" border="0" alt="Home" name="MSFPnav1"></a><br><script language="JavaScript"><!--
+if(MSFPhover) { MSFPnav2n=MSFPpreload("_derived/introduction.htm_cmp_blends010_vbtn.gif"); MSFPnav2h=MSFPpreload("_derived/introduction.htm_cmp_blends010_vbtn_a.gif"); }
+// --></script><a href="introduction.htm" language="JavaScript" onmouseover="if(MSFPhover) document['MSFPnav2'].src=MSFPnav2h.src" onmouseout="if(MSFPhover) document['MSFPnav2'].src=MSFPnav2n.src"><img src="_derived/introduction.htm_cmp_blends010_vbtn.gif" width="140" height="60" border="0" alt="Introduction" name="MSFPnav2"></a><br><img src="_derived/high_level_design.htm_cmp_blends010_vbtn_p.gif" width="140" height="60" border="0" alt="High Level Design"><br><script language="JavaScript"><!--
+if(MSFPhover) { MSFPnav3n=MSFPpreload("_derived/hardware_design.htm_cmp_blends010_vbtn.gif"); MSFPnav3h=MSFPpreload("_derived/hardware_design.htm_cmp_blends010_vbtn_a.gif"); }
+// --></script><a href="hardware_design.htm" language="JavaScript" onmouseover="if(MSFPhover) document['MSFPnav3'].src=MSFPnav3h.src" onmouseout="if(MSFPhover) document['MSFPnav3'].src=MSFPnav3n.src"><img src="_derived/hardware_design.htm_cmp_blends010_vbtn.gif" width="140" height="60" border="0" alt="Hardware Design" name="MSFPnav3"></a><br><script language="JavaScript"><!--
+if(MSFPhover) { MSFPnav4n=MSFPpreload("_derived/testing_and_debugging.htm_cmp_blends010_vbtn.gif"); MSFPnav4h=MSFPpreload("_derived/testing_and_debugging.htm_cmp_blends010_vbtn_a.gif"); }
+// --></script><a href="testing_and_debugging.htm" language="JavaScript" onmouseover="if(MSFPhover) document['MSFPnav4'].src=MSFPnav4h.src" onmouseout="if(MSFPhover) document['MSFPnav4'].src=MSFPnav4n.src"><img src="_derived/testing_and_debugging.htm_cmp_blends010_vbtn.gif" width="140" height="60" border="0" alt="Testing &amp; Debugging" name="MSFPnav4"></a><br><script language="JavaScript"><!--
+if(MSFPhover) { MSFPnav5n=MSFPpreload("_derived/results.htm_cmp_blends010_vbtn.gif"); MSFPnav5h=MSFPpreload("_derived/results.htm_cmp_blends010_vbtn_a.gif"); }
+// --></script><a href="results.htm" language="JavaScript" onmouseover="if(MSFPhover) document['MSFPnav5'].src=MSFPnav5h.src" onmouseout="if(MSFPhover) document['MSFPnav5'].src=MSFPnav5n.src"><img src="_derived/results.htm_cmp_blends010_vbtn.gif" width="140" height="60" border="0" alt="Results" name="MSFPnav5"></a><br><script language="JavaScript"><!--
+if(MSFPhover) { MSFPnav6n=MSFPpreload("_derived/conclusions.htm_cmp_blends010_vbtn.gif"); MSFPnav6h=MSFPpreload("_derived/conclusions.htm_cmp_blends010_vbtn_a.gif"); }
+// --></script><a href="conclusions.htm" language="JavaScript" onmouseover="if(MSFPhover) document['MSFPnav6'].src=MSFPnav6h.src" onmouseout="if(MSFPhover) document['MSFPnav6'].src=MSFPnav6n.src"><img src="_derived/conclusions.htm_cmp_blends010_vbtn.gif" width="140" height="60" border="0" alt="Conclusions" name="MSFPnav6"></a><br><script language="JavaScript"><!--
+if(MSFPhover) { MSFPnav7n=MSFPpreload("_derived/appendix.htm_cmp_blends010_vbtn.gif"); MSFPnav7h=MSFPpreload("_derived/appendix.htm_cmp_blends010_vbtn_a.gif"); }
+// --></script><a href="appendix.htm" language="JavaScript" onmouseover="if(MSFPhover) document['MSFPnav7'].src=MSFPnav7h.src" onmouseout="if(MSFPhover) document['MSFPnav7'].src=MSFPnav7n.src"><img src="_derived/appendix.htm_cmp_blends010_vbtn.gif" width="140" height="60" border="0" alt="Appendix" name="MSFPnav7"></a><br><script language="JavaScript"><!--
+if(MSFPhover) { MSFPnav8n=MSFPpreload("_derived/references.htm_cmp_blends010_vbtn.gif"); MSFPnav8h=MSFPpreload("_derived/references.htm_cmp_blends010_vbtn_a.gif"); }
+// --></script><a href="references.htm" language="JavaScript" onmouseover="if(MSFPhover) document['MSFPnav8'].src=MSFPnav8h.src" onmouseout="if(MSFPhover) document['MSFPnav8'].src=MSFPnav8n.src"><img src="_derived/references.htm_cmp_blends010_vbtn.gif" width="140" height="60" border="0" alt="References" name="MSFPnav8"></a><!--webbot bot="Navigation" i-checksum="50213" endspan --></p>
+
+</body>
+
+</html>

@@ -1,0 +1,98 @@
+;-------------------------------------------------------------------------
+; Draws a colored line between any two points (x1,y1) and (x2,y2)
+vga_line: ; color, x1, y1, x2, y2
+  =y2
+  =x2
+  =y1
+  =x1
+  =color
+  0 =count
+
+  x1 =x_temp
+  y1 =y_temp
+
+  ; Takes absolute value of difference and does something to it
+
+  ; Does the x's first
+  if x2 x1 lt
+  then
+    x1 x2 sub =dx
+    -1 =s1
+  endif
+
+  if x2 x1 eq
+  then
+    0 =dx
+    0 =s1
+  endif
+
+  if x2 x1 gt
+  then
+    x2 x1 sub =dx
+    1 =s1
+  endif
+
+  ; Now does the y's
+  if y2 y1 lt
+  then
+    y1 y2 sub =dy
+    -1 =s2
+  endif
+
+  if y2 y1 eq
+  then
+    0 =dy
+    0 =s2
+  endif
+
+  if y2 y1 gt
+  then
+    y2 y1 sub =dy
+    1 =s2
+  endif
+
+  ; Does some other stuff
+  
+  0 =xchange
+
+  if dy dx gt
+  then
+    dy dx
+    =dy
+    =dx
+    1 =xchange
+  endif
+
+  dy 1 shl dx sub =e
+
+  while count dx gt not
+  do
+    color y_temp x_temp vga_point
+
+    if e 0 lt not
+    then
+
+      if 1 xchange eq
+      then
+        x_temp s1 add =x_temp
+      else
+        y_temp s2 add =y_temp
+      endif
+
+      e dx 1 shl sub =e
+
+    endif
+
+    if 1 xchange eq
+    then
+      y_temp s2 add =y_temp
+    else
+      x_temp s1 add =x_temp
+    endif
+
+    e dy 1 shl add =e
+
+    1 count add =count
+  endwhile
+
+return

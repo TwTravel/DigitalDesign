@@ -1,0 +1,13 @@
+#navlist li {
+	display:inline;
+	padding:0 .9em;
+	border-right:1px solid #009;
+}
+
+#navlist li.last {
+	border:none;
+}
+
+#navlist {
+	text-align:center;
+}

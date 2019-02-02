@@ -1,0 +1,79 @@
+DEPTH = 1024;
+WIDTH = 16;
+  
+ADDRESS_RADIX = HEX;
+DATA_RADIX = HEX;
+   
+CONTENT
+BEGIN
+[000..3FF]	:	0000;
+000	:	1000;	%  pushi 0 % 
+001	:	e001;	%  out greenLEDs % 
+002	:	1000;	%  pushi 0 % 
+003	:	3083;	%  pop counter1 % 
+004	:	0000;	% L1: nop  % 
+005	:	1001;	%  pushi forever % 
+006	:	503E;	%  jz L8 % 
+007	:	2083;	%  push counter1 % 
+008	:	9000;	%  pushpc  % 
+009	:	403E;	%  jmp inc % 
+00a	:	3080;	%  pop temp % 
+00b	:	2080;	%  push temp % 
+00c	:	2080;	%  push temp % 
+00d	:	e000;	%  out redLEDs % 
+00e	:	3083;	%  pop counter1 % 
+00f	:	1001;	%  pushi 1 % 
+010	:	3084;	%  pop counter2 % 
+011	:	0000;	% L2: nop  % 
+012	:	2084;	%  push counter2 % 
+013	:	2000;	%  push 0 % 
+014	:	f00b;	%  ne  % 
+015	:	501C;	%  jz L3 % 
+016	:	2084;	%  push counter2 % 
+017	:	9000;	%  pushpc  % 
+018	:	403E;	%  jmp inc % 
+019	:	3084;	%  pop counter2 % 
+01a	:	4012;	%  jmp L2 % 
+01b	:	0000;	% L3: nop  % 
+01c	:	d001;	%  in keys % 
+01d	:	f011;	%  bnot  % 
+01e	:	100F;	%  pushi keymask % 
+01f	:	f005;	%  band  % 
+020	:	1008;	%  pushi key3mask % 
+021	:	f00a;	%  eq  % 
+022	:	5027;	%  jz L4 % 
+023	:	10FF;	%  pushi pattern2 % 
+024	:	e001;	%  out greenLEDs % 
+025	:	403C;	%  jmp L7 % 
+026	:	0000;	% L4: nop  % 
+027	:	100F;	%  pushi pattern3 % 
+028	:	e001;	%  out greenLEDs % 
+029	:	d000;	%  in switches % 
+02a	:	1001;	%  pushi sw0mask % 
+02b	:	f00a;	%  eq  % 
+02c	:	5030;	%  jz L5 % 
+02d	:	9000;	%  pushpc  % 
+02e	:	e001;	%  out greenLEDs % 
+02f	:	0000;	% L5: nop  % 
+030	:	d000;	%  in switches % 
+031	:	1002;	%  pushi sw1mask % 
+032	:	f00a;	%  eq  % 
+033	:	503B;	%  jz L6 % 
+034	:	1082;	%  pushi test % 
+035	:	1055;	%  pushi pattern % 
+036	:	8000;	%  st  % 
+037	:	1082;	%  pushi test % 
+038	:	7000;	%  ld  % 
+039	:	e001;	%  out greenLEDs % 
+03a	:	0000;	% L6: nop  % 
+03b	:	0000;	% L7: nop  % 
+03c	:	4005;	%  jmp L1 % 
+03d	:	0000;	% L8: nop  % 
+03e	:	3081;	% inc: pop pctemp % 
+03f	:	1001;	%  pushi 1 % 
+040	:	f000;	%  add  % 
+041	:	2081;	%  push pctemp % 
+042	:	1001;	%  pushi 1 % 
+043	:	f000;	%  add  % 
+044	:	a000;	%  poppc  % 
+END ;	

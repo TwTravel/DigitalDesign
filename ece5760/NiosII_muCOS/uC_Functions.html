@@ -1,0 +1,1004 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head><title>uC/OS-II Functions and Data Structures</title>
+
+
+  
+                                         
+  <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1"></head><body>
+           
+<h1 align="center">Summary of Commonly Used uC/OS-II Functions and Data Structures</h1>
+             
+<h2><u>Data Structures</u></h2>
+      &nbsp;&nbsp;&nbsp; <b>OS_EVENT:<br>
+  <br>
+  </b>This structure is used in the following functions: OSQCreate(), OSQPend(),
+ OSQPost(), OSSemCreate(), OSSemPend(),OSSemPost(). &nbsp;All of these functions
+ make use of queues to either protect resources or pass messages between
+tasks. A pointer to the created structure is returned by the two create functions.
+ Once these queues have been created treat the returned pointers as&nbsp; 
+the head of the queue and always pass the pointer to this structure to the 
+Pend and Post functions as the pevent argument. Traversal is not necessary.<br>
+  <br>
+  See below for further information regarding the individual functions. Data
+ structure located in file src/uC/ucos_ii.h<br>
+        
+<pre>typedef struct {<br>    INT8U    OSEventType;                    	/* Type of event control block (see OS_EVENT_TYPE_???)     */<br>    INT8U    OSEventGrp;                     	/* Group corresponding to tasks waiting for event to occur */<br>    INT16U   OSEventCnt;                     	/* Semaphore Count (not used if other EVENT type)          */<br>    void    *OSEventPtr;                     	/* Pointer to message or queue structure                   */<br>    INT8U    OSEventTbl[OS_EVENT_TBL_SIZE];  	/* List of tasks waiting for event to occur                */<br>    char     OSEventName[OS_EVENT_NAME_SIZE]; 	/* Compile time directive currently has OS_EVENT_NAME_SIZE = 32 */<br>} OS_EVENT;<br><br><br>#define  OS_EVENT_TYPE_UNUSED      0		/* All possible values for OSEventType in OS_EVENT struct */<br>#define  OS_EVENT_TYPE_MBOX        1<br>#define  OS_EVENT_TYPE_Q           2<br>#define  OS_EVENT_TYPE_SEM         3<br>#define  OS_EVENT_TYPE_MUTEX       4<br>#define  OS_EVENT_TYPE_FLAG        5<br><br></pre>
+      &nbsp;&nbsp;&nbsp; <b>OS_STK</b>:<br>
+  <br>
+  Each task has stack entries of this type. The data structure is
+ located in file src/uC/os_cpu.h<br>
+      <br>
+           
+<pre>typedef unsigned short OS_STK;                   /* Each stack entry is 16-bit wide                    */</pre>
+      <br>
+      &nbsp;&nbsp;&nbsp; <b>OS_STK_DATA:<br>
+  <br>
+  </b>A variable of type OS_STK_DATA is filled in when calling OSTaskStkChk() to get the statistics
+ about the stack of each task. Further information regarding the OSTaskChkTask
+ function is located below. The OS_STK_DATA data structure is located in file src/uC/ucos_ii.h<b><br>
+  </b>      
+<pre><br>typedef struct {<br>    INT32U  OSFree;                    /* Number of free bytes on the stack for a specific task */<br>    INT32U  OSUsed;                    /* Number of bytes used on the stack for a specific task*/<br>} OS_STK_DATA;<br><br><br></pre>
+ &nbsp;&nbsp;&nbsp;<b>OS_TCB:</b><br><br>
+A variable of type OS_TCB is filled in when calling OSTaskQuery() to get information about a task. Further information 
+regarding OSTaskQuery is located below. The OS_TCB data structure is located in file src/uC/ucos_ii.h<br><br>
+<pre>typedef struct os_tcb{<br>	OS_STK		*OSTCBStkPtr;		//Stack Pointer
+	void		*OSTCBExtPtr;		//TCB extension pointer
+	OS_STK		*OSTCBStkBottom;	//Ptr to bottom of stack
+	INT32U		OSTCBStkSize;		//Size of task stack (#elements)
+	INT16U		OSTCPOpt;		//Task options
+	struct os_tcb	*OSTCBNext;		//Pointer to next TCB
+	struct os_tcb	*OSTCBPrev;		//Pointer to previous TCB
+	OS_EVENT	*OSTCBEventPtr;		//Pointer to ECB
+	void		*OSTCBMsg;		//Message received
+	OS_FLAG_NODE	*OSTCBFlagNode;		//Pointer to event flag node
+	OS_FLAGS	OSTCBFlagsRdy		//Event flags that made task ready
+	INT16U		OSTCBDly;		//Nbr ticks to delay task or, timeout
+	INT8U		OSTCBStat;		//Task Status
+	INT8U		OSTCBPrio;		//Task Priority (0 = highest)
+	INT8U		OSTCBX;
+	INT8U		OSTCBY;
+	INT8U		OSTCBBitX;
+	INT8U		OSTCBBitY;
+	BOOLEAN		OSTCBDelReq;		//Flag to tell task to delete itself
+}OS_TCB;</pre>
+
+<h2><u>Global Variables</u></h2>
+  Most of the global variables for uC/OS-II are located in file src/uC/ucos_ii.h.
+ Do not modify these globals. Reading from them is necessary for some exercises
+ in the labs.<br>
+  <br>
+       
+<pre>OS_EXT  INT8S             OSCPUUsage;               /* Percentage of CPU used                          */<br><br></pre>
+     
+<h2><u>Vector Table Entries</u><br>
+   </h2>
+   Initialize vector table entry #0 with the pointer of the context switching function. This function
+ will be called on every context switch.  Initialize the table before doing anything
+ else. Without the context switching vector (TRAP # 0) pointing to the correct
+ function uC/OS-II will not function correctly. The context switching function
+  OSCtxSw() is located in file src/uC/os_cpu_a.s &nbsp;This is given to you. 
+DO NOT modify the code that moves the Trap location into the vector table. 
+<pre><br><br><br>*((int *)0x80) = (int)OSCtxSw;	/* set up vector to Context Switch (TRAP #0) */<br></pre>
+  <br>
+           
+<h2><u>Initialization Functions</u></h2>
+      <b>&nbsp;&nbsp;&nbsp; OSInit()<br>
+      <br>
+      </b>      
+<table border="1" cellpadding="2" cellspacing="1" width="100%">
+        <tbody>
+          <tr>
+            <td align="center" valign="top">Function Prototype<br>
+            </td>
+                      <td align="center" valign="top">Arguments<br>
+            </td>
+            <td align="center" valign="top">Returns<br>
+            </td>
+            <td align="center" valign="top">Notes<br>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">void OSInit(void);<br>
+        <br>
+  Location:<br>
+  src/uC/os_core.c<br>
+            </td>
+                      <td valign="top">none<br>
+            </td>
+            <td valign="top">nothing<br>
+            </td>
+            <td valign="top">Call this function first inside your begin() 
+function.   Initializes uC/OS-II and must be called before calling OSStart()<br>
+            </td>
+          </tr>
+                       
+  </tbody>      
+</table>
+      <br>
+ Example:<br>
+      &nbsp;&nbsp;&nbsp; <br>
+           
+<blockquote>                  
+  <pre>begin (void)    			/* SYSTEM ENTRY POINT */<br>{</pre>
+                       
+  <pre>    *((int *)0x80) = (int)OSCtxSw;	/* set up vector to Context Switch (TRAP #0) */<br>    <b>OSInit();</b><br>    .<br>    .	<br>    OSStart();  			  /* away we go ! */<br>}</pre>
+      </blockquote>
+      <br>
+      &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; <br>
+      <b>&nbsp;&nbsp;&nbsp; OSStart()</b><br>
+      <br>
+           
+<table border="1" cellpadding="2" cellspacing="2" width="100%">
+        <tbody>
+          <tr>
+            <td align="center" valign="top">Function Prototype<br>
+            </td>
+                      <td align="center" valign="top">Arguments<br>
+            </td>
+            <td align="center" valign="top">Returns<br>
+            </td>
+            <td align="center" valign="top">Notes<br>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">void OSStart(void);<br>
+        <br>
+  Location:<br>
+  src/uC/os_core.c<br>
+            </td>
+                      <td valign="top">none<br>
+            </td>
+            <td valign="top">nothing<br>
+            </td>
+            <td valign="top">OSStart begins the multitasking. Call this as
+ a  part  of your initialization function but make sure that you have called
+ OSInit()  first.<br>
+            </td>
+          </tr>
+                       
+  </tbody>      
+</table>
+      <br>
+      Example:<br>
+       &nbsp;&nbsp;&nbsp; <br>
+             
+<blockquote>                     
+  <pre>begin (void)    			/* SYSTEM ENTRY POINT */<br>{</pre>
+                           
+  <pre>    *((int *)0x80) = (int)OSCtxSw;	/* set up vector to Context Switch (TRAP #0) */<br>    OSInit();<br>    .<br>    .	<br>    <b>OSStart();</b>  			  /* away we go ! */<br>}</pre>
+       </blockquote>
+      <br>
+      <br>
+      <b>&nbsp;&nbsp;&nbsp; OSStatInit()</b><br>
+      <br>
+           
+<table border="1" cellpadding="2" cellspacing="2" width="100%">
+        <tbody>
+          <tr>
+            <td align="center" valign="top">Function Prototype<br>
+            </td>
+                      <td align="center" valign="top">Arguments<br>
+            </td>
+            <td align="center" valign="top">Returns<br>
+            </td>
+            <td align="center" valign="top">Notes<br>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">void OSStatInit(void);<br>
+        <br>
+  Location:<br>
+  src/uC/os_core.c<br>
+            </td>
+                      <td valign="top">none<br>
+            </td>
+            <td valign="top">nothing<br>
+            </td>
+            <td valign="top">If CPU stats are required, this function 
+must be called. It must be called from the first and only task created. 
+This first  and only task may,in turn, create other tasks once OSStatInit has
+been called.<br>
+            </td>
+          </tr>
+                       
+  </tbody>      
+</table>
+      <br>
+      Example:<br>
+      <br>
+           
+<blockquote>                  
+  <pre>begin (void)    			/* SYSTEM ENTRY POINT */<br>{<br>    *((int *)0x80) = (int)OSCtxSw;	/* set up vector to Context Switch (TRAP #0) */<br>    OSInit();<br>    TaskCreate("StartTask",StartTask,StartTask_ID);<br>    OSStart();  			  /* away we go ! */<br>}<br><br>void StartTask(void *data)<br>{<br>    ScopeInit();		/* Initialize oscilloscope triggering routine */<br>    TickInit();		/* Start OS ticker,  see os/os_cpu_a.s */<br>    <b>OSStatInit();		/* Initialize statistics task */</b><br>    OSTaskCreateExt(...);	/* all clear to call tasks now */<br>    OSTaskCreateExt(...);	<br>    .<br>    .<br>    .<br>    OSTaskDel(OS_PRIO_SELF);	/* This task only runs once */<br>}</pre>
+      </blockquote>
+      <br>
+      <br>
+           
+<h2><u>Task Functions</u></h2>
+      &nbsp;&nbsp;&nbsp; <b>OSTaskCreateExt()</b><br>
+      <br>
+           
+<table border="1" cellpadding="2" cellspacing="2" width="100%">
+        <tbody>
+          <tr>
+            <td align="center" valign="top">Function Prototype<br>
+            </td>
+                      <td align="center" valign="top">Arguments<br>
+            </td>
+            <td align="center" valign="top">Returns<br>
+            </td>
+            <td align="center" valign="top">Notes<br>
+            </td>
+          </tr>
+          <tr>
+            <td align="left" valign="top">INT8U <br>
+      OSTaskCreateExt<br>
+    (void(*task)(void*pd), <br>
+    void *pdata, <br>
+    OS_STK *ptos, <br>
+    INT8U  prio, <br>
+    INT16U id, <br>
+    OS_STK *pbos,<br>
+    INT32U stk_size,<br>
+    void *pext,<br>
+    INT16U opt ) ;<br>
+        <br>
+  Location:<br>
+  src/uC/os_task.c<br>
+            </td>
+                      <td valign="top"><b>task</b><br>
+    Pointer to task's code that must be declared as void Task (void *)<br>
+            <br>
+      <b>pdata</b><br>
+    Pointer to data that is passed to task when it is created<br>
+            <br>
+      <b>ptos</b><br>
+    Pointer to the top of the task's stack. For stacks that grow down in
+memory   ptos needs to point to the highest valid memory location on the
+stack.<br>
+            <br>
+      <b>prio</b><br>
+    Unique priority to assign to this task. The lower the number the higher 
+ the priority.<br>
+            <br>
+      <b>id</b><br>
+    Task's ID number which is not currently used. Set this to the priority
+ of  the task.<br>
+            <br>
+      <b>pbos</b><br>
+    Pointer to the bottom of the task's stack. For stacks that grow downward
+  in memory pbos must point to the lowest valid stack location.<br>
+            <br>
+      <b>stk_size</b><br>
+    Number of 16 bit entries available on the stack. See typedef of OS_STK
+ &nbsp;in  src/uC/os_cpu.h and above.<br>
+            <br>
+      <b>pext</b><br>
+    Pointer to a user supplied memory location used as TCP extension. User
+ defined  location or data structure.<br>
+            <br>
+      <b>opt</b> <br>
+    Options for the task created. Lower 8 bits are reserved for uC/OS-II
+but   applications may use the upper 8 bits for application specific options.
+Possible  uC/OS-II predefined options are:<br>
+    <b>OS_TASK_OPT_STK_CHK</b><br>
+   Specifies whether stack checking is allowed for the task<br>
+    <b>OS_TASK_OPT_STK_CLR</b><br>
+   Specifies whether the stack need to be cleared<br>
+    <b>OS_TASK_OPT_SAVE_FP</b><br>
+   N/A we have no floating point registers on our CPU32<br>
+            </td>
+            <td valign="top">One of the following error codes:<br>
+            <br>
+      <b>OS_NO_ERR</b><br>
+      Function was successful in creating the task<br>
+            <br>
+      <b>OS_PRIO_EXIST</b><br>
+      A task already exists with that priority. In uC each task must have 
+a  unique  priority<br>
+            <br>
+      <b>OS_PRIO_INVALID</b><br>
+      prio is higher than OS_LOWEST_PRIO, currently set to 63<br>
+            <br>
+      <b>OS_NO_MORE_TCB</b><br>
+      uC has run out of OS_TCBs to assign<br>
+            </td>
+            <td valign="top">Stack must be declared as type OS_STK<br>
+         <br>
+   At some point during the execution of the task one of the services offered 
+ by uC/OS-II must be called to wait for time to expire, suspend the task or
+ wait for an event like a mailbox or semaphore. Otherwise the task may never
+ cede the processeor and other tasks with lower priorities may never get
+a  time slice. uC/OS-II is not a round robin OS. Consequently, all task must
+eventually cede for all task to get servicing.<br>
+         <br>
+   Don't assign user tasks priorities 0, 1, 2, 3, OS_LOWEST_PRIO-3, OS_LOWEST_PRIO-2, 
+ OS_LOWEST_PRIO-1, or OS_LOWEST_PRIO. These are reserved by uC/OS-II. The 
+other 56 application tasks are therefore available.<br>
+            </td>
+          </tr>
+                            
+  </tbody>      
+</table>
+      <br>
+      Example:<br>
+ <br>
+ 
+<pre>	#define TASK_OPT	OS_TASK_OPT_STK_CHK + OS_TASK_OPT_STK_CLR</pre>
+ <br>
+ 
+<pre>	void TaskCreate(char *TaskDesc, void *TaskFunc, INT8U TaskID)<br>	{<br>    		INT8U err;<br>    		er<b>r=OSTaskCreateExt(TaskFunc,<br>                        (void *)0,<br>                        &amp;TaskStack[TaskID][TASK_STACK_SIZE-1],<br>                        TaskID+5,<br>                        TaskID,<br>                        &amp;TaskStack[TaskID][0],<br>                        TASK_STACK_SIZE,<br>                        &amp;TaskData[TaskID],<br>                        TASK_OPT);</b><br>    		if (!err)<br>        		strcpy(TaskData[TaskID].TaskName, TaskDesc);<br>    		else<br>        		disp_err(err);<br>	}</pre>
+ <br>
+ <br>
+      &nbsp;&nbsp;&nbsp; <b>OSTaskDel()<br>
+      <br>
+      </b>      
+<table border="1" cellpadding="2" cellspacing="2" width="100%">
+        <tbody>
+          <tr>
+            <td align="center" valign="top">Function Prototype<br>
+            </td>
+                      <td align="center" valign="top">Arguments<br>
+            </td>
+            <td align="center" valign="top">Returns<br>
+            </td>
+            <td align="center" valign="top">Notes<br>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">INT8U OSTaskDel<br>
+    (INT8U prio) ;<br>
+        <br>
+  Location:<br>
+  src/uC/os_task.c<br>
+            </td>
+                      <td valign="top"><b>prio</b> <br>
+      priority number of the task to be deleted. <br>
+            </td>
+            <td valign="top"><b>OS_NO_ERR</b><br>
+      Call was successful<br>
+            <br>
+      <b>OS_TASK_DEL_IDLE</b><br>
+      This value is returned if you attempt to delete the idle task, this 
+is  not  permitted<br>
+            <br>
+      <b>OS_TASK_DEL_ERR</b><br>
+      Task to be deleted does not exist.<br>
+            <br>
+      <b>OS_PRIO_INVALID</b><br>
+       prio is higher than OS_LOWEST_PRIO.<br>
+            <br>
+      <b>OS_TASK_DEL_ISR</b><br>
+      This value is returned if you attempt to delete a task from an ISR.<br>
+            <br>
+            </td>
+            <td valign="top">Specify &nbsp;the priority of the task to be 
+deleted   or pass in OS_PRIO_SELF if priority of task is unknown. This task's 
+code  is not actually removed but the task is placed in the dormant state 
+and can  be recreated and made active by calling OSTaskCreate or OSTaskCreateExt.
+       <br>
+            <br>
+      Be careful when deleting a task that owns associated resources. &nbsp;If
+   a task owns resources like mailboxes, semaphores etc. call OSTaskDelReq()
+   instead to deal with those issues safely.<br>
+            </td>
+          </tr>
+                       
+  </tbody>      
+</table>
+      <b><br>
+      </b>Example:<br>
+ <br>
+ 
+<pre>	void StartTask(void *data)<br>	{<br>    		ScopeInit();		/* Initialize oscilloscope triggering routine */<br>    		TickInit();		/* Start OS ticker,  see src/uC/os_cpu_a.s */<br>    		OSStatInit();		/* Initialize statistics task */<br>    		LEDQueue = OSQCreate (LEDQueueTbl, 10);<br>		.<br>		.<br>		.<br>    	<b>	OSTaskDel(OS_PRIO_SELF);</b>	/* We don't want the Start ask to run more than once */<br>	}<br></pre>
+ <br>
+      <br>
+      &nbsp;&nbsp;&nbsp; <b>OSTaskStkChk()</b><br>
+      <br>
+           
+<table border="1" cellpadding="2" cellspacing="2" width="100%">
+        <tbody>
+          <tr>
+            <td align="center" valign="top">Function Prototype<br>
+            </td>
+                      <td align="center" valign="top">Arguments<br>
+            </td>
+            <td align="center" valign="top">Returns<br>
+            </td>
+            <td align="center" valign="top">Notes<br>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">INT8U <br>
+      OSTaskStkChk (INT8U prio, OS_STK_DATA *pdata);<br>
+        <br>
+  Location:<br>
+  src/uC/os_task.c<br>
+            </td>
+                      <td valign="top"><b>prio</b> <br>
+       priority number of the task about which you want stack information.
+  If the value OS_PRIO_SELF is passed then the stack of the calling task
+is   checked.<br>
+            <br>
+      <b>pdata</b> <br>
+      pointer to a variable of type OS_STK_DATA that is used by the function<br>
+            </td>
+            <td valign="top"><b>OS_NO_ERR</b><br>
+      Call was successful<br>
+            <br>
+      <b>OS_PRIO_INVALID</b><br>
+       prio is higher than OS_LOWEST_PRIO or not equal to OS_PRIO_SELF<br>
+            <br>
+      <b>OS_TASK_NOT_EXIST</b> <br>
+      Specified task does not exist<br>
+            <br>
+      <b>OS_TASK_OPT_ERR</b><br>
+      this value is returned if the task was created by OSTaskCreate or if
+ OS_TASK_OPT_STK_CHK   was not specified when the OSTaskCreateExt call was
+ used.<br>
+            </td>
+            <td valign="top">Execution time for this task depends on the
+size  of the stack for each task and is, therefore, nondeterministic.<br>
+         <br>
+   To calculate the total stack size used add .OSFree and .OSUsed together. 
+ Currently, all of the stacks in the labs are the same size (= 512 bytes).<br>
+         <br>
+   Don't call this function inside an ISR due to its nondeterministic nature 
+ and possible length of time for completion.<br>
+            </td>
+          </tr>
+                       
+  </tbody>      
+</table>
+      <br>
+      Example:<br>
+ <br>
+ 
+<pre>&nbsp;&nbsp;&nbsp; 	OS_STK_DATA&nbsp;&nbsp; StackData;&nbsp;&nbsp;&nbsp; 	<br>	INT8U&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp; &nbsp;err;</pre>
+ 
+<pre>	<b>err = OSTaskStkChk(OS_PRIO_SELF,&amp;StackData);</b></pre>
+
+
+&nbsp;&nbsp;&nbsp;<br><b>OSTaskQuery()</b><br>
+<table border="1" cellpadding="2" cellspacing="2" width="100%">
+        <tbody>
+          <tr>
+            <td align="center" valign="top">Function Prototype<br>
+            </td>
+            <td align="center" valign="top">Arguments<br>
+            </td>
+            <td align="center" valign="top">Returns<br>
+            </td>
+            <td align="center" valign="top">Notes<br>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+	    INT8U<br>
+	    OSTaskQuery<br>(INT8U prio, OS_TCB *pdata);<br><br>
+  Location:<br>
+  src/uC/os_q.c<br>
+            </td>
+            <td valign="top"><b>prio</b> <br>
+       priority number of the task about which you want task information.
+  If the value OS_PRIO_SELF is passed then the stack of the calling task
+is   checked.<br><br>
+            <b>pdata</b><br>pointer to a structure of type OS_TCB, which contains
+	    a copy of the task's control block
+            </td>
+            <td valign="top"><b>OS_NO_ERR</b><br>
+      Call was successful<br>
+            <br>
+	    <b>OS_PRIO_ERR</b><br>
+	    Attempt to obtain information from an invalid task<br><br>
+      <b>OS_PRIO_INVALID</b><br>
+       prio is higher than OS_LOWEST_PRIO or not equal to OS_PRIO_SELF<br>
+            <br></td>
+            <td valign="top">You must allocate an OS_TCB structure before calling this function, and
+	    passing the pointer in as a parameter. Your copy obtains a snapshot of the desired task's control
+	    block. <br><br>DO NOT modify any of the fields in the OS_TCB control blocks. Reading them is sufficient for 
+	    the labs in CMPE401.</td>
+          </tr>
+                       
+  </tbody>      
+</table>
+
+<br>
+      Example:<br>
+<br>
+
+<pre>&nbsp;&nbsp;&nbsp; 	OS_TCB&nbsp;&nbsp; &nbsp;task_data;&nbsp;&nbsp;&nbsp; 	<br>	INT8U &nbsp;&nbsp; &nbsp;err;</pre>
+ 
+<pre>	<b>err = OSTaskQuery(OS_PRIO_SELF,&amp;task_data);</b></pre>
+
+
+           
+<h2><u>Queue Functions</u></h2>
+      &nbsp;&nbsp;&nbsp; <b>OSQCreate()</b><br>
+      <br>
+           
+<table border="1" cellpadding="2" cellspacing="2" width="100%">
+        <tbody>
+          <tr>
+            <td align="center" valign="top">Function Prototype<br>
+            </td>
+                      <td align="center" valign="top">Arguments<br>
+            </td>
+            <td align="center" valign="top">Returns<br>
+            </td>
+            <td align="center" valign="top">Notes<br>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">OS_EVENT *<br>
+      OSQCreate<br>
+    (void **start, INT16U size);<br>
+        <br>
+  Location:<br>
+  src/uC/os_q.c<br>
+            </td>
+                      <td valign="top"><b>start</b><br>
+      base address of storage area<br>
+            <br>
+      <b>size</b><br>
+      number of elements in the storage area<br>
+            </td>
+            <td valign="top">A pointer to the event control block allocated 
+ to  the queue is returned if the call succeeds. If it fails a NULL pointer 
+ is  returned.<br>
+            </td>
+            <td valign="top">Always create queues before using them.<br>
+         <br>
+   Generally, queues are created for intertask communication. One task posts 
+ a message and another task retrieves it. Otherwise race conditions could 
+result and cause many potential problems if tasks attempt to simultaneously 
+access common resources.<br>
+            </td>
+          </tr>
+                       
+  </tbody>      
+</table>
+      <br>
+      Example:<br>
+      <br>
+           
+<pre>	begin (void)<br>	{<br>    		*((int *)0x80) = (int)OSCtxSw;	/* set up vector to Context Switch (TRAP #0) */<br>    		OSInit();<br>    		TaskCreate("StartTask",StartTask,StartTask_ID);<br>    		OSStart();<br>	}<br><br>	void StartTask(void *data)<br>	{<br>    		ScopeInit();<br>    		TickInit();<br>    		.<br>    		.<br>    		<b>TxQueueA = OSQCreate (TxQueueTblA, FIFO_SIZE);<br>    		TxQueueB = OSQCreate (TxQueueTblB, FIFO_SIZE);</b><br>    		.  <br>    		.<br>    		OSTaskDel(OS_PRIO_SELF);	/* This task only runs once */<br>	}</pre>
+      <br>
+      <br>
+      &nbsp;&nbsp;&nbsp; <b>OSQPend()</b><br>
+      <br>
+           
+<table border="1" cellpadding="2" cellspacing="2" width="100%">
+        <tbody>
+          <tr>
+            <td align="center" valign="top">Function Prototype<br>
+            </td>
+                      <td align="center" valign="top">Arguments</td>
+            <td align="center" valign="top">Returns</td>
+            <td align="center" valign="top">Notes</td>
+          </tr>
+          <tr>
+            <td valign="top">void * <br>
+      OSQPend<br>
+    (OS_EVENT *pevent, INT16U timeout, INT8U * err) ;<br>
+        <br>
+  Location:<br>
+  src/uC/os_q.c<br>
+            </td>
+                      <td valign="top"><b>pevent</b><br>
+  Pointer to queue from which the message is to be recieved. &nbsp;This is
+ the same pointer that was returned when the queue was created using OSQCreate()<br>
+            <br>
+      <b>timeout</b><br>
+  Pass in 0 if you want to wait forever for a message. Pass a value in ticks
+ (0 - 65535) to give up on receiving the message after the period has lapsed.
+ The function will return and the task will resume once the number of ticks
+ has expired.<br>
+            <br>
+      <b>err</b><br>
+        <b>OS_NO_ERR</b><br>
+  Message was received<br>
+        <br>
+        <b>OS_TIMEOUT</b><br>
+  Message was not received withing the specified timeout.<br>
+        <br>
+        <b>OS_ERR_EVENT_TYPE</b><br>
+  pevent is not pointing to a message queue<br>
+        <br>
+        <b>OS_ERR_PEVENT_NULL</b><br>
+  pevent is a NULL pointer<br>
+        <br>
+        <b>OS_ERR_PEND_ISR</b><br>
+  This function was called from an ISR and uC/OS-II must suspend the task.
+ To avoid this don't call this function from an ISR.<br>
+            </td>
+            <td valign="top">If successful OSQPend returns a message sent 
+by  a  task and *err contains OS_NO_ERR. If unsuccessful a NULL pointer is 
+returned   and *err contains one of the error codes as specified in the arguments
+  field.<br>
+            </td>
+            <td valign="top">Always create queues before using them and don't 
+  call this function from inside an ISR<br>
+         <br>
+   Messages are placed in the queue by one task and retreived by another.<br>
+        <br>
+  Call this function to retrieve possible messages.<br>
+        <br>
+  If multiple tasks are waiting for a message the highest priority task is
+ resumed.<br>
+            </td>
+          </tr>
+                       
+  </tbody>      
+</table>
+      <br>
+      Example:<br>
+ <br>
+ 
+<pre>	<b>LedQueueData = *(LED_DATA *)OSQPend(LEDQueue, 0, &amp;err);</b>  /* this will block until a queue entry is available */<br>	if (err)<br>   		disp_err(err);</pre>
+ <br>
+ <br>
+      &nbsp;&nbsp;&nbsp; <b>OSQPost()</b><br>
+      <br>
+           
+<table border="1" cellpadding="2" cellspacing="2" width="100%">
+        <tbody>
+          <tr>
+            <td align="center" valign="top">Function Prototype<br>
+            </td>
+                      <td align="center" valign="top">Arguments<br>
+            </td>
+            <td align="center" valign="top">Returns<br>
+            </td>
+            <td align="center" valign="top">Notes<br>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">INT8U <br>
+      OSQPost<br>
+    (OS_EVENT *pevent, void *msg) ;<br>
+        <br>
+  Location:<br>
+  src/uC/os_q.c<br>
+            </td>
+                      <td valign="top"><b>pev</b>ent<br>
+  Pointer to the queue into which the message is deposited. Use the pointer
+ that was returned when the queue was created using OSQCreate()<br>
+            <br>
+      <b>msg</b><br>
+  Pointer- sized variable that is user defined. Don't post a NULL pointer.<br>
+            </td>
+            <td valign="top"><b>OS_NO_ERR</b><br>
+  Message was deposited in the queue.<br>
+            <br>
+      <b>OS_Q_FULL</b><br>
+  No room in the queue.<br>
+            <br>
+      <b>OS_ERR_EVENT_TYPE</b><br>
+  pevent is not pointing to a message queue.<br>
+            <br>
+      <b>OS_ERR_PEVENT_NULL</b><br>
+  pevent is a NULL pointer.<br>
+            <br>
+      <b>OS_ERR_POST_NULL_PTR</b><br>
+  msg is a NULL pointer.<br>
+            <br>
+            </td>
+            <td valign="top">Always create Queues before using them and never 
+  pass in NULL pointers as arguments.<br>
+        <br>
+  Use this function to send a message to another task via a previously created
+ queue.<br>
+        <br>
+  If multiple tasks are waiting for a message the highest priority task is
+ resumed.<br>
+            </td>
+          </tr>
+                       
+  </tbody>      
+</table>
+      <br>
+      Example:<br>
+ <br>
+ 
+<pre>	void LedBufferPost(char num, char state)<br>	{<br>    		INT8U err; <br>    		if (LedBufferIndex &gt;=10)<br>        		LedBufferIndex=0;<br>    		LedBuffer[LedBufferIndex].LedNum = num;<br>    		LedBuffer[LedBufferIndex].State = state;<br>    		<b>err = OSQPost(LEDQueue, (void *)&amp;LedBuffer[LedBufferIndex++]);</b><br>	}</pre>
+ <br>
+           
+<h2><u>Semaphore Functions</u></h2>
+      &nbsp;&nbsp;&nbsp; <b>OSSemCreate()</b><br>
+      <br>
+           
+<table border="1" cellpadding="2" cellspacing="2" width="100%">
+        <tbody>
+          <tr>
+            <td align="center" valign="top">Function Prototype<br>
+            </td>
+                      <td align="center" valign="top">Arguments</td>
+            <td align="center" valign="top">Returns</td>
+            <td align="center" valign="top">Notes</td>
+          </tr>
+          <tr>
+            <td valign="top">OS_EVENT* OSSemCreate<br>
+    (INT16U value);<br>
+        <br>
+  Location:<br>
+  src/uC/os_sem.c<br>
+            </td>
+                      <td valign="top"><b>value</b><br>
+  Initial value of the semaphore that can be from 0 - 65536. Pass in 0 to 
+indicate that the resource is not available.<br>
+            </td>
+            <td valign="top">OSSemCreate returns the created event control
+ block   if the function succeeds. If it fails OSSemCreate returns a NULL
+pointer<br>
+            </td>
+            <td valign="top">Always create semaphores before using them.<br>
+        <br>
+  When creating semaphores the value indicates how many tasks can obtain
+the  semaphore concurrently. Pass in 1 if the semaphore is protecting a single
+ resource (ie. a memory location). If there is more than one resource available
+ (ie. a block of structures that can be assigned) then pass in that number.<br>
+            </td>
+          </tr>
+                       
+  </tbody>      
+</table>
+      <br>
+      Example:<br>
+<br>
+<pre>	OS_EVENT *TxSemA, *TxSemB, *TxBufferLock;<br><br>	void StartTask(void *data)<br>	{<br>    		ScopeInit();<br>    		TickInit();<br>    		<b>TxSemA = OSSemCreate(0);<br>    		TxSemB = OSSemCreate(0);<br>    		TxBufferLock =  OSSemCreate(1);</b><br>    		.<br>		.<br>    		DuartInit();<br>    		OSTaskDel(OS_PRIO_SELF);	/* This task only runs once */<br>	}</pre>
+<br>
+ <br>
+      &nbsp;&nbsp;&nbsp; <b>OSSemPend()</b><br>
+      <br>
+           
+<table border="1" cellpadding="2" cellspacing="2" width="100%">
+        <tbody>
+          <tr>
+            <td align="center" valign="top">Function Prototype<br>
+            </td>
+                      <td align="center" valign="top">Arguments</td>
+            <td align="center" valign="top">Returns</td>
+            <td align="center" valign="top">Notes</td>
+          </tr>
+          <tr>
+            <td valign="top">void <br>
+      OSSemPend<br>
+    (OS_EVENT *pevent, <br>
+    INT16U timeout, <br>
+    INT8U *err) <br>
+        <br>
+  Location:<br>
+  src/uC/os_sem.c<br>
+            </td>
+                      <td valign="top"><b>pevent</b><br>
+  Pointer to the semaphore. This was returned when the semaphore was created
+ with OSSemCreate()<br>
+            <br>
+      <b>timeout</b><br>
+  Pass in 0 if you want to wait forever for a message. Pass a value in ticks 
+ (0 - 65535) to give up on receiving the message after the period has lapsed. 
+ The function will return and the task will resume once the number of ticks 
+ has expired.<br>
+   <br>
+      <b>err</b><br>
+        <b>OS_NO_ERR</b><br>
+  Semaphore is available<br>
+        <br>
+        <b>OS_TIMEOUT</b><br>
+  Semaphore was not obtained withing the specified timeout.<br>
+   <br>
+   <b>OS_ERR_EVENT_TYPE</b><br>
+   pevent is not pointing to a semaphore<br>
+   <br>
+   <b>OS_ERR_PEVENT_NULL</b><br>
+   pevent is a NULL pointer<br>
+   <br>
+   <b>OS_ERR_PEND_ISR</b><br>
+   This function was called from an ISR and uC/OS-II must suspend the task.
+ To avoid this don't call this function from an ISR.<br>
+            </td>
+            <td valign="top">nothing<br>
+            </td>
+            <td valign="top">Always create semaphores before using them.<br>
+        <br>
+  Call this function when a task needs to use a shared resource safely, is
+ waiting for an event,or needs to synchronize its activities with an ISR
+or  a task.<br>
+        <br>
+  Note that this call blocks while waiting for the semaphore to be free.
+Don't  use this function from an ISR use the non-blocking OSSemAccept instead()<br>
+            </td>
+          </tr>
+                       
+  </tbody>      
+</table>
+      <br>
+      Example:<br>
+<pre>	void TxTask1 (void *data)	/* send the uppercase alphabet to TxA */</pre>
+<pre>	{<br>    		char byte;<br>    		char err;<br>    		while(1)<br>    		{<br>    			byte=0x41;<br>        		<b>OSSemPend(TxBufferLock, 0, &amp;err);</b><br>        		while (byte &lt;= 0x5A)<br>            			TxBufferPost(0, byte++);<br>        		TxBufferPost(0, CR);<br>        		TxBufferPost(0, LF);<br>        		OSSemPost(TxBufferLock);<br>        		OSTimeDly(64);<br>    		}<br>	}</pre>
+<br>
+ <br>
+ <br>
+      &nbsp;&nbsp;&nbsp; <b>OSSemPost()</b><br>
+      <br>
+           
+<table border="1" cellpadding="2" cellspacing="2" width="100%">
+        <tbody>
+          <tr>
+            <td align="center" valign="top">Function Prototype<br>
+            </td>
+                      <td align="center" valign="top">Arguments<br>
+            </td>
+            <td align="center" valign="top">Returns<br>
+            </td>
+            <td align="center" valign="top">Notes<br>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">INT8U <br>
+      OSSemPost<br>
+    (OS_EVENT *pevent);<br>
+        <br>
+  Location:<br>
+  src/uC/os_sem.c<br>
+            </td>
+                      <td valign="top"><b>pevent</b><br>
+  Pointer to the semaphore. This was returned when the semaphore was created
+ with OSSemCreate()<br>
+   <br>
+            </td>
+            <td valign="top"><b>OS_NO_ERR</b><br>
+  Semaphore has been signalled or released.<br>
+            <br>
+      <b>OS_SEM_OVF</b><br>
+  Semaphore counts has overflowed (&gt; 65535).<br>
+            <br>
+      <b>OS_ERR_EVENT_TYPE</b><br>
+             pevent is not pointing to a semaphore<br>
+        <br>
+      <b>OS_ERR_PEVENT_NULL</b><br>
+   pevent is a NULL pointer<br>
+            </td>
+            <td valign="top">Always create semaphores before using them.<br>
+        <br>
+  Calling this function will signal, or release the semaphore so that another
+ task can obtain it. If the value is 0 or greater the value is incremented
+ and the function returns to the caller. <br>
+        <br>
+        <br>
+            </td>
+          </tr>
+                       
+  </tbody>      
+</table>
+      <br>
+      Example:<br>
+<br>
+<pre>	void TxTask1 (void *data)	/* send the uppercase alphabet to TxA */</pre>
+ 
+<pre>	{<br>    		char byte;<br>    		char err;<br>    		while(1)<br>    		{<br>    			byte=0x41;<br>        		OSSemPend(TxBufferLock, 0, &amp;err);<br>        		while (byte &lt;= 0x5A)<br>            			TxBufferPost(0, byte++);<br>        		TxBufferPost(0, CR);<br>        		TxBufferPost(0, LF);<br>        		<b>OSSemPost(TxBufferLock);</b><br>        		OSTimeDly(64);<br>    		}<br>	}</pre>
+<br>
+           
+<h2><u>Time Functions</u></h2>
+      &nbsp;&nbsp;&nbsp; <b>OSTimeDly()</b><br>
+      <br>
+           
+<table border="1" cellpadding="2" cellspacing="2" width="100%">
+        <tbody>
+          <tr>
+            <td align="center" valign="top">Function Prototype</td>
+                      <td align="center" valign="top">Arguments</td>
+            <td align="center" valign="top">Returns<br>
+            </td>
+            <td align="center" valign="top">Notes</td>
+          </tr>
+          <tr>
+            <td valign="top">void OSTimeDly<br>
+    (INT16U ticks) ;<br>
+        <br>
+  Location:<br>
+  src/uC/os_time.c<br>
+            </td>
+                      <td valign="top"><b>ticks</b><br>
+    Number of clock ticks to delay the current task. (0 - 65,535) &nbsp;(see
+  OS_TICKS_PER_SEC in configuration file src/uC/os_cfg.h)<br>
+            </td>
+            <td valign="top">nothing<br>
+            </td>
+            <td valign="top">Use this function to reschedule a task for a 
+later  time. Calling the function with all parameters set to zero simply returns
+ to the caller immediately.<br>
+            </td>
+          </tr>
+                       
+  </tbody>      
+</table>
+      <br>
+ Example:<br>
+ <br>
+ 
+<pre>	while(1)<br>     	{<br>       		/* One second = 64 ticks*/<br>        	<b>OSTimeDly(64);</b><br>     	}</pre>
+ <br>
+ <br>
+      &nbsp;&nbsp;&nbsp; <b>OSTimeDlyHMSM()</b><br>
+      <br>
+           
+<table border="1" cellpadding="2" cellspacing="2" width="100%">
+        <tbody>
+          <tr>
+            <td align="center" valign="top">Function Prototype</td>
+                    <td align="center" valign="top">Arguments</td>
+            <td align="center" valign="top">Returns<br>
+            </td>
+            <td align="center" valign="top">Notes<br>
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">void <br>
+      OSTimeDlyHMSM<br>
+    (INT8U hours, <br>
+    INT8U minutes, <br>
+    INT8U seconds, INT8U milli) ;<br>
+          <br>
+          <br>
+    Location:<br>
+    src/uC/os_time.c<br>
+            </td>
+                    <td valign="top"><b>hours</b> &nbsp; <br>
+    Number of hours of delay (0 - 255)<br>
+            <br>
+      <b>minutes</b> &nbsp; <br>
+    Number of minutes of delay (0 - 59)<br>
+            <br>
+      <b>seconds</b><br>
+      Number of seconds of delay (0 - 59)<br>
+            <br>
+      <b>milli</b><br>
+      Number of milliseconds of delay (0 - 999). &nbsp;milliseconds are rounded
+   to nearest number of ticks so be careful. Be aware of tick rate when only
+ using milliseconds. If the number of milliseconds passed in is smaller that
+ one tick the delay may not occur at all.<br>
+            </td>
+            <td valign="top"><b>OS_NO_ERR</b><br>
+      Call was successful<br>
+            <br>
+      <b>OS_TIME_INVALID_MINUTES</b><br>
+    Minutes argument is greater than 59<br>
+          <br>
+      <b>OS_TIME_INVALID_SECONDS</b><br>
+    Seconds argument is greater than 59<br>
+            <br>
+      <b>OS_TIME_INVALID_MILLI</b><br>
+    Milliseconds argument is greater than &nbsp;999<br>
+            <br>
+      <b>OS_TIME_ZERO_DLY</b><br>
+    All arguments are given as zero<br>
+            </td>
+            <td valign="top">Use this function to reschedule the task for 
+a  later time. Calling the function with all parameters set to zero simply 
+returns  to the caller immediately.<br>
+            </td>
+          </tr>
+                       
+  </tbody>      
+</table>
+      <br>
+      Example:<br>
+<br>
+<pre>	while(1)<br>     	{<br>        	LEDValue = *(char *)OSQPend(LEDQueue, 0, &amp;err);<br>        	if (err)<br>            		disp_err(err);<br>        	led_current |= LEDValue;<br>        	*LED = led_current;<br>	<b>	OSTimeDlyHMSM(0,0,0,50);</b><br>        	led_current &amp;= ~LEDValue;<br>        	*LED = led_current;<br>     }</pre>
+<br>
+<br>
+<b>References:</b><br>
+<ul>
+  <li>Refer to the source code as indicated in the Location: field in the
+tables above for additional comments.</li>
+</ul>
+<ul>
+  <li>Main reference and source for this document is: <br>
+Jean J. Labrosse, <i>MicroC/OS-II - The Real-Time Kernel</i>, 2nd ed., (CMP
+Books, 2002), ISBN 1-57820-103-9<br>
+  </li>
+</ul>
+<hr size="2" width="100%">Last Modified by Nancy Minderman September 13, 2004<br>
+
+</body></html>

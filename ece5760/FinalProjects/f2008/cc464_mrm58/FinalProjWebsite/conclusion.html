@@ -1,0 +1,83 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+	<title>ECE 5760 Final Project :BALL-E</title>
+	<link href="style.css" rel="stylesheet" type="text/css" />
+</head>
+
+<body>
+<div id="container">
+	<div id="main">
+		<div id="header"></div>
+		<div id="nav">
+			<ul>
+				<li><a href="index.html">Introduction</a></li>
+				<li><a href="highlevel.html">High Level Design</a></li>
+				<li><a href="hardware.html">Hardware </a></li>
+				<li><a href="results.html">Results </a></li>
+				<li><a href="conclusion.html">Conclusion</a></li>
+				<li><a href="appendix.html">Appendix</a></li>
+			</ul>
+		</div>
+		<div id="content">
+			<div id="full">
+				<div class="post">
+					<h1>Conclusion</h1><span>BALL-E</span>
+					<br>
+					<br>
+					<h3>Analysis</h3>
+					<p>We came across a few design obstacles in the course of working on this project. To begin, we had issues with grounding
+					the FPGA while we were building the motor circuit and controls. It turns out that when the FPGA is plugged in for power, it needs
+					the USB cable for a ground reference. This problem led to the wheels not getting enough power in certain configurations. This problem
+					was eventually fixed when BALL-E was made completely battery powered.
+					<br>
+					<br>
+					Additionally, we began by using a 1.3 Megapixel CMOS Imager Array that plugs directly into the DE2 board.  However, this camera had very limited color perception.
+					We worked with this camera for 2 weeks before finding a suitable alternative after being offered a Sony DCR DVD108
+					video camera.  This camera is much clearer and picks up color much better. Using this camera we were able to write the detect red and vga output modules.
+					<br>
+					<br>
+					We also had a few complications with the neural network. As mentioned, we built a series of counters to count the spikes in order to control the 
+					wheels properly. However, it seems that the spikes weren't fast enough and the counters weren't performing their jobs properly. We increased the
+					frequency of the spikes from the neural network and the counters worked better after this. 
+					</p> 
+					<h3>Future Work</h3>
+					<p>Given more time and resources there were a few things we would do differently, and would like to build on. We would like to obtain
+					better motors with more precise speed control, to allow for better turning ablility.
+					Additionally, we would like to build a better neural network to actually learn to chase the ball. This neural network would 
+					use the red distance from center as a fitness function, and would learn to keep the orange ball in the center of its screen. 
+					We would additionally like a camera that is lighter but with the same color depth. </p>
+					
+					<h3>Standards, Intellectual Property and Legal Considerations</h3>
+					<p>Our research has not uncovered any standards that our design must conform to. We used the Terasic DE2_TV code as a basis for our
+					Video Decoder. Additionally, we used Bruce Land's neural networking example to create our simplefied neural network. While similar
+					robots exist in the world, our design was not a reverse engineering of any of these exisiting devices and thus there are no
+					intellectual property concerns in regards to this. We did not sign any non-disclosure acts to obtain any parts. We are unsure of the
+					patent opportunities of this design at this time, though we are unaware of any FPGA based designs that accomplish what BALL-E does. We
+					do not have any major legal considerations at this time, as the robot is completely autonomous and requires no communication through RF or
+					and type of transmission.</p>
+					
+					
+				</div>
+				
+			</div>
+			
+			<div class="clear"></div>
+		</div>
+	</div>
+	<div id="footer">
+		<ul>
+			<li><a href="index.html">Introduction</a></li> | 
+			<li><a href="highlevel.html">High Level Design</a></li> | 
+			<li><a href="hardware.html">Hardware </a></li> | 
+			<li><a href="results.html">Results</a></li> | 
+			<li><a href="conclusion.html">Conclusion</a></li> | 
+			<li><a href="appendix.html">Appendix</a></li>
+		</ul>
+		<span>&copy;<a href="../../../../../../../../www.csl.cornell.edu/~cathy">Cathy Chen</a><a href="mailto:cc464@cornell.edu">(cc464@cornell.edu)</a> and Matt Meister <a href="mailto:mrm58@cornell.edu">(mrm58@cornell.edu)</a> </span>
+		<span> Information from this site may not be used without the permission of Cathy Chen and Matt Meister</span>
+	</div>
+</div>
+</body>
+</html>

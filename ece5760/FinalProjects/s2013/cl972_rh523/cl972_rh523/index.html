@@ -1,0 +1,549 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Piano Hero with Virtual Keyboard</title>
+<style type="text/css">
+<!--
+body {
+	font: 90%/1.4 Verdana, Arial, Helvetica, sans-serif;
+	background-color: #666;
+	margin: 0;
+	padding: 0;
+	color: #000;
+}
+
+#header22 {
+	float: left;
+	width: 100%;
+	background: #b3b3aa;
+	border-bottom: 5px solid #b3b3aa;
+	}
+	
+#navigation {
+	margin: 0 auto;
+	width: 740px;
+	}
+	
+#navigation ul {
+	float: left;
+	margin: 0;
+	padding: 0;
+	border-left: 1px solid #a6a69d;
+	width: 739px;
+	font-size: 1em;
+	}
+	
+#navigation li {
+	margin: 0;
+	padding: 0;
+	float: left;
+	background: none;
+	}
+	
+#navigation a {
+	float: left;
+	padding: 7px 20px;
+	border: none;
+	border-right: 1px solid #a6a69d;
+	font-size: 1.2em;
+	font-weight: bold;
+	color: #fff;
+	text-decoration: none;
+	}
+	
+#navigation a:hover {
+	background: #a6a69d;
+	}
+
+
+/* ~~ Element/tag selectors ~~ */
+ul, ol, dl { /* Due to variations between browsers, it's best practices to zero padding and margin on lists. For consistency, you can either specify the amounts you want here, or on the list items (LI, DT, DD) they contain. Remember that what you do here will cascade to the .nav list unless you write a more specific selector. */
+	padding: 0;
+	margin: 0;
+}
+h1, h2, h3, h4, h5, h6, p {
+	margin-top: 0px;	 /* removing the top margin gets around an issue where margins can escape from their containing div. The remaining bottom margin will hold it away from any elements that follow. */
+	padding-right: 15px;
+	padding-left: 15px; /* adding the padding to the sides of the elements within the divs, instead of the divs themselves, gets rid of any box model math. A nested div with side padding can also be used as an alternate method. */
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	text-align: justify;
+}
+
+h1 {
+	font-family: georgia, verdana, arial, helvetica, sans-serif;
+	font-size: 21pt;
+	padding-top: 12px;
+	padding-bottom: 3px;
+	background-color: #CCC;
+}
+
+h2 {
+	font-family:  "Times New Roman", Times, serif;
+	font-size: 18pt;
+	padding-top: 12px;
+	padding-bottom: 3px;
+	
+}
+
+a img { /* this selector removes the default blue border displayed in some browsers around an image when it is surrounded by a link */
+	border: none;
+}
+
+/* ~~ Styling for your site's links must remain in this order - including the group of selectors that create the hover effect. ~~ */
+a:link {
+	color: #42413C;
+	text-decoration: underline; /* unless you style your links to look extremely unique, it's best to provide underlines for quick visual identification */
+}
+a:visited {
+	color: #6E6C64;
+	text-decoration: underline;
+}
+a:hover, a:active, a:focus { /* this group of selectors will give a keyboard navigator the same hover experience as the person using a mouse. */
+	text-decoration: none;
+}
+
+/* ~~this fixed width container surrounds the other divs~~ */
+.container {
+	width: 960px;
+	background-color: #FFF;
+	margin: 0 auto; /* the auto value on the sides, coupled with the width, centers the layout */
+}
+
+/* ~~ the header is not given a width. It will extend the full width of your layout. It contains an image placeholder that should be replaced with your own linked logo ~~ */
+.header {
+	background-color: #b31b1b;
+}
+
+.header2 {
+	background-color: #eeeeee;
+}
+
+
+
+
+/* ~~ These are the columns for the layout. ~~ 
+
+1) Padding is only placed on the top and/or bottom of the divs. The elements within these divs have padding on their sides. This saves you from any "box model math". Keep in mind, if you add any side padding or border to the div itself, it will be added to the width you define to create the *total* width. You may also choose to remove the padding on the element in the div and place a second div within it with no width and the padding necessary for your design. You may also choose to remove the padding on the element in the div and place a second div within it with no width and the padding necessary for your design.
+
+2) No margin has been given to the columns since they are all floated. If you must add margin, avoid placing it on the side you're floating toward (for example: a right margin on a div set to float right). Many times, padding can be used instead. For divs where this rule must be broken, you should add a "display:inline" declaration to the div's rule to tame a bug where some versions of Internet Explorer double the margin.
+
+3) Since classes can be used multiple times in a document (and an element can also have multiple classes applied), the columns have been assigned class names instead of IDs. For example, two sidebar divs could be stacked if necessary. These can very easily be changed to IDs if that's your preference, as long as you'll only be using them once per document.
+
+4) If you prefer your nav on the right instead of the left, simply float these columns the opposite direction (all right instead of all left) and they'll render in reverse order. There's no need to move the divs around in the HTML source.
+
+*/
+.sidebar1 {
+	float: left;
+	width: 180px;
+	background-color: #EADCAE;
+	padding-bottom: 10px;
+}
+.content {
+	padding: 10px 0;
+	width: 780px;
+	float: left;
+	background-color: #f0eee4;
+	
+}
+
+/* ~~ This grouped selector gives the lists in the .content area space ~~ */
+.content ul, .content ol { 
+	padding: 0 15px 15px 40px; /* this padding mirrors the right padding in the headings and paragraph rule above. Padding was placed on the bottom for space between other elements on the lists and on the left to create the indention. These may be adjusted as you wish. */
+}
+
+/* ~~ The navigation list styles (can be removed if you choose to use a premade flyout menu like Spry) ~~ */
+ul.nav {
+	list-style: none; /* this removes the list marker */
+	border-top: 1px solid #666; /* this creates the top border for the links - all others are placed using a bottom border on the LI */
+	margin-bottom: 15px; /* this creates the space between the navigation on the content below */
+}
+ul.nav li {
+	border-bottom: 1px solid #666; /* this creates the button separation */
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+}
+ul.nav a, ul.nav a:visited { /* grouping these selectors makes sure that your links retain their button look even after being visited */
+	padding: 5px 5px 5px 15px;
+	display: block; /* this gives the link block properties causing it to fill the whole LI containing it. This causes the entire area to react to a mouse click. */
+	width: 160px;  /*this width makes the entire button clickable for IE6. If you don't need to support IE6, it can be removed. Calculate the proper width by subtracting the padding on this link from the width of your sidebar container. */
+	text-decoration: none;
+	background-color: #C6D580;
+}
+ul.nav a:hover, ul.nav a:active, ul.nav a:focus { /* this changes the background and text color for both mouse and keyboard navigators */
+	background-color: #ADB96E;
+	color: #FFF;
+}
+
+/* ~~ The footer ~~ */
+.footer {
+	padding: 10px 0;
+	background-color: #CCC49F;
+	position: relative;/* this gives IE6 hasLayout to properly clear */
+	clear: both; /* this clear property forces the .container to understand where the columns end and contain them */
+}
+
+/* ~~ miscellaneous float/clear classes ~~ */
+.fltrt {  /* this class can be used to float an element right in your page. The floated element must precede the element it should be next to on the page. */
+	float: right;
+	margin-left: 8px;
+}
+.fltlft { /* this class can be used to float an element left in your page. The floated element must precede the element it should be next to on the page. */
+	float: left;
+	margin-right: 8px;
+}
+.clearfloat { /* this class can be placed on a <br /> or empty div as the final element following the last floated div (within the #container) if the #footer is removed or taken out of the #container */
+	clear:both;
+	height:0;
+	font-size: 1px;
+	line-height: 0px;
+}
+-->
+</style></head>
+
+<body>
+
+<div class="container">
+  <div id="top" class="header"><a href="../../../../../../../../www.ece.cornell.edu/default.htm"><img src="cu_logo.gif" alt="Insert Logo Here" name="Cornell ECE" width="340" height="75" id="Cornell" style="background-color: #b31b1b; display: block;" /></a></div>
+  
+  
+  <div id="header22">	
+	<!--
+		The navigation div contains the site's main navigation. These
+		links will be displayed in a horizontal, gray navigation bar 
+		under the unit signature banner.
+	-->	
+	<div id="navigation">
+		<ul>
+			<li><a href="../../../../../../../../www.ece.cornell.edu/default.htm">ECE</a></li>
+			<li><a href="../../../../../../../../https@intranet.ece.cornell.edu/default.htm">ECE intranet</a></li>
+			<li><a href="../../../../../../../../www.cuinfo.cornell.edu/default.htm">CUinfo</a></li>
+			<li><a href="../../../../../../../../www.cornell.edu/default.htm">Cornell</a></li>
+			<li><a href="../../../../../../../../www.library.cornell.edu/default.htm">Library</a></li>
+			<li><a href="../../../../../../default.htm">Bruce Land</a></li>
+			<!-- More navigation as needed
+			<li><a href="#">Navigation 6</a></li>
+			-->
+						
+		</ul>
+	</div>
+</div>
+
+  <div class="header2" >
+  
+    <p style="text-align:center;"><font color="#333333" size="+5" >Piano Hero with Virtual Keyboard</font></p>
+       <p style="text-align:center;"><em>Chonggang Li <sub>(cl972)</sub> and Ran Hu <sub>(rh235)</sub></em></p>
+        <hr size="4" noshade="noshade">
+        
+    
+  </div>
+
+
+
+
+
+
+
+  <div class="sidebar1">
+    <ul class="nav">
+      <li><a href="#introduction">Introduction</a></li>
+      <li><a href="#high">High level design</a></li>
+      <li><a href="#hardware">Hardware design</a></li>
+      <li><a href="#Results">Results of the design</a></li>
+      <li><a href="#conclusion">Conclusion</a></li>
+      <li><a href="#reference">Reference</a></li>
+      <li><a href="#appendix">Appendix</a></li>
+    </ul>
+    <p><font size="2" face="Tahoma, Geneva, sans-serif"> Contact Information</font></p>
+    <p><font size="2" face="Arial, Helvetica, sans-serif">Chonggang Li <br />cl972@cornell.edu <br />
+    Ran Hu <br />rh235@cornell.edu</font>
+    
+    </p>
+  <!-- end .sidebar1 --></div>
+  <div class="content">
+
+<h1 id="introduction">Introduction</h1>
+    <p>Our project implements an interactive piano game and users could play virtual piano keyboard on the screen even though it’s not a touch screen.</p>
+    <p>
+By hooking up a camera above a monitor, with very simple calibration steps, your monitor is turned into a touch screen! Then, by hitting the virtual piano keys displayed on the screen, you will get the sound as playing a real piano. We provide two modes for users, one is practice mode, in which, users could feel free to play it as their will; the other mode is play mode, in which users would play songs following graphical instructions of which key to hit at a given time, and users would get a score for how well they played the song. Lots of configuration functions are provided, and user could choose hard level, number of keys and transposition, etc.
+</p>
+    <p>The whole system is as the following figure.</p>
+ <div  style="width:100%; text-align:center">
+   <img src="pic.jpg" width="600" height="667" />
+   </div>
+
+ <h5><a href="index.html#top">[top]</a></h5>
+
+<h1 id="high">High level design</h1>
+    <h2 id="function">Rationale and sources of the project idea</h2>
+      <p>The design idea is taken from the game “Synthesia  Piano Hero”; refer to <a href="../../../../../../../../www.synthesiagame.com/default.htm">the_website</a>  for more details. Our design adopts the similar graphical interface as “Synthesia”, but with our virtual keyboard function, you could turn any monitor into a piano keyboard and play on it! </p>
+      <p>The model of the &quot;Synthesia&quot; is as the following figure.</p>
+      <div  style="width:100%; text-align:center">
+      <img src="synthesia.png" width="260" height="201" />
+      </div>
+<h5><a href="index.html#top">[top]</a></h5>
+   <hr />
+   <h2 id="Background">Background math</h2>
+   <h3 id="Optical">Optical geometry</h3>
+   <p>Optical geometry is as the following figure.</p>
+   <div  style="width:100%; text-align:center">
+   <img src="touch.png" width="450" height="532" />
+   </div>
+   <p>So as to make the screen work as a touch screen, we have to make sure that the system senses the key-hit only when the finger really touches the screen or is very close to the screen. The structure for setup is as the above figure.</p>
+    <p>When finger doesn't touch the screen, the camera could see the keys; when finger presses a certain key, the key pressed is shaded by the finger.</p>
+       
+    <h3 id="Karplus">Karplus strong</h3>
+    <p>The Karplus-Strong string synthesis Algorithm is widely used to simulate the real instrument sound produced by strings. It is a method of physical modeling synthesis that makes use of looping a short wave signal through a filtered delay processing to simulate the string sound. The algorithm first generates a series of random noise signal, which is then imported into a shift register and processed by a low pass filter. In this process, the signal will decay generally. The note will sound different with various filters and shift registers. The length of the shift registers determines the pitch of the note. And the gain value of the filter can also change the sound mode.</p>
+    <p>The following figure shows how Karplus strong algorithm works.</p>
+      <div  style="width:100%; text-align:center">
+      <img src="kps.jpg" width="549" height="121" /></div>
+    <h5><a href="index.html#top">[top]</a></h5>
+   <hr />
+    
+   <h2 id="structure">Logical structure</h2>
+
+  <p>The whole system could be divided into two parts, the interface and the back end. The interface displays the graphical part through a monitor and perceives the screen display through a camera; it also has an audio interface to send the sound to speakers; it takes the users’ configuration and commands through toggle switches and keys. The back end part stores the song data and sends them to the display part; it detects the shape of the keyboard and stores them; it compares the video information from the interface with the stored keyboard to find if any key is pressed; it generates sound and sends feedback signal to graphical part; it tracks how well do users play the game and gives a final score.</p>
+  <p>The detailed system structure is as the following figure. More detailed information about the image capture part is in <a href="#image">image capture</a>.</p>
+  <p align="center"> <img style="alignment-adjust:auto" src="structure.jpg" width="760" height="407" alt="structure" /></p>
+
+<h5><a href="index.html#top">[top]</a></h5>
+ <hr />
+<h2 id="function">Hardware/software tradeoffs</h2>
+    <p>One major tradeoff for our project is that, instead of storing the image to display in SRAM, we just make a virtual buffer for VGA. It’s a module that takes the VGA address as input and calculates the corresponding color and sends out the result. The reason why we do so is because if the SRAM is dedicated to display, we then don’t have enough space to store data from image processing.</p>
+    <p>
+Another decision we have made is to use a single SRAM as several separate tables. Because, originally we need to store several tables to do the image processing: a ROI (region of interest) table to store the region of keyboard, a color table to store the color for each pixel in the ROI, a label table to store the label for each pixel in ROI, and a diff table to store the difference between the image from camera and the original image stored. Since that we cannot assign each table a separate RAM, we put them in a single SRAM; each pixel has 8-bits space, and different bits are account for different tables.
+ </p>
+    <h5><a href="index.html#top">[top]</a></h5>
+  
+    <h1 id="hardware">Hardware design</h1>
+    <h2 id="image">Image capture</h2>
+    <p>The AD 7181B chip would take the NTSC signal and convert it to digital signal and extract the sync signal and a TD_CLK clock signal for further use. A TD_Detect block detects whether we are getting stable video signal and sends reset signal to initialize the rest of the system. Then, the ITU_656_decoder would decode the digital signal, convert it to YCbCr signal and send it to the four ports SDRAM module to store it in SDRAM. Two line buffers (for even lines and odd lines respectively) take in the data from the output port of the four ports SDRAM module and send synchronized YCbCr data according to the x coordination of current VGA address.</p>
+    <p>The structure for this part is as the following figure.</p>
+     <div  style="width:100%; text-align:center">
+      <img src="TV_structure.jpg" width="700" height="678" /></div>
+<h5><a href="index.html#top">[top]</a></h5>
+    <hr />
+    <h2 id="color">Color detection</h2>
+    <p>The synchronized YCbCr data is then converted to RGB mode. Since we only want to know whether a pixel points to a green key or a blue key or neither, we need to extract the color information for each pixel. One way for doing this is to use a RGB to HSV function to get the hue, saturation and lightness value of the pixel, which is very exact in telling the color. The image retrieving is driven by the VGA clock, so the pixel value is on the fly. However, since the RGB to HSV algorithm comprises floating point number calculation, it usually takes several clock cycles to calculate for a single pixel, which means the processing speed cannot follow the retrieving speed. One way to solve this is to use a pipeline to do the color format conversion, through which even though the output has a few clock cycles lag to the input, the calculation still could follow the retrieving speed. Since we notice that the camera has an auto gain correction, which means that colors would always stay in a normal range, we develop a simplified color detection function which only outputs if the color is blue or green or neither.  The function does a threshold for each of the R, G and B color channel and use the combination of the threshold to determine what color it is. Usually, the threshold should be adjusted according to the environment, but experience shows that with the help of the auto-gain of the camera, a threshold applies well for several of conditions if it is initially set in a normal condition and works well. The turth table for threshold funtion is as following.</p>
+    <table width="200" border="1" align="center">
+  <tr>
+    <th scope="col">Red&gt;Threshold</th>
+    <th scope="col">Green&gt;Threshold</th>
+    <th scope="col">Blue&gt;Threshold</th>
+    <th scope="col">Output</th>
+  </tr>
+  <tr>
+    <td>0</td>
+    <td>0</td>
+    <td>0</td>
+    <td>Neither</td>
+  </tr>
+  <tr>
+    <td>0</td>
+    <td>0</td>
+    <td>1</td>
+    <td>Blue</td>
+  </tr>
+  <tr>
+    <td>0</td>
+    <td>1</td>
+    <td>0</td>
+    <td>Green</td>
+  </tr>
+  <tr>
+    <td>0</td>
+    <td>1</td>
+    <td>1</td>
+    <td>Neither</td>
+  </tr>
+  <tr>
+    <td>1</td>
+    <td>0</td>
+    <td>0</td>
+    <td>Neither</td>
+  </tr>
+  <tr>
+    <td>1</td>
+    <td>0</td>
+    <td>1</td>
+    <td>Neither</td>
+  </tr>
+    <tr>
+    <td>1</td>
+    <td>1</td>
+    <td>0</td>
+    <td>Neither</td>
+  </tr>
+    <tr>
+    <td>1</td>
+    <td>1</td>
+    <td>1</td>
+    <td>Neither</td>
+  </tr>
+</table>
+
+    <h5><a href="index.html#top">[top]</a></h5>
+    <hr />
+    <h2 id="noise">Noise Filter</h2>
+    <p>In case that the image caption part or color detection part might generate random noise, which means some random pixels are regarded as blue or green when they are not, we apply a kind of median filter to get rid of noises. We traverse the whole image data in SRAM, and compare each single pixel’s color with its neighbors. If a pixel is different from both of its upper and lower neighbors or both of its left or right neighbor, it is regarded as noise and we erase it.</p>
+    <p>Another method we have tried is applying a median filter. However, since we can't update the whole image at once, this method doesn't work well.</p>
+    <h5><a href="index.html#top">[top]</a></h5>
+    <hr />
+    <h2 id="label">Label</h2>
+    <p>We assign each key a label, so later on when we compare the  input image color with the stored color, we can know which key is pressed.  Since the key colors are aligned in a way that blue and green show up  alternately in horizontal direction, we sweep the image data column by column  in sequence. Then we need to assign each connected color region a unique label. The  traditional way of segmentation is done in a recursive way –  <a href="../../../../../../../../en.wikipedia.org/wiki/Image_segmentation#Region-growing_methods">region_growing_method</a>.  But we assume that two keys with the same color couldn&rsquo;t exist in the same  column, so we can regard pixels with same color in contiguous column are connected.</p>
+    <p>The algorithm is like this: while sweeping the frame column  by column, find unlabeled color pixel, and label it with a label value. As long  as next column has pixels with the same color, label them with the same value;  if can&rsquo;t find pixel with same color in next column, end this labeling process,  increase the label value and start from the beginning again to find the next  color, until the end of the frame. A double check is done by comparing the  number of labels with the number of keys; if they don&rsquo;t match, it means that at  least one process failed and we should start from the first process again.</p>
+     <p>So as to implement the above algorithm, we should use a state machine to control the work flow, and we also need to keep track of: whether each pixel has been labeled or not, whether we are looking for the first pixel for a new label or are we keep labeling the current key, the current label number, whether we have reached the end of the frame. The whole precess could be generally devided into two parts: searching the first column for a key, searching the rest of the key. </p>
+     <p>The work flow is as the following figure.</p>
+      <div  style="width:100%; text-align:center">
+      <img src="flow_chart2.jpg" width="558" height="1087" />
+      </div>
+      <br />
+<p>While detecting key  press, we let the VGA clock keep running and compare the incoming pixel color  with the data stored in the SRAM, and we count the diff number for each label.  Now that we only allow one key to make sound at a time, we regard the label  with highest number of difference as the key pressed, if it exceeds a threshold  at the same time.</p>
+<h5><a href="index.html#top">[top]</a></h5>
+    <hr />
+   
+    <h2 id="sound">Sound</h2>
+    <p>In this system, we provide the user two kinds of sounds to synthesize the notes of the instrument. Firstly, we make use of the Karplus-Strong Algorithm to synthesize the sound of the piano hammer strike. Based on the Karplus-Strong algorithm which synthesizes the guitar pluck(code provided by <a href="../../../../../../../../https@instruct1.cit.cornell.edu/courses/ece576/DE2/fpgaDSP.html">ECE576_DSP_material</a>), we improve the computation to simulate the hammer strike better. This is accomplished by low pass filtering of the input signal. We make use of a first-order low pass filter, and set the gain as 0.125. And we also improve the sound by simulating three strings per note, which is considered from a real piano. In the three strings for each note, we set the length of the shift register to be a little different from the two other strings. So, we have three M4K rams for each note. The output of the three strings’ sum is pretty good. We use some tune test applications on mobile device to test and adjust the frequency of each note from the speaker, and finally get 18 notes correspond to the note frequency tale.</p>
+    <p> 
+Secondly, we also provide the sound synthesis using square wave with various frequencies. We use the 50MHz clock as the reference clock and it is easy to achieve the frequency computation. The sound is also very well. The advantage of this method is that we can cover more pitches and get wider frequencies for the notes. In fact, when we change to the 20 keys mode, we prefer to use the second kind of sound for the reason that if we still use the Karplus-Strong algorithm, some high frequency note will not sound good.
+</p>
+    <h5><a href="index.html#top">[top]</a></h5>
+    <hr />
+    <h2 id="speed">Speed, Melody and Score</h2>
+    <p>A timer is used to control the tempo, measured in bps (beats per second). The melody retrieving and notes display are all driven by the beat clock. The melody is stored in memory, and shows up in the screen according to the current beat number. Users are graded for if they hit the right key at the right time. Each note is only counted once even though users might hit several times during the note period. Whether the user has hit the right note at the right time is determined by comparing the pressed key with the melody for current beat.</p>
+    <h5><a href="index.html#top">[top]</a></h5>
+    <hr />
+    <h2 id="display">Display</h2>
+    <p>The VGA user interface doesn’t take any memory; it is calculated on the fly. Since the image to display could be formulized, so whenever VGA requests a data to display, the display module calculates and returns the data according to the VGA address.</p>
+   <div  style="width:100%; text-align:center">
+    <img src="hand1.png" width="540" height="443" />
+    <p>Practice mode is as the above figure. The lower row with blue and green blocks is used as keyboard. The column which is pressed would be shadowed.</p>
+    <img src="hand2.png" width="540" height="443" />
+     <p>Play mode is as the above figure. The lower area with blue and green blocks is used as keyboard area; the upper area is used to display notes that the user supposed to play. The note to be pressed is in bright gray. The note pressed at the right time is in red.  If the user miss the note during the appropriate time, the note will not change into red. Also, the column which is pressed would be shadowed. In the play mode, if the user slide the pause/run switch, the notes will stay on the position where they are.</p>
+    </div>
+<h5><a href="index.html#top">[top]</a></h5>
+
+<hr />
+    <h2 id="interface">Interface</h2>
+    <p>With the keys, switches, and seven-segments on the DE2 FPGA board, the user can achieve the
+settings of the system, change the number of keys, and chose different modes to play this piano
+hero game. We design the interface effectively and the user can accomplish several functions
+with the interface.</p>
+    <p>The KEY[0] is used to reset the camera and the display system, and KEY[1] is used to reset the
+      sound system. Once the DE2 board is powered on and the devices are placed well, the user can
+      push the reset buttons. Then the user can make use of the SW[0] to select which kinds of sound
+      they would like to hear. Our default setting is the Karplus-Strong algorithm sound. And then the
+      user can use SW[1] to change the display into the view of the camera. The monitor will show the
+      user where the keys are and make sure the position of the keyboard mask. At this time, we can
+      change SW[14], SW[15], SW[16] to determine the number of keys that we want. Note that we
+      need to reset the system each time when we change the number of piano keys. In the next step,
+      the user can slide the filter switches SW[2] and SW[3] two or three times. These two switches
+      correspond to the filter function for the two different color piano keys, which will remove the
+      noise pixels in the camera view for all piano keys. After the noise being removed, the user can
+      slide the label switch SW[4], which will label the piano keys. And the seven-segments [6][7] will
+      show the user how many piano keys are labeled after the labeling is finished. Since now, the
+      system setting is accomplished, and then the user can chose the mode of the game. When we
+      begin to play, the detect switch SW[5] should be turned on, and then the user’s finger can be
+      detected. </p>
+    <p>If we want to use the practice mode, the switch SW[17] should be turned on, and the
+      user can chose the start note using switches SW[7], SW[8], SW[9]. There are eight choices for
+      the user, which are the seven notes in the scale and one high pitch G, and the seven-segment
+      [6] will show the user’s choice. If we want to use the play mode, the mode switch SW[17] and
+      the pause switch SW[6] should be turned down. We can set the tempo of the music score by
+      switches SW[10]-SW[13], which will also be showed on the bps seven-segment. Then we can
+      press KEY[2] to start the music score. If the user want to stop in the middle of the game, then the
+      SW[6] switch can be used. After one music score is finished, the score will be displayed on the
+      seven-segments. And the user can restart the game using KEY[2].</p>
+    
+    <div  style="width:100%; text-align:center"><img src="interface.png" width="700" height="283" /></div>
+<h5><a href="index.html#top">[top]</a></h5>
+
+
+<h1 id="Results">Results of the design</h1>
+    <p>The system has the following functions. It could display a piano keyboard for users to hit keys; it should be able to sense which key is pressed by the user; it should give a visual feedback and sound whenever a key is pressed; it could display build-in song to instruct users to play; it could grade users’ performance by how well they play the build-in song.</p>
+    <p>The user interface during playing is as the following figure.</p>
+    <div  style="width:100%; text-align:center">
+    <img src="screen.jpg" width="500" height="401" />
+    </div>
+    <br />
+    <p> Sample songs played using this system:</p>
+    <div  style="width:100%; text-align:center">
+<a href="Blue_and_white_porcelain.mp3">Blue and white porcelain.mp3</a>
+<br />
+    
+    
+      <a href="red_river_valley.mp3">red river valley.mp3</a>	
+     
+    <br />
+      <a href="old_macdonald_had_a_farm.mp3">old macdonald had a farm.mp3</a>
+   
+    </div>
+    <br />
+    <p>Video is available in the parent page, right next to the title of this page. </p>
+<h5><a href="index.html#top">[top]</a></h5>
+
+
+
+
+
+    <h1 id="conclusion">Conclusion</h1>
+    <p>Our design is an entertainment tool which could be used by anyone who is interested in music playing but don’t have a piano keyboard. Our design could help users to turn their monitor into a touch screen and play interactively. In the play mode, the system will help the user to improve their playing skills. We can add more music scores into the system and the users can choose the music score they like. You will enjoy playing it!</p>
+<h5><a href="index.html#top">[top]</a></h5>
+
+
+
+
+
+    <h1 id="reference">Reference</h1>
+    <p>
+    <a href="../../../f2010/kaf42_jay29_teg25/teg25_jay29_kaf42/index.html">Video Realtime Cartoonifier</a>
+<br />   <a href="../../../../../../../../www.altera.com/education/univ/materials/boards/de2/unv-de2-board.html">Altera University Program</a>  <br />
+  <a href="../../../../../../../../ftp@ftp.altera.com/up/pub/Webdocs/DE2_UserManual.pdf">Altera DE2 User Manual</a>  <br />
+  
+   <a href="../../../../../../../../https@ccrma.stanford.edu/~jos/SimpleStrings/SimpleStrings.html">Elementary Digital Waveguide Models for Vibrating Strings</a>  <br />
+    <a href="../../../../../../../../www.speech.kth.se/music/5_lectures/weinreic/strings.html">The coupled motion of piano strings</a>  <br />
+     <a href="../../../f2009/csm44_jck46/index.html">KSD Piano Project</a>  <br />
+  
+  
+  
+  
+</p>
+<h5><a href="index.html#top">[top]</a></h5>
+
+
+
+    <h1 id="appendix ">Appendix </h1>
+ 
+  
+    <h2 id="Code">Code</h2>
+  <p> The zip file of the commented source code can be found <a href="SourceCode.zip">here</a>.
+	</p>
+  <p>The top level module is in <a href="DE2_TV.v">DE2_TV.v </a></p>
+    <h5><a href="index.html#top">[top]</a></h5>
+    <hr />
+  
+  
+  
+    <h2 id="Acknowledgement">Acknowledgements</h2>
+  <p>We would specially thank Bruce Land and TA Annie Dai (wd65) for their astute advice and guidance during this project and the whole semester. It was a fun and interesting semester in our graduate study.  Thanks for the help! </p>
+    <h5><a href="index.html#top">[top]</a></h5>
+    <hr />
+    
+    
+    <h2 id="WorkSplit">Work Split</h2>
+    <p>Chonggang Li: Display design and vision processing. </p>
+  <p>Ran Hu: Sound Synthesis</p>
+  <p>Design and test are done together by team members.</p>
+    <h5><a href="index.html#top">[top]</a></h5>
+
+
+
+
+
+  
+  <!-- end .content --></div>
+  <div class="footer">
+    <p align="center" ><font color="#333333" size="-4">©2013 Chonggang Li, Ran Hu</font></p>
+    <!-- end .footer --></div>
+  <!-- end .container --></div>
+</body>
+</html>

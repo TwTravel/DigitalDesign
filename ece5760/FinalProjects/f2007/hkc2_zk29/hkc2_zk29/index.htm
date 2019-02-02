@@ -1,0 +1,771 @@
+<html>
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+<meta name=Generator content="Microsoft Word 12 (filtered)">
+<title>Starfox FPGA</title>
+<style>
+<!--
+ /* Font Definitions */
+ @font-face
+	{font-family:SimSun;
+	panose-1:2 1 6 0 3 1 1 1 1 1;}
+@font-face
+	{font-family:"Cambria Math";
+	panose-1:2 4 5 3 5 4 6 3 2 4;}
+@font-face
+	{font-family:Cambria;
+	panose-1:2 4 5 3 5 4 6 3 2 4;}
+@font-face
+	{font-family:Calibri;
+	panose-1:2 15 5 2 2 2 4 3 2 4;}
+@font-face
+	{font-family:Tahoma;
+	panose-1:2 11 6 4 3 5 4 4 2 4;}
+@font-face
+	{font-family:"\@SimSun";
+	panose-1:2 1 6 0 3 1 1 1 1 1;}
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin:0in;
+	margin-bottom:.0001pt;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";}
+h1
+	{mso-style-link:"Heading 1 Char";
+	margin-top:12.0pt;
+	margin-right:0in;
+	margin-bottom:3.0pt;
+	margin-left:0in;
+	page-break-after:avoid;
+	font-size:16.0pt;
+	font-family:"Cambria","serif";}
+p.MsoCaption, li.MsoCaption, div.MsoCaption
+	{margin-top:6.0pt;
+	margin-right:0in;
+	margin-bottom:6.0pt;
+	margin-left:0in;
+	font-size:10.0pt;
+	font-family:"Times New Roman","serif";
+	font-weight:bold;}
+p.MsoTitle, li.MsoTitle, div.MsoTitle
+	{mso-style-link:"Title Char";
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:15.0pt;
+	margin-left:0in;
+	border:none;
+	padding:0in;
+	font-size:26.0pt;
+	font-family:"Cambria","serif";
+	color:#17365D;
+	letter-spacing:.25pt;}
+p.MsoTitleCxSpFirst, li.MsoTitleCxSpFirst, div.MsoTitleCxSpFirst
+	{mso-style-link:"Title Char";
+	margin:0in;
+	margin-bottom:.0001pt;
+	border:none;
+	padding:0in;
+	font-size:26.0pt;
+	font-family:"Cambria","serif";
+	color:#17365D;
+	letter-spacing:.25pt;}
+p.MsoTitleCxSpMiddle, li.MsoTitleCxSpMiddle, div.MsoTitleCxSpMiddle
+	{mso-style-link:"Title Char";
+	margin:0in;
+	margin-bottom:.0001pt;
+	border:none;
+	padding:0in;
+	font-size:26.0pt;
+	font-family:"Cambria","serif";
+	color:#17365D;
+	letter-spacing:.25pt;}
+p.MsoTitleCxSpLast, li.MsoTitleCxSpLast, div.MsoTitleCxSpLast
+	{mso-style-link:"Title Char";
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:15.0pt;
+	margin-left:0in;
+	border:none;
+	padding:0in;
+	font-size:26.0pt;
+	font-family:"Cambria","serif";
+	color:#17365D;
+	letter-spacing:.25pt;}
+p.MsoSubtitle, li.MsoSubtitle, div.MsoSubtitle
+	{mso-style-link:"Subtitle Char";
+	margin:0in;
+	margin-bottom:.0001pt;
+	font-size:12.0pt;
+	font-family:"Cambria","serif";
+	color:#4F81BD;
+	letter-spacing:.75pt;
+	font-style:italic;}
+a:link, span.MsoHyperlink
+	{color:blue;
+	text-decoration:underline;}
+a:visited, span.MsoHyperlinkFollowed
+	{color:purple;
+	text-decoration:underline;}
+pre
+	{margin:0in;
+	margin-bottom:.0001pt;
+	font-size:10.0pt;
+	font-family:"Courier New";}
+p.MsoAcetate, li.MsoAcetate, div.MsoAcetate
+	{mso-style-link:"Balloon Text Char";
+	margin:0in;
+	margin-bottom:.0001pt;
+	font-size:8.0pt;
+	font-family:"Tahoma","sans-serif";}
+span.MsoPlaceholderText
+	{color:gray;}
+p.MsoNoSpacing, li.MsoNoSpacing, div.MsoNoSpacing
+	{margin:0in;
+	margin-bottom:.0001pt;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";}
+p.MsoIntenseQuote, li.MsoIntenseQuote, div.MsoIntenseQuote
+	{mso-style-link:"Intense Quote Char";
+	margin-top:10.0pt;
+	margin-right:.65in;
+	margin-bottom:14.0pt;
+	margin-left:.65in;
+	border:none;
+	padding:0in;
+	font-size:12.0pt;
+	font-family:"Times New Roman","serif";
+	color:#4F81BD;
+	font-weight:bold;
+	font-style:italic;}
+span.MsoSubtleEmphasis
+	{color:gray;
+	font-style:italic;}
+span.MsoIntenseEmphasis
+	{color:#4F81BD;
+	font-weight:bold;
+	font-style:italic;}
+span.Heading1Char
+	{mso-style-name:"Heading 1 Char";
+	mso-style-link:"Heading 1";
+	font-family:"Cambria","serif";
+	font-weight:bold;}
+span.BalloonTextChar
+	{mso-style-name:"Balloon Text Char";
+	mso-style-link:"Balloon Text";
+	font-family:"Tahoma","sans-serif";}
+span.SubtitleChar
+	{mso-style-name:"Subtitle Char";
+	mso-style-link:Subtitle;
+	font-family:"Cambria","serif";
+	color:#4F81BD;
+	letter-spacing:.75pt;
+	font-style:italic;}
+span.TitleChar
+	{mso-style-name:"Title Char";
+	mso-style-link:Title;
+	font-family:"Cambria","serif";
+	color:#17365D;
+	letter-spacing:.25pt;}
+span.IntenseQuoteChar
+	{mso-style-name:"Intense Quote Char";
+	mso-style-link:"Intense Quote";
+	color:#4F81BD;
+	font-weight:bold;
+	font-style:italic;}
+.MsoChpDefault
+	{font-size:10.0pt;}
+@page Section1
+	{size:8.5in 11.0in;
+	margin:1.0in 1.25in 1.0in 1.25in;}
+div.Section1
+	{page:Section1;}
+-->
+</style>
+
+</head>
+
+<body lang=EN-US link=blue vlink=purple>
+
+<div class=Section1>
+
+<div style='border:none;border-bottom:solid #4F81BD 1.0pt;padding:0in 0in 4.0pt 0in'>
+
+<p class=MsoTitle>Starfox FPGA</p>
+
+</div>
+
+<div style='border:none;border-bottom:solid #4F81BD 1.0pt;padding:0in 0in 4.0pt 0in;
+margin-left:.65in;margin-right:.65in'>
+
+<p class=MsoIntenseQuote style='margin-top:10.0pt;margin-right:0in;margin-bottom:
+14.0pt;margin-left:0in'><span style='font-size:14.0pt'>Introduction</span></p>
+
+</div>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>Our project
+was an attempt to implement Starfox from the Super Nintendo Entertainment
+System (SNES) on the FPGA using the VGA running in 320 pixels by 240 pixels
+screen resolution.  The source of the project idea is from the classic game
+Starfox on the SNES.  This was one of the first games to display 3D models.  Figure
+1 below shows a screenshot of the original game as it appeared on the SNES.</span></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal align=center style='text-align:center;page-break-after:avoid'><b><img
+width=300 height=263 id="Picture 1" src="index_image001.jpg"></b></p>
+
+<p class=MsoCaption align=center style='text-align:center'>Figure 1 - Nintendo's implementation of the game</p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<div style='border:none;border-bottom:solid #4F81BD 1.0pt;padding:0in 0in 4.0pt 0in;
+margin-left:.65in;margin-right:.65in'>
+
+<p class=MsoIntenseQuote style='margin-top:10.0pt;margin-right:0in;margin-bottom:
+14.0pt;margin-left:0in'><span style='font-size:14.0pt'>High Level Design</span></p>
+
+</div>
+
+<p class=MsoNormal><span class=MsoIntenseEmphasis>Logical Design</span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>In our
+implementation, the 3D models are drawn in Matlab the vertex list is generated
+from a script.  The vertex list is included as a header file in the software
+and the software running on the NIOS CPU communicates these 3D world
+coordinates to the hardware.  The hardware transforms the 3D world coordinates
+to 2D screen coordinates using matrix arithmetic and draws the wire frame of
+the 3D models on the 2D VGA screen using the Breshenham algorithm implemented
+in Lab 2.  The NIOS console then takes input from the keyboard and redraws the
+screen with coordinate changes to give the impression of movement for the ship.</span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>&nbsp;</span></p>
+
+<p class=MsoNormal><span class=MsoIntenseEmphasis>Background Math</span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>In order to
+convert a world coordinate to screen coordinates, we need to multiply the world
+coordinates by the camera transform matrix, called T<sub>cam</sub>.  </span></p>
+
+<p class=MsoNormal><span
+style='font-size:12.0pt;font-family:"Times New Roman","serif"'><img width=243
+height=19 src="index_image002.gif"></span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>The total
+camera transformation matrix T<sub>cam</sub> is defined as the view matrix T<sub>view</sub>
+multiplied by the perspective matrix T<sub>persp</sub>.  </span></p>
+
+<p class=MsoNormal><span
+style='font-size:12.0pt;font-family:"Times New Roman","serif"'><img width=149
+height=21 src="index_image003.gif"></span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>Where the
+view matrix is a 4x4 translate matrix multiplied by a rotate:</span></p>
+
+<p class=MsoNormal><span
+style='font-size:12.0pt;font-family:"Times New Roman","serif"'><img width=351
+height=73 src="index_image004.gif"></span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>Where N is
+the view vector defined as:</span></p>
+
+<p class=MsoNormal><span
+style='font-size:12.0pt;font-family:"Times New Roman","serif"'><img width=199
+height=39 src="index_image005.gif"></span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>And V is
+the vector perpendicular to N that is defined as:</span></p>
+
+<p class=MsoNormal><span
+style='font-size:12.0pt;font-family:"Times New Roman","serif"'><img width=322
+height=19 src="index_image006.gif"></span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>This is
+then normalized:          </span><span
+style='font-size:12.0pt;font-family:"Times New Roman","serif";position:relative;
+top:8.5pt'><img width=97 height=29 src="index_image007.gif"></span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>And U is
+the right vector defined as the cross of the norms of the N and V vectors.</span></p>
+
+<p class=MsoNormal><span
+style='font-size:12.0pt;font-family:"Times New Roman","serif"'><img width=113
+height=19 src="index_image008.gif"></span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>The
+perspective matrix is:</span></p>
+
+<p class=MsoNormal><span
+style='font-size:12.0pt;font-family:"Times New Roman","serif"'><img width=274
+height=76 src="index_image009.gif"></span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>Where d is
+the distance from camera to near clip plane, f is the distance from the camera
+to the far clip plane, and h is the height of the view volume.</span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>After the screen
+coordinates are calculated, they may still not be ready for a direct mapping
+onto the VGA screen.  This is because the vertex list range is typically in the
+unit sphere range of -1 to 1.  In order to get these coordinates into a format
+more suitable to the VGA, we need to multiply and shift the screen coordinates into
+the correct 320x240 screen range from the vertex list range.</span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>&nbsp;</span></p>
+
+<div style='border:none;border-bottom:solid #4F81BD 1.0pt;padding:0in 0in 4.0pt 0in;
+margin-left:.65in;margin-right:.65in'>
+
+<p class=MsoIntenseQuote style='margin-top:10.0pt;margin-right:0in;margin-bottom:
+14.0pt;margin-left:0in'><span class=MsoIntenseEmphasis><span style='font-size:
+14.0pt;font-weight:normal;font-style:normal'>Program &amp; Hardware Design</span></span></p>
+
+</div>
+
+<p class=MsoNormal><span class=MsoIntenseEmphasis>Software Design</span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>The
+software design and implementation is relatively simple.  The vertex lists and
+face lists of the 3D models that are generated from Bruce Land’s MATLAB script are
+stored in the header files and loaded onto the NIOS CPU.  This is done so that
+all of the necessary data would be loaded onto the FPGA and therefore there
+would not be any need for the FPGA to have to communicate with the base
+computer, which would have undoubtedly incurred more synchronization problems. </span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>The code iterates
+through the vertices based on the face list and sends pairs of coordinates to
+the hardware, which draws a line with those vertex endpoints.  The vertices are
+only sent when the hardware is ready and in a waiting state, indicated by the
+hardware ready bit which is read by the software before each attempt to send
+the next pair of coordinates.  Also, 10 µsec sleeps were added in the loop before
+each pair of vertices are iterated through in order to correct some visual
+artifacts that were occurring on the hardware side.</span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>The user
+interface was also implemented in software using the NIOS II console for the user
+to input movement directions.  The w, a, s, d keys are used to move the model
+up, left, down and right, respectively.  Since the Nios II C only supports
+getchar() and not getche(), each key press must be followed by a return to
+register.  This does impair game play and would require an extension to the
+Nios II C that implements getche() to work around the limitation.</span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>&nbsp;</span></p>
+
+<p class=MsoNormal><span class=MsoIntenseEmphasis>Hardware Design</span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>The
+hardware reads pairs of points from the software, transforms them from the
+world coordinate system to the VGA screen coordinate system in 320x240 pixel
+resolution, and uses a breshenham line generator to draw lines between the
+pairs of points, forming the wire frame 3D models.  </span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>For our number
+system in verilog, we used a 6:12 fixed point system with 6 bits of integer
+precision and 12 bits or fraction precision.  This was done in order to have a
+wide enough integer range as required by the transform parameters along with a
+precise enough fraction range for the conversions.  The range goes from -32 to
+31.9996 with increments of 2<sup>-12­</sup>.  </span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>Since we
+planned for all the matrix multiplication to be done in verilog in order to
+take advantage of the hardware’s speed over the software, we wrote
+multiplication modules in verilog for our given number system.  We started by
+modifying Bruce Land’s 2:16 fixed point multiply module so that it would now
+represent a 6:12 fixed point multiply, and then we used that multiply module as
+the building block for 3x3 and 4x4 matrix multiply modules.  Since the addition
+has no special overflow case to consider, we used the standard verilog adders
+by using “+” when we wanted to add two numbers together, such as in computing
+the results of a matrix multiply.</span></p>
+
+<p class=MsoNormal align=center style='text-align:center;page-break-after:avoid'><img
+width=481 height=340 src="index_image010.gif"></p>
+
+<p class=MsoCaption align=center style='text-align:center'>Figure 2 - The Hardware State Machine</p>
+
+<p class=MsoNormal align=center style='text-align:center'><span
+style='font-family:"Calibri","sans-serif"'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>The actual
+work on the hardware end was all taken care of by a state machine (shown above
+in Figure 2) in verilog which would idle in a waiting state with a ready flag
+at logic level “1” until it received a command from the software.  Upon
+receiving a pair of points from the software, the ready flag is set to logic
+“0” to communicate to the software that the hardware is busy operating on a set
+of points and is not ready to receive the next pair of coordinates.  The state
+machine then goes to state “trans1” followed by “trans2” which together apply
+the world-to-screen matrix transforms.  The transforms are implemented in
+verilog using the described background math and matrix multiplication modules.  After
+state “trans2”, the coordinates are now screen coordinates and are sent to the
+breshenham line generator state machine.  The breshenham line generator state
+machine would then draw a line between the pair of screen coordinates and then
+return to the waiting state and set the ready flag to logic “1” again.</span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>&nbsp;</span></p>
+
+<p class=MsoNormal><span class=MsoIntenseEmphasis>Hardware / Software Tradeoffs</span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>The only significant
+tradeoffs that could’ve been made are where the mathematical matrix
+transformations could be made.  They are best done in hardware for speed, but
+require a fixed point number system to do calculations and require
+conversions.  If done in software, the transformation may not be fast enough,
+but it’s much easier to handle the representations and the arithmetic.  Toward
+the end of the project, we decided to move all the mathematical transformations
+out of both software and hardware in favor of pre-calculating the data in
+Matlab in an attempt to try to show something presentable on the screen and in
+order to debug our VGA drawing scheme.  For this, the resultant 2D screen
+coordinates were included as header file to the C code.</span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>&nbsp;</span></p>
+
+<p class=MsoNormal><span class=MsoIntenseEmphasis>Things We Tried That Didn’t Work</span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>As we’ve
+just described, we had originally planned for the 3D world coordinate to 2D
+screen coordinate conversion to occur in hardware.  However, the matrix
+multipliers that we had written in verilog did not work for a reason we had yet
+to figure out from many hours of debugging.  At a certain point, we decided to
+give up on the hardware conversion and thought of moving the conversion to
+software and just send the 2D coordinates to the hardware.  However, after some
+thought we decided it would be too slow in software and decided to let Matlab
+do the work and use the 2D coordinates directly.  Figure 3 below shows the
+final logical diagram that was implemented as a minimum, simplified system.</span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>&nbsp;</span></p>
+
+<p class=MsoNormal align=center style='text-align:center;page-break-after:avoid'><img
+width=492 height=415 src="index_image011.gif"></p>
+
+<p class=MsoCaption align=center style='text-align:center'>Figure 3 - The Simplified System</p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>The
+following parameters were used to derive T<sub>cam</sub>, which we hard coded
+for now.  If we wanted some user interface to move the camera around, we would
+need to move the math into software in order to dynamically recalculate T<sub>cam</sub>. 
+For our final simplified model, all the math and calculations are done in
+Matlab and hardcoded into the software/hardware. This required us to write a
+conversion script to convert numbers from decimal notation in Matlab to our
+6:12 fixed point notation in verilog in order to hardcode them into verilog. 
+All of the following parameters were chosen using a desirable view in Bruce
+Land’s Matlab gui and then outputting the respective variables.  </span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>LookFrom =
+[.5 2.5 5]  </span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>LookTo =
+[.5 .5 .5]</span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>UpVector =
+[0, 1, 0]</span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>d = 4    </span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>f = 10   </span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>h =.7    </span></p>
+
+<p class=MsoNormal><span
+style='font-size:12.0pt;font-family:"Times New Roman","serif";position:relative;
+top:3.0pt'><img width=204 height=19 src="index_image012.gif"></span><span
+style='font-family:"Calibri","sans-serif"'> </span></p>
+
+<p class=MsoNormal><span
+style='font-size:12.0pt;font-family:"Times New Roman","serif";position:relative;
+top:3.0pt'><img width=191 height=19 src="index_image013.gif"></span><span
+style='font-family:"Calibri","sans-serif"'> </span></p>
+
+<p class=MsoNormal><span
+style='font-size:12.0pt;font-family:"Times New Roman","serif";position:relative;
+top:3.0pt'><img width=141 height=19 src="index_image014.gif"></span><span
+style='font-family:"Calibri","sans-serif"'> </span></p>
+
+<p class=MsoNormal><span
+style='font-size:12.0pt;font-family:"Times New Roman","serif";position:relative;
+top:22.5pt'><img width=325 height=71 src="index_image015.gif"></span><span
+style='font-family:"Calibri","sans-serif"'> </span></p>
+
+<p class=MsoNormal><span
+style='font-size:12.0pt;font-family:"Times New Roman","serif";position:relative;
+top:22.5pt'><img width=316 height=71 src="index_image016.gif"></span><span
+style='font-family:"Calibri","sans-serif"'> </span></p>
+
+<p class=MsoNormal><span
+style='font-size:12.0pt;font-family:"Times New Roman","serif";position:relative;
+top:22.5pt'><img width=352 height=71 src="index_image017.gif"></span><span
+style='font-family:"Calibri","sans-serif"'> </span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>This T<sub>cam</sub>
+matrix was then hardcoded into verilog, effectively reducing the amount of
+calculation we had to do in verilog at the cost of locking our camera position.</span></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>We had also
+tried a different approach to transforming 3D world coordinates to 2D screen
+coordinates from the Wikipedia page until Bruce directed us to his page.</span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>In the Wikipedia
+approach:</span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>Ax,Ay,Az = a
+point in 3D space</span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>Cx,Cy,Cz = the
+location of the camera - hardset to 0,0,0 for now</span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>Tx,Ty,Tz = the
+rotation of the camera - hardset to 0,0,0 for now</span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>Ex,Ey,Ez = the
+viewer position in camera space</span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>Bx,By = 2D
+projection of A</span></p>
+
+<p class=MsoNormal><span
+style='font-size:12.0pt;font-family:"Times New Roman","serif"'><img width=576
+height=108 src="index_image018.gif"></span><span style='font-family:"Calibri","sans-serif"'>
+</span></p>
+
+<p class=MsoNormal><span
+style='font-size:12.0pt;font-family:"Times New Roman","serif";position:relative;
+top:3.0pt'><img width=170 height=19 src="index_image019.gif"></span><span
+style='font-family:"Calibri","sans-serif"'> </span></p>
+
+<p class=MsoNormal><span
+style='font-size:12.0pt;font-family:"Times New Roman","serif";position:relative;
+top:3.0pt'><img width=171 height=19 src="index_image020.gif"></span><span
+style='font-family:"Calibri","sans-serif"'> </span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>However, we
+did not know what to set some of the parameters to, so we went with Bruce’s
+already implemented transformations instead.</span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>&nbsp;</span></p>
+
+<p class=MsoNormal><span class=MsoIntenseEmphasis>Relationship to Standards</span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>Our design is
+a software and verilog implementation on prototyping hardware and therefore
+must adhere to FCC standards and regulations.  Since our Dell laboratory PCs,
+the Altera DE2 board, and the VGA monitor all adhere to the standards, we
+assume that our project does as well, since we have done nothing that would
+cause any of our equipment to malfunction.</span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>&nbsp;</span></p>
+
+<p class=MsoNormal><span class=MsoIntenseEmphasis>Copyright Considerations</span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>The
+original inspiration for our design, Starfox, is copyrighted by Nintendo. 
+However, we simply use their game as an inspiration for what could be done with
+the FPGA in a strictly educational manner, and therefore do not believe that
+there is any copyright infringement.  </span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>&nbsp;</span></p>
+
+<p class=MsoNormal><span class=MsoIntenseEmphasis>Safety &amp; Usability
+Considerations</span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>Our project
+has no safety or usability restrictions beyond those of normal computer use,
+since our project is interfaced through the standard keyboard, mouse, and
+monitor of a common desktop computer.</span></p>
+
+<div style='border:none;border-bottom:solid #4F81BD 1.0pt;padding:0in 0in 4.0pt 0in;
+margin-left:.65in;margin-right:.65in'>
+
+<p class=MsoIntenseQuote style='margin-top:10.0pt;margin-right:0in;margin-bottom:
+14.0pt;margin-left:0in'><span style='font-size:14.0pt'>Results</span></p>
+
+</div>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>Our design did
+not manage to come anywhere near Nintendo’s implementation.  Figure 4 shows our
+wireframe models drawn on the VGA screen.</span></p>
+
+<p class=MsoNormal align=center style='text-align:center;page-break-after:avoid'><span
+style='font-family:"Calibri","sans-serif"'><img width=464 height=348
+id="Picture 3" src="index_image021.jpg"></span></p>
+
+<p class=MsoCaption align=center style='text-align:center'>Figure 4 - Our Result</p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>A major
+drawback is that there is not much user interaction at all.  The user is able
+to slightly move the ship, but since the matrix transforms were never
+successfully implemented it does not give the user any 3-dimenional feel and
+instead simply moves the ship around the screen in 2D.  There is an asteroid
+that is drawn at the top right of the screen that always moves down and you can
+try to avoid it, but at the same time there is no collision detection so moving
+the ship into the asteroid doesn’t actually do anything.  On top of all this,
+the clear screen doesn’t consistently work so sometimes you see after images of
+the ship and/or asteroid at their previous positions.  Figure 5 shows an
+example of the after-image artifacts.  </span></p>
+
+<p class=MsoNormal align=center style='text-align:center;page-break-after:avoid'><span
+style='font-family:"Calibri","sans-serif"'><img width=473 height=355
+id="Picture 4" src="index_image022.jpg"></span></p>
+
+<p class=MsoCaption align=center style='text-align:center'>Figure 5 - The After-Image</p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>You’ll have
+to manually hit KEY3 to fully clear screen if these artifacts occur.  Figure 6
+shows what the movement of the ship to the right should look like if no
+after-images occur.</span></p>
+
+<p class=MsoNormal align=center style='text-align:center;page-break-after:avoid'><span
+style='font-family:"Calibri","sans-serif"'><img width=480 height=360
+id="Picture 5" src="index_image023.jpg"></span></p>
+
+<p class=MsoCaption align=center style='text-align:center'>Figure 6 - The Proper Drawing of Movement</p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>&nbsp;</span></p>
+
+<div style='border:none;border-bottom:solid #4F81BD 1.0pt;padding:0in 0in 4.0pt 0in;
+margin-left:.65in;margin-right:.65in'>
+
+<p class=MsoIntenseQuote style='margin-top:10.0pt;margin-right:0in;margin-bottom:
+14.0pt;margin-left:0in'><span style='font-size:14.0pt'>Conclusions</span></p>
+
+</div>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>Our design fell
+vastly short of most of our expectations.  When we first started, we had the
+goal of displaying the Starfox ship and moving it through the 3D environment on
+the 2D screen.  As it stands, our design only has a ship and an asteroid drawn
+on the screen in 2D, so there is no 3D environment for the ship to move through. 
+A lot more can be added such as moving camera positions, sharper movement,
+collision detection, solid plane instead of wire frame, etc.  Despite our
+shortcomings, we still learned a lot and would like to thank Bruce Land for all
+his help and advice as we tried to get a stronger implementation of this
+project working.</span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>&nbsp;</span></p>
+
+<p class=MsoNormal><span class=MsoIntenseEmphasis>Tasks</span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>Zi Ling –
+Design, debugging and testing of the hardware and software, design and
+implementation of the simplified system, and the first draft of the project web
+page.</span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>Heman – Early
+design, debugging, and testing of hardware and software, as well as the final
+draft of the project web page.</span></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<div style='border:none;border-bottom:solid #4F81BD 1.0pt;padding:0in 0in 4.0pt 0in;
+margin-left:.65in;margin-right:.65in'>
+
+<p class=MsoIntenseQuote style='margin-top:10.0pt;margin-right:0in;margin-bottom:
+14.0pt;margin-left:0in'><span style='font-size:14.0pt'>References</span></p>
+
+</div>
+
+<p class=MsoNormal><span class=MsoIntenseEmphasis>Outside Code Sources</span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>The Matlab
+scripts to generate 3D polygon models and calculate the matrix transformations
+are from Prof. Bruce Land.</span></p>
+
+<p class=MsoNormal><a
+href="../../../../../../../../www.nbb.cornell.edu/neurobio/land/PROJECTS/Hierarchy/default.htm"><span
+style='font-family:"Calibri","sans-serif"'>http://www.nbb.cornell.edu/neurobio/land/PROJECTS/Hierarchy/</span></a></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>The
+breshenham line generator code is our implementation from </span><a
+href="../../../../../../../../instruct1.cit.cornell.edu/courses/ece576/LABS/f2007/lab2.html"><span
+style='font-family:"Calibri","sans-serif"'>Lab 2.</span></a></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>The
+template for our 6:12 multiply module was Bruce Land’s 2:16 multiply module.</span></p>
+
+<p class=MsoNormal><a
+href="../../../../../../../../instruct1.cit.cornell.edu/courses/ece576/DDA/index.htm"><span
+style='font-family:"Calibri","sans-serif"'>http://instruct1.cit.cornell.edu/courses/ece576/DDA/index.htm</span></a><span
+style='font-family:"Calibri","sans-serif"'> </span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>The
+template for our verilog code was the </span><a
+href="../../../../../../../../instruct1.cit.cornell.edu/courses/ece576/DE2/DE2_TOP.v"><span
+style='font-family:"Calibri","sans-serif"'>Altera DE2 Top Level Module</span></a><span
+style='font-family:"Calibri","sans-serif"'>.</span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>&nbsp;</span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>The
+template for our c-code was the microC/OS implementation from </span><a
+href="../../../../../../../../instruct1.cit.cornell.edu/courses/ece576/LABS/f2007/lab3.html"><span
+style='font-family:"Calibri","sans-serif"'>Lab 3</span></a><span
+style='font-family:"Calibri","sans-serif"'>.</span></p>
+
+<p class=MsoNormal><b>&nbsp;</b></p>
+
+<p class=MsoNormal><span class=MsoIntenseEmphasis>Information References</span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>Wikipedia for
+some 3D projection information</span></p>
+
+<p class=MsoNormal><a href="../../../../../../../../en.wikipedia.org/wiki/3D_projection">http://en.wikipedia.org/wiki/3D_projection</a></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>The Star Fox Series Wikipedia page</p>
+
+<p class=MsoNormal><a href="../../../../../../../../en.wikipedia.org/wiki/Star_Fox_%28series%29">http://en.wikipedia.org/wiki/Star_Fox_%28series%29</a></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>Information regarding the Breshenham algorithm</p>
+
+<p class=MsoNormal><a
+href="../../../../../../../../graphics.idav.ucdavis.edu/education/GraphicsNotes/Bresenhams-Algorithm.pdf">http://graphics.idav.ucdavis.edu/education/GraphicsNotes/Bresenhams-Algorithm.pdf</a></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal>Altera Documentation page for the DE2 Board</p>
+
+<p class=MsoNormal><a
+href="../../../../../../../../www.altera.com/education/univ/materials/boards/unv-de2-board.html">http://www.altera.com/education/univ/materials/boards/unv-de2-board.html</a></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+<p class=MsoNormal><span class=MsoIntenseEmphasis>Attached Code</span></p>
+
+<p class=MsoNormal><span style='font-family:"Calibri","sans-serif"'>Our verilog
+and c-code has been attached in the following </span><a
+href="hkc2_zk29_code.zip"><span style='font-family:"Calibri","sans-serif"'>zip
+file</span></a><span style='font-family:"Calibri","sans-serif"'> for
+convenience.  The zip file also includes Bruce Land’s Matlab scripts which we
+used to create a model of our asteroid and which we used to find the
+mathematical matrices, as well as our own matlab script double2fixed.m</span></p>
+
+<p class=MsoNormal>&nbsp;</p>
+
+</div>
+
+</body>
+
+</html>

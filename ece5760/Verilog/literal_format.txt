@@ -1,0 +1,13 @@
+
+
+Literal number syntax is: <size>'<signed><base><value>
+<size> (optional) is the number of bits (default size is 32 bits)
+<signed> (optional) is the letter s or S (default is unsigned)
+<base> is b, o, d, h for binary, octal, decimal or hex (not case sensitive)
+
+If the size does not match the number of bits in the value:
+The left-most bit of value is 0 or 1, the value is left-extended with 0
+8'hA unsigned value extends to 00001010
+8'shA signed value extends to 00001010
+8'shA is not sign-extended because the sign bit is the MSB of the size, 
+not the MSB of the value!

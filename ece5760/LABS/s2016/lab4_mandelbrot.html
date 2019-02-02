@@ -1,0 +1,148 @@
+
+<html>
+<head>
+<title>ECE 5760 Lab 4</title>
+<style type="text/css">
+<!--
+.red {
+	color: #F00;
+}
+-->
+</style>
+</head>
+
+<body>
+<h2>
+ECE 5760: Laboratory 4</h2> 
+<h2> Mandelbrot set visualization. </h2>
+<p>
+<b> Introduction. </b>
+
+<p> In this assignment you will implement a system to compute and draw the <a href="../../../../../../mathworld.wolfram.com/MandelbrotSet.html">Mandelbrot
+set</a>, and to zoom in on pieces of the set. A <a href="mandelbrot.m">matlab program</a> shows
+how the computation is done. Note that the numbers are all complex. The image
+below is from the program output. The x,y axis units are pixels, not natural
+units. The x axis range is <code>[-2,1]</code> and the y axis <code>[-1,1]</code>. And Shiva Rajagopal found a video for Mandelbrot Set made by Cornell students! <a previewinformation="1" id="LPlnk170748" href="../../../../../../https@www.youtube.com/watch@v=ES-yKOYaXq0" target="_blank">https://www.youtube.com/watch?v=ES-yKOYaXq0</a> Lyrics: <a href="../../../../../../www.jonathancoulton.com/wiki/Mandelbrot_Set/Lyrics" target="_blank">http://www.jonathancoulton.com/wiki/Mandelbrot_Set/Lyrics</a><br>
+<img src="mandelbrot_640x480.png" width="672" height="504" alt="mandelbrot">
+<p> <b> Procedures:</b>  
+<ul>
+  <li>There may be one or more serial processors to control computation and serial communication.</li>
+  <li>You can use additional NiosII processors, pancake processors or build custom hardware to compute
+    the image. The computation of a 640x480 image is compute intensive, so you
+    are going to want to implement multiple computational units to speed up the
+    process. You may want to consider load balancing since some regions of the
+    complex plane are much faster to compute than others.</li>
+  <li>If you use custom hardware, I suggest using 3.33 fixed point notation for
+    interating the quadratic
+    complex number calculation. The top bit will be the usual 2's comp sign bit.
+    This format give the numbers a dynamic range of +/-3. A <a href="mandelbrot_limit_bits.m">matlab
+      program</a> to check the effect
+    of limiting the range shows that the computation  works.
+  If you use NiosII cpus to do the calcuations use 3.29 format.</li>
+</ul>
+<p>Examples from class:</p>
+<ul>
+  <li>Skyler Schneider <a href="../../StudentWork/ss868/lab3/ss868_lab3_photos/100_4904.JPG">1</a>, <a href="../../StudentWork/ss868/lab3/ss868_lab3_photos/100_4891.JPG">2</a>, <a href="../../StudentWork/ss868/lab3/ss868_lab3_photos/100_4919.JPG">3</a>, <a href="../../StudentWork/ss868/lab3/ss868_lab3_photos/100_4923.JPG">4</a></li>
+  <li>Venkatesh Santhanagopalan and Rick Wong <a href="../../StudentWork/vs327/2010-10-21_22-08-27_804 (Custom).jpg">1</a>, <a href="../../StudentWork/vs327/2010-10-21_22-17-32_749 (Custom).jpg">2</a>, <a href="../../StudentWork/vs327/2010-10-21_22-22-30_621 (Custom).jpg">3</a></li>
+  <li>Jinda Cui and Jiawei Yang, <a href="../../StudentWork/jy554/Mandelbrot Set.JPG">Full set</a>.; <br>
+    <a href="../../StudentWork/jy554/satellite_double_spiral.JPG">Satellite double spiral</a>: x_mid=-0.743 643 900 055; y_mid=0.131 825 890 901; zoom level=3000; <br>
+  <a href="../../StudentWork/jy554/neural_network.JPG">neural network</a>: range mode: x=(-0.37432239 -0.373655726 ); y=(0.65938433 0.66005100); zoom mode: x_mid=-0.37398906; y_mid=0.65971767; zoom level=3000;<br>
+  <a href="../../StudentWork/jy554/devils_eye.JPG">devil's eye</a>: range mode: x=(-1.87 -1.85); y=(-0.01 0.01); zoom mode: x_mid=-1.86; y_mid=0; zoom level=100; <br>
+  <a href="../../StudentWork/jy554/alien_egg.JPG">alien's egg</a>: range mode: x=(-1.863 -1.85); y=(-0.00153846 0.00153846); zoom mode: x_mid=-1.8615; y_mid=0; zoom level=650; <br>
+  <a href="../../StudentWork/jy554/lava.JPG">lava</a>: range mode: x=(-1.38 -1.36);y=(-0.026 -0.006); zoom mode: x_mid=-1.37; y_mid=-0.016; zoom level=100; </li>
+  <li>Sandeep Gangundi and  Sion Wang   <a href="../../StudentWork/sg835/600x_zoom.jpg">600x_zoom</a><br>
+    <table border="0" cellpadding="0" cellspacing="0" width="583">
+      <tbody>
+        <tr>
+          <td nowrap="nowrap" valign="bottom" width="159"><p><strong>image name</strong></p></td>
+          <td nowrap="nowrap" valign="bottom" width="220"><p><strong>x coord</strong></p></td>
+          <td nowrap="nowrap" valign="bottom" width="204"><p><strong>y coord</strong></p></td>
+        </tr>
+        <tr>
+          <td nowrap="nowrap" valign="bottom" width="159"><p><a href="../../StudentWork/sg835/flower.jpg">flower</a></p></td>
+          <td nowrap="nowrap" valign="bottom" width="220"><p>[-0.37465401, -0.37332411]</p></td>
+          <td nowrap="nowrap" valign="bottom" width="204"><p>[0.659227668, 0.66020767]</p></td>
+        </tr>
+        <tr>
+          <td nowrap="nowrap" valign="bottom" width="159"><p><a href="../../StudentWork/sg835/asymmetric_mandelbrot.jpg">asymmetric mandelbrot</a></p></td>
+          <td nowrap="nowrap" valign="bottom" width="220"><p>[0.435396403, 0.451687191]</p></td>
+          <td nowrap="nowrap" valign="bottom" width="204"><p>[0.367981352, 0.380210061]</p></td>
+        </tr>
+        <tr>
+          <td nowrap="nowrap" valign="bottom" width="159"><p><a href="../../StudentWork/sg835/pattern.jpg">pattern</a></p></td>
+          <td nowrap="nowrap" valign="bottom" width="220"><p>[-0.758,-0.75]</p></td>
+          <td nowrap="nowrap" valign="bottom" width="204"><p>[0.05,0.06]</p></td>
+        </tr>
+        <tr>
+          <td nowrap="nowrap" valign="bottom" width="159"><p><a href="../../StudentWork/sg835/spiral.jpg">spiral</a></p></td>
+          <td valign="bottom" width="220"><p>[-0.403, -0.399]</p></td>
+          <td nowrap="nowrap" valign="bottom" width="204"><p>[-0.600, -0.603]</p></td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+</ul>
+<p>Other links</p>
+<ul>
+  <li>A student <a href="../../../../../../web.cecs.pdx.edu/~mperkows/CLASS_574/Oct16-2008/mand.pdf">report</a> on implementing
+a mandelbrot generator on a DE1 board. </li>
+  <li>Mark Bowers <a href="../../../../../../markbowers.org/fpga-mandelbrot">FPGA-based Mandelbrot generator</a></li>
+  <li><a href="../../../../../../locklessinc.com/articles/mandelbrot/default.htm">Mandelbrot set</a></li>
+  <li>MIke Field <a href="../../../../../../ec2-122-248-210-243.ap-southeast-1.compute.amazonaws.com/mediawiki/index.php/Mandelbrot">Mandelbrot on FPGA</a></li>
+  <li>Who needs VRAM anyway? <a href="../../../../../../codelead.se/who-needs-vram-anyway">Or, calculating Mandelbrot on an FPGA</a></li>
+  <li><a href="../../../../../../kluge.in-chemnitz.de/documents/fractal/node9.html">Properties of Mandelbrot set</a></li>
+  <li><a href="../../../../../../en.wikipedia.org/wiki/Mandelbrot_set#Optimizations">Optimizations</a></li>
+</ul>
+<hr>
+<b> Assignment </b> 
+<ul>
+  <li>There may be one or more serial processors to control computation and serial communication, <br>
+  but you do not need to use a serial processor if you do not want to. </li>
+  <li>The corners of the region being plotted should be displayed either on the VGA screen, on a serial console, or on the LCD display.</li>
+  <li>Upon pressing KEY3, the system should compute and display the full Mandelbrot
+    set,
+    as shown above. </li>
+  <li>The VGA graphics interface should  run the VGA at 640x480 resolution with 8-bit color per pixel. Colors may aid in
+    debugging and certainly look cool. You may want to map color to the number of iterations
+    to divergence, or to the log of that number. A reasonable approximation of
+    the log is to just use the position of the largest non-zero bit in the count
+    (in matlab<code> fix(log2(count))</code>.
+  A modified <a href="mandelbrot_log.m">matlab
+  program</a> and <a href="mandelbrot_640x480_log.png">image</a> show the effect
+  of log-compressing the numerical range.
+The <a href="mandelbrot_640x480_zoom_log.png">zoomed image</a> (see below) also
+shows different detail.
+  <li>There will be a zoom interface using serial communication
+    to a terminal or a graphical interface. It is sufficient to pick a center coordinate and zoom in/out by a factor of two.
+   When you trigger the zoom calculation, the specified
+  corners should be reassigned to the corners of the display and 640x480 new points in those intervals should be iterated
+  again. 
+  <li>Part of your grade
+      will depend upon how fast you can render the full 640x480 set and two other regions picked on demo day. The
+      elapsed time in seconds and fractions of a second to draw should be shown <em>in decimal </em>on the 7-segment
+    LEDs, or LCD, or console or on the VGA screen. </li>
+  <li>You should be able
+  to choose the maximum number of iterations using serial input, or toggle switches,
+  or however you want to do it.</li>
+  <br>
+  Be prepared to demo your design to your TA in lab.
+  </li>
+</ul>
+<p> Your written lab report should include the sections mentioned in the <a href="../../policy.html">policy page</a>, and :
+<ul>
+  <li>A table of times to compute various regions of the Mandelbrot set close
+    to the areas specified in the list.
+    <ul>
+      <li><code>x=[-2 1],  y=[-1 1] </code></li>
+      <li><code>x=[-0.758,-0.75], y=[0.05,0.06]</code></li>
+      <li><code>x=[-1.45, -1.3], y=[-0.07, 0.07]</code></li>
+  </ul>  
+  <li>A collection of photographs of your favorite regions, and their coordinates.
+    The camera should be good enough to resolve individual pixels.
+  <li>A detailed dsecription of your SOPC design. 
+  <li> A heavily commented listing of your Verilog design and GCC code (if you use NiosII) or Syrup code (if you use Pancake). 
+</ul>
+<hr>
+<small> <font size="-1">Copyright Cornell University </font></small><!-- #BeginDate format:Am1 -->March 22, 2016<!-- #EndDate -->
+</body> </html>
+

@@ -1,0 +1,116 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>compile/verify</title>
+</head>
+
+<body>
+<h3 align="center">Compiling and Verification in Quartus Prime<br />
+  ece5760 Cornell</h3>
+<p>&nbsp;</p>
+<p>The compilation process which starts with Verilog and ends with hardware configured on the FPGA is a multistep process. Before starting with the Quartus compiler, it is always a good idea to simulate the code as much as possible (Can't do VGA for example) using <a href="../ModelSim/index.html">ModelSim</a> software.</p>
+<p>The following image [Imperial College <a href="../../../../../www.ee.ic.ac.uk/pcheung/teaching/MSc_Experiment/Lecture 1 - Introduction to Mastering Digital Design (x2).pdf">lecture</a> silde 32] shows the steps in compilation.<br />
+  For another flowchart and specific Quartus useage, see <a href="../../../../../quartushelp.altera.com/15.0/mergedProjects/quartus/gl_quartus_welcome.htm">Quartus doc</a>. <br />
+<img src="Imp_college_slide32.PNG" width="742" height="518" alt=""/></p>
+<p><strong>Process for a small example</strong></p>
+<ol>
+  <li>Analysis/Synthesis
+    <ol>
+      <li><a href="anaysis_flow.PNG">Analysis/Elaboration</a>
+<ol>
+          <li>Analysis  stage of Analysis &amp; Synthesis  examines the logical completeness and consistency of the project, and checks  for boundary connectivity and syntax  errors. </li>
+          <li>Analysis &amp; Synthesis also  synthesizes and performs technology  mapping on the logic in the design  entity or project’s files. It infers flip flops, latches, and state machines from  Verilog HDL and VHDL. It creates state assignments for state machines and  makes choices that minimize resources usage. (example: <a href="../DE1_SOC/Power_Estimation/example_counter_snippet.txt">Verilog counter</a>, <a href="counter_rtl_viewer.PNG">Quartus generated RTL viewer</a>)</li>
+          <li>Analysis &amp; Synthesis uses  algorithms to minimize gate count,  remove redundant logic, and use the  device architecture (e.g. DSP blocks and memory blocks) as efficiently as  possible. You can customize synthesis by using <em><a href="../../../../../https@www.intel.com/content/www/us/en/programmable/quartushelp/17.0/hdl/vlog/vlog_file_dir.htm">synthesis directives</a></em> (scroll past table for details), for instance to force use of logic or memory blocks.</li>
+          <li>Analysis &amp; Synthesis also applies logic synthesis techniques (prune states, minimize, factor) to help  implement timing requirements for a  project and optimize the design to  meet these requirements      </li>
+        </ol>
+      </li>
+      <li>Partition Merge -- Quartus allows parts of the design to be fixed, while other parts are recompiled. In the standard incremental compilation design flow, the top-level design is divided into design partitions, which can be compiled and optimized together in the top-level Intel Quartus Prime project. You can preserve fitting results and performance for completed partitions while other parts of the design are changing, which reduces the compilation times for each design iteration. To take advantage of incremental compilation, start by splitting your design along any of its hierarchical boundaries into design blocks to be compiled incrementally, and set each block as a design partition. The Intel Quartus Prime software synthesizes each individual hierarchical design partition separately, and then merges the partitions into a complete netlist for subsequent stages of the compilation flow. When recompiling your design, you can use source code, post-synthesis results, or post-fitting results to preserve satisfactory results for each partition.</li>
+    </ol>
+  </li>
+  <li><a href="fitter_flow.PNG">Fitter</a> (Place and route)
+<ol>
+      <li> The Fitter matches the logic and timing  requirements of the project with the available resources of the target device.  It assigns each logic function to the best logic cell location for routing and  timing, and selects appropriate interc onnection paths and pin assignments. </li>
+      <li>The <a href="post_fitter_1.PNG">Post-fitter viewer</a> shows the tiny example counter as a series of flipflops and adders. 
+        <ol>
+          <li><a href="post_fitter_2.PNG">zoomed</a> in on the counter input. Note that the mux is gone because the compiler recognized that loading a zero into the register is equivalent to a D-flop clear signal, which is supported by the ALM.</li>
+          <li> <a href="post_fitter_3.PNG">zoomed again</a> on the output. Only the first 31 bits of the 40-bit counter were actually built, because the higher bits were not used for output.</li>
+          <li>The <a href="fitter_report.PNG">fitter summary</a> report indicates that 31 registers were used in 16 ALMs, plus one ALM which seems to be only ground.</li>
+        </ol>
+      </li>
+      <li>The Fitter must iterate until timing meets constraints.  (<a href="../../../../../https@dl.acm.org/citation.cfm@id=191492">ACM paper</a>: Several industrial FPGA routing architectures have been shown to have no efficient routing algorithms (unless P=NP). Here, we further investigate if the intractability of the routing problem on a regular 2-D FPGA routing architecture can be alleviated by adding routing switches. We show that on this routing architecture, even with a substantial increase in switching flexibility, a polynomial time, predictable routing algorithm is still not likely to exist, and there is no constant ratio bound of the detailed over global routing channel densities. We also show that a perfect routing is unachievable on this architecture even with near complete (maximum) switching flexibility.We also discuss a new, greedy routing architecture, that possesses predictable and other desired routing properties, yet requires fewer routing resources than regular architectures. This theoretical result may suggest an alternative approach in routing architecture designs.)</li>
+      <li>The <a href="chip_planner1.png">chip planner interface</a> shows the tiny example counter and how it is physically placed on the FPGA. 
+        <ol>
+          <li>Shown <a href="chip_planner_zoomed.png">zoomed</a> in on the counter. You can see the 31 register bits as red rectangles associated with each ALM doing a two bit addition. </li>
+          <li>The <a href="chip_planner_color1.png">color code</a> for the planner showing colors for DSP, M10k, and logic.</li>
+          <li>Three ALM selected with <a href="chip_planner_generate_fan_in.png">generate fan-in</a> showing the carry-bit connections to each other and register input to the adders.</li>
+          <li>Two register bits selected with <a href="chip_planner_generate_fan_out.png">generate fan-out</a> to I/o pins.</li>
+          <li>Selecting one ALM and asking<a href="MLAB_cell.PNG"> for properties.</a> You can see the adders and flip-flops used, and the logic equations.</li>
+        </ol>
+      </li>
+    </ol>
+  </li>
+  <li>Assembler
+    <ol>
+      <li>Merges post-fit logic partitions.</li>
+      <li>The Assembler module of  the Quartus II Compiler generates programming files that the Quartus II  Programmer can use to program or configure a device with Altera  programming hardware. The Assembler automatically converts the Fitter’s device, logic cell, and pin  assignments into a programming image for the device, in the form of one or  more Programmer Object Files ( .pof ) or SRAM Object Files ( .sof ) for the  target device. </li>
+      <li>Processes memory image files (*.mif) into loadable bit streams.</li>
+    </ol>
+  </li>
+  <li>Verification
+    <ol>
+      <li>Timing -- <a href="TimeQuest_sdc_file.html">TimeQuest analyzer</a> and the <a href="../../../../../ftp@ftp.altera.com/up/pub/Intel_Material/15.1/Tutorials/Verilog/Timequest.pdf">Altera tutorial</a></li>
+      <li>Power -- <a href="../DE1_SOC/HPS_peripherials/Power_est_index.html">PowerPlay</a></li>
+      <li>Logic Analyser -- <a href="../../../../../ftp@ftp.altera.com/up/pub/Intel_Material/15.1/Tutorials/Verilog/SignalTap.pdf">SignalTap Altera Tutorial</a></li>
+      <li><a href="../../../../../ftp@ftp.altera.com/up/pub/Intel_Material/15.1/Tutorials/default.htm">Version 15.1 Tutorials</a></li>
+    </ol>
+  </li>
+</ol>
+<p><strong>Larger example</strong></p>
+<p>Another example is from the <a href="../DE1_SOC/HPS_peripherials/Bus_master_slave_index.html">Bus Master page</a> (GPU with <strong>FAST</strong> display from <strong>SRAM</strong>). The <a href="chip_planner_comp_sys_full.png">chip planner interface</a> for this project shows that it uses about one-half the M10k blocks (long brown strips on the left side of the image). The pink block overlay shows that the design has been LOCKED on the FPGA.</p>
+<p><strong>Using SignalTap</strong> <strong>on-chip logic analyser to verify design</strong></p>
+<p>SignalTap is a logic analyser that Quartus can build on the FPGA with your design. <a href="../../../../../https@courses.cs.washington.edu/courses/cse467/08au/labs/Tutorials/tut_signaltapII_verilogDE2.pdf">SignalTap tutorial</a>. <br />
+Using the same example <a href="../DE1_SOC/Power_Estimation/example_counter_snippet.txt">Verilog counter</a> as before:</p>
+<ol>
+  <li>Open the SignalTap II window by selecting <em>File&gt;New</em> , then Choose <em>SignalTap II Logic Analyzer File</em> and click OK.</li>
+  <li>In the <a href="SignalTap/SignalTap_setup1.PNG">window whch opens</a>, select <em>File&gt;save</em> as and save as <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">counter.stp</span>, then click yes in the dialog box asking if this is the active signal tap file. <br />
+  -- Note:  If you want to disable this file from the project, or to disable SignalTap from the project, go to <em>Assignments&gt;Settings</em> .  In the category list, select <em>SignalTap II Logic Analyzer</em> , bringing up <a href="SignalTap/SignalTap_UN_setup.PNG">this window</a>.  To turn off the analyzer, uncheck <em>Enable SignalTap II Logic Analyzer</em> .  </li>
+  <li>Now we need to connect SignalTap to the counter and supply trigger condtions so that SignalTap knows which event to detect in order to store waveforms. Double-click in the area labeled <a href="SignalTap/SignalTap_setup2.PNG">Double-click to add nodes</a> , bringing up the <a href="SignalTap/SignalTap_node_finder1.PNG">Node Finder window</a>, and click on the expand button (marked with an arrow) to show search options. In the <em>Filter</em> field, select <em>SignalTap II: pre-synthesis</em> , and for the <em>Look in</em> field select |DE1_SOC_computer| . Click the <em>List button</em> in the upper right corner. This will <a href="SignalTap/SignalTap_node_finder2.PNG">now display all the nodes</a> that can be probed in the project. Choose signals to probe <a href="SignalTap/SignalTap_node_finder3.PNG">in the left panel</a> and use the <em>&gt; button</em> to select them into the right panel. Click the <em>Insert button</em> to insert the selected nodes, then <em>Close button</em> to close the Node Finder window.</li>
+  <li>Now we need to specify what clock is going to run the SignalTap module that will be instantiated within our design. To do this, in the <em>Clock box </em>of the <em>Signal Configuration pane</em> of the <em>SignalTap window</em>, click<em> ...</em> , which will again bring up the Node Finder window. Select <em>List</em> to display all the nodes that can be added as the clock, and then <a href="SignalTap/SignalTap_node_finder_clock.PNG">double-click <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">CLOCK_50</span></a>. Click OK .</li>
+  <li>With the <em>Setup tab</em> (left side, 2/3 way down the window) of the SignalTap window still selected, select the checkbox in the Trigger Conditions column. In the <a href="SignalTap/SignalTap_setup3.PNG">dropdown menu at the top of this column</a>, select Basic AND . Right-click on the <em>Trigger Conditions</em> cell corresponding to the node <em>reset</em> and select <em>falling edge</em>.  Now, the trigger for running the Logic Analyzer will be when  key[0] on the  board is released. Note that you can right-click on the <em>Trigger Conditions</em> cell of any of the nodes being probed and select the trigger condition from a number of choices. The actual trigger condition will be true when the logical AND of all these conditions is satisfied. For now, just keep the trigger condition as falling edge of <em>reset</em> and the others set to their default value, <em>Don’t Care</em> .</li>
+  <li>Make sure the FPGA hardware is communication is correct using the Setup... button (upper right corner). If the USB blaster is not configured you may get an warning like <em>invalid JTAG</em>. Compile the project (including SignalTap) and program the board.</li>
+  <li>Select the Data tab (left side 2/3 down the window), then choose on <em>processing&gt;Run Analysis</em>. <br />
+  The <a href="SignalTap/SignalTap_data3.PNG">interface should wait</a> until you press key[0] (reset), <a href="SignalTap/SignalTap_data1.PNG">then show you waveforms</a>.</li>
+  <li>Modifying the <a href="SignalTap/SignalTap_setup4.PNG">trigger condition</a> to wait for a rising edge on bit 4 of the counter <em>and</em> key[0] low, results in <a href="SignalTap/SignalTap_data2.PNG">this data</a>. <br />
+  The trigger conditions at time zero are marked with arrows.</li>
+  <li>A look at the <a href="SignalTap/SignalTap_memory_use.PNG">synthesis results</a> will show you that some M10k memory is used. In the <em>Signal Configuration</em> pane of the <em>SignalTap II </em>window, in the <em>Sample depth dropdown menu of the Data pane</em>, you can choose the number of samples stored. This option allows you to specify how many samples will be taken around the triggers in your design. If you require many samples to debug your design, select a larger sample depth. Note, however, that if the sample depth selected is too large, there might not be enough room on the board to hold your design and the design will not compile. If this happens, try reducing the sample depth. The <a href="SignalTap/SignalTap_memory_use_planner.PNG">chip planner interface</a> shows that quite a lot of logic was built, including using two M10k blocks, to support SignalTap. The design for the counter is 17 ALMs. With SignalTap the design is 390 ALMs. But as the actual design gets bigger, the SignalTap size will not grow porportionally.</li>
+  <li>Sometimes a design you create will have wires in it that the Quartus compiler will optimize away. You can force Quartus to keep the wires for probing by SignalTap by including the directive<span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace"> /*synthesis keep*/</span> on the line where you declare a signal. For example, <br />
+  <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">wire abc /*synthesis keep*/;</span></li>
+</ol>
+<p><strong>SignalProbe</strong><br />
+  A scheme for bring signals out of the FPGA with very little (or no) recompile.
+    <br />
+<span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">Tools &gt; SignalProbe Pins... <br />
+</span>Chapter 13 of <a href="../../../../../https@www.altera.com/content/dam/altera-www/global/en_US/pdfs/literature/hb/qts/qts-qps-5v3.pdf">Quartus Prime Handbook Vol 3</a></p>
+<p>https://www.altera.com/en_US/pdfs/literature/hb/qts/qts_qii53008.pdf<br />
+  https://www.altera.com/support/support-resources/software/debugging.html<br />
+  https://www.youtube.com/watch?v=20WwtqaA1dY</p>
+<p><strong>Bus Analyser Tool Kit</strong><br />
+Gain visibility into your Qsys interconnect based system.<br />
+<span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">Tools &gt; System Debugging Tools &gt; Bus analyzer</span><br />
+http://www.alterawiki.com/wiki/Bus_Analyzer_Toolkit</p>
+<p><strong>On-chip Debugging Design Examples</strong><br />
+https://www.altera.com/support/support-resources/design-examples/design-software/on-chip-debugging.html</p>
+<hr />
+<p><a href="../../../../../ftp@ftp.altera.com/up/pub/Altera_Material/15.1/Tutorials/Verilog/Timequest.pdf">Using TimeQuest Timing Analyzer</a> (Quartus Prime)</p>
+<p><a href="../../../../../https@www.altera.com/en_US/pdfs/literature/hb/qts/qts-qps-5v3.pdf">Quartus Prime Standard Edition Handbook Volume 3: Verification</a> Chapters 6 and 7</p>
+<p><a href="../../../../../https@www.altera.com/en_US/pdfs/literature/hb/qts/qts-qps-handbook.pdf">Quartus Prime Standard Edition Handbook Volume 1: Design and Synthesis</a></p>
+<p><a href="../../../../../ftp@ftp.altera.com/up/pub/Intel_Material/15.1/Tutorials/Verilog/Quartus_II_Introduction.pdf">Quartus Prime Introduction Using Verilog Designs</a></p>
+<hr />
+<p>
+  Copyright Cornell University, 
+  <!-- #BeginDate format:Am1 -->January 30, 2019<!-- #EndDate -->
+</p>
+<p>&nbsp;</p>
+</body>
+</html>

@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<!-- saved from url=(0148)https://people.ece.cornell.edu/land/courses/ece4760/FinalProjects/f2016/ax25_abc248_jc2538/ax25_abc248_jc2538/ax25_abc248_jc2538/index.html#hardware -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<link rel="stylesheet" href="5760_final_project_files/main.css">
+<link rel="stylesheet" href="5760_final_project_files/normalize.css">
+<link href="5760_final_project_files/css" rel="stylesheet">
+
+<style>
+table, th, td {
+    border: 1px solid black;
+}
+</style>
+
+<title>ECE 5760 Final Project</title>
+
+</head><body>
+
+  <ul>
+      <li><a href="#intro">Introduction</a></li>
+      <li><a href="#design">High Level Design</a></li>
+      <li><a href="#hardware">Hardware</a></li>
+      <li><a href="#software">Software</a></li>
+      <li><a href="#results">Results of Design</a></li>
+      <li><a href="#conclusion">Conclusion</a></li>
+      <li><a href="#appendix">Appendix</a></li>
+      <li><a href="#references">References</a></li>
+  </ul>
+
+
+
+
+
+<div id="intro" class="section">
+    <center><h1 class="banner">Head Related Transfer Function Explorer</h1></center>
+    <center><h3 class="names">Justin Cray (jgc232), Mihir Marathe (mmm389), and Junpeng Wang (jw2299)</h3></center>
+    <h1>Introduction</h1>
+    <p>
+        The purpose of this final project is to implement an FPGA based head related transfer function (HRTF) system. The goal of the HRTF is sound spatialization, where a sound is played in a way such that a person wearing headphones will think the sound is coming from a location in space around their head. In practice the mock spacalization is acheived through filtering the left and right outputs of the music separately, through different FIR filters. These filters are based on filters determined by researchers at UC David (see references.)<br>
+        <br>
+        Our project utilizes HRTFs in two ways. First, the system allows a user to identify the HRTF which corresponds to their own personal head parameters. While every human has a different HRTF, we can identify a similar enough HRTF such that the user should observe very similar effects to the fully accurate HRTFs. We accomplish this through identifying similar HRTFs and having users test and validate the functions. The second functionality is playing three different sample sounds. Once we've identified a sufficent HRTF, we can emulate spacial sound using convolution and play the sound out of the audio codec of the FPGA.
+
+    </p>
+</div>
+
+<div id="design" class="section">
+    <br>
+    <br>
+    <h1>High Level Design</h1>
+    <p>
+      The FPGA can be considered a soundcard in our system. The HPS is preload with the FPGA fabric with HRIR transfer function and one discrete sample of sound input at each full cycle of the FPGA state machine. The bulk of information is transferred with a shared SRAM that contains 402 32-bit entries. Once the information is ready, the FPGA does the convolution and outputs the sound directly into the audio FIFO. Beside the audio processing and output, everything else, including VGA user interface and HRIR down-selection, are done on the HPS part of the system.
+<br>
+        <br>
+        </p><center><img src="5760_final_project_files/fig1.png" class="h3"></center>
+        <br>
+        <b><center>Figure 1: Block Diagram of Overall Design</center></b>
+
+</div>
+
+<div id="hardware" class="section">
+    <br>
+    <br>
+    <h1>Hardware</h1>
+    <h3>Math Considerations & Convolution Logic</h3>
+        <p>
+        The HRIR transfer data for each elevation, azimuth and subject combination has 200 data points, precise to 1e-6. Each sample of the audio input are normalized so that each has amplitude less than 1. Therefore, the largest amplitude output of a convoluted sample is 200. Given the amplitude and precision requirement, we decided to use 10.17 fixed point scheme in the convolution calculation.<br>
+        <br>
+        The convolution is done by a long chain of datapath, containing 200 27-bit datapath registers for each of the left and right audio channel. S stand for time-domain sound input sample, and H stand for HRIR data.<br>
+
+        <br>
+      </p><center><img src="5760_final_project_files/fig2.png" class="h3"></center>
+      <b><center>Figure 2: FPGA Convolution Datapath</center></b>
+
+      Looking at the first 3 datapath registers:
+      <table style="width:100%">
+        <tr>
+          <th>t</th>
+          <th>Datapath[0] (Output)</th>
+          <th>Datapath[1]</th>
+          <th>Datapath[2]</th>
+        </tr>
+        <tr>
+          <td>0</td>
+          <td>S[0]H[0]</td>
+          <td>S[0]H[1]</td>
+          <td>S[0]H[2]</td>
+        </tr>
+        <tr>
+          <td>1</td>
+          <td>S[0]H[1] + S[1]H[0]</td>
+          <td>S[0]H[2] + S[1]H[1]</td>
+          <td>S[0]H[3] + S[1]H[2]</td>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>S[0]H[2] + S[1]H[1] +S[2]H[0]</td>
+          <td>S[0]H[3] + S[1]H[2] + S[2]H[1]</td>
+          <td>S[0]H[4] + S[1]H[3] + S[2]H[2]</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>S[0]H[3] + S[1]H[2] + S[2]H[1] + S[3]H[0]</td>
+          <td>S[0]H[4] + S[1]H[3] + S[2]H[2] + S[3]H[1]</td>
+          <td>S[0]H[5] + S[1]H[4] + S[2]H[3] + S[3]H[2]</td>
+        </tr>
+      </table>
+
+    <b><center>Table 1: FPGA Convolution Datapath over Discrete Time</center></b>
+
+    <p>The table can continue with infinite entries of audio samples and do the discrete time convolution.</p>
+
+    <p>However, an important limitation we has is that, the FPGA fabric has only 78 DSP units with 27x27 multiplier. Therefore, we are doing the convolution of each of the left/right channel in 4 clock cycles instead of one. We start operating on Datapath[150] to Datapath[199], while storing the value in Datapath[150] in a Carry register. Then in the next clock cycle, we operate on Datapath[100] to Datapath[149], and feed the carry register to the adder that outputs to Datapath[149]. In this way, we spend 8 clock cycles to convolute audio output for both the left and right audio channel.</p>
+
+    <h3>Audio FIFO</h3>
+    <p>The Audio FIFO FSM we used was taken from the Audio code example available on Professor Bruce Land’s website. The image below shows the audio write FSM states and transitions. The only modifications we had to apply to the original FSM was to identify which state was the one in which we could do our audio sample synthesis, prior to loading it into the FIFO L/R buffers. This was identified to be the state that followed the one that cleared the Audio FIFO and where the FIFO had space available. The state for the standalone of audio FIFO can be described as follows:</p>
+
+
+    State 1: Sets up the available FIFO address and the reads the available space in the FIFO </br>
+    State 2: Waits for the FIFO read ack and then moves to State 3</br>
+    State 3: Entered when room is available in FIFO, and then computes next synthesis sample. Only shift to State 4 if space is available, otherwise go to State 1. Write to Left FIFO.</br>
+    State 4: Waits for Left FIFO Acknowledgement, then go to State 5.</br>
+    State 5: Writes to the Right FIFO, then shift to State 6.</br>
+    State 6: Waits for Right FIFO write ack from the Bus Master, then moves to State 1.
+
+    <h3>SRAM Shared Memory</h3>
+    <p>The bulk of information, containing the HRIR function, sound input amplitude, and status flag,  is transferred with a shared SRAM between HPS and FPGA that contains 402 32-bit entries. The memory space is mapped as follows:</p>
+
+    <table style="width:100%">
+      <tr>
+        <th>Offset from Memory Base Address</th>
+        <th>Content</th>
+      </tr>
+      <tr>
+        <td>0 ~ 199</td>
+        <td>HRIR for left audio channel</td>
+      </tr>
+      <tr>
+        <td>200 ~ 399</td>
+        <td>HRIR for right audio channel</td>
+      </tr>
+      <tr>
+        <td>400</td>
+        <td>Sound input sample amplitude</td>
+      </tr>
+      <tr>
+        <td>401</td>
+        <td>Status flag</td>
+      </tr>
+    </table>
+
+    <b><center>Table 2: Index Legend for Shared SRAM</center></b>
+
+    <p>
+The HRIR and sound input all have 10.17 fixed point format. The status flag can contain an integer value from 0, 1 or 2. FPGA writes a 0 to the status address when it finishes loading the audio FIFO, indicating the data is processed and FPGA is ready for new input. HPS writes a 2 to the status address if HPS has updated the shared SRAM with new HRIR and a new sample of audio input. HPS writes a 1 to the status address if HPS has updated the shared SRAM with a new sample of audio input while keeping the HRIR the same, to save clock cycles on the FPGA.</p>
+
+  <h3>System Architecture</h3>
+
+  The QSYS layout containing all the sub-systems are as follows:
+
+  <center><img src="5760_final_project_files/QSYS.jpg" class="h3"></center>
+    <b><center>Figure 3: QSYS Configuration</center></b>
+
+  <p>The VGA subsystem is driven directly by the HPS, and memory mapped in SDRAM. The SRAM for memory shared is configured as 2-port SRAM with one port tied to the HPS axi master and the other port exported to the FPGA fabric. Note that there is a parallel I/O port between HPS and FPGA for resetting the system.</p>
+
+  <h3>System State Diagram</h3>
+  <center><img src="5760_final_project_files/FPGA_state_machine.png" class="h3"></center>
+  <b><center>Figure 4: System State Diagram</center></b>
+
+  <p>The FPGA actually has over 1000 states to keep track of memory read and convolution calculation. The states can be categorized as follows:</p>
+
+  <table style="width:100%">
+    <tr>
+      <th>State Number</th>
+      <th>Function</th>
+      <th>Note</th>
+    </tr>
+    <tr>
+      <td>0 ~ 8</td>
+      <td>Load Audio FIFO & Reset Status</td>
+      <td>Write 0 to status flag and go to state 96 after</td>
+    </tr>
+    <tr>
+      <td>10 ~ 17</td>
+      <td>Convolution</td>
+      <td>Explained in “Convolution Logic” Section</td>
+    </tr>
+    <tr>
+      <td>30 ~ 32</td>
+      <td>Load sound input from SRAM</td>
+      <td>3 clock cycles to read from SRAM, go to state 0 after</td>
+    </tr>
+    <tr>
+      <td>96 ~ 98</td>
+      <td>Load status flag from SRAM</td>
+      <td>Go to state 99 after</td>
+    </tr>
+    <tr>
+      <td>99</td>
+      <td>Direct to new state based on status flag</td>
+      <td>0 - go back to 96 and keep checking status<br>
+      1 -  go to state 30 and load new sound input<br>
+      2 - go to state 100 and load new HRIR<br></td>
+    </tr>
+    <tr>
+      <td>100 ~ 1299</td>
+      <td>Load HRIR from SRAM</td>
+      <td>3 clock cycles to read each entry from SRAM, 400 entry in total. Goes to state 30 to load sound input after</td>
+    </tr>
+</td>
+  </table>
+
+  <b><center>Table 3: All States in FPGA</center></b>
+
+  </div>
+
+<div id="software" class="section">
+    <br>
+    <br>
+    <h1>Software</h1>
+    <h3>System Overview</h3>
+
+    The HPS side code was mostly used for the top level user interface, VGA display generation and control, as well as the down-selection procedure implementation. While not computationally heavy, the C code was mostly a balancing of timing constraints of the UI as well as the graphics display setup on the VGA. In addition to the UI control, the HPS was also responsible for taking advantage of the Linux file system such that the processing of the large two-dimensional HRIR arrays for each of the 45 subjects was minimal in terms of processing time. <br>
+
+    <h3>Memory Address Acquisition</h3>
+
+    <p>A feature of note in this system design was that since both the HPS and FPGA required access to some of the same datasets, and the fact that the Hardware had to integrate both VGA forwarding (in the FPGA) as well as setting up the Audio subsystem, the on-chip SRAM was chosen as the shared memory cell between the HPS and FPGA. As described in the Hardware Section, the s2 port of the on-chip SRAM is tied to the HPS via the Avalon bus. The memory address offsets used in the SRAM are from 0 - 402 for the full set of share data. The acquisition of this base address occurs in the main.c file via the mmap() function which maps the expected base addresses and offsets to a virtual memory space which is then available to the HPS for data transfer. During initial testing and setup of the shared memory, we had to an incorrect input to the mmap() function using the FPGA On Chip Memory span whereas we actually required the SRAM memory address span for a correct mapping. Once this issue was corrected, we were successfully able to send 200 element arrays to the SRAM and successfully hear sounds at various spatial locations. </p>
+
+    <h3>HRIR Data Access and Parsing</h3>
+
+    <p>The Head related impulse responses (HRIRs) for each subject, post compression into a  2 dimensional array, are stored in a folder called hrir_headers in the top level folder as the main executable C file. Initial attempts to include these HRIR header files consisted of include statements in C, which led to compiler errors, as the compiler ran out of virtual memory when linking the various objects (header files). Our solution to this issue was to utilize the linux file system and the C file IO standard library functions to parse the header files as strings and to convert them into viable float arrays which could be accessed within the main code. The method of implementing this essentially required that all of the header files be formatted the same way, with each row of the 1250 x 200 HRIR array being placed on a new line with a new line character at the end of each line. The hrir_lr_assign() function essentially opens up the desired subject’s .h file, identifies the correct row of the file which has the desired HRIR row, and uses the fgets() function to obtain a character array of the desired row. Following that, using the strtof() stdlib function, the function iterates through the character array and parses each set of numbers delimited by a white space into a float value, which is then added to a globally defined array for use in the read thread.</p>
+
+    <h3>HRIR Down-Selection Algorithm Implementation</h3>
+
+    <p>The down-selection algorithm, per the pre-processing methodology, was decided to be a 1-tier exploration of nearest neighbors of testing subjects. A two dimensional array of 45 x 6 elements is loaded into a global variable, where each row is that indexed subject’s associated nearest neighbors (per a threshold). The down-selection process plays 4 different elevation/azimuth pairs, and the user identifies whether or not those 4 audibly spatially located positions match the displayed locations on the VGA. The metric is no match, full match, or a ‘close’ match, which is highly subjective and user specific.</p>
+
+    <p>If, during the down-selection process, a subject is deemed to be inaccurate enough, the algorithm either randomly gets a new subject for testing from the subjects list, or finds the next nearest neighbor of the initial testing subject. In both possible paths, the newly returned subject is tested to ensure that it has not been already tested, and if it has, the new-subject finding is repeated until a new untested subject is found, or the program quits. Whether or not a new random subject or a new neighboring subject is used is dependent on how many of the testing elevation/azimuth pairs are evaluated to be close or far away. If more than 1 pair is close, a nearest neighbor search is triggered, whereas if more than 1 pair is ‘far away’, or has no VGA match, a new random subject search is triggered. The four testing pairs we used were the following (elevation, azimthuth (in degrees)): (45,-35),(0,35),(225,35), and (0,-35). These are very easily customizable and the visual interface will adapt accordingly. </p>
+
+    <p>The implementation of the down-selection process was a very smooth process and had no errors during the implementation. This process is highly user-dependent, where some users have identified the correct HRIR within two iterations, whereas others have never found them. Also, as with any search algorithm, the system is highly initial condition dependent.</p>
+
+    <h3>HRIR Testing Methodology</h3>
+
+    <p>The HRIR selected during the down-selection process is tested in the read thread’s test mode by allowing the user to select an audio source of their choosing, from a preset list, where each sound source is 221184 samples long. A preset list of 12 azimuths is already loaded in a global array, and at each azimuth, 1/12th of the samples available are iteratively loaded into the soundcard. This is sequentially processed until the sound source sounds like it is being swept around the user’s ears at an elevation of 0 degrees (this elevation is also easily customizable). The ideal result of this is that the sound source is seamlessly ‘moved’ around the person in a circle, and if the HRIR is best-matched to the user, then the sweep is audibly identifiable by the user for any most elevations and all azimuths.</p>
+
+    <h3>Thread Structure</h3>
+    <center><img src="5760_final_project_files/fig4.png" class="h3"></center>
+    <b><center>Figure 5: HPS Side Threaded Structure</center></b>
+
+    <h4>Top_Level.c</h4>
+
+    - Memory base address acquisition <br>
+    - Clear VGA screen<br>
+    - Setup POSIX Multithreaded setup (per ECE 5760 templates)<br>
+
+    <h5>thread_read</h5>
+    - Asks for user input, and sets up initial conditions <br>
+    - Runs Down-selection algorithm and checks for tested subjects <br>
+    - Identifies best match subject <br>
+
+    <h5>thread_display</h5>
+    - In down-selection mode, displays static elevation and azimuth perspectives, and dynamic changing locations of elevation and azimuth when playing test points <br>
+    - In test mode, just displays test mode message  <br>
+    - In exit mode, just displays exit mode message <br>
+
+    <h3>User Interface Top-Level</h3>
+
+    The top-level performance of the user interface is that it operates in one of three modes: <br>
+      - Down-Selection of HRIR Subject Match <br>
+      - Testing of HRIR Subject Match <br>
+      - Exit Mode <br>
+
+<p>During the top-level execution of the program, the user is offered the opportunity to enter any of the modes above, and the option is presented once again at the end of a mode’s execution. Each of the modes operate as described above. The Exit mode essentially freezes the VGA display on the exit screen and causes the c code to quit (using the exit(0) function).</p>
+
+<p>The following images are examples of the VGA display during the three modes of operation. </p>
+
+<center><img src="5760_final_project_files/fig5.png" class="h3"></center>
+<b><center>Figure 6: Demonstrating Down-Selection Testing Process with Gerald The Test Head</center></b> <br><br>
+
+<center><img src="5760_final_project_files/fig6.png" class="h3"></center><br>
+<b><center>Figure 7: Exit Mode</center></b>
+<br><br>
+<center><img src="5760_final_project_files/fig7.png" class="h3"></center><br>
+<b><center>Figure 8: Test Mode</center></b><br>
+
+
+  </div>
+
+<div id="results" class="section">
+    <br>
+    <br>
+    <h1>Results of Design</h1>
+    <p>
+        To test the standalone convolutor unit, we set up a testbench in ModelSim. The sound input amplitude is set to a constant one, and the left HRIR is set as an array stepping up from 0 to 199, and right HRIR is set as an array stepping down from 199 to 0. The convolution result in analog waveform is shown below, which met the expected math outcome: <br>
+
+        <center><img src="5760_final_project_files/convolutor_modelsim.PNG" class="h3"></center><br>
+        <b><center>Figure 9: ModelSim Test for the Convolutor/center></center></b>
+        <br><br>
+        Here is the waveform of the the left channel (1 on scope) and the right channel (2 on scope). The HRIR is set to have elevation and azimuth at 0 and 0 respectively, so the left and right channel has similar amplitude. However, one can still identify some minor difference between the channels due to some minor asymmetries in human body.
+        <br>
+        <br>
+
+        <center><img src="5760_final_project_files/az0.JPG" class="h3"></center><br>
+        <b><center>Figure 10: Audio Output for Subject 003 at 0 Elevation and 0 Azimuth></center></b>
+        <br><br>
+        Here is the waveform for the same subject, but with azimuth changed to -45 degrees, so that the sound should source 45 degree to the left from the subject. One can see that both the amplitude and shape of the waveform for left and right channel are very different:<br> <br>
+        <center><img src="5760_final_project_files/az45.JPG" class="h3"></center><br>
+        <b><center>Figure 11: Audio Output for Subject 003 at 0 Elevation and -45 Azimuth</center></b>
+        <br>
+        During the final testing of the system itself, the only user interface side feature that did not exactly perform as initially expected was the test mode of the user interface. There are distinct ‘clicks’ heard when in test mode and sweeping the selected audio source with 12 different azimuth positions located in a circle around the human test subject. The initial idea was to have a smooth continuous sound, which is almost achieved. The ‘clicks’ are a result of there being a few elements of the audio FIFO buffer being randomly populated due to there being some memory transfer latency between successive azimuth/elevation transfer functions being transferred to the on-chip SRAM over the Avalon Bus. The test mode still proves the success or lack thereof of the down-selected HRIR subject however, and so the slight performance discrepancy is an easily solved HPS side problem (the solution would probably require another thread to preempt HRIR to on-chip SRAM transfer while the previous location sound is playing). <br>
+        <br>
+        The Final result of the HPS C code being integrated into the Soundcard setup is essentially a functioning endpoint demonstration. The following link shows the main functionality of the integration: <a href="../../../../../../../../../https@youtu.be/JtTN3p5GRpE" class="h3">HRTF Down-Selection Demonstration</a> 
+        <br>
+        <br>
+        The image below shows the full system testing setup. <br><br>
+        <center><img src="5760_final_project_files/System_testing.png" class="h3"></center><br>
+        <b><center>Figure 12: System Testing Setup</center></b>
+
+    <p></p>
+</div>
+
+<div id="conclusion" class="section">
+    <br>
+    <br>
+    <h1>Conclusion</h1>
+    <h3>Improvements</h3>
+    <p class="h3">
+        Overall, we were pleased with the final outcome of our project. If we were to make improvements to the design in the future, we would implement a more sophisticated down-selection algorithim to match users with possible pairs. We would also likely adjust the test points to make sure they are more thorough in their analysis. We would also add some smoothing to the sound outputted in test mode as well as add additional sounds for the user to try. We would also like to render more sophisticated graphics and verbose instructions.
+
+    </p>
+    <h3>Intellectual Property Considerations</h3>
+    <p class="h3">
+        We did not use anyone else’s design for this project. We did not have to sign any non-disclosure forms for any part of the project.
+        <br><br>
+        We would like to acknowledge the Regents of the University of California and the CPIC for collating the aforementioned database, and for permitting use of it for educational purposes.
+    </p>
+    <h3>Standards</h3>
+    <p class="h3">
+      All applicable standards (such as IEEE) were adhered to.
+    </p>
+    <h3>Legal Considerations</h3>
+    <p class="h3">
+        There were no other legal considerations to make.
+    </p>
+</div>
+<div id="appendix" class="section">
+    <br>
+    <br>
+    <h1>Appendix</h1>
+    <h3>Appendix A: Approvals</h3>
+    <p class="h3">
+        "The group approves this report for inclusion on the course website." <br>
+        "The group approves the video for inclusion on the course YouTube channel."
+    </p>
+    <h3>Appendix B: Code</h3>
+    <a href="5760_final_project_files/hrir_headers.zip" class="h3">Modified HRIR Headers</a> <br>
+    <a href="5760_final_project_files/MATLAB_sim.zip" class="h3">MATLAB Downselection Algorithim and header file generator</a> <br>
+    <a href="5760_final_project_files/final_project_fpga.zip" class="h3">FPGA Code</a> <br>
+    <a href="5760_final_project_files/C_Source_Code.zip" class="h3">C Source Code</a> <br>
+
+    <br>
+    <h3>Appendix C: Work Distribution</h3>
+    <p class="h3">
+        Justin: Downsampling algorithim in MATLAB, c code for downsampling selection <br \="">
+        Mihir: GUI, HPS code, QSYS <br>
+        Junpeng: FPGA Code, QSYS <br>
+      <br>
+    </p>
+</div>
+
+<div id="references" class="section">
+    <h1>References</h1>
+    <h3 class="h3">Datasheets</h3>
+    <a href="../../../../../../../../../https@www.ece.ucdavis.edu/cipic/spatial-sound/hrtf-data/default.htm" class="h3">The CIPIC HRTF Database - UC Davis</a> <br>
+    <a href="../../../../../../../../../ftp@ftp.altera.com/up/pub/Intel_Material/14.1/Computer_Systems/DE1-SoC/DE1-SoC_Computer_ARM.pdf" class="h3">DE1 University Manual</a> <br>
+    <a href="../../../../../../../../../https@people.ece.cornell.edu/land/courses/ece5760/default.htm" class="h3">ECE 5760 Course Page</a> <br>
+    <a href="../../../../../../../../../https@people.ece.cornell.edu/land/courses/ece5760/DE1_SOC/HPS_peripherials/Qsys_index.html" class="h3">QSYS Bus Design</a> <br>
+
+</div>
+
+
+
+
+
+</body></html>

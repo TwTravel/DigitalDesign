@@ -1,0 +1,200 @@
+
+<html>
+<head>
+<title>ECE 5760 Lab 4</title>
+<style type="text/css">
+<!--
+.red {
+	color: #F00;
+}
+-->
+</style>
+</head>
+
+<body>
+<h2>
+ECE 5760: Laboratory 4</h2> 
+<h2> Julia set visualization. </h2>
+<p>
+<b> Introduction. </b>
+
+<p> In this assignment you will implement a system to compute and draw  <a href="../../../../../../en.wikipedia.org/wiki/Julia_set">Julia sets</a>, and to zoom in on pieces of the set. A <a href="julia_set.m">matlab program</a> shows
+how the computation is done. Note that the numbers are all complex. The image
+below is from the program output for c=-0.8+0.156*i . The x,y axis units are pixels, not natural
+units. The x axis range is <code>[-2,2]</code> and the y axis <code>[-2,2]</code>. The second image uses a slightly modified program with x axis range  <code>[-1,1]</code> and  y axis <code>[-1,1]</code>. <br>
+<img src="julia_full.png" width="1021" height="786" alt="julia set">
+<br>
+<img src="julia_zoomed.png" width="1021" height="786" alt="julia zoomed">
+<p><strong>2014 student results:</strong>
+<p> From Ackerley Tng, Saisrinivasan Mohankumar and Ankur Thakkar. <a href="../../StudentWork/alt53/julia/julia/IMG_20140328_131509.jpg">1</a>, <a href="../../StudentWork/alt53/julia/julia/IMG_20140328_131600.jpg">2</a>, <a href="../../StudentWork/alt53/julia/julia/IMG_20140328_131742.jpg">3</a>, <a href="../../StudentWork/alt53/julia/julia/IMG_20140328_132226.jpg">4</a>
+  <br>
+  <img src="../../StudentWork/alt53/julia/julia/IMG_20140328_132133.jpg" width="739" height="608" alt="student image">
+<p><b>Procedures:</b>  
+<ul>
+  <li>There will be one serial processor to control computation and serial communication.</li>
+  <li>You can use additional NiosII processors, pancake processors or build custom hardware to compute
+    the image. The computation of a 640x480 image is compute intensive, so you
+    are going to want to implement multiple computational units to speed up the
+    process. You may want to consider load balancing since some regions of the
+    complex plane are much faster to compute than others.</li>
+  <li>If you use custom hardware, I suggest using 3.33 fixed point notation for
+    interating the quadratic
+    complex number calculation. The top bit will be the usual 2's comp sign bit.
+    This format give the numbers a dynamic range of +/-3. A <a href="Julia_limit_to_3.m">matlab
+      program</a> to check the effect
+    of limiting the range shows that the computation  works.
+  If you use NiosII cpus to do the calcuations use 3.29 format.</li>
+  <li>If you use a NiosII, I suggest using SDRAM as memory for the NiosII and
+    SRAM as the VGA display memory. Be sure to follow the suggestions in the <a href="../../DE2/tut_DE2_sdram_verilog.pdf">SDRAM
+  tutorial</a> to get the SDRAM timing correct. </li>
+</ul>
+<ol>
+  <li>  You must handle the boards only on on the ESD mat. These boards are expensive and you must be careful of them. 
+  <li>Make sure the Altera DE2 board is connected to power and to the PC as specified 
+    in the evaluation board description. Turn on the power supply with the red switch 
+    on the board. Make sure the toggle switch on the left edge of the board marked (<code>Run/Prog</code>) is in the <code>Run</code> position and <em>leave it there at all times</em>.
+The FPGA will program in the <code>Run</code> position. Putting the switch in the <code>Prog</code> position writes your design to flash memory, which you do not want to do.
+  <li>The <a href="../../DE2/DE2_TOP.v">default top level module</a> for the DE2 defines all of the logical i/o signals. 
+  <li>You can define the mapping from logical signal to FPGA pins (<em>pin assignment</em> in QuartusII) for all the pins at once by importing <a href="../../DE2/DE2_pin_assignments.csv">this file</a> using the menu item <code>Assignments... Import Assignments...</code> and specifying the file name. There is no need to define pins one-by-one.   
+<li>A hardware VGA interface is shown on the <a href="../../../../../../instruct1.cit.cornell.edu/courses/ece576/DE2/index.html">DE2 page</a>. Read VGA example 1 Verilog code.
+</ol>
+<p><strong>--See also:</strong></p>
+<ul>
+  <li><a href="../../../../../../www.altera.com/literature/tt/tt_nios2_multiprocessor_tutorial.pdf">Creating Multiprocessor Nios II Systems Tutorial</a> and <a href="../../../../../../www.altera.com/support/examples/nios2/exm-multi-nios2-hardware.html">example</a></li>
+  <li><a href="../../../../../../iweb.tntech.edu/oelkeelany/6170/lectures/multi.pdf">Implementing a Multiprocessor System on an FPGA using Altera Nios II Processors &amp; SOPC</a> (Tenn Tech Univ)</li>
+  <li><a href="../../NiosII_doc/Quartus11_nios/Introduction_to_the_Altera_SOPC_Builder.pdf">Intro to SOPC builder</a></li>
+  <li><a href="../../NiosII_doc/Quartus11_nios/Using_the_SDRAM.pdf">Using SDRAM</a></li>
+  <li><a href="../../NiosII_doc/Quartus11_nios/Nios2_introduction.pdf">NiosII introduction</a></li>
+  <li><a href="../../NiosII_doc/Quartus11_nios/Altera_Monitor_Program.pdf">Altera Monitor Program</a></li>
+  <li><a href="../../NiosII_doc/Quartus11_nios/HAL_tutorial.pdf">HAL in Altera Monitor</a></li>
+  <li><a href="../../NiosII_doc/NiosIDE_v10_2010.pdf">Getting started with the NiosII EDS</a></li>
+  <li><a href="../../../../../../www.altera.com/literature/lit-nio2.jsp">NiosII Literature</a></li>
+  <li><a href="../../../../../../www.altera.com/literature/tt/tt_nios2_hardware_tutorial.pdf">NiosII hardware tutorial</a></li>
+  <li><a href="../../../../../../www.altera.com/literature/hb/nios2/edh_ed51004.pdf">NiosII 10.0 command shell</a></li>
+  <li><a href="../../NiosII_doc/Nios_SW_handbook.pdf">Nios Software handbook</a>.</li>
+  <li><a href="../../../../../../www.altera.com/literature/ug/ug_embedded_ip.pdf">Embedded Peripheral Users Guide</a></li>
+  <li><a href="../../../../../../www.altera.com/literature/hb/qts/qts_qii51015.pdf">Incremental compilation for QuartusII</a></li>
+  <li>The Nios II IDE is based on the Eclipse IDE project and the Eclipse C/C++ Development Tools&nbsp;(CDT). See Eclipse Project at <a href="../../../../../../www.eclipse.org/default.htm">www.eclipse.org</a>.</li>
+  <li>Once you have initialized and built a BSP project in the Nios IDE, you can find:<br>
+    (1) peripheral macro definitions in your_proj_bsp...drivers...inc<br>
+    (2) header code in your_proj_bsp...alt_sys_init.c then right-click on   specific includes such as "sys/alt_irq.h" and ask to "open declaration"<br>
+    (3) full HAL API in<br>
+  &nbsp;<a href="../../../../../../https@exchange.mail.cornell.edu/owa/redir.aspx@C=68454e0cd3dd439c83bb9f6a5ae4de94&URL=http_253a_252f_252fwww.altera.com_252fliterature_252fhb_252fnios2_252fn2sw_nii5v2_04.pdf" target="_blank">http://www.altera.com/literature/hb/nios2/n2sw_nii5v2_04.pdf</a></li>
+</ul>
+<p><strong>--Setting up Altera Monitor System</strong></p>
+<ol>
+  <li>Download the executable from <a href="../../../../../../www.altera.com/education/univ/software/monitor/unv-monitor.html">http://www.altera.com/education/univ/software/monitor/unv-monitor.html</a>. Make sure that you choose the version that matches the version of QuartusII which is installed.</li>
+  <li>Install the executable. You will not be able to run it unless you ave previously installed QuartusII and the NiosIDE tools.</li>
+  <li>When you run the monitor program in the lab, it may tell you that QuartusII is not installed. If so, open <code>control panel&gt;system&gt;advanced&gt;environment variables</code> and add a variable with name <code>QUARTUS_ROOTDIR</code> and value <code>c:\altera\11.0\quartus</code>.</li>
+  <li>Follow the directions for setting up a new project in <a href="../../NiosII_doc/Quartus11_nios/Altera_Monitor_Program.pdf">Altera Monitor Program</a>. Choose the C option which uses <code>program with device driver support</code>.</li>
+</ol>
+<p><strong>---Setting up a new project in the NiosII IDE:</strong><span class="red"> <strong>USE <a href="../../../../../../www.altera.com/literature/hb/nios2/n2sw_nii52017.pdf">THIS REFERENCE</a> for version 10.0 EDS</strong></span></p>
+<ol>
+  <li>When using the IDE there must be <strong>no space characters in the path</strong> you choose to your workspace! </li>
+  <li>Start the IDE and specify a workspace. When you designed the cpu and top-level module, the design was stored in a folder. In the Workspace selection dialog box, browse for that folder, then add the string <code>\software</code> to the folder path. This new folder will be used to store all of the software projects associated with the specific cpu you built in the SOPC. After you press OK, you may need to click on the <code>workbench</code> icon to do anything useful. </li>
+  <li>Create a new software project. Select <code>File&gt;New&gt;project</code>. A series of dialog boxes will open.
+      <ol>
+        <li>In the <code>Altera NiosII item</code>, choose <code>NiosII C/C++</code> application, then click <code>Next</code>. </li>
+        <li>Give the project a <code>name</code>, specify the <code>ptf</code> file from SOPC builder, use the <code>default location</code>, and specify a <code>blank project</code>. <br>
+        Then click <code>Next</code>.</li>
+        <li>Select <code>creat new system library</code> then click <code>finish</code>. </li>
+      </ol>
+  </li>
+  <li>Back in the main IDE window, right-click on the <code>syslib</code> entry in the <code>C/C++ Projects </code>pane, then select <code>Properties</code>.
+      <ol>
+        <li>In the dialog box, select <code>system library</code> on the left. </li>
+        <li>Associate the desired device with <code>stdout</code>, <code>stdin</code>, and <code>stderr</code>. These will usually default to the JTAG UART. </li>
+        <li>From the pulldown menu, select whether you are going to use <code>single threaded</code> or <code>microC/OS</code>. Note that the web-version of the IDE does not support the operating system. </li>
+        <li>Select the memory location, usually defaults to SDRAM. </li>
+        <li>Click <code>OK</code> to proceed. </li>
+      </ol>
+  </li>
+  <li>Back in the main IDE window, right-click on the <code>syslib</code> entry in the <code>C/C++ Projects </code>pane, then select <code>Build Project</code>. <br>
+    Wait for it to finish. </li>
+  <li>Create header files using <code>File&gt;New&gt;headerfile </code>and C files using<code> File&gt;New&gt;file. </code>The project (not the syslib) <em>should be highlighted before creating</em> the new source file.</li>
+  <li>In <code>Run...</code> menu item be sure that the download option points to the actual project (not the syslib project). In the Run... dialog double-click the NiosII hardware option to find the USB-blaster device and download to the software to the NiosII.</li>
+  <li>If you get the following message when downloading your program to the NiosII (when using SDRAM for the program):<br>
+      <pre>Using cable "USB-Blaster [USB-0]", device 1, instance 0x00
+Pausing target processor: not responding.
+Resetting and trying again: FAILED
+Leaving target processor paused&gt; </pre>
+    Then some suspects come to mind:
+    <ol type="a">
+      <li>You forgot to assign pins to the QuartusII project. </li>
+      <li>There is an incorrect or missing PLL file for SDRAM delay (use the megawizard to rebuild or generate a new PLL module as described in the <a href="../../DE2/tut_DE2_sdram_verilog.pdf">SDRAM tutorial</a>.) <strong>Special Note</strong>: The component <code>altpll</code> has changed between release 7 and 8 of Quartus. When defining a PLL for the phase-shifted SDRAM clock <code>c0</code> (as explained in the <a href="../../DE2/tut_DE2_sdram_verilog.pdf">SDRAM tutorial</a>), you need to add an <code>c1</code> output to the PLL with zero phase-shift and use this signal for the NiosII clock! If you don't do this, the program will load normally, with no error messages, <strong>but the program will not run</strong>! A new, corrected project is zipped <a href="../../NiosII_C/NiosSDRAMv8.zip">here</a>.</li>
+      <li>There is a misspelled control line in the Nios module interface, usually the clock or reset signal. </li>
+      <li>Check the size of the compiled hardware design. If the size is less than about 2000 logic blocks, then the Nios was probably optimized away. Check all the warnings to make sure no NiosII registers were <em>reduced</em>.</li>
+    </ol>
+  </li>
+</ol>
+<p><strong>--Opening a downloaded, zipped project from the course site</strong></p>
+<ol>
+  <li>Unzip the file.</li>
+  <li>Open the QuartusII project then:
+      <ol>
+        <li>Regenerate the NiosII in SPOC builder.</li>
+        <li>Close the SOPC builder.</li>
+        <li> Resynthesize the Verilog design. </li>
+        <li>Download the <code>sof</code> file to the DE2. </li>
+      </ol>
+  </li>
+  <li>Start the Nios II IDE. The path to the IDE is approximately <code>C:\altera\kits\nios2_60\bin\eclipse\nios2-ide.exe</code>.
+      <ol>
+        <li>The folder heirarchy will have a folder with all the SOPC-generated stuff in it. In that folder will be a folder entitled <code>software</code>. In the Nios II IDE menu <code>File</code>, choose <code>Switch Workspace...</code> and point the workspace to the <code>software</code> folder. The Nios IDE will appear to close itself, then reopen in the specified workspace. Some folders should appear in the left panel of the IDE. </li>
+        <li>In the menu <code>Project</code>, choose <code>Clean...,</code> and in the dialog box choose <code>All projects</code>. This action will remove any dependencies on older versions of the Nios IDE or libraries.</li>
+        <li>Rebuild all the project parts by selecting the <code>Run</code> menu, choosing <code>Run as...,</code> and then <code>NiosII hardware</code>. </li>
+      </ol>
+  </li>
+</ol>
+<hr>
+<b> Assignment </b> 
+<ul>
+  <li>There will be one serial processor to control computation and serial communication. The lower left and upper right corners of the visible computed
+  region should be displayed in the terminal window, with x in the range <code>[-2 2]</code> and
+  y in the range <code>[-2 2]</code>. You should be able
+  to choose the maximum number of iterations using serial input, or toggle switches,
+  or however you want to do it.</li>
+  <li>Upon pressing KEY3, the system should compute and display the full <a href="../../../../../../www.jcu.edu/math/vignettes/Julia.htm">Julia
+    set</a> with<code> c=-0.8+0.156*i </code>,
+    as shown above. </li>
+  <li>The VGA graphics interface should  run the VGA at 640x480 resolution. 
+    You will need to share one word of SRAM between 2 pixels.
+  This will give you eight bit color for each pixel. Minimally, you will need
+    two colors corresponding to convergence/divergence. More colors may aid in
+    debugging and look cool. You may want to map color to the number of iterations
+    to divergence, or to the log of that number. A reasonable approximation of
+    the log is to just use the position of the largest non-zero bit in the count
+    (in matlab<code> fix(log2(count))</code>.
+  <li>There will be a text interface for choosing c in which you spearately enter the real and imaginary parts on a terminal, LCD, or graphically.
+  <li>There will be a zoom interface using serial communication
+    to a terminal or graphical interface. I suggest that you  enter an x,y pair in text format to set the center of the zoom and use two buttons to zoom in/out by a factor of two.
+   When you trigger the zoom calculation, the specified
+  corners should be reassigned to the corners of the display and every new pixel coordinate should be iterated
+  again. 
+  <li>Part of your grade
+      will depend upon how fast you can render the full 640x480 set and two other regions picked on demo day. The
+      elapsed time in seconds and fractions of a second to draw should be shown <em>in decimal </em>on the 7-segment
+    LEDs. </li>
+  <br>
+  Be prepared to demo your design to your TA in lab.
+  </li>
+</ul>
+<p> Your written lab report should include the sections mentioned in the <a href="../../policy.html">policy page</a>, and :
+<ul>
+  <li>A table of times (at 1000 iterations max) to compute various regions of the Julia set close
+    to the areas specified in the list.
+    <ul>
+      <li><code>c=-0.8+0.156*i, x=[-2 2],  y=[-2 2] </code></li>
+      <li><code>c=-0.8+0.156*i, x=[-.3, -.5],  y=[-0.1,0.1]</code></li>
+      <li><code>c=0.285+0.01*i, x=[-.45,-.55], y=[-.45,-.55]</code></li>
+  </ul>  
+  <li>A collection of photographs of your favorite regions, and their coordinates.
+    The camera should be good enough to resolve individual pixels.
+  <li>A detailed dsecription of your SOPC design. 
+  <li> A heavily commented listing of your Verilog design and GCC code (if you use NiosII) or Syrup code (if you use Pancake). 
+</ul>
+<hr>
+<small> <font size="-1">Copyright Cornell University </font></small> 
+<!-- #BeginDate format:Am1 -->March 6, 2015<!-- #EndDate -->
+</body> </html>
+

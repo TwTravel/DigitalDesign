@@ -1,0 +1,7 @@
+#include !"gpu_inst_controller.csv"
+
+//Bresenham line drawer parameters
+LOOPCOUNTER_WIDTH,GPU_MAX_WIDTH,Width of the loopcounter variable.
+LOOPCOUNTER_RANGE,GPU_MAX_RANGE,Range of the loopcounter variable.
+ERROR_WIDTH,GPU_MAX_WIDTH+2,Width of the error variable.
+ERROR_RANGE,ERROR_WIDTH-1:0,Range of the error variable.

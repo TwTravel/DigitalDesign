@@ -1,0 +1,425 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<!--
+	This document provides the basis of a semantically structured web page 
+	authored in XHTML 1.0 Transitional using established Cornell University
+	naming conventions.
+-->
+
+<head>
+	<title>POTION: Pong using motion</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+	<meta http-equiv="Content-Language" content="en-us" />
+	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
+	
+<!--
+	All layout and formatting should be controlled through Cascading Stylesheets (CSS).
+	The following link tag should appear in the head of every page in the website. see
+	styles/screen.css.
+-->
+	<link rel="stylesheet" type="text/css" media="screen" href="styles/screen.css" />
+</head>
+
+<body class="twocolumn">
+
+<!--
+	The following link provides a way for people using text-based browsers and
+	screen readers to skip over repetitive navigation elements so that they can 
+	get directly to the content. It is hidden from general users through CSS.
+-->
+<div id="skipnav">
+	<a href="#content">Skip to main content</a>
+</div>
+
+<hr />
+
+<!-- The following div contains the Cornell University logo with unit signature -->
+<div id="cu-identity">
+	<div id="cu-logo">
+		<a id="insignia-link" href="../../../../../../../../www.cornell.edu/default.htm"><img src="images/layout/unit_signature.gif" alt="Cornell University" width="416" height="88" border="0" /></a>
+		<div id="unit-signature-links">
+			<a id="cornell-link" href="../../../../../../../../www.cornell.edu/default.htm">Cornell University</a>
+			<a id="unit-link1" href="../../../../../../../../instruct1.cit.cornell.edu/Courses/ece576/default.htm">ECE5760</a>
+			<a id="unit-link2" href="../../../../../../../../www.youtube.com/watch@v=jP6AS03JYHw">BoF</a>
+		</div>
+	</div>
+	
+	<!-- 
+		The search-form div contains a form that allows the user to search 
+		either pages or people within cornell.edu directly from the banner.
+	-->
+	<div id="search-form">
+		<form action="http://www.cornell.edu/search/" method="get" enctype="application/x-www-form-urlencoded">
+			<div id="search-input">
+				<label for="search-form-query">SEARCH CORNELL:</label>
+				<input type="text" id="search-form-query" name="q" value="" size="20" />
+				<input type="submit" id="search-form-submit" name="submit" value="go" />
+			</div>
+
+			<div id="search-filters">
+					<input type="radio" id="search-filters1" name="tab" value="" checked="checked" />
+					<label for="search-filters1">Pages</label>
+				
+					<input type="radio" id="search-filters2" name="tab" value="people" />
+					<label for="search-filters2">People</label>
+					
+					<a href="../../../../../../../../www.cornell.edu/search/default.htm">more options</a>
+			</div>	
+		</form>
+	</div>
+	
+	<!-- 
+		The search-form div contains a form that allows the user to search 
+		either the unit website or all of cornell.edu directly from the banner.
+	<div id="search-form">
+		<form action="#" method="post" enctype="application/x-www-form-urlencoded">
+			<div id="search-input">
+				<label for="search-form-query">SEARCH:</label>
+				<input type="text" id="search-form-query" name="query" value="" size="20" />
+				<input type="submit" id="search-form-submit" name="submit" value="go" />
+			</div>
+
+			<div id="search-filters">
+					<input type="radio" id="search-filters1" name="target" value="unit" checked="checked" />
+					<label for="search-filters1">Unit name</label>
+				
+					<input type="radio" id="search-filters2" name="target" value="cornell" />
+					<label for="search-filters2">Cornell</label>
+					
+					<a href="#">more options</a>
+			</div>	
+		</form>
+	</div>
+	-->
+	
+	<!--
+		The search-navigation div contains links that allow the user to search
+		either the unit website or all of cornell.edu.
+		These links will be displayed in the unit signature banner and will
+		be aligned with the right edge of the page.
+	<div id="search-navigation">
+		<ul>
+			<li><a href="#">Search Unit Name</a></li>
+			<li><a href="http://www.cornell.edu/search/">Search Cornell</a></li>
+		</ul>
+	</div>
+	-->
+</div>
+
+<!-- The header div contains the main identity and main navigation for the site -->
+<div id="header">	
+	<!--
+		The navigation div contains the site's main navigation. These
+		links will be displayed in a horizontal, gray navigation bar 
+		under the unit signature banner.
+	-->	
+	<div id="navigation">
+		<ul>
+			<li><a href="#HighLevelDesign">High Level Design</a></li>
+			<li><a href="#Hardware">Hardware</a></li>
+			<li><a href="#Software">Software</a></li>		
+			<li><a href="#Results">Results</a></li>		
+			<li><a href="#Conclusions">Conclusions</a></li>		
+  <li><a href="#Appendix">Appendix</a></li>		
+			
+			<!-- More navigation as needed
+			<li><a href="#">Navigation 6</a></li>
+			-->
+						
+		</ul>
+	</div>
+	
+	<hr />
+	
+	<!-- 
+		The identity div contains the name of a main site section
+	-->
+	<div id="identity">
+    
+     <h1><font size="5">POTION:  Pong using motion</font><br />
+</h1>
+       <h1><font size="4">
+    Sean Chen (<a href="mailto: ssc88@cornell.edu">ssc88@cornell.edu</a>) <br />
+		Yunchi Luo (<a href="mailto: yl477@cornell.edu">yl477@cornell.edu</a>) </font></h1>
+        </font>
+	</div>
+</div>
+
+<hr />
+
+<div id="wrap">
+
+<!-- The content div contains the main content of the page -->
+<div id="content">
+
+	<!--
+		The section-navigation div contains the second level of site navigation.
+		These links appear at the top of the left sidebar of the two-column page.
+	-->
+	<hr />
+
+	<!--
+		The main div contains the main contents of the page. It will be displayed
+		as the wide right column with the beige background.
+	-->
+<div id="main">
+   	  <div class="bridge-section">
+        <font size="1">
+		<h2>Introduction</h2>
+		<p>POTION is a motion-controlled game system that allows two players to battle head-to-head or one player to compete against AI for ultimate ping pong glory. For the two-player setup, two video feeds from consumer digital cameras are each separately fed into a pair of slave DE2 boards. These inputs are primarily used to detect objects held in players' hands to represent paddles. Additionally, each of the slave DE2 boards drives a  display output to a separate monitor, in which the camera feed of the opposing player is shown in a picture-in-picture window embedded within the game graphics. The game software runs on a third  DE2 board that acts as a master, which is connected to the two slave boards via GPIO and controls graphics as well as arbitrates game state. The single-player case requires only a single camera, monitor, and DE2 slave.</p></font>
+        
+        
+        <div class="main-photo-large"> <a href="images/main/PIP.jpg"><img src="images/main/PIP_thumb.jpg" width="510" height="383" /></a>
+  <p class="caption">Game screenshot demonstrating object tracking (the opponent's green paddle) shown within picture-in-picture window</p>
+  <p class="caption">(click for full image)</p>
+        </div>
+        
+        
+        
+        
+        
+        
+      </div>
+   	  <div class="bridge-section">
+        <font size="1">
+		<h2><a name="HighLevelDesign" id="HighLevelDesign"></a>High Level Design
+        <font size="2"></font></h2>
+        </font><font size="2"><h3>Rationale and Sources</h3></font>
+        <p>The motivation for this project  comes from our mutual love for <a href="../../../../../../../../www.youtube.com/watch@v=A8IVASo0umU">table tennis</a>, as well as having seen a number of motion-controlled video games come into popularity in recent years. All three of the major  game consoles today support some type of motion input either natively or through an add-on. We desired to create this sort of immersive entertainment experience ourselves, especially since an FPGA provides an ideal, highly-parallelizable platform for fast object tracking in real-time. Additionally, we stumbled across the addicting flash-based game <a href="../../../../../../../../www.addictinggames.com/curveball.html">Curveball</a>, and we quickly realized that this would be an ideal model for a multiplayer motion-based game that is easy to learn yet challenging to implement elegantly.</p>
+        <p>&nbsp;</p>
+        <font size="2"><h3>Features</h3></font>
+        <p><strong><em>Object Tracking:<br />
+        </em></strong>We decided that color object tracking would be the most feasible way to implement motion controls. We had previously considered implementing true feature detection to detect a unique arbitrary object using a MOPS-based or SIFT-based feature descriptor and thereafter querying an on-chip database, but  there simply is not enough logic on the onboard Cyclone FPGA to implement this type of algorithm in parallel, just as there is not enough time to perform this iteratively. We settled on tracking the largest bright green object in the camera's field of view, as this color is strikingly absent from our lab. Thus, we have made large green paddles for players to use to control the game (as long as they are not wearing bright green clothing). Note, however, that our detection code will work with any color as long as we can ensure its scarcity, so it is possible that one may opt to track a sterile, grayish hue in a verdant environment teeming with life.</p>
+        <p><em><strong>Game Mechanics and AI:<br />
+        </strong></em>The ball moves back and forth at a constant velocity along the z-axis (depth) inside a narrow tunnel. Each player operates a paddle that is at either end of the tunnel. If the ball hits the paddle, it bounces backwards at the same speed toward the other player's paddle, so this is pretty much pong in 3D. To add some more excitement, an x or y velocity is added to the ball depending on where on the paddle it hits. Finally, the main feature of the game mechanics is that if you are moving the paddle at a fast speed when you hit the ball, you can hit a curveball that accelerates toward the sides of the tunnel back to the other player. If a player is unable to hit the ball when it reaches his side, then that player loses. Time and score are displayed on the 7-segment LEDs.</p>
+        <p>There is also a very basic AI implemented for the game that can be toggled using a switch if a second player is not available. The AI will track the ball perfectly and always be able to hit it back to the player. Essentially, it has godmode on.</p>
+        <p><em><strong>Graphics:<br />
+        </strong></em>In the background is a set of disproportionally sized rectangles that inscribe each other, creating the illusion that you are looking into the tunnel. As the ball goes deeper into the tunnel, or further along the z-axis, it becomes smaller and moves more toward the center, so that it actually looks it is getting further away. Another rectangle is drawn that is at the same depth of the ball but is as wide as the tunnel to further enhance the 3D feel. The player's paddle is a large red rectangle and the opponent's paddle is a smaller blue rectangle at the other end of the tunnel. </p>
+        <p><em><strong>Picture-in-Picture:<br />
+        </strong></em>Within each monitor, the camera feed of the opposing player is also downsampled by a factor of 4 (in height and width) and displayed in the very center of the screen to create the effect of seeing the adversary in the video game display itself at the end of the tunnel. Of course, this idea is borrowed from our experiences with webcam chatting through popular services such as <a href="../../../../../../../../www.skype.com/default.htm">Skype</a> and <a href="../../../../../../../../www.chatroulette.com/default.htm">Chatroulette</a>. It is very interesting to see the opponent's paddle superimposed on this image, and it shows just how well our object tracking works.
+        <font size="2"></font></p>
+        <p>&nbsp;</p>
+        <font size="2"><h3>Logical Structure</h3></font>
+<p>We  describe the high-level logical structure for a two-player head-to-head game. We connect a commercial digital camera's analog video output to each of the slave DE2 boards through the composite video input. Each of the DE2 boards converts the YCbCr video into RGB and next performs object detection. Each sends the coordinates of the locally detected paddle, along with the current location at which it is drawing to the central master DE2 board via GPIO connections. This master DE2 board uses this information to calculate where to draw all four paddles and both balls (each player sees his own paddle as well as his opponent's detected paddle, along with the ball) and relays this information back to the slave boards in the form of binary red, green, and blue values (we have a total of eight possible colors) as the VGA controllers in the slaves move from pixel to pixel.
+
+        </p>
+<div class="main-photo-large"> 
+  <img src="images/main/Block.png" width="510" height="734" />
+  <p class="caption">Block diagram for three-board solution</p>
+      </div>
+<p>Note from the diagram that each slave DE2 board is actually collecting the video input from one player yet drawing the video output for the opponent player in the two-player case, as all of the picture-in-picture information is kept local to the slave boards. Additionally, each DE2 board can independently draw the background tunnel graphics of the game, as this does not alter dynamically and needs no intervention or arbitration from the master.</p>
+<p>In a single-player situation, only a master-slave relationship is required from just a pair of DE2 boards, and the picture-in-picture of the lone player would be his own captured image. <font size="2"></font></p>
+<p>&nbsp;</p>
+<font size="2"><h3>Hardware/Software Tradeoffs</h3></font>
+        <p>SDRAM is a very precious resource, and is in fact the reason why our two-player scheme needs three boards and our single-player scheme needs two boards. The NIOS II and YCbCr-to-RGB conversion both require SDRAM, and we did not find an efficient method to multiplex these resources without causing severe video artifacts and timing errors. Additionally, this SDRAM was used for object detection by each of the DE2 board slaves as it makes for an efficient frame buffer. Finally, we chose to pre-calculate the background graphics, as well as the paddle and ball shapes in a hardware lookup table as software rendering would be too expensive to do in real time.</p></div>
+  
+   	  <div class="bridge-section">
+        <font size="1">
+		<h2><a name="Hardware" id="Hardware"></a>Hardware
+          <font size="2">
+        </font></h2>
+        </font><font size="2">
+        <h3>Detection Scheme</h3></font>
+<p>Our goal here was to get fast, yet accurate object tracking. We noticed very early on that we could not simply track single pixels of the target color since this would introduce too much jitter even with some hysteresis added on. In fact, we desired to track the largest object of some color so that smaller objects in the background that happen to be a similar color would not disturb the gameplay.</p>
+<p>The algorithm here is as follows: we iterate through each line of a captured frame and look for the longest horizontal line of the desired color. If we approximate the object to be a circle (or a regular polygon-like shape), this would then give its equator. Then, the center of this horizontal line should give approximately the center of the detected object.</p>
+</font>
+<p>Our actual hardware works by reading as its video source the buffered frames stored in SDRAM (after the YCbCr-to-RGB conversion). To detect bright green as its target color, we set the requirement that a pixel must be at least halfway green on the intensity scale, while less than halfway blue and less than a quarter red. These values were determined after extensive experimentation. We allow a higher threshold for the blue as we found that the commercial digital cameras we used happened to assign strong blue tones to the picture overall, especially as they automatically respond to the perceived lighting conditions of the room.</p>
+<p>An important optimization we make is that we decouple our iteration through the frame with the actual line-by-line scanning performed by the VGA controller. This eliminates cross-interference and gives us the freedom and flexibility to explore detection strategies with hysteresis that take longer to compute per frame than it takes for the VGA to scan a frame (although we did end up deciding to use a much faster approach). In any case, such a circumstance would result in contents of the frame buffer  changing before we finish iterating through a frame if our detection iterator is out of phase, thus introducing unwanted jitter and detection error. This then requires that we take the frame buffer and perform detection on it within a downsampled binary intensity matrix (where high bits denote detected target colors within the block corresponding to the sub-sampled point), which we take with a factor of 8 in this case. This is achieved as we downsample by using only every 8th VGA scanline. Within each VGA scanline, we traverse segments of 8 pixels and store 1 in the intensity matrix if at least half of those pixels match the target pixel requirements. </p>
+<p>As we traverse through the intensity matrix independently of the VGA scan, we keep track of the center of the largest consecutive line with consecutive high bits, and we call this the center of the detected object within the current traversal through the intensity matrix. But this does not necessary correspond to our output detection location, as we apply hysteresis to prevent jitter. In fact, we only call this our output detection location if it is at least a threshold distance away from the previous output detection location. A pixel distance of 16 was empirically evaluated to give a good tradeoff between preventing excessive jitter and providing rather smooth movement.</p>
+<p>Additionally, we must take care not to update the output detection location at all if the object of interest moves out of the field of view of the camera. We maintain that a threshold of 24 pixels is the minimum width of the equator in order for the output detection location to update. Otherwise, the output freezes and assumes that it does not see anything of interest. This also gives a tighter maximum distance on how far a player can stand away from the camera and still have his paddle detected, although we found this value to be suitable for the distances we were standing away from the screen, usually below 2 [m].</p>
+<p>&nbsp;</p>
+<font size="2">
+<h3>Paddles</h3></font>
+<p>These objects used for detection are still technically hardware. We simply tape large green paper squares (approximately 10 [cm] by 10 [cm]) as the paddle base taped to screwdrivers (the handles) created using colored printer ink. These work unbelievably well compared to other objects that we thought would be more easily detectable. We do note that we tried to make <a href="../../../../../../../../us.playstation.com/ps3/playstation-move/default.htm">PlayStation Move</a>-style paddles earlier by putting <a href="../../../../../../../../www.allelectronics.com/make-a-store/item/LED-111/1-WATT-GREEN-ULTRA-ULTRA-BRIGHT-LED//1.html">1 [Watt] LEDs</a> inside ping pong balls (what better object!). However, we could not find a reasonable intensity, as putting too much current through would appear to the cameras as pure white (saturating the Bayer filters), while putting not enough current would appear to the cameras... still as white since that is the color of the ping pong balls themselves. We were unable to find a happy medium with this setup, and it also required battery power, so we went forward with our aforementioned poor man's solution.
+</font>
+<p>Do note that the other reason we tried using LEDs was that we had initially experimented with the <a href="../../../../../../../../www.terasic.com.tw/cgi-bin/page/archive.pl@Language=English&CategoryNo=68&No=50&PartNo=2">Terasic cameras</a>. However, the images obtained from them were terribly underexposed and totally unusable with anything less than a bright LED light source. This actually made detection extremely easy, except that the camera also could not distinguish between light sources of different colors since everything saturated into white, including the fluorescent lighting in the lab. Additionally, players looked terrible in the picture-in-picture window as they were horribly dark. Hence, we switched to using commercial digital cameras.</p>
+<p>&nbsp;</p>
+<font size="2">
+<h3>Graphics</h3></font>
+<p>The goal for graphics is to generate a clean, nice-looking game, but also occupy as little space as possible. The logic also needs to be as fast as possible so that it can keep up with the rate of 25.2MHz at which the VGA scans across the screen. A major obstacle was that, to make the game have a 3D feel, to compute the position and size of any object on the screen required multiple 3D projection calculations, each of which requires a multiply and divide. Both these operations are extremely difficult to implement on the FPGA. To overcome this challenge, we did most of the graphics using lookup tables, which are stored in M4K blocks. Each pixel color is generated on the fly according to the current VGA scan position, with values coming from either the lookup tables or combinational logic.</p>
+<p></p>
+<p>The background uses a lookup table where there is 1 bit for every pixel on the screen, for a total of 640 x 480 = 307200 bits, or 19200 16-bit words. The ball uses two lookup tables. One lookup table provides the radius of the ball, given its z position. The second lookup table is indexed by the radius of the ball and the VGA y-axis scan position, and provides the x-axis pixel distance from the edge of the ball to the center of the ball. The rectangle that is drawn at the same depth of the ball is referred to as the depth tracker. We actually computed the position of this tracker using the 3D projection formula because there was no good way to do it without using too much memory, while there are only projection calculations needed to be done as we only have to calculate one corner of the rectangle. </p>
+<p>Here is our projection formula for x (y is similar):</p>
+<div class="main-photo-large"> <img src="images/main/Projection.png" width="510" height="77" /></div>
+<p>To draw the two paddles and the tracker, we  checked whether the VGA scan position is along the bounds of the rectangle, and assert if it is. To enforce the depth of the objects such that objects in front will cover objects behind it, we asserted whether the object is present at that pixel and multiplexed the output color, prioritizing objects in front.<font size="2">
+</font></p>
+<p>&nbsp;</p>
+<font size="2"><h3>Picture-in-Picture</h3></font>
+<p>To create the scaled-down version of the picture, we piggy-backed off the VGA controller's read requests to the SDRAM. For every 4 pixels and every 4 lines, using the VGA controller's  X and Y scan coordinates, we wrote the pixel colors into SRAM, scaling the address to the size of the picture-in-picture window. Then, when the VGA controller requests a pixel inside the picture-in-picture window and no game objects are in front, we compute its position in the SRAM and give it to the VGA controller. The SRAM had to be dual ported for this to work, and we simulated the dual porting by running the SRAM at twice the VGA clock and then reading and writing on alternate cycles. While this may sound simple, the timing between the SDRAM, VGA controller, SRAM, and various game elements was extremely tricky to implement without causing serious video artifacts.
+</p>
+</div>
+
+      	<div class="bridge-section">
+        <font size="1">
+		<h2><a name="Software" id="Software"></a>Software</h2>
+        </font>
+        
+        
+        
+<p>A NIOS II processor was instantiated on the FPGA to compute game mechanics. The processor uses the GPIO ports to output the position of the ball, and has for input the positions of the paddles. There is also an output for the AI's position for single-player mode. At the start of the game, the ball is initialized in the center of the screen in front of the left player, with a set z velocity towards the right player.</p>
+<p>The game runs inside an infinite loop, where each iteration of the loop is considered a step in the game. In the loop, the paddle positions are first read. Then the step function is called to compute the next position of the ball and win/lose conditions. If the game is in single-player mode, the position of the AI paddle is set equal to the position of the ball so that it never loses. The ball's ideal next positions are then updated without checking for boundaries. A boundary check is done on the tunnel walls and the ball is deflected if it is outside the boundary. After that, a collision check is done on both players' paddles to see if the ball has reached a player, and whether the player was able to hit it back. If a player fails to hit the ball, then the game over function is called to pause the game until the start button is pressed. If the player does hit the ball, the offset of the ball from the center is used to compute an x or y velocity to add the ball. Also, the difference between the paddle's last position and current position is taken to also add an x or y velocity, opposite in direction and proportional in magnitude to the difference vector, to create curveball mechanics. The acceleration is reset on each paddle collision while the velocity is added, giving the game mechanics a more realistic feel. Finally, the finalized next position of the ball is updated. In the last step, the GPIO outputs are updated to change the position of the ball and AI paddle.</p>
+<p>Note that we do use the buttons on the master board to start a new round each time a player has lost.</p>
+      </div>
+
+      	<div class="bridge-section">
+        <font size="1">
+		<h2><a name="Results" id="Results"></a>Results</h2>
+        </font>
+        
+        
+<p>The detection scheme suffers from minimal jitter and tracks our paddles up to approximately a distance of 2 [m] away from the camera. The paddles are also tracked  consistently even for large movements, as a player can move the paddle rapidly from one side of the screen to another and still have it tracked quickly enough to make the game feel responsive to the input.</p>
+<p>Note that our algorithm is robust and putting smaller green objects such as green marker caps into the camera's field of view will not disturb it. Additionally, we noticed that while playing, sometimes a player may get excited and not notice that he is moving his paddle outside of the camera's field of view. But since our detector freezes the paddle location if no object of a suitable size is detected, the paddle drawn on the screen does not make a huge jump or flicker. Additionally, this sort of feedback easily helps the player realize he must move back into the camera's field of view.</p>
+<p>The graphics for the game exceeded expectations. The logic for computing colors at each pixel was able to finish much faster than the VGA scan speed so that there was no glitching or video artifacts of the game objects. There are, however, rare problems with the picture-in-picture  where the opponent is displayed at the other end of the tunnel, but it was unavoidable due to the poor quality of the TV video decoder code and documentation available to us. We are actually impressed with how well the picture-in-picture worked.</p>
+
+<div class="main-photo-large"> <a href="images/main/Setup.jpg"><img src="images/main/Setup_thumb.jpg" width="510" height="383" /></a>
+  <p class="caption">Preparing our three-board system; cameras are not yet online, hence the blank picture-in-picture windows</p>
+  <p class="caption">(click for full image)</p>
+</div>
+<div class="main-photo-large"> <a href="images/main/Action2.jpg"><img src="images/main/Action2_thumb.jpg" width="510" height="383" /></a>
+  <p class="caption">All components fully functional and online; contestants prepare to meet in glorious combat</p>
+</div>
+<div class="main-photo-large"> <a href="images/main/Action1.jpg"><img src="images/main/Action1_thumb.jpg" width="510" height="383" /></a>
+  <p class="caption">The creators fight and struggle for eternal bragging rights</p>
+</div>
+
+<OBJECT width="510" height="412" ><PARAM name="movie" value="MPFLVPlayer.swf" /><PARAM name="allowFullScreen" value="true" /><PARAM name="FlashVars" value="fn=../../../../../../../../www.youtube.com/watch@v=n3J3yNoz73g&flvskin=MPFLVSkin.swf" /><EMBED src="MPFLVPlayer.swf"  width="510" height="412" type="application/x-shockwave-flash" allowFullScreen="true" FlashVars="fn=../../../../../../../../www.youtube.com/watch@v=n3J3yNoz73g&flvskin=MPFLVSkin.swf"></EMBED></OBJECT>ction">
+        <font size="1">
+		<h2><a name="Conclusions" id="Conclusions"></a>Conclusions</h2>
+        </font>
+        
+
+<p>POTION, while rather complex to set up, is fun and very easy to learn to play. The drawing of the local player's paddle certainly helps to guide player responses, and the drawing of the opponent player's paddle makes the game much more personal and social. The detection code is very fast and tracks in real time. In fact, it tracks our green paddles pretty smoothly and there is minimal jitter due to the added hysteresis. Additionally, using the improved VGA code provided by Skyler Schneider, and very fast graphics computation, there is minimal glitching or video artifacts.</p>
+<p>The simplest add-on to our project would be to allow sound and music to be played out of the audio port. This could be in the form of music played by storing audio data on a SD card and using the built-in SD card reader. On top of this, it would be very interesting to explore how to overlay sound effects over the music, such as paddle hits and ball deflections against the tunnel walls.</p>
+<p>Another add-on to the detection would involve experimenting further to see if there in fact is an easy way to track LED sources without imposing saturation to the camera. Then, one could imagine a scheme where one or several of multiple LEDs (of different colors) is lit based on that color or color combination being scarce in the captured scene. This concept is borrowed from the operation of the PlayStation Move motion controller.</p>
+<p>However, even more interestingly, one could explore how to transmit the game data, including picture-in-picture data, and receive graphics updates through the ethernet port. This could then evolve into something of a client-server model, where the master now becomes a server (accessed from behind a router) that calculates a central game state for its clients, and also becomes a routing point for the two sets of picture-in-picture data from each end to fly past one another. This may in turn create the need for yet another audio feature, which is to take microphone input from a player and play it out to his opponent, and vice versa, as ethernet will permit players to truly be remote from one another. Such a configuration would be perfect for sessions with a trainer (one player would coach the other) or for sessions between bloodthirsty rivals (facilitate trash talking).</p>
+<p>A final extension to this project would be to convert the graphics to an anaglyph so that players may wear red-cyan glasses to see the game environment in 3-D. This is since our gameplay perspective looks down a tunnel and has great potential to look believable in 3-D. The main challenge here would be to convert the picture-in-picture itself to an analyph as well, since converting the rest of the graphics should be as simple as changing the contents of the lookup tables.</p>
+<p>In the course of crafting this game system, we used the TV decoder code from Altera, which very importantly has the YCbCr-to-RGB conversion that we need to display composite video from the cameras onto the VGA monitors, as well as run our detection code. Additionally, we used a NIOS II processor in our design, which is part of Altera's intellectual property. Also, we used a VGA control module from fellow ECE 5760 student Skyler Schneider. We did not use any other public domain code. Since our game is similar to the Curveball game, though it greatly improves upon it by adding motion control and picture-in-picture, we are not considering patent opportunities at this time.</p>
+   	  </div>
+  
+   	  <div class="bridge-section">
+        <font size="1">
+		<h2><a name="Appendix" id="Appendix"></a>Appendix        </h2>
+        </font>
+        
+
+
+        <font size = "2">
+        </font><font size = "2">
+        <h3>Code Listing</h3></font>
+        <p>Slave Board Quartus Project: <a href="source/potion_slave.zip">potion_slave.zip</a></p>
+        <p>Master Board Quartus Project: <a href="source/potion_master.zip">potion_master.zip</a></p>
+        <p>Game Program in C: <a href="source/potion_software.zip">potion_software.zip</a></p>
+        <p>&nbsp;</p>
+ <font size = "2">
+        </font><font size = "2">
+        <h3>Task Breakdown</h3></font>
+        <p>Project Idea and Board-to-Board Protocol - Sean<br />
+          <br />
+          Detection and Tracking - Sean<br />
+          <br />
+          Picture-in-Picture - Both<br />
+          <br />
+          Graphics - Yunchi<br />
+          <br />
+          Game Code - Yunchi<br />
+        </p>
+        <p>&nbsp; </p>
+        <font size = "2">
+        <h3>References</h3></font>
+        <p><a href="../../../../../../../../www.addictinggames.com/curveball.html">Curveball Flash Game</a></p>
+        <p><a href="../../../../../../../../instruct1.cit.cornell.edu/Courses/ece576/StudentWork/ss868/ss868_VGA_Controller.zip">Skyler Schneider's Improved VGA Module</a></p>
+   	  </div>
+      
+<blockquote>
+  <blockquote>
+    <blockquote>
+      <blockquote>
+        <h2 align="right">&nbsp;</h2>
+      </blockquote>
+    </blockquote>
+  </blockquote>
+</blockquote>
+<h2 align="left"><strong>Acknowledgements</strong></h2>
+<p><strong>We thank the following  people for giving us inspiration and for helping us to design and build our project:<br />
+  </strong></p>
+<p><strong>The unknown creators of the popular web game Curveball, whose gameplay model we emulate in our project.</strong></p>
+<p><strong>Skyler Schneider for creating a greatly improved VGA controller module.</strong></p>
+<p><strong>Herman Yang for allowing us to borrow his camera equipment.</strong></p>
+<p><strong>And finally, Bruce Land for helping us to debug many complex and difficult aspects of our project.</strong></p>
+</div>
+<hr />
+	
+	<!--
+		The contents of the secondary div are displayed in the left column sidebar
+		below the secondary navigation. Each group of secondary content should be 
+		organized in a secondary-section div, which will pad the content from the 
+		edges of the sidebar and separate it from other content.
+	-->
+<div id="secondary">
+  <!--
+            A secondary-photo div contains an image that is as wide as the sidebar
+            (200px) and a caption paragraph. Note that the secondary-photo should
+            not be within a secondary-section div.
+        -->
+                              <div class="secondary-photo"> <a href="../../../../../../../../courses.cit.cornell.edu/ee476/FinalProjects/s2010/ssc88_egl27/index.html"><img src="images/sidebar/Sean.jpg" alt="Sean" width="200" height="149" /></a>
+                                <p class="caption">Sean Chen, ECE '11<br />
+                                  <br />
+(click portrait to see previous project from <a href="../../../../../../../../courses.cit.cornell.edu/ee476/default.htm">ECE 4760</a>)</p>
+    </div>
+      
+                 <div class="secondary-photo"> <a href="../../../../../../../../courses.cit.cornell.edu/ee476/FinalProjects/s2010/yl477_my288/yl477_my288/index.html"><img src="images/sidebar/Yunchi.jpg" alt="Yunchi" width="200" height="149" /></a>
+                                <p class="caption">Yunchi Luo, ECE '11<br />
+                                  <br />
+                                  (portrait links to previous project)<br />
+                   </p>
+</div>
+      
+                 <div class="secondary-photo"> <a href="images/sidebar/Screenshot.jpg"><img src="images/sidebar/Screenshot_thumb.jpg" alt="Sean prepares to chop an easy serve" width="200" height="150" /></a>
+                   <p class="caption">Sean prepares to chop an easy serve</p>
+                                <p class="caption">(click for full image)</p>
+    </div>
+      
+                 <div class="secondary-photo"> <a href="images/sidebar/Zoomed.jpg"><img src="images/sidebar/Zoomed_thumb.jpg" alt="Yunchi drives it low and fast" width="200" height="150" /></a>
+                   <p class="caption">Yunchi drives it low and fast (debug grid turned on for the picture-in-picture)</p>
+    </div>
+                 <div class="secondary-photo"> <a href="images/sidebar/Gameover.jpg"><img src="images/sidebar/Gameover_thumb.jpg" alt="Yunchi drives it low and fast" width="200" height="150" /></a>
+                   <p class="caption">Yunchi finally slips up</p>
+    </div>
+      
+                 <div class="secondary-photo"> <a href="images/sidebar/Hardware.jpg"><img src="images/sidebar/Hardware_thumb.jpg" alt="Master, slaves, and paddles" width="200" height="150" /></a>
+                   <p class="caption">Master, slaves, and paddles</p>
+    </div>
+      
+                 <div class="secondary-photo"> <a href="images/sidebar/Cam1.jpg"><img src="images/sidebar/Cam1_thumb.jpg" alt="Canon PowerShot SD800 was our first love..." width="200" height="150" /></a>
+                   <p class="caption">Canon <a href="../../../../../../../../www.usa.canon.com/cusa/support/consumer/digital_cameras/powershot_sd_series/powershot_sd800_is">PowerShot SD800</a> was our first love...</p>
+    </div>
+    
+                 <div class="secondary-photo"> <a href="images/sidebar/Cam2.jpg"><img src="images/sidebar/Cam2_thumb.jpg" alt="ut then we met its younger sister!" width="200" height="150" /></a>
+                   <p class="caption">...but then we met its <a href="../../../../../../../../www.usa.canon.com/cusa/support/consumer/digital_cameras/powershot_sd_series/powershot_sd970_is">younger sister</a>!</p>
+    </div>
+    
+                 <div class="secondary-photo"> <a href="images/sidebar/Workspace.jpg"><img src="images/sidebar/Workspace_thumb.jpg" alt="Our workspace and December home" width="200" height="150" /></a>
+                   <p class="caption">Our workspace and December home<br />
+                   </p>
+    </div>
+                 <div class="secondary-photo"> <a href="images/sidebar/DE2.jpg"><img src="images/sidebar/DE2_thumb.jpg" alt="DE2 Love" width="200" height="150" /></a>
+                   <p class="caption">In the early hour before the light, she delivers us a most soothing glow<br />
+                   </p>
+</div>
+    
+</div>
+
+</div>
+<hr />
+</div>
+<div id="footer">
+<!-- The footer-content div contains the Cornell University copyright -->
+<div id="footer-content">
+	&copy;2010 <a href="../../../../../../../../www.cornell.edu/default.htm">Cornell University</a>
+</div>
+</div>
+
+</body>
+</html>

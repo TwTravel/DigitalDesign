@@ -1,0 +1,70 @@
+#include !"disp_controller.csv"
+
+//GPU display definitions.
+//Note: The GPU display can be the same size
+//      or smaller than the physical display.
+GPU_DISP_WIDTH,480,GPU display width (in pixels).
+GPU_DISP_HEIGHT,272,GPU display height (in pixels).
+GPU_X_MAX_VALUE,GPU_DISP_WIDTH-1,Maximum X-axis position value.
+GPU_X_WIDTH,max_width(GPU_X_MAX_VALUE),Display X-axis width.
+GPU_X_MAX,GPU_X_WIDTH'dGPU_X_MAX_VALUE,Maximum X-axis position.
+GPU_X_RANGE,GPU_X_WIDTH-1:0,Display X-axis range.
+GPU_Y_MAX_VALUE,GPU_DISP_HEIGHT-1,Maximum Y-axis position value.
+GPU_Y_WIDTH,max_width(GPU_Y_MAX_VALUE),Display Y-axis width.
+GPU_Y_RANGE,GPU_Y_WIDTH-1:0,Display Y-axis range.
+GPU_Y_MAX,GPU_Y_WIDTH'dGPU_Y_MAX_VALUE,Maximum Y-axis position.
+GPU_MAX_WIDTH,max(GPU_X_WIDTH;GPU_Y_WIDTH),Max of X_WIDTH and Y_WIDTH.
+GPU_MAX_RANGE,GPU_MAX_WIDTH-1:0,Bitwidth of max width.
+
+DISP_X_LIMIT_LOW,DISP_X_WIDTH'dfloor((DISP_WIDTH-GPU_DISP_WIDTH)/2),Display x-axis lower limit.
+DISP_X_LIMIT_HIGH,DISP_X_WIDTH'dDISP_X_LIMIT_LOW+GPU_DISP_WIDTH-1,Display x-axis upper limit.
+DISP_Y_LIMIT_LOW,DISP_Y_WIDTH'dfloor((DISP_HEIGHT-GPU_DISP_HEIGHT)/2),Display y-ayis lower limit.
+DISP_Y_LIMIT_HIGH,DISP_Y_WIDTH'dDISP_Y_LIMIT_LOW+GPU_DISP_HEIGHT-1,Display y-ayis upper limit.
+
+//Display layer selection.
+GPU_LAYER_FG,1'b0,Foreground display layer.
+GPU_LAYER_BG,1'b1,Background display layer.
+GPU_FG_ADDR_OFFSET,18'dGPU_DISP_WIDTH*GPU_DISP_HEIGHT,Foreground memory segment offset.
+
+//Instruction color definition.
+//Note: Need to leave one pixel free for
+//      foreground pixel valid flag.
+INST_COLOR_R_WIDTH,5,Red bit-width.
+INST_COLOR_G_WIDTH,6,Green bit-width.
+INST_COLOR_B_WIDTH,5,Blue bit-width.
+INST_COLOR_R_RANGE,INST_COLOR_R_WIDTH-1:0,Red color bit range.
+INST_COLOR_G_RANGE,INST_COLOR_G_WIDTH-1:0,Green color bit range.
+INST_COLOR_B_RANGE,INST_COLOR_B_WIDTH-1:0,Blue color bit range.
+INST_COLOR_R_POS,INST_COLOR_R_WIDTH+INST_COLOR_G_WIDTH+INST_COLOR_B_WIDTH-1:INST_COLOR_G_WIDTH+INST_COLOR_B_WIDTH,Red color instruction position.
+INST_COLOR_G_POS,INST_COLOR_G_WIDTH+INST_COLOR_B_WIDTH-1:INST_COLOR_B_WIDTH,Green color instruction position.
+INST_COLOR_B_POS,INST_COLOR_B_RANGE,Blue color instruction position.
+
+//Instruction fields.
+INST_PARAM_WIDTH,24,Instruction parameter width.
+INST_CMD_WIDTH,6,Instruction command type width.
+INST_PARAM_RANGE,INST_PARAM_WIDTH-1:0,Instruction parameter bit range.
+INST_CMD_RANGE,INST_CMD_WIDTH+INST_PARAM_WIDTH-1:INST_PARAM_WIDTH,Instruction command type bit range.
+
+//Instruction parameter fields.
+INST_PARAM_COLOR_R_RANGE,INST_COLOR_R_POS,Red parameter bit range.
+INST_PARAM_COLOR_G_RANGE,INST_COLOR_G_POS,Green parameter bit range.
+INST_PARAM_COLOR_B_RANGE,INST_COLOR_B_POS,Blue parameter bit range.
+INST_PARAM_X_RANGE,GPU_X_WIDTH-1:0,X parameter bit range.
+INST_PARAM_Y_RANGE,GPU_Y_WIDTH+GPU_X_WIDTH-1:GPU_X_WIDTH,Y parameter bit range.
+INST_PARAM_LAYER,0,Layer select position.
+INST_PARAM_FG_EN,0,Foreground enable (1=visible, 0=invisible).
+INST_PARAM_PRIORITY,1,Draw priority bit position.
+
+//Command types.
+CMD_NONE,INST_CMD_WIDTH'd0,No command.
+CMD_SET_XY1,INST_CMD_WIDTH'd1,Set (X1,Y1) value.
+CMD_SET_XY2,INST_CMD_WIDTH'd2,Set (X2,Y2) value.
+CMD_CLEAR,INST_CMD_WIDTH'd3,Clear screen.
+CMD_DRAW_RECT,INST_CMD_WIDTH'd4,Draw rectangle.
+CMD_DRAW_LINE,INST_CMD_WIDTH'd5,Draw line.
+CMD_DRAW_IMAGE,INST_CMD_WIDTH'd6,Draw image.
+CMD_SET_LAYER,INST_CMD_WIDTH'd7,Set display layer.
+CMD_CLEAR_RECT,INST_CMD_WIDTH'd8,Clear rectangle.
+CMD_SHOW_FG,INST_CMD_WIDTH'd9,Hide/show foreground layer.
+CMD_LOAD_FONT,INST_CMD_WIDTH'd10,Load bitmap font.
+CMD_DRAW_STRING,INST_CMD_WIDTH'd11,Draw string using loaded font.

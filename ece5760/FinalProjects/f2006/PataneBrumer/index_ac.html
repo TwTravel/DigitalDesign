@@ -1,0 +1,220 @@
+<html>
+<head><title>ECE 576 - HRTF - Brett Patane & Eric Brumer</title></head>
+<body bgcolor='#AABBEE'>
+
+<table width=900 align=center border=1 cellspacing=0 cellpadding=4 bgcolor=white><tr><td>
+<div align='center'>
+<font size=+3>
+Head Related Transfer Function<br>
+ECE 576 - Fall 2006<br>
+Brett Patane & Eric Brumer<br>
+</font>
+<hr>
+<a href='index.html'>Introduction & Architecture</a> &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+<a href='index_d.html'>Design</a> &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+<a href='index_ac.html'>Analysis & Conclusion</a> &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
+<a href='index_a.html'>Appendix</a>
+</div>
+</td></tr></table>
+
+<br>
+
+<table width=900 align=center border=1 cellspacing=0 cellpadding=4 bgcolor=white><tr><td>
+<h2>Analysis</h2>
+<p>We divide up our analysis by design component.</p>
+<h4>UART</h4>
+<p>Our UART implementation is very clean. Although we performed some reverse-engineering on the SOPC builder's
+UART, we managed to maintain a very simple interface for receiving data over the UART.</p>
+
+<p>The UART's main limitation is the fact that it has little bandwidth - a maximum data rate of 115kbps can be
+used on a modern PC. To transmit a 16-bit 48kHz audio stream, we need a data rate of at least 768kbps. Thus,
+we could not use RS-232 for streaming data, and could only use it for control. It is a shame, since using the
+UART is so easy!</p>
+
+<p>When filling the external SRAM with coefficients (by clicking the StuffIt! button in the GUI), we send 500kB
+worth of data over the serial port, which takes roughly one minute. This time would have been reduced to mere
+seconds if we used ethernet to initialize the external SRAM, but ethernet was a late addition to our project,
+and we did not want to upset our working implementation with the UART.</p>
+
+<p>Using RS-232 for changing azimuths and elevations (by clicking and dragging the mouse over the 2-D plot in
+the GUI) worked very well. Even with sudden mouse movements, the UART did not skip any azimuth or elevation
+commands, as shown using signal tap.</p>
+
+<p>On the PC side, we used the C# System.IO.Ports.SerialPort class, which works just like any other stream in C#
+(file streams, HTTP streams, etc) and are extremely easy to work with. For example, the following code
+sets up communication on COM1, and dumps the digits 0 through 99 to the serial port</p>
+
+<pre>System.IO.Ports.SerialPort s = new SerialPort("COM1", 115200, Partiy.None, 8, StopBits.One);
+s.Open(); // open serial port stream
+
+byte[] b = new byte[100];
+for (int i=0; i<100; i++) b[i] = i;
+
+s.Write(b, 0, 100); // write 100 bytes
+</pre>
+
+<h4>Ethernet</h4>
+<p>The ethernet was exceedingly painful to get working. It took between 50 and 60 man-hours to get the hardware
+ethernet driver fully working. The DM9000A chip uses indirect addressing for its internal registers, which
+<i>normally</i> would not complicate interfacing with the chip. However, akward setup/hold times, as well as
+long sequential procedures complicated matters.</p>
+
+<p>For example, to read the first data word (2-bytes) from an ethernet packet requires a read from the DM9000A's
+0xF0 register, followed a 4-cycle delay, followed by a read from the DM9000A's 0xF2 register. Then, to get subsequent
+words, we read DM9000A's 0xF2 register, with one cycle of delay in between reads. Handling cases such as these
+would be easy in a software driver (adding nops, and using loops). But in hardware it is very difficult, and as such
+our ethernet code is fairly ugly.</p>
+
+<p>Once the ethernet was working, however, it received the correct data from the PC, and performed sufficient for
+our read-only application. It was too complicated to implement flow control in the hardware ethernet driver, and
+as such we simply used the ethernet link as read-only, reading in audio data from the PC. The nature of the DM9000A
+is such that it will throw away any incoming frames once its buffer is full. Since we don't have a method for the DM9000A
+to tell the PC that its buffer is full, we have to ensure that the PC doesn't send more than 13kB of data at a time,
+and that the DM9000A's buffer is never full.</p>
+
+<p>It would have been orders of magnitude easier to use a NIOS II CPU running at high speed and done the ethernet driver
+in software.</p>
+
+<p>In any case, ethernet provides plenty of bandwidth for us to use in our system. For each mono, 16-bit, 48kHz audio stream
+we only need ~750kbps of throughput to transfer the data. Since ethernet runs at 100Mbit, there is plenty of room for
+expansion into many more streams.</p>
+
+<p>On the PC side, we found an ethernet driver online that allowed us to send raw data over ethernet. We were lucky to find
+this with a simple C# interface.</p>
+
+<h4>HRTF</h4>
+<p>Our HRTF design of separating the control logic from the filters themselves worked very well. On one hand, we had audio
+streams being filtered by our FIR filters, each using their own local coefficient RAMs and storing their own past samples.
+Interactions between the control updater and the FIR filters was simply a matter of changing the input to the local coefficient
+RAM output muxes, a single bit for each channel being sent to a filter. This let us completely decouple UART control from the
+audio streams, and worked very well.</p>
+
+<p>When we were designing our project, we were unsure if changing all of the filter coefficients in a single cycle would cause
+a noticeable change in audio quality. We thought there might be clicks, or volume fade-in's and fade-out's as our ears adjusted
+to the new azimuth and elevations. However, the system works smoothly, and there are <i>no</i> audible artifacts from changing
+azimuth and elevations, even if drastic changes are made to azimuths and elevations.</p>
+
+<p>The audio quality of our system varied depending on the audio stream, the subject's coefficients being used, and the music
+being listened to. For example, if we played the Windows 'ding' sound through the audio DAC, we could hear some <i>cracking</i>
+of the music whenever ding pulses began, no matter what the elevation or azimuth. But, if we play rock music, we only hear
+<i>cracking</i> at extreme azimuths and elevations (near the boundary of the 2-D plot in the GUI). This can be attributed to
+one or more reasons:</p>
+
+<OL>
+<LI>Our filter coefficients (quantized down to 16-bit fixed point) may not respond well to high frequencies. So, the ding,
+containing some high frequencies could be causing the crackle. A way to test this would be to generate a DDS sine wave
+and set that as input to the filter and listen for cracking as you vary the frequency. However, since we are using 48kHz
+audio, there is a range as to what resolution sine wave is possible to generate (with a 256-entry sine table, about 190Hz).
+One could bypass the audio codec and directly use the AUDIO DAC for such a test, however.</LI>
+<LI>Some high frequency components of the rock music <i>are</i> cracking, but the cracking is being drowned out by the
+rest of the higher-quality music output from the filters.</LI>
+<LI>At the extreme azimuths and elevations, second-order effects potentially play a more significant role than in non-extreme
+regions. For example, humans generally have higher sensitivity in the azimuth as opposed to in elevation (presumably because
+our ears are on the left and right sides of our head, not on the top and bottom). So, the shape of our ears (both inside and
+outside the head), as well as diffraction caused by our head and shoulders play more of an effect in dealing with elevations.
+These second-order effects appear as smaller changes in the filter coefficients, which due to our quantization may not filter
+correctly. A way to check this would be to move to 32-bit filters and see if cracking remains in the extreme azimuths and elevations.</LI>
+</OL>
+
+<p>Playing multiple audio streams through our filter was an interesting experience. In a non-HRTF audio system, if two songs are
+being played through the same set of headphones, it is hard to separate one band from the other. However, using our system, if
+we positioned one audio stream to our upper right, for example, and positioned the other audio stream to our lower left, we could
+<i>clearly</i> hear two bands, as if they were playing in the same room.</p>
+
+<p>This effect could be extended to speech as well. In a room with many people holding many conversations (coming from different
+locations), the human brain is able to distinguish between conversations based on the fact that people are positioned differently
+in the room. Our HRTF system is able to mimic this, where a normal audio recording of many conversations will yield uncomprehensible
+audio.</p>
+
+<h4>Coefficients & Demoing Our Project</h4>
+
+<p>The full set of UC Davis coefficient contained 25 azimuths and 50 elevations (where we skip every other elevation, using only 25).
+We could have fit the entire coefficient set (~1MB) on the DE2's external SDRAM chip (8MB), but this would require an SDRAM controller,
+as using the SDRAM is non-trivial. However, by using half the elevations we bring our total coefficient table size to 500kB, which fits
+on the external SRAM (512kB) which is extremely simple to use.</p>
+
+<p>We made some interesting observations concerning our use of coefficients and the user listening to the audio. We found that UC Davis subject
+165's coefficients worked fairly well for both Eric & Brett, fairly well for Professor Land, and somewhat poorly for our TA, Paul Chen. Subject
+165 is one of the mannequins used in the UC Davis experiments, and we thought it would be representative of a larger population (compared to
+human subjects), but this turned out not to work as well as we thought it would.</p>
+
+<p>Upon further investigation, we found that Professor Land's ears are larger than Eric's & Brett's, and that Paul's ears are smaller. This
+would explain the discrepancy in the effectiveness of subject 165's coefficients. We tried the UC Davis subject 021 (mannequin with a small
+pinna) but again, primary effects (azimuth changes) were noticable, but secondary effects (elevations) did not work as well as they would have
+if we had coefficients reflective of Paul's ear shape.</p>
+
+<h4>Switches & Buttons</h4>
+<p>We used most of the switches and keys on the DE2 as debug mechanisms during the development of our project. The switches and buttons operate
+as follows:</p>
+
+<UL>
+  <LI>Key[0] is a global reset, and must be performed once the FPGA has been programmed. This resets all of our control updater state machines,
+  as well as the UART and ethernet interfacing state machines.</LI>
+  <LI>Key[2] starts the ethernet initialization routine. This must be performed after a reset (Key[0]). This causes the DM9000A to initialize,
+  and the ethernet power on light (green LED) turns on after successfull initialization execution.</LI>
+  <LI>SW[16] was used to debug sampling of the DM9000A at 48kHz. For our design we use the audio_in_ready signal to cause our ethernet interfacing
+  logic to read the DM9000A and read the first sample from the receive buffer. However, we also tried using a hand-made 48kHz pulse using a counter
+  and the DE2's 50MHz clock as a test. Both methods work fine, but we left our debug 48kHz in.</LI>
+  <LI>To facilitate debugging the DM9000A we use switches and Key[3] to read and write to the registers of the ethernet chip as follows:
+      <UL>
+      <LI>SW[7:0] is the address of the DM9000A register we are reading/writing to.</LI>
+      <LI>SW[17] chooses whether or not we are reading or writing data to the register specified in SW[7:0]. In the up position we are writing,
+      and in the down position we are reading.</LI>
+      <LI>Key[3] initiates the transaction.</LI>
+      </UL>
+      If we are performing a write, the data we are writing to the register (specified in SW[7:0]) is contained in latches built into the Verilog code.
+      So, if we write to address 0x05, we are writing the data 0x03 to enable receiving and promiscuous mode.
+  </LI>
+</UL>
+
+<h4>Chip Utilization</h4>
+<p>Our chip utilization using 2 audio streams (and thus 4 filters) is:</p>
+
+<UL>
+  <LI>4% of the total logic</LI>
+  <LI>12% of the total M4K blocks on the Cyclone II</LI>
+  <LI>11 DSP elements used (each filter uses two 9x9 multiplies, and the coefficient updater uses three 9x9 multipliers for the external SRAM address calculation)</LI>
+</UL>
+<p>The chip utilization is <i>insignificant</i>! We can very easily add another 10-15 audio streams without any modifications to our design. It is possible
+to achieve more streams (upwards of 100) if we make some changes to our storage techniques. For example, if we needed more multiply units, we could
+serialize some of the FIR filter multiplications (as opposed to performing all of them in parallel) which would require another state machine, as
+well as a faster clock. We could run our logic off the 50MHz clock for more performance if necessary. There are many other optimizations which can
+be done, including transmitting more information (such as coeffients or previous samples) over ethernet, as we are not limited in ethernet bandwidth.</p>
+
+<p>For reference, we used 1239 logic elements in our design, approximately 200 of that dedicated to ethernet.  A small NIOS II processor uses only 600-700 logic elements
+ and so we would advise using a NIOS II to handle the ethernet interface instead of pure hardware.  For minimal additional hardware, ethernet processing should be greatly simplified.</p>
+
+<h4>Other Design Considerations</h4>
+<p>We considered using USB to transfer our data, as that would provide enough bandwidth for several extra audio stream to be used in our system.
+However, in looking up the USB hardware driver (and also using the USB port on a PC to send the audio stream) this seemed significantly more difficult
+than using the ethernet port.</p>
+
+<p>We also considered transmitting two streams of data into the audio ADC, by putting a mono audio stream into the left channel of the input audio,
+and another stream into the right channel. However, this did not add much value to our project as this approach is not scalable to any more than
+2 streams. Our goal was to create a many-stream scalable system, and adding another stream in the audio ADC input did little for that goal.</p>
+
+<h4>Interesting...</h4>
+<p>During our many hours of development and testing, we would occasionally have the headphones on (attached to the DE2 audio output) while
+the audio input streams were null. Basically, we should have been listening to nothing at all, but (presumably) interference from the DE2 was
+causing a slight hum in the audio output, which we could hear through the headphones. This is expected, as on a board containing many electronic
+components operating at various frequencies such as the DE2.</p>
+<p>What was not expected is that we could <i>hear</i> what the DE2 was doing. As we were waiting for a trigger in Signal Tap, the hum
+would get loud, right up until Signal Tap triggered, and the hum volume went down. This has no affect to our HRTF system, as the hum is
+fairly quiet, but we thought it was interesting enough to write in this report.</p>
+
+<h2>Conclusion</h2>
+<p>We are very pleased with our project. We were able to get multiple streams (over multiple mediums) to work, and for them to be positioned correctly.
+We were able to <i>clearly</i> distinguish two bands as they were positioned in different locations, where it would be very difficult if they were
+not positioned at all.</p>
+
+<p>Our architecture need not deal with HRTF alone. Currently, we have real-time filtering of 16-bit samples with 200-tap FIR filters. These can
+be used for anything at all! In fact, with a modification that the FPGA is able to reprogram its own coefficients through a ROM, it is then
+possible to create a complete filtering system capable of non-adaptive and adaptive filtering!</p>
+
+<p>Lastly, we both had a great time working on the project. Neither of us had really worked with audio filtering before (or filtering in general),
+so we both learned a great deal. Also, working with the DE2 for real-time filtering was more interesting than performing audio simulations using
+MATLAB.</p>
+
+</td></tr></table>
+</body>
+</html>

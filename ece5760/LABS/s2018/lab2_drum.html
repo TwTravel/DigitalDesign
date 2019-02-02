@@ -1,0 +1,168 @@
+
+<html>
+<head>
+<title>ece5760 Lab 2</title>
+</head>
+
+<body>
+<h2> ECE 5760: Laboratory 2 </h2> 
+<h2> Multiprocessor Drum Synthesis. </h2>
+
+<b> Introduction. </b> 
+<p> For this exercise, you will simulate the 2D wave equation on a square mesh in realtime to produce drum-like sounds. <br>
+  This year we will add a <a href="MarognaAvanziniBank_tension_modulation.pdf">nonlinear effect</a> related to the instantaneous tension in the mesh.
+  <br>
+  We will also compare drum sizes that can be simulated in realtime using HPS and FPGA.
+<b><hr>
+Procedure:</b> 
+<p> Read <a href="WaveFDsoln.pdf"><em>Study Notes on Numerical Solutions of the Wave Equation with the Finite Difference Method</em></a>. The main result you will need to simulate is equation 2.18. A <a href="FDfreeEdge2order.m">matlab program</a> gives a sequential version of the algorithm and plots the Fourier modes of the drum. Another <a href="FDfreeEdgeMiddleC.m">version</a> is tuned to middle C (261 Hz). You can see in the figure below that the simulated sound spectrum (blue) matches the theoretical drum modes (red) up to about mode 8 or 9 (see <a href="vanduyne93physical.pdf"><em>Physical modeling with a 2D waveguide mesh </em></a>for details) .  The theoretical square drum mode frequencies follow the ratio sequence: <br>
+  <code>sqrt(m+n) where m,n=1,2,3,...</code><br>
+  Where the first term (<code>sqrt(2)</code>) corresponds to the fundamental mode of the drum.<br>
+  The first few modes are <code>1, sqrt(5)/sqrt(2), 2, sqrt(10)/sqrt(2), sqrt(13)/sqrt(2), sqrt(17)/sqrt(2)</code>.<br>
+  <a href="MiddleCspectrum.png"><img src="MiddleCspectrumSmall.png" width="400" height="178" border="0"></a>
+<p>Modifying the boundary conditions, damping, wave speed, drum size, and distrubution of input energy can modifiy the sound of the simulation from <a href="BassDrum.wav">drum-like</a>, to <a href="chime.wav">chime-like</a>, to <a href="Gong.wav">gong-like</a> or <a href="bell.wav">bell-like</a>. You can modify the program further to include frequency-dependent damping and other effects. This <a href="FD2orderXY.m">version</a> simluates a long, thin bar struck at one end. 
+<p>Adding tension modulation allows pitch bending observed in a real drum after a large amplitude input. The large amplitude means that the membrane is stretched more, and therefore the speed of propagation (and therefore pitch) is increased. This <a href="FDfreeEdge_tension_mod.m">matlab code</a> produces an exagerated pitch effect with initial high amplitude. See also <a href="../../../../../../dafx09.como.polimi.it/proceedings/papers/paper_77.pdf">PHYSICALLY-BASED SYNTHESIS OF NONLINEAR CIRCULAR MEMBRANES</a> equation 10.<p>You will probably want to read 
+<ul>
+  <li><a href="FPGAfd.pdf"><em>IMPLEMENTATION OF FINITE DIFFERENCE SCHEMES FOR THE WAVE EQUATION</em></a><em> <a href="FPGAfd.pdf">ON FPGA</a></em> </li>
+  <li><a href="FPGAparallel.pdf"><em>PARALLEL IMPLEMENTATION OF FINITE DIFFERENCE SCHEMES FOR THE PLATE EQUATION ON A FPGA-BASED MULTI-PROCESSOR ARRAY</em></a> </li>
+  <li><a href="../../../../../../ieeexplore.ieee.org/stamp/stamp.jsp@arnumber=1508533">Time Domain Numerical Simulation for Transient Wave Equations on Reconfigurable Coprocessor Platform</a></li>
+  <li><a href="../../../../../../ieeexplore.ieee.org/xpls/abs_all.jsp@arnumber=4359511">Design Methodology for Real-Time FPGA-Based Sound Synthesis</a></li>
+</ul>
+<p>for ideas on parallelization.</p>
+<p>The hardware audio interface is a <a href="../../DE2_Datasheets/Audio CODEC/WM8731_WM8731L.pdf">Wolfson
+WM8731</a> codec which is controlled by an I2C interface. </p>
+<ul>
+  <li>The Qsys <a href="AVconfig_dialog.PNG">AVconfig module</a> abstracts away much of the codec detail. </li>
+  <li>The codec fast data transfer hardware is hidden behind Altera IP called the <a href="../../DE1_SOC/Audio_core.pdf">University Audio Core</a> for Qsys (<a href="Audio_dialog.PNG">configuration interface</a>). </li>
+  <li>An example using the audio core is near the bottom of the <a href="../../DE1_SOC/HPS_peripherials/Bus_master_slave_index.html">Avalon Bus master</a> page.<br>
+</ul>
+	  
+    <p>Cyclone5 <a href="../../DE1_SOC/cyclone5_handbook.pdf">handbook</a> describing available hardware, <strong>but here is a <a href="../../DE1_SOC/CycloneV_SE_A5.PNG">summary</a></strong>.</p>
+    <ul>
+      <li>Also read documentation on <a href="Incremental_compile.pdf">incremental compilation</a>. Some compile times may be <em>very</em> long.</li>
+      <li>To avoid long compile read <a href="../../ModelSim/index.html">Using ModelSim</a> to test node computations </li>
+      <li>You may want to read the <a href="../../../../../../www.sutherland-hdl.com/pdfs/verilog_2001_ref_guide.pdf">Evans and Sutherland HDL guide</a>, chapter 9, for info on using generate. (<a href="../../Verilog/generate_example.txt">example</a>)</li>
+      <li><a href="../../DE1_SOC/ug_ram_rom.pdf">Cyclone5 memory blocks</a>.
+        <ul>
+          <li>Cyclone5 <a href="../../DE1_SOC/DSP_wp-01159-arriav-cyclonev-dsp.pdf">DSP blocks description</a> and <a href="../../DE1_SOC/ug_lpm_alt_mfug.pdf">arithmetic megafunctions</a> </li>
+          <li><a href="../../DE1_SOC/HDL_style_qts_qii51007.pdf">HDL style</a> -- inferring memory and DSP blocks, and a <a href="../../../../../../https@piazza.com/class/iwxtrp0baxh1z@cid=50">post</a> from Mohammad</li>
+          <li><a href="../../../../../../quartushelp.altera.com/15.0/mergedProjects/hdl/vlog/vlog_file_dir.htm">Verilog HDL Synthesis Attributes and Directives</a><br>
+            <a href="../../../../../../quartushelp.altera.com/15.0/mergedProjects/hdl/vlog/vlog_file_dir_ram.htm">-- RAM-style synthesis parameter</a><br>
+            <a href="../../../../../../quartushelp.altera.com/15.0/mergedProjects/hdl/vlog/vlog_file_dir_multstyle.htm">-- MULT-style synthesis parameter</a> 
+          </li>
+        </ul>
+      </li>
+</ul>
+      </li>
+    </ul>
+<p><strong>Verilog Testing:</strong></p>
+<ol>
+  <li>Simulate one node with four zero-value boundary conditions .<br>
+    Result should be simple harmonic motion. Remember that rho&lt;0.5. Start with rho=1/16. <br>
+    Note that when rho is close to the limit of 0.5 that the solution has a <em>very high natural frequency</em>, <br>
+    so that the sine wave is on the border of aliasing, and therefore looks like a square wave. <br>
+    Assuming1:17 fixed point, start with initial conditions, u<sup>n</sup>=u<sup>n-1</sup> and amplitude about 1/8 full scale.<br>
+  Compare to <a href="lab2_one_node.m">matlab solution</a>.<a href="lab2_single_node_rho1.png"> rho=0.5</a>, <a href="lab2_single_node_rho2.png">rho=0.0625</a></li>
+  <li>Get generate statement running and simulate 10x10 array for demo in first lab.<br>
+  Compare to Matlab solution.</li>
+  <li>Get 10x10 array running using the audio codec on the FPGA for demo in second lab.<br>
+    You will want to refer to the <a href="../../DE1_SOC/HPS_peripherials/Bus_master_slave_index.html">Bus Master</a> page, <em>Audio output bus_master</em> example.<br>
+    Also refer to 
+    the <a href="../../DE1_SOC/HPS_peripherials/DSP_index.html">DSP</a> page.<br>
+  </li>
+  <li>Scale up parallel processor to 24x24 or greater. Required audio output 
+  with nonlinear rho.</li>
+</ol>
+<p><strong>HPS Testing:</strong></p>
+<ol>
+  <li>A good place to start for audio output from HPS is to search for <em>Using two ARM processors with IPC to display time while writing video and playing a tone</em> on the <a href="../../DE1_SOC/HPS_peripherials/univ_pgm_computer.index.html">DE1-SoC: University Computer</a> page. The <a href="../../DE1_SOC/DE1_soc_computer/Audio_video/media_brl4_7_audio_drum.c"><strong>audio code</strong></a> example  supports a finite difference drum scheme. The drum coded   is a linear system with coefficients chosen so that cheap fixed-point   shifts could be used to generate the 32-bit sound samples at   48Ksamples/sec. At -O3 optimization, I could just fit a 30x30 FDTD drum   into the 20.8 microsecond systhesis time frame. With nonlinear rho, the maximum size was around 25x25 grid. <a href="lab2_nonlinear_drum2.mp3"><strong>MP3</strong></a> generated by HPS on a 25x25 grid, with nonlinear rho. (<a href="lab2_nonlinear_drum2.wav">wav</a>)<br>
+  </li>
+  <li>Modify the code for the nonlinear rho effect. This will require rewriting the solver to use fixed point multiplies.<br>
+  </li>
+  <li>Get a finite difference scheme running using the audio codec on the FPGA for demo in second lab.<br>
+    Required audio output 
+    with nonlinear rho.</li>
+  <li>Scale up HPS solution  until it is no longer realtime.</li>
+</ol>
+<p><strong>Student examples running on FPGA:</strong></p>
+<ul>
+  <li>2008: Matt Meister and Cathy Chen <a href="../../StudentWork/CathyChen/DrumExample.wav">wav file</a>. </li>
+  <li>2008: Parker Evans and Jordan  Crittenden <a href="../../StudentWork/ParkerEvans/beatlab4.wav">wav1</a>, <a href="../../StudentWork/ParkerEvans/beat2lab4.wav">wav2</a> </li>
+  <li>2010: Skyler Schneider <a href="../../StudentWork/ss868/drum/bass.wav">wav</a> base drum <br>
+  with n = 16 ,rho = 0.05,  eta = 2e-4, alpha = 0.1, boundaryGain = 0.0, node hit = (8, 8), node probed = (8, 8)</li>
+  <li>2010: Peter Kung and  	 Jsoon Kim, rho bit shifted =<a href="../../StudentWork/pfk5/Rho6.wma"> 6</a>, <a href="../../StudentWork/pfk5/Rho8.wma">8</a>, <a href="../../StudentWork/pfk5/Rho10.wma">10</a>, <a href="../../StudentWork/pfk5/Rho11.wma">11</a>, <a href="../../StudentWork/pfk5/Rho14.wma">14</a></li>
+  <li>2010: Kerran Flanigan, Tom Gowing, Jeff Yates, <a href="../../StudentWork/kaf42/chickenCan.wav">chickencan</a>, <a href="../../StudentWork/kaf42/glassHit.wav">glasshit</a>, <a href="../../StudentWork/kaf42/littleBongo.wav">littlebongo</a>, <a href="../../StudentWork/kaf42/miniBell.wav">minibell</a></li>
+  <li>2011: Jinda Cui and Jiawei Yang, <a href="../../StudentWork/drum2011/drum.wma">drum</a>, <a href="../../StudentWork/drum2011/bass_drum.wma">bass drum</a>, <a href="../../StudentWork/drum2011/knock_a_bowl.wma">bowl</a></li>
+  <li>2011: Weiqing Li and Luke 	Ackerman, <a href="../../StudentWork/drum2011/low.wma">low</a>, <a href="../../StudentWork/drum2011/high.wma">high</a></li>
+  <li>2011: Jo&atilde;o Diogo Falc&atilde;o, <a href="../../StudentWork/drum2011/growinggrig.wav">growing grid</a>, <a href="../../StudentWork/drum2011/oldmacd.wav">old MacDonald</a>. <br>
+  The growing grid starts at 7*34*4=952 nodes, (#columns*#lines*symmetry), and ends at 254*34*4=34544 nodes. This is with Rho=0.5 and Eta=0.000244.</li>
+  <li>2014 <span aria-label="Saisrinivasan Mohankumar _3Csm2354_40cornell.edu>. Press Enter key to open contact card" role="heading" tabindex="0" autoid="_n_L1">Saisrinivasan Mohankumar</span>, Ackerley Tng, Ankur Thakkar, eta = 0.0002, rho = 0.5 and  0.25, boundary gain =0, Number of nodes = 89x257x2 ( rows x colums x symmetry) = 45746 nodes.<br>
+  <a href="../../StudentWork/sm2354/lower_pitch.wav">Lower</a>, <a href="../../StudentWork/sm2354/higher_pitch.wav">Higher</a></li>
+  <li>Christine Soong, <a href="../../StudentWork/C_Soong/lamb.wav">Mary had a little lamb</a></li>
+</ul>
+<p>&nbsp;</p>
+<hr>
+<p><b> Assignment</b></p>
+<p><strong>Weekly check points</strong></p>
+<ol>
+  <li>Week 1: <br>
+    -- 
+    Simulate a 10x10  (or greater) linear grid to produce a sound by exporting the wave file to matlab.<br>
+    -- Show the time that the FPGA uses to solve the audio sample. <br>
+    -- Also demo the HPS producing a nonlinear drum sound through the FPGA audio codec. <br>
+  -- Show the time that the HPS uses to solve the audio sample. </li>
+  <li>Week 2: <br>
+    -- 
+  Simulate the nonlinear PDE solver  for a 24x24  (or greater) grid using no more than 174 multipliers.
+  <br>
+    -- Use the simulation waveform
+    to produce a sound in matlab. <br>
+    -- Demo a 10x10 linear solver array running using the audio codec on the FPGA    <br>
+  </li>
+  <li>Week 3: demo full FPGA system below and compare to HPS.</li>
+</ol>
+<p><strong>Full system</strong></p>
+<ol>
+  <li>  Build a realtime drum solver which produces sound from the audio codec interface. 
+    <br>
+    Minimum FPGA grid size for full credit  should 
+  be bigger than 24x24, the size that can be solved by the HPS in realtime. <br>
+    The grid should have no more than 4:1 aspect ratio.<br>
+    Grid expansion via symmetry does not count for size.
+  <li>The solver on the FPGA should solve the 2d wave equation to produce selectable effects. <br>
+    A minimum of three buttons on the DE1-SoC should produce different timbers.<br>
+  Timber can be set by boundary condition, eta, rho, tension modulation, or number of nodes. <br>
+  At least one timber must include audible nonlinear tension modulation effects.
+  <li>There should be exactly one computational update of all the drum nodes for each audio sample. <br>
+    Last year the highest number of nodes was around 300,000 on DE1-SoC.<br>
+    Each sample that you calculate must be output to the audio codec. <br>
+    Each node simulated will require around 10 additions/multiplications. You may be able to use clever shifting schemes to avoid multiplys. Thus the computation rate will be about <br>
+ <code> 10*(number of wave equation nodes)*(audio sample frequency)</code> . <br>
+ For a minimal  24x24 grid you will need ~<code>276x10<sup>6</sup></code>
+operations/sec. Clearly some parallel processing will be necessary as you go to higher numbers of nodes. 
+  <li>You can use fine-grained parallelism or course-grained multiprocessors on the FPGA side.   
+  <li>Plot grid size versus compute time for at least 3 different drum sizes for both FPGA and HPS solvers.<br>
+    During the demo, prove to the TA that the computation finishes in less than 20.8 microseconds for the drum you demo.
+    <br>
+    At least one FPGA grid size should 
+  be bigger than the size that can be solved by the HPS in realtime.<li>Record the audio output back into matlab to show that your simulation matches drum modes (under the correct boundary conditions, etc). 
+</ol>
+    
+<p>Be prepared to demo your design to your TA in lab. </p>
+<p> Your written lab report should include the sections mentioned in the <a href="../../policy.html">policy page</a>, and :
+<ul>
+  <li>Mathematical considerations (what you actually implemented) 
+  <li>The  table of grid size versus compute time for both the FPGA solver and the HPS solver.
+    <br>
+    Do you see any cache-size effects on HPS? What is the effect of -O0 vs -O3?<br>
+    Are there any scaling surprizes in the FPGA?
+  <li> Your parallelization scheme   
+  <li>A plot of the power spectrum of your drum sounds 
+  for each different timber
+  <li> A heavily commented listing of your Verilog design (if you write a bus-master) and GCC  code (if you use HPS).  
+</ul>
+<hr>
+<br>
+<small> <font size="-1">Copyright Cornell University </font></small><!-- #BeginDate format:Am1 -->November 15, 2018<!-- #EndDate -->
+</body> </html>
+

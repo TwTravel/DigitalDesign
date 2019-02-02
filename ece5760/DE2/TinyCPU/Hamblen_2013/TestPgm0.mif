@@ -1,0 +1,21 @@
+DEPTH = 256;
+WIDTH = 16;
+  
+ADDRESS_RADIX = HEX;
+DATA_RADIX = HEX;
+   
+CONTENT
+BEGIN
+[00..FF]	:	0000;
+00	:	0200;	%  load initA % 
+01	:	0102;	%  store outval % 
+02	:	0200;	% init load initA % 
+03	:	0001;	% loop add incr % 
+04	:	0406;	%  jneg skip % 
+05	:	0303;	%  jump loop % 
+06	:	0202;	% skip load outval % 
+07	:	0001;	%  add incr % 
+08	:	0500;	%  out LEDs % 
+09	:	0102;	%  store outval % 
+0a	:	0302;	%  jump init % 
+END ;	

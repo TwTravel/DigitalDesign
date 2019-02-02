@@ -1,0 +1,100 @@
+DEPTH = 1024;
+WIDTH = 16;
+  
+ADDRESS_RADIX = HEX;
+DATA_RADIX = HEX;
+   
+CONTENT
+BEGIN
+[000..3FF]	:	0000;
+000	:	1000;	%  pushi 0 % 
+001	:	e001;	%  out greenLEDs % 
+002	:	1000;	%  pushi 0 % 
+003	:	3083;	%  pop counter1 % 
+004	:	0000;	% L1: nop  % 
+005	:	1001;	%  pushi forever % 
+006	:	5040;	%  jz L8 % 
+007	:	2083;	%  push counter1 % 
+008	:	9000;	%  pushpc  % 
+009	:	4040;	%  jmp inc % 
+00a	:	f013;	%  dup  % 
+00b	:	e000;	%  out redLEDs % 
+00c	:	3083;	%  pop counter1 % 
+00d	:	1001;	%  pushi 1 % 
+00e	:	3084;	%  pop counter2 % 
+00f	:	0000;	% L2: nop  % 
+010	:	2084;	%  push counter2 % 
+011	:	2000;	%  push 0 % 
+012	:	f00b;	%  ne  % 
+013	:	501A;	%  jz L3 % 
+014	:	2084;	%  push counter2 % 
+015	:	9000;	%  pushpc  % 
+016	:	4040;	%  jmp inc % 
+017	:	3084;	%  pop counter2 % 
+018	:	4010;	%  jmp L2 % 
+019	:	0000;	% L3: nop  % 
+01a	:	d001;	%  in keys % 
+01b	:	f011;	%  bnot  % 
+01c	:	100F;	%  pushi keymask % 
+01d	:	f005;	%  band  % 
+01e	:	1008;	%  pushi key3mask % 
+01f	:	f00a;	%  eq  % 
+020	:	5025;	%  jz L4 % 
+021	:	10FF;	%  pushi pattern2 % 
+022	:	e001;	%  out greenLEDs % 
+023	:	403E;	%  jmp L7 % 
+024	:	0000;	% L4: nop  % 
+025	:	100F;	%  pushi pattern3 % 
+026	:	e001;	%  out greenLEDs % 
+027	:	1001;	%  pushi sw0mask % 
+028	:	9000;	%  pushpc  % 
+029	:	404D;	%  jmp evalsw % 
+02a	:	5032;	%  jz L5 % 
+02b	:	10FF;	%  pushi pattern2 % 
+02c	:	1055;	%  pushi pattern % 
+02d	:	100F;	%  pushi pattern3 % 
+02e	:	f01b;	%  dnext  % 
+02f	:	f01f;	%  over  % 
+030	:	e001;	%  out greenLEDs % 
+031	:	0000;	% L5: nop  % 
+032	:	1002;	%  pushi sw1mask % 
+033	:	9000;	%  pushpc  % 
+034	:	404D;	%  jmp evalsw % 
+035	:	503D;	%  jz L6 % 
+036	:	1082;	%  pushi test % 
+037	:	1055;	%  pushi pattern % 
+038	:	8000;	%  st  % 
+039	:	1082;	%  pushi test % 
+03a	:	7000;	%  ld  % 
+03b	:	e001;	%  out greenLEDs % 
+03c	:	0000;	% L6: nop  % 
+03d	:	0000;	% L7: nop  % 
+03e	:	4005;	%  jmp L1 % 
+03f	:	0000;	% L8: nop  % 
+040	:	3080;	% inc: pop temp % 
+041	:	3081;	%  pop temp2 % 
+042	:	2080;	%  push temp % 
+043	:	2081;	%  push temp2 % 
+044	:	1001;	%  pushi 1 % 
+045	:	f000;	%  add  % 
+046	:	3080;	%  pop temp % 
+047	:	3081;	%  pop temp2 % 
+048	:	2080;	%  push temp % 
+049	:	2081;	%  push temp2 % 
+04a	:	1001;	%  pushi 1 % 
+04b	:	f000;	%  add  % 
+04c	:	9001;	%  poppc  % 
+04d	:	3080;	% evalsw: pop temp % 
+04e	:	3081;	%  pop temp2 % 
+04f	:	2080;	%  push temp % 
+050	:	2081;	%  push temp2 % 
+051	:	d000;	%  in switches % 
+052	:	f00a;	%  eq  % 
+053	:	3080;	%  pop temp % 
+054	:	3081;	%  pop temp2 % 
+055	:	2080;	%  push temp % 
+056	:	2081;	%  push temp2 % 
+057	:	1001;	%  pushi 1 % 
+058	:	f000;	%  add  % 
+059	:	9001;	%  poppc  % 
+END ;	

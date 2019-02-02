@@ -1,0 +1,135 @@
+
+<html>
+<head>
+<title>ece5760 Lab 2</title>
+<style type="text/css">
+.red {color: #F00;
+}
+</style>
+</head>
+
+<body>
+<h2> ECE 5760: Laboratory 2 </h2> 
+<h2> Hardware ODE solver with Nios II control. </h2>
+
+<b> Introduction. </b> 
+<p> For this exercise, you will simulate an analog system using a Digital Differential Analyzer (DDA) and control the function of the circuit with a NiosII cpu. The positions of the two particles will be plotted as a function of time on the VGA display. You can consider the DDA as a special purpose, reconfigurable, calculator controlled by the NioII.
+<b><hr>
+Procedure:</b> 
+<p> Read the <a href="../../../../../../instruct1.cit.cornell.edu/courses/ece576/DDA/index.htm">DDA page</a>. After reading the page introduction, the example code that you want to use is at the <em>end</em> of the page. <br>
+  The physical system you will simulate is the <a href="../../../../../../kaharris.org/teaching/216/Lectures/lec26/lec26.pdf">coupled, spring-mass system</a> shown below. <br>
+  The image is modified from a <a href="../../../../../../msemac.redwoods.edu/~darnold/math55/deproj/Sp00/SeanAlex/finalpaper.pdf">paper</a> by Alex Gagen and Sean Larson. <br>
+<img src="springmass.png" width="502" height="224">
+<p>The differential equations for this system are:
+<p><code>m(d<sup>2</sup>x<sub>1</sub>/dt<sup>2</sup>)  + k<sub>1</sub>(x<sub>1</sub>) &minus; k<sub>mid</sub>(x<sub>2</sub> &minus; x<sub>1</sub>) + D<sub>1</sub>(dx<sub>1</sub>/dt) = 0 <br>
+m(d<sup>2</sup>x<sub>2</sub>/dt<sup>2</sup>) - k<sub>2</sub>(x<sub>2</sub>) + k<sub>mid</sub>(x<sub>2</sub> &minus; x<sub>1</sub>) + D<sub>2</sub>(dx<sub>2</sub>/dt) = 0
+</code>
+<p> The<code> k's</code> are spring constants, <code>m</code> the mass, and <code>D's</code> the damping coefficients. The outputs are x<sub>1</sub> and x<sub>2</sub> which will depend on position and velocity initial condtions, as well as the equation constants.
+  
+  A matlab <a href="lab2_osc/Osc_driver.m">code</a> and <a href="lab2_osc/osc_fun.m">function</a> provides a reference solution, to which you will compare your solutions.  The image below is a typical output from the matlab program. <br>
+  Note that the matlab code includes cubic force terms for the springs:<br>
+  <code>spring_force1 = k1 * ((x(1)-left_wall) + k13*(x(1)-left_wall)^3)</code><br>
+You will have to add one such term (<code>k13</code>) in the assignment below.<br>
+  <img src="lab2_osc/matlab_output.png" width="889" height="320" alt="matlab example"><br>
+But in general the solutions are  linear combinations of symmetric and antisymmetric solutions. The anti-symmetric solution corresponds to masses moving in exactly the same directions at all times, so that the center spring stays at its rest length,<code> R</code>. If the two outer springs have equal <code>k</code> and rest length<code> L</code>, then at rest, <code>k*L=k<sub>mid</sub>*R</code> and<code> 2*L+R=2</code>. For example, if <code>k<sub>mid</sub>=k</code> then the distance betweent the two masses can stay at separation <code>0.67</code> indefinitely (first image below). If the two masses are started at symmetric positions (relative to zero), then they move in opposite directions at all times (second image).<br>
+<img src="lab2_osc/matlab_antisym.png" width="364" height="228" alt="antisymmetric">
+<img src="lab2_osc/matlab_sym.png" width="376" height="228" alt="symmetric">
+<p>The previous matlab program uses the high performance ode45 solver. On the FPGA you are going to be using simple Euler integration. <br>
+  This <a href="lab2_osc/Osc_Euler.m">matlab program</a> is coded to use Euler integration so that you can directly compare the the FPGA solution. The undamped solution is unstable, so a little damping is added.
+<p><strong>-- NiosII See also:</strong></p>
+<p>There are now three different versions of Quartus used in the lab. <br>
+You may need to search the Altera site for the tutorial corresponding to the version you decide to use.</p>
+<ul>
+  <li><a href="../../NiosII_doc/Video_q11.pdf">VGA for NiosII</a> -- <a href="video_core-use_notes.html">Use notes for 640x480 resolution</a></li>
+  <li><a href="../../../../../../ftp@ftp.altera.com/up/pub/Altera_Material/12.1/Tutorials/Verilog/SignalTap.pdf">Signal Tap logic analyser tutorial</a> (on chip)</li>
+  <li><a href="../../NiosII_doc/Quartus11_nios/Introduction_to_the_Altera_SOPC_Builder.pdf">Intro to SOPC builder</a></li>
+  <li><a href="../../../../../../https@www.altera.com/support/support-resources/design-examples/design-software/qsys/exm-qsys-tut.html">Qsys tutorial</a> (version 13 and up)</li>
+  <li><a href="../../NiosII_doc/Quartus11_nios/Using_the_SDRAM.pdf">Using SDRAM</a></li>
+  <li><a href="../../NiosII_doc/Quartus11_nios/Nios2_introduction.pdf">NiosII introduction</a></li>
+  <li><a href="../../NiosII_doc/Quartus11_nios/Altera_Monitor_Program.pdf">Altera Monitor Program</a></li>
+  <li><a href="../../NiosII_doc/Quartus11_nios/HAL_tutorial.pdf">HAL in Altera Monitor</a></li>
+  <li><a href="../../../../../../www.altera.com/literature/lit-nio2.jsp">NiosII Literature</a></li>
+  <li><a href="../../../../../../www.altera.com/literature/tt/tt_nios2_hardware_tutorial.pdf">NiosII hardware tutorial</a></li>
+  <li><a href="../../NiosII_doc/Nios_SW_handbook.pdf">Nios Software handbook</a>.</li>
+  <li><a href="../../../../../../www.altera.com/literature/ug/ug_embedded_ip.pdf">Embedded Peripheral Users Guide</a></li>
+  <li><a href="../../../../../../www.altera.com/literature/hb/qts/qts_qii51015.pdf">Incremental compilation for QuartusII</a></li>
+</ul>
+<p><strong>--Setting up Altera Monitor System</strong></p>
+<ol>
+  <li>Altera monitor is installed on the lab computers. On your own computer, download the executable from Altera<br>
+    Make sure that you choose the version that matches the version of QuartusII which you decide to use.</li>
+  <li>Install the executable. You will not be able to run it unless you ave previously installed QuartusII and the NiosIDE tools (for the same version).</li>
+  <li>When you run the monitor program in the lab, it may tell you that QuartusII is not installed. If so, open <code>control panel&gt;system&gt;advanced&gt;environment variables</code> and add a variable with name <code>QUARTUS_ROOTDIR</code> and value <code>c:\altera\11.0\quartus</code>.</li>
+  <li>Follow the directions for setting up a new project in <a href="../../NiosII_doc/Quartus11_nios/Altera_Monitor_Program.pdf">Altera Monitor Program</a>. Choose the C option which uses <code>program with device driver support</code>.</li>
+  <li>If you get the following message when downloading your program to the NiosII (when using SDRAM for the program):<br>
+    <pre>Using cable "USB-Blaster [USB-0]", device 1, instance 0x00
+Pausing target processor: not responding.
+Resetting and trying again: FAILED
+Leaving target processor paused&gt; </pre>
+    Then some suspects come to mind:
+    <ol type="a">
+      <li>You forgot to assign pins to the QuartusII project. </li>
+      <li>There is an incorrect or missing PLL file for SDRAM delay (use the megawizard to rebuild or generate a new PLL module as described in the <a href="../../DE2/tut_DE2_sdram_verilog.pdf">SDRAM tutorial</a>.) <strong>Special Note</strong>: The component <code>altpll</code> has changed between release 7 and 8 of Quartus. When defining a PLL for the phase-shifted SDRAM clock <code>c0</code> (as explained in the <a href="../../DE2/tut_DE2_sdram_verilog.pdf">SDRAM tutorial</a>), you need to add an <code>c1</code> output to the PLL with zero phase-shift and use this signal for the NiosII clock! If you don't do this, the program will load normally, with no error messages, <strong>but the program will not run</strong>! A new, corrected project is zipped <a href="../../NiosII_C/NiosSDRAMv8.zip">here</a>.</li>
+      <li>There is a misspelled control line in the Nios module interface, usually the clock or reset signal. </li>
+      <li>The reset line is being held low/high by incorrect logic. <br>
+        Using <code>reset=~KEY[0]</code> will <em>kill</em> the processor! Whereas using <code>reset=KEY[0]</code> is fine.<em></em></li>
+      <li>Check the size of the compiled hardware design. If the size is less than about 2000 logic blocks, then the Nios was probably optimized away. Check all the warnings to make sure no NiosII registers were <em>reduced</em>.</li>
+    </ol>
+  </li>
+</ol>
+<p><strong>--Using   QuartusII SignalTap tool to verify your design.</strong></p>
+<p>From the <a href="../../../../../../ftp@ftp.altera.com/up/pub/Altera_Material/12.1/Tutorials/Verilog/SignalTap.pdf">Altera Tutorial</a>: The SignalTap II Embedded Logic Analyzer is a system-level debugging tool that captures and displays signals in circuits designed<br>
+  for implementation in Altera’s FPGAs. SignalTap II  can be used to capture and display signals in real time in any FPGA design (some M4K blocks are used).<br>
+  You can:</p>
+<ul>
+  <li>Probe signals using the SignalTap software.</li>
+  <li>Set up triggers to specify when data is to be captured.</li>
+  <li>Configure  Sample Depth and Buffer Acquisition Modes using on-chip memory.</li>
+  <li>Configure QuartusII to keep registers which are otherwise optimized away.<br>
+  </li>
+</ul>
+<p></p>
+<p><a href="../../StudentWork/Spring_mass/20160304_104159.mp4">Example from 2016</a> by Tahmid Mahbub, Manish Patel, Matt Filipek
+<hr>
+<b> Assignment</b>
+<ol>
+  <li>  Build a DDA which simulates a coupled spring-mass system as described above.
+    <br>
+    -- Choose the spring constants, masses, and time step so that the natural frequencies of the system are around 500 Hz. <br>
+  -- Scale the amplitude so that the integrators stay in range <code>(+/-1</code>).<br>
+  -- Scale time so that the spring constants 
+   stay in range <code>(+/-1</code>).<br>
+  -- You can set the mass to a constant <code>m=1</code> .
+  
+  <li>Monitor the two position variables using a VGA output of x<sub>1</sub> and x<sub>2</sub> versus time. <br>
+    -- 
+    The display should look much like the matlab plot above.<br>
+    -- Scale the display so that the amplitude range takes up about one half of the VGA vertical resolution.<br>
+    -- The horiziontal VGA coordinate should be in integrator time steps
+    (or a small multiple of the time step) so as to show a few cycles.<br>
+    -- The display should be erased when a new simulation starts. It should freeze
+  when the simulation stops.
+  <li> Build a NioII cpu and program it to allow an operator to use a serial console to:<br>
+    -- Set the four initial conditions of the simulation.<br>
+    -- Set the three linear spring constants.
+    <br>
+    -- Start/Stop the simulation.<br>
+    -- Turn on/off a cubic spring term for spring 1 with a value  of about the same as the linear term.
+</ol>
+    
+<p>Be prepared to demo your design to your TA in lab. You will be expected to show:<br>
+-- Set arbitrrary initial conditions and all three spring constants<br>
+-- 
+Symmetric and antisymmetric modes with and without the cubic spring term.<code> </code></p>
+<p> Your written lab report should include: 
+<ul>
+  <li>Mathematical considerations (type of integrator, error expected/measured, approximations) 
+  <li>screen shots of the VGA<li>How you implemented the  DDA circuits. 
+  <li> A heavily commented listing of your Verilog design and GCC  code.  
+</ul>
+<hr>
+<br>
+<small> <font size="-1">Copyright Cornell University </font></small> 
+<!-- #BeginDate format:Am1 -->March 4, 2016<!-- #EndDate -->
+</body> </html>
+

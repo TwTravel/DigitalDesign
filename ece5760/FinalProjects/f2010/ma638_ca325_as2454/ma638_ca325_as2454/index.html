@@ -1,0 +1,251 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+<title>Cornell ECE 5760-Final Project: PID Controller</title><style type="text/css">
+<!--
+body {
+	background-color: #CCCCCC;
+}
+-->
+</style></head>
+
+<body>
+<div align="center">
+  <table width="870" border="1">
+    <tr>
+      <th width="860" bgcolor="#F0F0F0" scope="row"><h1 align="center"><a name="top" id="top"></a>ECE 5760: Final Project (Fall 2010) </h1>
+        <h1 align="center">PID Controller on FPGA for  Temperature Control</h1>
+        <p align="center">By</p>
+        <p align="center"><em>Anandram Sundar (as2454) </em><br />
+            <em>&nbsp;Muneeb Akram (ma638)</em><br />
+      <em>Chandrashekar Anand  (ca325)</em></p>
+      </th>
+    </tr>
+  </table>
+  <table width="866" border="1" cellpadding="5">
+    <tr>
+      <th width="138" valign="top" bgcolor="#F0F0F0" scope="row"><div align="left">
+        <p><a href="#Introduction">Introduction</a><a href="#introduction"></a></p>
+        <p><a href="#HighLevelDesign">High Level Design</a></p>
+        <p><a href="#Modeling">Modeling</a></p>
+        <p><a href="#Hardware">Hardware/Software</a></p>
+        <p><a href="#Results">Results</a></p>
+        <p><a href="#Testing">Testing and Development </a></p>
+        <p><a href="#Conclusion">Conclusion</a></p>
+        <p><a href="#Acknowledgements">Acknowledgements</a><a href="#Thanks"></a></p>
+        <p><a href="#Appendix">Appendix</a></p>
+      </div></th>
+      <td width="712" valign="top" bgcolor="#F0F0F0"><h2 align="left">Introduction<a name="Introduction" id="Introduction"></a></h2>
+        <p align="justify">The objective of this project was to implement a digital PID  controller on an FPGA for a control application. We designed a controller to  track and maintain a set point temperature of a water tank with lowest possible  overshoot while maintaining maximum possible rise time. Multiple controllers  and heaters were used to efficiently control the temperature. We used MATLAB to  design our controller and develop a model of our system from experimental data.  The heaters were driven using a PWM signal from the FPGA that was amplified  using BUZ 73 transistors.</p>
+        <p align="justify">          The motivation behind using FPGA to implement a PID  controller rather than microcontrollers or DSPs is because it provides a good  balance between performance and cost. Using microcontrollers, although they may  be cheaper do not provide enough processing power to effectively perform complex  calculations in real-time. Digital signal processors can implement complex  algorithms quickly but are expensive. </p>
+        <p>&nbsp;</p>
+        <h2 align="left">High Level Design<a name="HighLevelDesign" id="HighLevelDesign"></a></h2>
+      <p align="justify">The figure below shows the top-level block diagram of the  system. Our controller and water heater are connected in a closed loop configuration  where the temperature reading from the sensors are fed back to the controller  that adjusts the output to accommodate for the error. </p>
+      <p align="center"><img src="block_diagram_1.jpg" width="709" height="173" /></p>
+      <p align="left">&nbsp;</p>
+      <h3 align="left"><em>PID Controller</em></h3>
+      <p align="justify">The PID controller was implemented on the FPGA using NIOS. A  PID controller provides compensation to an existing system by trying to  minimize the error between the desired output and actual output. It does this  by adjusting the process inputs. A PID controller consists of three forms of  compensation, namely, Proportional, Integral and Derivative. <br />
+        The advantages of using a PID controller are many fold.  Combining the three forms of compensations we are able to stabilize a  potentially unstable system, minimize steady state error and increase system  speed respectively. </p>
+      <p align="justify">Below is a block diagram of a PID controller:</p>
+      <p align="center"><img src="block_diagram_2.jpg" width="502" height="230" /></p>
+      <p align="justify">To implement this on an FPGA,  we had to perform the calculations in discrete time. We read the temperatures  at regular time intervals and compared them with the set point. The error value  was then fed to the controller that responded accordingly to try to eliminate  the error.</p>
+      <p align="left">&nbsp;</p>
+      <h3 align="left"><em>Water Heating System</em></h3>
+      <p align="justify">Heating a water tank to a desired temperature and maintaining that  temperature within strict tolerance levels is difficult. This is largely due to  a large overshoot. When a desired temperature is reached, the heater is turned  off but continues to dissipate heat to the water tank. This raises the  temperature beyond the desired point. There are a number of ways we can deal  with this problem. One ways is through the use of a predictive controller.  Another option would be to have multiple heat sources and multiple temperature  sensors, controlling each heater separately based on the minor adjustments  required.</p>
+      <p align="left">Below is a diagram of our water tank: </p>
+      <p align="center"><img src="water_tank_diagram.jpg" width="599" height="162" /></p>
+      <p align="left"><a href="#top">Top</a></p>
+      <p align="left">&nbsp;</p>
+      <h2 align="left">Modeling<a name="Modeling" id="Modeling"></a></h2>
+      <p align="justify">In order to design an optimum controller we needed an  accurate system model. We developed our model based on experimental data and  using MATLAB curve fitting tool. We gave the heaters a step input of 5V and  monitored the temperature of water over time. We quickly noticed that our  system was too slow and we observed approximately one degree rise in  temperature every 4 minutes. This was mainly because of our power supply limitation  and inadequate power from the resistive heaters. To worsen the situation our  water tank was of a large capacity. <br />
+        Nonetheless, we took readings for approximately 1 hour and  left the system running for another hour and a half in the hope of reaching steady  state. Our system still had not reached steady state and therefore we decided  to model the system based on whatever data we had already accumulated. We made  the assumption that we had enough data to model the system accurately for our  operating region.</p>
+      <p align="left"> Below is a plot of our data using excel:</p>
+      <p align="center"><img src="plot.jpg" width="608" height="304" /></p>
+      <p align="left">Below is a best fit curve obtained from MATLAB from our  experimental data:</p>
+      <p align="center"><img src="best_fit.jpg" width="591" height="428" /></p>
+      <p align="justify">Due to the slow dynamics of the system and its inability to  reach steady state, we weren&rsquo;t able to model the system as an exponential  function but rather modeled it as a sum of exponentials in the following form:</p>
+      <p align="left"><strong> Plant Model: </strong></p>
+      <p align="left">G(t) = a*exp(-b*t)+c*exp(-d*t)</p>
+      <p align="left">G(s) = a/(s+b)+c/(s+d)</p>
+      <p align="left">where,</p>
+      <p align="left">a = 2.899, b = 0.00002311, c = -2.219, d = 0.00005388</p>
+      <p align="left"><strong>Controller:</strong></p>
+      <p align="left">K(s) = Kp + (Ki/s) + (Kd*s)</p>
+      <p align="left">where the following values gave the best response,</p>
+      <p align="left">Kp = 10, Ki = 4, Kd = 2 </p>
+      <p align="left"> From our MATLAB simulation we obtained the following  specifications:</p>
+      <p align="left"> 1. Steady State Error = 0%<br />
+        2. Percent Overshoot = 0%<br />
+        3. Phase Margin = 138&ordm;</p>
+      <p align="left"><a href="#top">Top</a></p>
+      <p align="left">&nbsp;</p>
+      <h2 align="left"> Hardware/Software<a name="Hardware" id="Hardware"></a></h2>
+      <p align="justify">We had the option of doing the PID controller on either  hardware or on Nios. We chose to do it on Nios because there weren&rsquo;t any  complex calculations involved and the system had a slow response. </p>
+      <p align="left">The block diagram of the system we  built looks like this:</p>
+      <p align="center"><img src="overall_block_diagram.JPG" width="678" height="362" /></p>
+      <p align="left">We present details about how each of  these blocks works in this section:</p>
+      <p align="justify"><strong>Temperature  sensor:</strong><br />
+        We used two LM-34 temperature sensors.  These sensors show a 10 mV increase or decrease for 1&deg; F change in temperature.  The two sensors are placed close to the two heaters which are on opposite walls  of the water tank. We have assumed that each sensor reads the temperature of  the heater that is close to it and the effect of mixing of water is neglected. </p>
+      <p align="justify"><strong>Analog  to Digital Converter:</strong><br />
+        We used AD7574 which is an 8 bit ADC.  We used this IC in its slow memory mode. In this mode, the Chip Select (CS) and  Read (RD) pins are tied together. They are both active low inputs. The IC  starts conversion on a high-to-low transition on these pins and the data is  available when the BUSY output of the ADC goes high. The conversion is completed  by a low-to-high transition on CS and RD pins. We chose to give these signals  externally from a signal generator at a frequency of 2.4 Hz. For a time  sensitive application, the BUSY output has to be monitored and the data has to  be latched when it goes high. However, in our case, the temperature did not  change for several seconds and hence we did not poll the BUSY pin. </p>
+      <p align="justify">        The ADC has a reference input, VREF,  which lets us set the resolution of the converter. The resolution is given by  |Vref|/256. The ADC we used could take a minimum Vref of -5 V. hence, it could  give a one bit change for every 20 mV or 2&deg;F. So, we would suggest to anyone  building a PID controller which takes inputs from an ADC, to make use of an ADC  with a lower Vref and also to use a 16 bit digital output which will improve  the precision of calculations.<br />
+        The output of the ADC was fed to the  Altera DE II board through the GPIO_0 port. The DE II board recognizes a  voltage level of 3.4 V to be high. Hence, we stepped down the output of the ADC  using potentiometers before feeding it to the Altera board. </p>
+      <p align="left"><strong>Nios  II:</strong><br />
+        The Nios II performs these functions:</p>
+      <div align="left">
+        <ul>
+          <li>Gets the reference temperature from  the user</li>
+          <li>Reads temperature input from ADC</li>
+          <li>Computes the actuating quantity using  the PID controller equations</li>
+          <li>Outputs the 10 bit value to the TimerSDRAM  module which converts it into an equivalent PWM signal.</li>
+        </ul>
+      </div>
+      <p align="justify">The Nios II gets the reference  temperature from the user from the Nios console when SW[0] on the DE II board  is activated. The heater has to heat up to this temperature. The Nios also  reads the input from the GPIO port and compares it with the reference  temperature. It takes one of the following decisions when both the values are  available:</p>
+      <div align="left">
+        <ul>
+          <li>
+            If the reference temperature is  greater than the tank temperature by 1&deg; F, the actuating quantity has to be  determined and the PID calculation is performed.
+          </li>
+          <li>
+            If the reference temperature is lesser  than the tank temperature, the output from the Nios is made <strong>zero </strong>and the system waits for the tank  to cool down to the reference temperature.
+          </li>
+          <li>
+            If the tank temperature does not  change over time, maintain the output from the Nios. Computation of the  actuating quantity is not required.
+          </li>
+        </ul>
+      </div>
+      <p align="justify">We used float for computing the output  for the PID controller. This gives better precision. We took a 10 bit output  value from the Nios and fed it to the TimerSDRAM module. </p>
+      <p align="justify"><strong>Generation  of PWM signals:</strong><br />
+        The 10 bit output code is used for  generation of PWM signals. The PWM performs the function of Digital to Analog  conversion. The 10 bit output value gives a minimum duty cycle of (1/1024). The  output from the PWM is used to turn ON and OFF, a MOSFET (BUZ73). The flowchart  for generating PWM signals is shown below: </p>
+      <p align="center"><img src="PWM_flowchart.JPG" width="585" height="558" /></p>
+      <p align="justify">We don&rsquo;t check  for the terminating condition of the counter and simply let it overflow when it  reaches 1024. </p>
+      <p align="justify"><strong>VGA monitor:</strong><br />
+        We display the  status of the heaters (whether they are ON or OFF) on the VGA monitor. We also  had a progress bar which shows the extent to which the heating is complete. We  wrote to SRAM and used Prof. Bruce Land&rsquo;s VGA control module. </p>
+      <p align="justify"><em>Implementation of the progress bar:</em><br />
+        We implemented a  progress bar which was 80 pixels wide. <strong>Start</strong> is the first value from the ADC that is stored the instant the PID controller  is turned ON. The computation for the progress bar is given as:<br />
+  <strong>((Out &ndash; start)/ (ref &ndash;start)) * 80</strong><br />
+        This computation  is done on Nios II.</p>
+      <p align="justify"><strong>Heater:</strong><br />
+        We used a 2 ohm,  20 W resistor as the heating element in our project. </p>
+      <p align="justify">Some of the other  components used in the hardware:</p>
+      <p align="justify"><strong>MOSFET&rsquo;s:</strong><br />
+  We used two BUZ73  MOSFET&rsquo;s as switching elements. These transistors got their Gate inputs from  the PWM signal generated by the Nios. The Source terminal was grounded and the  heating element was connected between the Drain and the positive supply rail  (+5 V).</p>
+      <p align="justify"><strong>Operational amplifiers:</strong><br />
+        While testing our  system we found that the voltage across the resistors needed to be at least 3.5  V for them to heat up. So, we had to step up the output of the Nios to about 9  V. For this, we used an operational amplifier. We used LM-358. We had to  account for the slew rate of the operational amplifier and had to considerably  reduce the frequency of the PWM signal. We set this to 6 KHz. </p>
+      <p align="left"><a href="#top">Top</a></p>
+      <p>&nbsp;</p>
+      <h2 align="left">Testing  and Development:<a name="Testing" id="Testing"></a></h2>
+      <p align="justify">        Since  our project had a large external circuitry component. So, we had a lot of  testing to do in the early stages.</p>
+      
+        <div align="justify">
+          <ul>
+            <li>First  and foremost, we had to determine the extent to which the resistor was getting  heated. Once we did this, we built the model of our tank and tested the  response with water in the tank. The presence of water slowed the heating  process and we found that for a 1&deg; F rise in temperature, it took up to 4  minutes. </li>
+            <li>          We  tested our PID controller implementation on the Nios by taking an arbitrary system  model and sending the plant response as user inputs. </li>
+            <li>          We  tested the PWM by observing the output waveform on the oscilloscope.</li>
+            <li> We  tested the ADC by giving known analog inputs and observing the digital output  on LED&rsquo;s.</li>
+          </ul>
+        </div>
+        <p align="left"><a href="#top">Top</a></p>
+      <p>&nbsp;</p>
+      <h2 align="left">Results<a name="Results" id="Results"></a></h2>
+      <p align="justify">To test the performance of our system, we filled the tank  with cold water and gave a desired set point temperature to the FPGA. Due to  the slow dynamics of our system we only gave a reference voltage that was two  to four degrees higher than the initial temperature. This allowed us to analyze  the full performance of our design. <br />
+        Neglecting the limitations of external hardware such as the  power supply and heaters, our controller performed well and as expected. We  were able to maintain the temperature of the water tank at a desired set point  temperature. We also introduced a disturbance by adding cold water to lower the  temperature to see how it responds. The system reacted appropriately and the  heaters turned on again to adjust the error.</p>
+      <p align="justify">Below are some links to images of the completed project:</p>
+      <div align="left">
+        <ol>
+          <li><a href="Heater_on_Progressbar.jpg">Progress bar with heaters on</a></li>
+          <li><a href="Heater_off.jpg">Heaters off</a></li>
+          <li>PWM waveform <a href="PWM_half.jpg">1</a>,<a href="PWM_high.jpg">2</a>,<a href="PWM_low.jpg">3</a></li>
+          <li><a href="IMG_20101208_153222.jpg">Water Tank </a></li>
+          <li>External Circuit <a href="IMG_20101208_153205.jpg">1</a>,<a href="IMG_20101208_153215.jpg">2</a></li>
+        </ol>
+      </div>
+      <p align="left"><a href="#top">Top</a></p>
+      <p>&nbsp;</p>
+      <h2 align="left">Conclusion<a name="Conclusion" id="Conclusion"></a></h2>
+      <p align="justify">We were able to  successfully complete what we intended to. The heater was able to heat the  water to the temperature desired. We were pleased that all the hardware that we  had assembled worked quite well. </p>
+      <p align="justify">However, the response  from the setup was slower than we expected it to be. This was primarily because  of the water in the tank, cooling the heater. This slowed down the response  considerably and we could achieve a rise of 1&deg; F in close to three minutes. The  main reasons for this were the low power rating of the heater and the size of  the tank that we chose. </p>
+      <p align="justify">We would suggest  a few other applications to anyone who wishes to work on an FPGA based PID  controller in the future. A very interesting and challenging problem would be  to build a system that balances an inverted pendulum. Another idea would be to  build a system that can keep an object suspended in mid-air by blowing air  against it. This would be cooler if the system is synced up with music and the  object stays at different heights. This idea was suggested to us by Bruce Land  and we found it quite interesting. </p>
+      <p align="left"><a href="#top">Top</a></p>
+      <p>&nbsp;</p>
+      <h2 align="left"><strong>Acknowledgements</strong><a name="Acknowledgements" id="Acknowledgements"></a></h2>
+            <p align="justify">We thank Prof.  Bruce Land for his ideas and inputs during the course of the project. We  wouldn&rsquo;t have completed this without his help. We also thank him for the  hardware parts that we used in this project.<br />
+              We also thank  Analog Devices for the Analog to Digital Converters that they provided us free of  cost. We also thank Altera for the DE2 boards. </p>
+            <p align="left"><a href="#top">Top</a> </p>
+            <p>&nbsp;</p>
+            <h2 align="left">Appendix<a name="Appendix" id="Appendix"></a></h2>
+      <h3 align="left">References</h3>
+      <div align="left">
+        <ol>
+          <li><a href="LM34.pdf">LM34 datasheets</a></li>
+          <li><a href="AD7574.pdf">AD7574 datsheet</a></li>
+          <li><a href="LM358.pdf">LM358 datasheet</a></li>
+          <li><a href="BUZ73.pdf">BUZ73 datasheet</a></li>
+          <li><a href="../../../../../../../../cegt201.bradley.edu/projects/proj2002/toetruck/default.htm">http://cegt201.bradley.edu/projects/proj2002/toetruck/</a></li>
+        </ol>
+      </div>
+      <p align="left"><strong>Verilog and C Files</strong></p>
+      <div align="left">
+        <ol>
+          <li><a href="NiosTimer.txt">NiosTimer.sopc</a></li>
+          <li><a href="test.c">test.c</a></li>
+          <li><a href="TimerSDRAM.v">TimerSDRAM.v</a></li>
+          <li><a href="SOPC.png">SOPC</a></li>
+        </ol>
+      </div>
+      <p align="left"><strong>Circuit Diagrams</strong></p>
+      <div align="left">
+        <ol>
+          <li><a href="schematic1.JPG">ADC Connection</a></li>
+          <li><a href="schematic2.JPG">Transistors, OpAmps and Heaters</a></li>
+        </ol>
+      </div>
+      <p align="left"><strong>Division of Labor</strong></p>
+      <div align="center">
+        <table width="599" border="1">
+            <tr>
+              <td width="331" valign="top"><p align="center"><strong>Specific task</strong></p></td>
+              <td width="252" valign="top"><p align="center"><strong>Done by</strong></p></td>
+            </tr>
+          <tr>
+              <td valign="top"><p>Implementation of PID controller on FPGA</p></td>
+              <td valign="top"><p>Anandram</p></td>
+            </tr>
+          <tr>
+              <td valign="top"><p>Building the water tank setup</p></td>
+              <td valign="top"><p>Muneeb</p></td>
+            </tr>
+          <tr>
+              <td valign="top"><p>Testing and Integration</p></td>
+              <td valign="top"><p>All</p></td>
+            </tr>
+          <tr>
+              <td valign="top"><p>Modeling on MATLAB</p></td>
+              <td valign="top"><p>Muneeb</p></td>
+            </tr>
+          <tr>
+              <td height="26" valign="top"><p>Implementation of progress bar</p></td>
+              <td valign="top"><p>Anandram</p></td>
+            </tr>
+          <tr>
+              <td valign="top"><p>Analog Circuitry </p></td>
+              <td valign="top"><p>All</p></td>
+            </tr>
+          <tr>
+            <td valign="top"><p>Testing the ADC</p></td>
+            <td valign="top"><p>Chandrashekar</p></td>
+          </tr>
+          <tr>
+            <td valign="top"><p>Webpage</p></td>
+            <td valign="top"><p>All</p></td>
+          </tr>
+          </table>
+        <p align="left"><a href="#top">Top</a></p>
+      </div>
+      </td>
+    </tr>
+  </table>
+</div>
+</body>
+</html>

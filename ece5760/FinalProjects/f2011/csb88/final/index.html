@@ -1,0 +1,315 @@
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><!--
+	This document provides the basis of a semantically structured web page 
+	authored in XHTML 1.0 Transitional using established Cornell University
+	naming conventions.
+--><title>ECE 5760: Conway's Game of Life</title>
+	
+	<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+	<meta http-equiv="Content-Language" content="en-us">
+	<link rel="shortcut icon" href="../../../../../../../../instruct1.cit.cornell.edu/courses/ee476/FinalProjects/s2007/aw259_bkr24/favicon.ico" type="image/x-icon"><!--
+	All layout and formatting should be controlled through Cascading Stylesheets (CSS).
+	The following link tag should appear in the head of every page in the website. see
+	styles/screen.css.
+-->
+	
+
+	<link rel="stylesheet" type="text/css" media="screen" href="styles/screen.css">
+	<link href="styles/prettify_002.htm" type="text/css" rel="stylesheet">
+	
+	<style type="text/css">
+
+/* All Styles Optional */
+
+div#show3 {
+background-color:#f0eee4;
+width:250px;
+margin:0 auto;
+border:1px solid #f0eee4;
+}
+div#show3 table td, div#show4 table td {
+height:24px;
+background-image:url('38.gif');
+}
+div#show4 table td {
+background-image:url('40.gif');
+}
+div#show3 table input,  div#show4 table input {
+outline-style:none;
+}
+    </style>
+
+<!--[if IE]>
+<style type="text/css">
+div#show3 table td, div#show4 table td {
+height:21px;
+}
+</style>
+<![endif]-->
+
+
+</head><body class="bridge" onload="prettyPrint()">
+
+<!--
+	The following link provides a way for people using text-based browsers and
+	screen readers to skip over repetitive navigation elements so that they can 
+	get directly to the content. It is hidden from general users through CSS.
+-->
+<div id="skipnav">
+	<a href="#content">Skip to main content</a>
+</div>
+
+
+
+<!-- The following div contains the Cornell University logo with unit signature -->
+<div id="cu-identity">
+	<div id="cu-logo">
+		<a id="insignia-link" href="../../../../../../../../www.cornell.edu/default.htm"><img src="styles/unit_signature_unstyled.gif" alt="Cornell University" border="0" height="75" width="240"></a>
+		<div id="unit-signature-links">
+			<a id="cornell-link" href="../../../../../../../../www.cornell.edu/default.htm">Cornell University</a>
+		</div>
+	</div>
+	
+	<!--
+		The search-navigation div contains links that allow the user to search
+		either the unit website or all of cornell.edu.
+		These links will be displayed in the unit signature banner and will
+		be aligned with the right edge of the page.
+	
+	<div id="search-navigation">
+		<ul>
+			<li><a href="http://www.cornell.edu/search/">Search Cornell</a></li>
+		</ul>
+	</div> -->
+	
+	 
+		<!--The search-form div contains a form that allows the user to search 
+		either pages or people within cornell.edu directly from the banner.-->
+	<div id="search-form">
+		<form action="http://www.cornell.edu/search/" method="get" enctype="application/x-www-form-urlencoded">
+			<div id="search-input">
+				<label for="search-form-query">SEARCH CORNELL:</label>
+				<input type="text" id="search-form-query" name="q" value="" size="20" />
+				<input type="submit" id="search-form-submit" name="submit" value="go" />
+			</div>
+
+			<div id="search-filters">
+					<input type="radio" id="search-filters1" name="tab" value="" checked="checked" />
+					<label for="search-filters1">Pages</label>
+				
+					<input type="radio" id="search-filters2" name="tab" value="people" />
+					<label for="search-filters2">People</label>
+					
+					<a href="../../../../../../../../www.cornell.edu/search/default.htm">more options</a>
+			</div>	
+		</form>
+	</div>
+	
+	
+	<!-- 
+		The search-form div contains a form that allows the user to search 
+		either the unit website or all of cornell.edu directly from the banner.
+	<div id="search-form">
+		<form action="#" method="post" enctype="application/x-www-form-urlencoded">
+			<div id="search-input">
+				<label for="search-form-query">SEARCH:</label>
+				<input type="text" id="search-form-query" name="query" value="" size="20" />
+				<input type="submit" id="search-form-submit" name="submit" value="go" />
+			</div>
+
+			<div id="search-filters">
+					<input type="radio" id="search-filters1" name="target" value="unit" checked="checked" />
+					<label for="search-filters1">Unit name</label>
+				
+					<input type="radio" id="search-filters2" name="target" value="cornell" />
+					<label for="search-filters2">Cornell</label>
+					
+					<a href="#">more options</a>
+			</div>	
+		</form>
+	</div>
+	-->
+</div>
+
+<!-- The header div contains the main identity and main navigation for the site -->
+<div id="header">	
+	<!--
+		The navigation div contains the site's main navigation. These
+		links will be displayed in a horizontal, gray navigation bar 
+		under the unit signature banner.
+	-->	
+	<div id="navigation">
+		<ul>
+			<li><a href="../../../../../../../../www.ece.cornell.edu/default.htm">ECE</a></li>
+			<li><a href="../../../../../../../../https@intranet.ece.cornell.edu/default.htm">ECE intranet</a></li>
+			<li><a href="../../../../../../../../www.cuinfo.cornell.edu/default.htm">CUinfo</a></li>
+			<li><a href="../../../../../../../../www.cornell.edu/default.htm">Cornell</a></li>
+			<li><a href="../../../../../../../../www.library.cornell.edu/default.htm">Library</a></li>
+			<li><a href="../../../../../../../../www.nbb.cornell.edu/neurobio/land/default.htm">Bruce Land</a></li>
+			<!-- More navigation as needed
+			<li><a href="#">Navigation 6</a></li>
+			-->
+						
+		</ul>
+	</div>
+	
+	<hr>
+	
+	<!-- 
+		The identity div contains the name of a main site section
+	-->
+	<div id="identity" align="center">
+	<h1> <br /> <br />
+	Cornell University ECE 5760 <br />
+ 	 Conway's Game of Life<br />
+	</h1>
+	<div style='font-family: georgia, "times new roman", times, serif;
+	font-weight: normal;
+	color: #73736c; font-size:10pt'>By: Cooper Bills</div>
+	</div>
+</div>
+
+<hr>
+<!-- The content div contains the main content of the page -->
+<div id="wrap">
+
+<!-- The content div contains the main content of the page -->
+
+<div id="content">
+	<div id="main">
+	
+	<div class="bridge-section">
+	<h2>Introduction</h2>
+	<p><a href="../../../../../../../../en.wikipedia.org/wiki/Conway_2527s_game_of_life">Conway's game of life</a> is a 2D cellular automaton.  This project implements Conway's game of life on an Altera Cyclone II FPGA using a DE2 development board, at full VGA resolution.</p>
+	
+	<h2>Overview</h2>
+	
+	<p>The main goal of this project was to implement Conway's game of life on a grid of 640x480 cells, running at 60Hz.  This would be full VGA, and updated as fast as the monitor can display the grid.  However, this poses the first and largest design hurdle: Updating that resolution at that rate requires over 18 million updates per second! This leaves just a few clock cycles per cell for updating.  Given that each cell requires 9 values to calculate it's next value, even with extreme pipelining serial updating would not be possible (without over-clocking).</p>
+	
+	<p>My design uses massive parallelization to achieve the required speeds, and is more than capable of faster.  More on this in the next section.</p>
+	
+	<p>Also, user interactivity was a major consideration, but ultimately didn't get implemented due to technical difficulties.  The game of life is much more interesting if it is interactive.  </p>
+	
+	<h2>High Level Design</h2>
+	<h3>Memory</h3>
+  <p>Due to the speed requirements, I choose to use M4K blocks, as they are dual ported (both the VGA and my Hardware can read/write) and fast.  They can also be made highly parallel using one block per parallel unit:</p>
+	
+	<h3>Parallelization</h3>
+  <p>I split the grid up into columns, 8 cells wide.  This resulted in columns of 8x480 cells.  I picked 8 because it uses the M4K blocks efficiently (one per column), and the X grid location can be easily split into a column reference and location within the column (highest bits and lowest 3 bits, respectively).  </p>
+	<p>Each column contains the logic to do calculations, and a state machine that will calculate a given row when triggered.  I also have a larger control module that controls and synchronizes these columns.  The control module is the only module the columns directly interact with.  </p>
+	<p>The control module triggers all of the columns to calculate a row in parallel the moment the VGA module finishes rendering a row.  This keeps the calculation and VGA in sync.  The control Module allows the rate of calculation to be controlled.  This is done by skipping frames, e.g. 60Hz (0 frames skipped), 30Hz (1 frame skipped per frame calculated), 20Hz (2 frames skipped), 15Hz (3 frames skipped), and so on.  The number of frames to skip is chosen using SW[17:10].  There is a lot of time where the columns are not dong any calculation, so the system itself is capable of much faster speeds, if we were to decouple the calculation from the VGA scanning.</p>
+	<p>Here is an animation of how the grid is updated in parallel.  As you can see, all columns finish updating the row with plenty of time to spare.  I wouldn't be surprised if this system could handle much higher frequencies (200+Hz).  The goal of synchronizing the updates to the VGA scan is to remove any flickering and distortion.</p>
+	<div align="center">
+	<img src="parallelization-animaiton.gif" />
+  <br />
+	Figure 1: An animation to explain the basics of the parallelization scheme.
+	</div><br />
+	<p>The above Animation is not completely accurate due to two missing details:<br />
+	  1. Memory is not read from calculated cells (as this will screw up the automata).  Instead, the previous row is contained in a buffer of registers.<br />
+	  2. The animation does not account for memory pipelining.
+	  </p>
+	  <p> Overall, Figure 1 is a great demonstration of the speed and logic behind the parallelization.</p>
+	<h3>Interaction</h3>
+	<p>The most intuitive control is using a mouse and cursor, and I insisted on implementing any interactivity using a mouse and cursor.  However, Due to limited time and lack of up-to-date documentation, the Interactive aspect was removed from the project, but much of the interface has already been implemented.  Even with this aspect removed, there remains interactivity by choosing one of four initial states.  These are chosen using SW[2:0]: Fully Random (initializes the screen with random bits), Half Random (initializes half the screen with random bits), Middle Random (initializes the center of the screen with random bits), and Pre-set (a small pre-set pattern in the center of the screen). All of these states are shown in videos at the end of this document.</p>
+	<p>If external input was to be added, it would be though a NIOS II processor.  The NIOS II would interact with the data though the controller.  It first has to stop the controller by pulling the "run" input low, then wait for the "running" output to go low.  This allows the controller to complete the current frame and stop gracefully.  After the controller has stopped running, the NIOS can input data via "override_x", "override_y", "override_data", and "override_clk". These inputs control which column, row, and value to input (first three respectively), and the "override_clk" allows the NIOS to pulse the control module, notifying that data is ready.</p>
+	<p>A mouse would give input to the system via the NIOS.  The mouse cursor is outputted from the NIOS to the VGA controller.  The VGA controller handles the rendering of the cursor. Upon click, the NIOS will modify the data under the cursor using the method described above.</p>
+	
+	<div align="center">
+	<img src="design.png" /><br />
+	Figure 2: High Level Layout.
+	</div>
+	
+	<h2>Hardware Design</h2>
+	<p>As talked about in the high level design, I've created two new hardware components: <strong>Cell Blocks</strong> (columns) and a <strong>Grid Controller</strong> (column moderator).</p>
+	<h1>Cell Blocks</h1>
+	<p>Each cell block (column group) is capable of calculating a row mostly independently.  I say mostly, because they are interconnected between each other - they need to communicate the boundary values.</p>
+	<p>This is done using a state machine with three major phases: Waiting for Sync, Initialization, and Main Loop.</p>
+	<p>note: "lower-left edge" and "lower_left" are two different things.
+    "lower-left edge" is the lower-left value to be shared with this
+    block's left neighbor. "lower_left" is the lower_left value relative
+    to the current row and col location.</p>
+  <p><strong>Waiting for Sync</strong> is when the cell block is waiting for the Grid Controller to trigger calculation of a row.  This section contains one state:<br />
+    <em>wait_for_sync:</em> waits for sync pulse, while clearing the bottom row (for consistency). Also sets row and resets col.</p>
+  <p><strong>Initialization</strong> is after a row has started, but before calculation begins.  During this phase boundary values are loaded and any variables are initialized.<br />
+    <em>start0:</em> updates prev_row, pipelines middle-left edge
+     <br /><em>start1:</em> sets upper-left and upper-right edges based on prev_row,
+     	  pipelines lower-left edge.
+     <br /><em>start2: pipelines middle-right edge.</em>
+     <br /><em>save_middle_left:</em> Saves value to it's proper locations, and pipelines lower-right edge.
+     <br /><em>save_lower_left:</em> Saves value to it's proper location.
+     <br /><em>save_middle_right:</em> Saves value to it's proper location.
+     <br /><em>save_lower_right:</em> Saves value to it's proper location.
+     <br /><em>load_neighbors:</em> Saves values from left neighbor to {upper,middle,lower}_left registers.</p>
+       <p><strong>Main Loop</strong> is when the row is being calculated. This section is looped over per pixel in the row, until the row is complete.<br />
+         <em>load_phase0:</em> checks to see if it's the final column, if it is it loads right neighbor values 
+         	       and skips to calculate,
+         	       else, it sets upper_right from prev_row and pipelines middle_right from mem.
+          <br /><em>load_phase1:</em> Pipelines lower_right from mem.
+          <br /><em>load_phase1b:</em> Delay for proper pipelining.
+         <br /><em>load_phase2:</em> saves middle_right
+         <br /><em>load_phase3:</em> saves lower_right
+         <br /><em>calculate:</em> does the logic, and saves the result to the results vector
+         <br /><em>save_phase:</em> commits the recent result to memory, and checks to see if we're done
+         	      returns to wait_for_sync if we are done.
+         <br /><em>shift_phase: </em>Increments col, and shifts values to the left. returns to load_phase0
+  </p>
+  
+  <p>The cell blocks also contain a single M4K block - just enough memory to contain an 8x480 array of bits.  These M4K blocks are fully dual ported, to allow the VGA to simultaneously read cells as rows are calculated.  However, the Dual-ported design is too slow for the VGA controller, so a buffer system has been implemented.  This system is a simple state machine that prefetches the next row, so when the VGA requests the data, it'll already be loaded into logic elements.</p>
+  
+  <h1>Grid Controller</h1>
+  
+  <p>This is the main controller for all of the Cell blocks.  It also contains a state machine.  This controller handles the logic of overrides, if we were to implement an external data modifier.  Note that a "frame" refers to one full screen scan by the VGA.</p>
+  
+  <p><strong>States:</strong><br/>
+  <em>not_running:</em> check irun and override inputs, and reacts accordingly
+  <br /><em>apply_override:</em> state while applying an override value
+  <br /><br /><em>wait_for_frame_start:</em> waits for VGA_y == 'd0; also monitors irun
+  <br /><em>frame_start:</em> Checks # of frames skipped, and decides to skip or init.
+  <br /><em>frame_start_skip:</em> waits for VGA_y != 'd0, then goes back to wait_for_frame_start
+  <br /><em>frame_start_init:</em> does initialization for a new frame.
+  <br /><br /><em>wait_for_row_complete:</em> Waits for VGA_y to finish a row to calculate it.
+  <br /><em>execute_row:</em> Runs Cellblocks on newly completed row (raise sync to high)
+  <br /><em>execute_row2:</em> lower sync to low;  if VGA_y is currently 'd0 (frame complete), return to wait_for_frame_start instead of wait_for_row_complete.
+  </p>
+	
+	<h2>Design Challenges</h2>
+	<h3>Parallelization</h3>
+	<p>My first implementation was serial, and I quickly realized I had to make a choice: Reduce the size/update rate, or redesign the system to parallelize the work.  I opted for the second, challenging myself and keeping the original ideas intact.  This increased the workload, so other frivolous things, such as loading a predesigned pattern, was removed.</p>
+	<h3>Input</h3>
+	<p>Interaction with the computer was removed, due to time limits.  The original design was to use a mouse, and I insisted on using a mouse.  I put a lot of time into trying to get it to work, and couldn't get it working.  I tried PS/2, USB, and Serial (RS-232) mice, all of which lacked documentation, or if the documentation did exist it was severely out of date.  Although I couldn't get the mouse working, the rest of the system is already prepared for it.</p>
+	<h3>DE2 Board</h3>
+	<p>For an extra challenge, I did not use the DE2-115 board we had available, and I wanted to see if I could make this computationally intensive task work with the limited resources of a DE2 board.  It posed a challenge in many aspects (Number of logic elements, M4K blocks available, etc.), but all of the challenges posed by the DE2 board were overcome.</p>
+	<h3>Clock</h3>
+	<p>For simplicity, everything in the system is clocked off of the VGA clock.  This means that there is only one clock cycle per pixel.  Again, this limitation was overcome using Parallelization.  Clocking higher was considered, but disregarded when it was realized that parallelization would need to be implemented regardless.</p>
+  
+  <h2>Conclusions</h2>
+  <p>With the limitations imposed by an FPGA, such as a slow clock rate and limited memory, this project has shown that it is possible to calculate Conway's game of life at full VGA resolution at 60Hz using a highly parallel implementation.  This parallelization scheme is also capable of much higher update rates.</p>
+  
+  <h2>Media</h2>
+  <h3>Code</h3>
+  <p>The full Quartus II project can be downloaded <a href="quartus_project.zip">here</a>.<br />
+    Note: the VGA_640x480_m4k_DLA.v file is the one that contains all of this project's code. </p>
+  <h3>Screenshots</h3>
+  <div align="center">
+  <a href="screenshot1.jpg"><img src="screenshot1.jpg" width=300px/></a>
+  <a href="screenshot2.jpg"><img src="screenshot2.jpg" width=300px/></a><br />
+  click to enlarge
+  </div>
+  <h3>Videos</h3>
+  <div align="center">
+     <OBJECT width="560" height="315"  ><PARAM name="movie" value="MPFLVPlayer.swf" /><PARAM name="allowFullScreen" value="true" /><PARAM name="FlashVars" value="fn=../../../../../../../../www.youtube.com/watch@v=s6rzNBtdOnM&flvskin=MPFLVSkin.swf" /><EMBED src="MPFLVPlayer.swf"  width="560" height="315"  type="application/x-shockwave-flash" allowFullScreen="true" FlashVars="fn=../../../../../../../../www.youtube.com/watch@v=s6rzNBtdOnM&flvskin=MPFLVSkin.swf"></EMBED></OBJECT>www.youtube.com/embed/7NHEV-1Eqp0" frameborder="0" allowfullscreen></iframe>
+  </div>
+  
+	</div>
+	</div>
+	</div>
+	
+<div id="footer-content" align="center">
+Copyright December 7, 2011, Cornell University<br />
+This page is transmitted using 100% recycled electrons.<br />
+</div>
+
+</body></html>
+

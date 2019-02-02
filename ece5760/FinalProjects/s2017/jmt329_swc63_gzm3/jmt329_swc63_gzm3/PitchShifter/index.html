@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset='utf-8'>
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <link href='../../../../../../../../../https@fonts.googleapis.com/css@family=Chivo_3A900' rel='stylesheet' type='text/css'>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/print.css" media="print">
+    <!--[if lt IE 9]>
+    <script src="../../../../../../../../../html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <title>PitchShifter by jmt329</title>
+  </head>
+
+  <body>
+    <div id="container">
+      <div class="inner">
+
+        <header>
+          <h1>PitchShifter</h1>
+          <h2>Change the pitch of your voice in real-time!</h2>
+        </header>
+        <section id="downloads" class="clearfix">
+
+
+          <a href="../../../../../../../../../https@github.com/jmt329/PitchShifter" id="view-on-github" class="button"><span>View on GitHub</span></a>
+
+        </section>
+        <hr>
+        <section id="main_content">
+
+<p>Sean Carroll (swc63), Gulnar Mirza (gzm3), James Talmage (jmt329)</p>
+
+<h1 id="introduction">Introduction</h1>
+
+<p>We designed a real-time pitch shifter on the DE1-SoC FPGA that was controlled by the ARM core using a GUI. The motivation for this project stemmed from the fact that the large amount of processing power available on the FPGA is well suited to audio input and output streaming, along with the required intermediate processing. As a result, we decided to utilize these capabilities to design and implement a real-time pitch shifter that could perform the following tasks: pitch-shift the left and right audio outputs independently with manual pitch tuning, produce voice chords using the right and left audio outputs along with the original voice, and produce time-variant pitch shifting by modulating the appropriate parameters at varying rates. The final product is able to produce many different voice effects, all while being controlled from a simple, user-friendly GUI displayed on a VGA monitor.</p>
+
+<p><img src="pictures/project_setup.jpg" alt="" title="Project Setup with speakers, mouse, microphone, and FPGA" /></p>
+<p align="center">
+Figure 1: Picture of the project setup
+</p>
+
+<h2 id="high-level-design">High Level Design</h2>
+
+<p>We decided to pursue this project idea after seeing the audio output capabilities from lab 3, as well as a desire to have a fun project with an interesting demo. The only background math required for this project was simple arithmetic and some basic digital signal processing knowledge. We used a 6th order Butterworth filter to smooth out high frequency noise from our system. This was in essence a low pass filter that attenuated signals above 3500 Hz while leaving signals at lower frequencies mostly unchanged. We also used fixed point arithmetic extensively in this project, as it allowed us plenty of accuracy for our sound samples, while leaving the arithmetic easy to implement (as opposed to using a floating point data type).</p>
+
+<p>The logical structure of this project revolved around modifying settings for our audio processing modules using the GUI running on the HPS, then speaking/playing music into the microphone that fed into the FPGA, where it ran through our buffer modules to change the pitch then through our filter module to smooth out any high frequency noise that may have been added to the system by this pitch shifting, and then back out through speakers. Our structure allowed us to play two different pitch shifted signals through the different speakers, taking advantage of the stereo output capability of the development board we used (DE1). By using the FPGA, we were able to process multiple streams of audio input simultaneously at a high sample rate (96 KHz), something we would probably not be able to do on the HPS alone. It also made sense to us to write the User Interface (UI) on the HPS, as there were Linux drivers in place to take care of using a mouse as a HID, so we could use it to interact with a screen we created that was displayed on the VGA, using code from previous labs in this course.</p>
+
+<p>We did not use any standards (IEEE, ISO, ANSI, etc) that we were aware of. We know that commercial pitch shifters exist, like the ones that are used in commercial auto-tuning and music production software. We wanted to create our own version to try a different approach from what we were able to glean from how these programs/tools worked, typically using calculation intensive FFT algorithms and the like.</p>
+
+<p>Figure 2 depicts the Qsys setup of the FPGA/HPS integration, which relies on numerous parallel I/O ports to enable user control of the pitch-shift effects.</p>
+
+<p><img src="pictures/qsys1.png" alt="" title="Screenshot of qsys screen" />
+<img src="pictures/qsys2.png" alt="" title="Screenshot of qsys screen" />
+<img src="pictures/qsys3.png" alt="" title="Screenshot of qsys screen" /></p>
+<p align="center">
+Figure 2: Screenshot of QSys setup
+</p>
+
+<h2 id="hardware-development">Hardware Development</h2>
+
+<h3 id="pitch-shifter">Pitch-Shifter</h3>
+
+<h4 id="design">Design</h4>
+
+<p>Pitch shifting was implemented using two circular buffer structures. Upon receiving a new sample from the audio input microphone line, we performed two main tasks on each buffer. First, we write the new sample to the buffer using the current write address index. We then increment the write index by one entry. Second, we read a new audio sample from the buffer using the current read address index. We then increment the read address based on the pitch-shift, using a value we call “delta.” The actual read index used for the buffer is simply the integer portion of the incremented read address, which results in delta &lt; 1 corresponding to a down-shift of the pitch (i.e., the audio samples are repeatedly read out). Similarly, delta &gt; 1 corresponds to an up-shift of the pitch (e.g., some audio samples are skipped entirely in order to move to the next sample). This is due to the effective change in sampling rate that results from either skipping or repeating samples, causing a pitch-shift effect of the voice input.</p>
+
+<p>Figures 3 and 4 illustrate the buffer actions that result from a newly obtained audio input sample for delta=2 and delta=0.5, respectively, by depicting the starting and final states of the read address “R” and write address “W” over two successive time steps. Note that Figures 3 and 4 illustrate the case of circular buffers of size 16. Our final pitch shifter design consisted of buffers of size 1024. This was determined to be the optimal size, based on our MATLAB simulations, for which discontinuity artifacts (discussed later) were minimized, while maximizing the cohesiveness of the audio output sound.</p>
+
+<p><img src="pictures/RB_example.png" alt="" title="Circular buffer update for delta=2" /></p>
+<p align="center">
+Figure 3: Circular buffer update for delta=2
+</p>
+
+<p><img src="pictures/RB_example_2.png" alt="" title="Circular buffer update for delta=0.5" /></p>
+<p align="center">
+Figure 4: Circular buffer update for delta=0.5
+</p>
+
+<p>When shifting the voice pitch up (i.e., delta &gt; 1), it is unavoidable that audio samples are read out at a higher rate than new samples are written into the buffer. As a result, the read index will surpass the available audio samples, running into “old” samples that remain from previous, outdated writes to the buffer space. This occurrence results in a noticeable “clicking” sound and other similar noise artifacts that arise from the discontinuity between current and old audio sample sequences.</p>
+
+<p>To resolve these noise artifacts, we use a dual-buffer design. The key idea is to offset the write index for the second buffer by one half of the total buffer size. This results in the second circular buffer corresponding to a 180 degree shifted version of the original circular buffer. We then take the average of the two values read out from the buffers (note that the two buffers always have the same read index), which produces a smoothing effect that reduces the amount of clicking and other noise artifacts due to the wrap-around of the buffer reads. This method was also extensively simulated in MATLAB before being implemented and tested in hardware. Although the initial use of the circular buffer method was independently designed, the idea for the 180 degree phase shifted second buffer was adapted from [5].</p>
+
+<p>Going off of this concept, we also tried MATLAB simulations for a larger number of circular buffers as well as a larger size of each circular buffer (e.g., more than 1024 total entries). However, these experiements did not produce the same level of results as the design using two 1024-entry buffers in terms of the sound quality and minimization of noise artifacts. As a result, we selected the dual buffer design using two 1024-entry circular buffers as the final design of the pitch-shift unit. These buffers were implemented in hardware using Altera M10K memory blocks with 1024 indices each, using 10-bit address that are updated on a mod-1024 basis.</p>
+
+<p>A simplified state diagram of the described circular buffer module actions can be found in Figure 5. It is worth noting that an output valid signal for each buffer is raised while in state S2, which facilitates synchronization with the EBAB Wrapper module (described in a following section).</p>
+
+<p><img src="pictures/ProjectBufferState.png" alt="" title="Circular buffer module state machine" /></p>
+<p align="center">
+Figure 5: Circular buffer module state machine
+</p>
+
+<p>As noted in Figure 5, the buffer module is also responsible for performing the delta modulation of the pitch shift amount when appropriate. This is implemented using a ROM of 512 samples of a full triangle wave period, with a value range of delta=0.5 to delta=1.5. When the pitch-shifter is in “delta modulation mode,” we simply read out the appropriate delta value from the ROM, updating the corresponding read address based on a count variable that is set by the HPS program (discussed in a later section). The count simply represents the number of buffer read cycles that will utilize the same delta value; thus higher counts correspond to a longer modulation period.</p>
+
+<h4 id="testing">Testing</h4>
+
+<p>Testing was done by creating a separate verilog module containing all aspects of the dual-buffer design and then simulating this design in ModelSim using a counter to represent the input audio samples. As a result, by changing the value of delta, we could then simply check the successive values of the audio output samples from the buffer module to confirm that the appropriate counts were being skipped over or repeated, depending on if the pitch was to be increased or decreased. Additionally, the proper state machine function was confirmed by stepping through the buffer update process to ensure all appropriate actions were being performed at the correct time.</p>
+
+<p><img src="pictures/buffer_test.png" alt="" title="Waves screenshot of buffer test" /></p>
+<p align="center">
+Figure 6: Waves screenshot of buffer test
+</p>
+
+<h3 id="filter">Filter</h3>
+
+<h4 id="design-1">Design</h4>
+
+<p>We used a 6th order Butterworth filter on the output from the circular buffers in order to smooth the high frequency noise from the signal. We modified code from the <a href="../../../../../../../../../https@people.ece.cornell.edu/land/courses/ece5760/DE2/fpgaDSP.html">DSP for DE2 page</a>, using the given MATLAB scripts to generate the necessary constants for the desired filters. We changed the accuracy from 18-bit fixed point (2.16) to 32-bit fixed point (2.30) to give us better accuracy as well as to conform to the 32-bit width of our samples throughout the rest of the project. We also changed the incoming signal, dividing it by 2 (arithmetically shifting right by one), so that we would not have any overflow when we did the necessary multiply and accumulate needed by the Butterworth filter. By dividing by 2, we reduce the magnitude of the incoming signals to a range of [0,2) from [0,4), and since there is a multiplication, the range of outputs from the multiplier is [0,4), which fits in the 2.30 representation. We set the cutoff frequency to 3500 Hz, as we estimated this to be near the top of the range of human voice, so any high frequency noise at a higher frequency than this should be attenuated as much as possible.</p>
+
+<h4 id="testing-1">Testing</h4>
+
+<p>The initial testing was done in MATLAB, trying different filters on the outputs from the MATLAB version of our buffer technique. Once we settled on a 6th order Butterworth filter, we began our hardware design and testing. The testing for the filter module was done mostly through ModelSim. We instantiated a filter module with constants determined by our MATLAB program (SEE CODE). In the initial round of testing, we just ran a sine wave at various frequencies through the filter to see how it was affected on the output. This was done using Direct Digital Synthesis and a sine wave lookup table. Initially, we ran into overflow issues with the filter, leading to our decision to arithmetically right shift the input sample by 1, effectively preventing any further overflow, even on a high frequency square wave of maximum magnitude. When we were convinced the filter was working in ModelSim, we put the code in with our working buffers on the DE1 board. We then performed some usage testing to insure that there was no further overflow problems. This was done by providing large impulses to the microphone.</p>
+
+<p><img src="pictures/butter_test.png" alt="" title="Waves screenshot of Butterworth-filter test" /></p>
+<p align="center">
+Figure 7: Waves screenshot of Butterworth-filter test
+</p>
+
+<h3 id="ebab-wrapper">EBAB Wrapper</h3>
+
+<p>The EBAB wrapper was used to encapsulate the processing of our design. This module was instantiated in the DE1_SoC_Computer top-level module. The are two sets of inputs/outputs, one from from audio system and the other from the HPS. Making this its own module allows for all the calculation to be simulated and tested without programming the board.</p>
+
+<p><img src="pictures/wrapper.png" alt="" title="Block diagram of EBAB Wrapper" /></p>
+<p align="center">
+Figure 8: Block diagram of EBAB Wrapper
+</p>
+
+<h4 id="design-2">Design</h4>
+
+<p>The EBAB wrapper instantiates a circular buffer and filter for each audio channel as seen in Figure 8, which enables independent voice effects on each of the two external speakers. The inputs to each of these modules are data/valid pairs. Since audio samples are coming in at 96 kHz and the FPGA is clocked at 50 MHz, each output sample is computed much faster than a new output sample. For this reason we simplified from a full valid/ready latency insensitive interface to just data/valid pairs. Incoming read data is stored in each circular buffer whose output is connected to a Butterworth filter. The output from the filter is ready to be written to the audio out FIFO.</p>
+
+<p><img src="pictures/ebab_state_machine.png" alt="" title="EBAB State Machine" /></p>
+<p align="center">
+Figure 9: EBAB State Machine
+</p>
+
+<p>The state machine in Figure 9 shows when data comes in and out of the wrapper. The code was adapted from the audio-loopback example on the DSP page of the <a href="../../../../../../../../../https@people.ece.cornell.edu/land/courses/ece5760/DE1_SOC/HPS_peripherials/DSP_index.html">course website</a>. The state machine starts by writing stereo to the audio FIFO and then reads new data from the audio FIFO. The first step is to read from the audio FIFO address to see if any space is available. Is there is enough space for both sample (left and right channel), the state machine proceeds to write each sample one at a time. If there is not enough space available, the state machine checks again. In practice the audio FIFO was found to have enough space since we were writing at approximately the sample rate. After the writes are finished the state machine reads the audio FIFO address the check for available reads. If there is at least one sample available it reads from both channels. For the purpose of this lab, we only used the right audio input. When the right audio input was read we assert a valid signal for one cycle which kicks off the computation of a new sample. The state machine then returns back to the beginning.</p>
+
+<h4 id="testing-2">Testing</h4>
+
+<p>Being able to simulate the wrapper was beneficial to our testing. Our test-bench was able to generate clock and reset signals which stimulating the wrapper and responding outputs. Streaming in and out a counter made the outputs simple enough to verify while also making sure all the modules were connected properly. Initially, the wrapper only streamed in and out data from the bus. The encapsulation provided by this module allowed us to iteratively test integration and functionality. After the wrapper was tested in isolation the buffer was instantiated inside the wrapper so both could be tested together. The buffer was also tested in isolation before integration. These steps were completed while the filter was still in development allowing time to also test the wrapper on the board. The results after this test confirmed our MATLAB simulations as we were able to pitch shift but still needed filtering to reduce the high frequencies from the discontinuities in the output wave. Finally the filter was added into the wrapper after bugs in the wrapper and buffer had already been solved and the filter was testing in isolation. At this point we stopped testing in ModelSim and tested on the hardware.</p>
+
+<h2 id="software-development">Software Development</h2>
+
+<p><img src="pictures/gui.jpg" alt="" title="GIU control on VGA monitor" /> <img src="pictures/gui_changed.jpg" alt="" title="GIU control on VGA monitor" /></p>
+<p align="center">
+Figure 10: GUI control on VGA monitor
+</p>
+
+<h3 id="design-3">Design</h3>
+
+<p>The HPS program for this project functioned as a driver for the hardware modules we designed. The program controlled certain parameters related to different functionalities of the modules instantiated in the FPGA fabric. The communication was done largely through parallel input ports that looked like memory to the HPS program. We also used the HPS program to write directly to a VGA screen to provide a user interface for our pitch shifter. Also, the HPS program allowed the use of a mouse to set the various values, while interacting with the VGA screen through buttons and sliders we created. The main body of the program revolved around the mouse input, waiting for a left click event to occur. We had drawn preliminary structures on the screen to represent buttons and sliders, as well as placing text on the screen to guide the user. When a user would click on a button, the program would change some parameter and possibly update the screen, as in the case of moving a slider bar or changing the mode of one of the output channels. This was all done through multiple variables keeping track of the current state of the VGA screen and recognizing where the mouse was clicked on the screen.</p>
+
+<p>Based on this set up, the mouse input is used to either increase/decrease the pitch-shift amount (delta variable) by multiplying/dividing by 2^(1/12), while limiting delta to the range of [0.5,2]. This allows the pitch to be shifted by up to one octave in either direction. Furthermore, the mouse input can be used to change the delta mode of the pitch-shift to use the built-in delta modulation mode of the buffer module. In this mode, the slider bar is used to control the period of the modulation, limited to a range of T = [0.5,2] seconds, by modifying the modulation counter variable described in the pitch-shifter design section. Finally, a reset button is included to easily return to a non-pitch-shifted output on both speakers (i.e., delta=1 for both speakers).</p>
+
+<h3 id="testing-3">Testing</h3>
+
+<p>The entirety of the testing done for the HPS program was done through usage testing, as it was primarily a user interface. We tested the transfer of information between the HPS and the fabric through a few dedicated hard-coded values. Following this, we began building the UI by first defining where the different buttons and sliders would be on the screen, and placing print statements into the code to give an indication that we were clicking in the correct areas. Much of the rest of the testing was done this way: build a new part of the interface, then insert debugging print statements to prove to ourselves that it was functioning how we expected, then move on.</p>
+
+<h2 id="results">Results</h2>
+
+<p>The following figures depict the achieved pitch-shifting in MATLAB simulations using a sine wave input. Additionally, Figure 12 illustrates the occurrence of a discontinuity artifact as well as the smoothing performed by the median and Butterworth filters.</p>
+
+<p><img src="pictures/pitchinc.png" alt="" title="Pitch shifting up" /> <img src="pictures/pitchdec.png" alt="" title="Pitch shifting down" /></p>
+<p align="center">
+Figure 11: Shifting the frequency up and down
+</p>
+
+<p><img src="pictures/avg_fading.png" alt="" title="Average fading between circular buffers" /> <img src="pictures/filters.png" alt="" title="Adding filters to output" /></p>
+<p align="center">
+Figure 12: On the left the shifted output shows the discontinuities resulting from the averaging the circular buffers. On the right we tested different filters and combinations resulting in our choice to use a Butterworth filter
+</p>
+
+<p>As described in earlier sections, the final design enables the user to modify the output voice pitch by up to one octave in either direction. Additionally, the user can select the delta modulation mode, which automatically varies delta between [0.5,1.5], and vary the modulation period between 0.5s to 2s. These actions can be performed independently for each speaker. As seen in the images in the software development section, the GUI is extremely intuitive and user-friendly, facilitating the usability of our design.</p>
+
+<p>User safety is not an issue for this project, since the user need only use the mouse to click on the screen and hold the microphone close to their face while speaking. To prevent audio feedback, we use a microphone that has a long enough cord such that the user can easily remain at a large enough distance from the speakers to avoid these undesirable effects. Furthermore, we did not experience any interference issues while working on this project since the microphone needed to be held fairly close to the user in order to receive the audio input.</p>
+
+<p>The video below contains a demo of the real-time pitch shifting effects performed by the final hardware design.</p>
+
+<iframe width="560" height="315" src="../../../../../../../../../https@www.youtube.com/embed/VeT4ikeRbic" frameborder="0" allowfullscreen></iframe>
+
+<h2 id="conclusion">Conclusion</h2>
+
+<p>Overall, this was a successful final project as we were able to implement real-time voice pitch shifting along with several other voice effects. Most importantly, the design we use is extremely simple and efficient in terms of the hardware implementation. One thing to note is that our method for pitch-shifting the voice input is a time-domain solution as opposed to the more common frequency-domain solutions that are found online. In terms of future work, it might be interesting to complete a frequency-domain pitch-shift method as well and compare the final results to our current design, evaluating the pros and cons of each method. However, we are satisfied with our design since it achieves all of the capabilities we had planned for at the outset of the project, and we were able to fully complete and test all aspects in the short project time-line.</p>
+
+<p>In terms of other considerations for this project, we do not foresee any legal or IP issues since nearly all of our project was independently designed, and for the remaining portions we have credited all prior work/ideas that our project design uses (Bruce Land’s example audio code, Altera M10K IP, 180-degree buffer phase-shift concept, etc.). We did not reverse-engineer any designs, nor do we suspect that we are the only users of a circular-buffer method of pitch-shifting in the time domain. As a result, we do not foresee any patent opportunities from this project, but we are happy with our independent implementation nonetheless.</p>
+
+<h2 id="work-distribution">Work Distribution</h2>
+
+<h3 id="gulnar-mirza">Gulnar Mirza</h3>
+<ul>
+  <li>Dual circular buffer module design, implementation, and testing in MATLAB</li>
+  <li>Implemented pitch-shift (buffer) module in hardware</li>
+  <li>Tested pitch-shift (buffer) module in ModelSim</li>
+  <li>Designed and implemented delta modulation effect in hardware</li>
+  <li>Tested delta modulation effect in MATLAB and hardware</li>
+</ul>
+
+<h3 id="james-talmage">James Talmage</h3>
+<ul>
+  <li>MATLAB testing of ring-buffer and filters</li>
+  <li>Designed and implemented EBAB (audio read/write) module</li>
+  <li>Tested EBAB module in ModelSim</li>
+  <li>Implemented independent right/left audio output pitch-shift control for chords</li>
+  <li>Implemented C program for GUI control on HPS</li>
+</ul>
+
+<h3 id="sean-carroll">Sean Carroll</h3>
+<ul>
+  <li>Tested EBAB module in ModelSim</li>
+  <li>Implemented Butterworth filter in hardware</li>
+  <li>Tested Butterworth filter in ModelSim</li>
+  <li>Implemented C program for GUI control on HPS</li>
+</ul>
+
+<h2 id="references">References</h2>
+<p>[1] <a href="../../../../../../../../../https@people.ece.cornell.edu/land/courses/ece5760/default.htm">https://people.ece.cornell.edu/land/courses/ece5760/</a></p>
+
+<p>[2] <a href="../../../../../../../../../https@people.ece.cornell.edu/land/courses/ece5760/DE2/fpgaDSP.html">https://people.ece.cornell.edu/land/courses/ece5760/DE2/fpgaDSP.html</a></p>
+
+<p>[3] <a href="../../../../../../../../../https@people.ece.cornell.edu/land/courses/ece5760/DE1_SOC/Audio_core.pdf">https://people.ece.cornell.edu/land/courses/ece5760/DE1_SOC/Audio_core.pdf</a></p>
+
+<p>[4] <a href="../../../../../../../../../https@people.ece.cornell.edu/land/courses/ece5760/DE1_SOC/External_Bus_to_Avalon_Bridge.pdf">https://people.ece.cornell.edu/land/courses/ece5760/DE1_SOC/External_Bus_to_Avalon_Bridge.pdf</a></p>
+
+<p>[5] <a href="../../../../../../../../../www.wavefrontsemi.com/products/update/AL3201/WavefrontAN3201-02.pdf">http://www.wavefrontsemi.com/products/update/AL3201/WavefrontAN3201-02.pdf</a></p>
+
+<h2 id="acknowledgments">Acknowledgments</h2>
+
+<p>We would like to thank Bruce Land for helping and advising us throughout the entirety of the project. We would also like to thank the course Teaching Assistants for their advice on the lab assignments over the course of the semester, from which we were able to learn the skills needed to design and complete this project.</p>
+
+<h2 id="appendix-a">Appendix A</h2>
+
+<p>The group approves this report for inclusion on the course website.</p>
+
+<p>The group approves the video for inclusion on the course YouTube channel.</p>
+
+<h2 id="appendix-b">Appendix B</h2>
+
+<p>See <a href="../../../../../../../../../https@github.com/jmt329/PitchShifter">GitHub</a> for code.
+<code class="highlighter-rouge">DE1_SoC_Computer.v</code> from Altera University Computer</p>
+
+        </section>
+
+        <footer>
+
+          PitchShifter is maintained by <a href="../../../../../../../../../https@github.com/jmt329">jmt329</a><br>
+
+          This page was generated by <a href="../../../../../../../../../https@pages.github.com/default.htm">GitHub Pages</a>.
+        </footer>
+
+      </div>
+    </div>
+
+
+  </body>
+</html>

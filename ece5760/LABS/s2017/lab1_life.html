@@ -1,0 +1,100 @@
+
+<html>
+<head>
+<title>ece5760 Lab 1</title>
+</head>
+
+<body>
+<h2>
+ECE 5760: Laboratory 1 </h2> 
+<h2> 2-dimensional Game of Life. </h2>
+<p>
+<b> Introduction. </b>
+
+<p> In this assignment you will build a device using the FPGA and HPS which runs a state machine to compute and display a  <a href="../../../../../../mathworld.wolfram.com/ElementaryCellularAutomaton.html">Cellular automaton (CA)</a> on a VGA monitor. The operation of the CA solver for <a href="../../../../../../mathworld.wolfram.com/GameofLife.html">Conway's Game of Life</a> will be controlled by interaction with the USB mouse attached to the HPS.
+<p> <b> Procedures.</b>  
+<ol>
+  <li>Read <a href="../../DE1_SOC/HPS_peripherials/linux_index.html">Linux on DE1-SoC</a>
+  <li>Read <a href="../../DE1_SOC/HPS_peripherials/univ_pgm_computer.index.html">University Program DE1-SoC_Computer_15_1</a>
+    <ol>
+      <li>When you load the unmodified sof file of the <em>better chopped down system</em> onto the  fpga:</li>
+      <li>download the zip</li>
+      <li>open the project</li>
+      <li>open the <a href="lab1_univ_comp_programmer.PNG">programmer</a> and click <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">start</span></li>
+  </ol>  
+  <li>You are going to be programming C to run the Conway CA state machine and mouse.   
+    <br>
+  Therefore you are expected to be able to program in Linux/GCC. Read about:
+  <ol>
+    <li> /dev/mem for i/o mapping, e.g. <a href="../../../../../../www.simtec.co.uk/appnotes/AN0014/default.htm">simtec</a> and <a href="../../DE1_SOC/HPS_peripherials/FPGA_addr_index.html">local</a></li>
+    <li>Debian Linux. We are using a Debian variant, I believe.</li>
+    <li>GCC on Linux, e.g. <a href="../../../../../../https@linux.die.net/man/1/gcc">die.net</a></li>
+    <li><a href="../../DE1_SOC/HPS_peripherials/USB_index.html">USB on DE1-SoC</a> Note that the demo mouse code on this page is blocking.<br>
+      You will probably need to add code to make the device non-blocking.
+
+        <pre>//needed for nonblocking mouse read()
+int flags = fcntl(fd, F_GETFL, 0);
+fcntl(fd, F_SETFL, flags | O_NONBLOCK); </pre>
+    </li>
+  </ol>  
+  <li>You are going to connect the VGA controller using Qsys tools. Read about:
+    <ol>
+      <li><a href="../../../../../../ftp@ftp.altera.com/up/pub/Altera_Material/15.1/Tutorials/Introduction_to_the_Altera_Qsys_Tool.pdf">Qsys</a></li>
+      <li><a href="../../DE1_SOC/DE1-SoC_User_manualv.1.2.2_revE.pdf">VGA on DE1-SoC</a></li>
+      <li><a href="../../DE1_SOC/Video_core.pdf">University video core</a></li>
+    </ol>  
+  <li>Put the Linux image on a SDcard</li>
+  <li>Configure Linux as you see fit, but at least follow the steps on  <a href="../../DE1_SOC/HPS_peripherials/linux_index.html">Linux on DE1-SoC</a></li>
+  <li>Get PuTTY and PSFTP  installed on your Windows machine <br>
+    --or--<br>
+  SSH and SFTP on Mac OS X  </li>
+  <li>I prefer to edit C in Notepad++ on the Windows machine, then PSFTP the code to the HPS SDcard directory to compile.</li>
+  <li>Edit Verilog/Qsys in QuartusII/Qsys and download to the FPGA using the Quartus loader <br>
+  (assuming the DE1-SoC config switch 0-5 is 010101)<br>
+  Use QuartusII v15.1
+  </li>
+  <li>I suggest that you start with a running Quartus project based on the VGA game of life on the<br>
+<a href="../../DE1_SOC/HPS_peripherials/univ_pgm_computer.index.html">University Program DE1-SoC_Computer_15_1</a> page.</li>
+</ol>
+<hr>
+<p><b>Assignment </b> 
+</p>
+<ul>
+  <li> You will design the system in C on the HPS and Verilog on the FPGA. Don't use schematic entry or VHDL. </li>
+  <li>The HPS will run the Conway CA state machine and control the USB mouse. </li>
+  <li>The VGA resolution must be 640x480. </li>
+  <li>When the HPS program starts, the screen will be blank (except for CA compute time), and the simulation stopped. </li>
+  <li>SW0 on the FPGA will control the run/stop state.</li>
+  <li>By clicking the mouse left-button (with SW1=0) you will draw/erase individual cells of the CA at the mouse location.</li>
+  <li>By clicking the mouse left-button (with SW1=1) you will draw a PI form at the mouse location. <br>
+    The code below shows a PI drawn at the center of the screen.
+<pre>// init a small pattern "PI"
+	 life[320][240] = 1;
+	 life[319][240] = 1;
+	 life[321][240] = 1;
+	 life[319][241] = 1;
+	 life[319][242] = 1;
+	 life[321][241] = 1;
+	 life[321][242] = 1; </pre>
+  </li>
+  <li>By clicking the mouse right-button you will draw a <a href="../../../../../../www.conwaylife.com/w/index.php@title=Gosper_glider_gun">Gosper glider gun</a>  at the mouse location.<br>
+    Clearly you will need to do a bounds check first.
+  </li>
+  <li>All of the drawn cells should evolve according to <a href="../../../../../../https@en.wikipedia.org/wiki/Conway's_Game_of_Life">Conway's game of life</a> when the run/stop switch is in run state.</li>
+  <li>The CA compute time for updating all the cells once should be displayed on the screen.</li>
+  <li>There should be no flickering, tearing, or other video artifacts caused by the code running on the HPS.</li>
+</ul>
+<p>Be prepared to demo your design to your TA in lab.</p>
+<p> Your written lab report should include the sections mentioned in the <a href="../../policy.html">policy page</a>, and :
+<ul>
+  <li>A state-transition diagram for the main CA update state machine. 
+  <li> A video of the VGA screen showing the evolution of an interesting CA configuration.   
+  <li>Comment and speculate on Conway's game of life and 
+    <a href="../../../../../../https@pdfs.semanticscholar.org/19ea/f250c6b311870efa0950e642fb18febcfaf5.pdf">Turing machines</a>.
+  <li> A heavily commented listing of your C and Verilog design. 
+</ul>
+<hr>
+<small> <font size="-1">Copyright Cornell University  </font></small> 
+<!-- #BeginDate format:Am1 -->February 2, 2017<!-- #EndDate -->
+</body> </html>
+

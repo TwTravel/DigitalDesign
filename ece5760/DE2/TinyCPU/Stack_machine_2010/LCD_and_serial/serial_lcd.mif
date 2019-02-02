@@ -1,0 +1,1027 @@
+DEPTH = 4096;
+WIDTH = 18;
+  
+ADDRESS_RADIX = HEX;
+DATA_RADIX = HEX;
+   
+CONTENT
+BEGIN
+[000..FFF]	:	0000;
+000	:	1FF1;	%  pushi 4081 % 
+001	:	1FFF;	%  pushi 4095 % 
+002	:	8000;	%  st  % 
+003	:	4008;	%  jmp main % 
+004	:	0000;	%  nop  % 
+005	:	0000;	%  nop  % 
+006	:	0000;	%  nop  % 
+007	:	0000;	%  nop  % 
+008	:	2FF1;	% main: push 4081 % 
+009	:	1001;	%  pushi 1 % 
+00a	:	f001;	%  sub  % 
+00b	:	f013;	%  dup  % 
+00c	:	3FF1;	%  pop 4081 % 
+00d	:	9000;	%  pushpc  % 
+00e	:	8000;	%  st  % 
+00f	:	40FF;	%  jmp LCDinit % 
+010	:	1080;	%  pushi position_line1 % 
+011	:	2FF1;	%  push 4081 % 
+012	:	1001;	%  pushi 1 % 
+013	:	f001;	%  sub  % 
+014	:	f013;	%  dup  % 
+015	:	3FF1;	%  pop 4081 % 
+016	:	9000;	%  pushpc  % 
+017	:	8000;	%  st  % 
+018	:	40DE;	%  jmp LCDputchar % 
+019	:	1031;	%  pushi 49 % 
+01a	:	1031;	%  pushi 49 % 
+01b	:	1030;	%  pushi 48 % 
+01c	:	1032;	%  pushi 50 % 
+01d	:	105F;	%  pushi 95 % 
+01e	:	1074;	%  pushi 116 % 
+01f	:	1063;	%  pushi 99 % 
+020	:	104F;	%  pushi 79 % 
+021	:	1008;	%  pushi 8 % 
+022	:	2FF1;	%  push 4081 % 
+023	:	1001;	%  pushi 1 % 
+024	:	f001;	%  sub  % 
+025	:	f013;	%  dup  % 
+026	:	3FF1;	%  pop 4081 % 
+027	:	9000;	%  pushpc  % 
+028	:	8000;	%  st  % 
+029	:	4145;	%  jmp LCDputstr % 
+02a	:	130D;	%  pushi 781 % 
+02b	:	1007;	%  pushi 7 % 
+02c	:	f003;	%  shl  % 
+02d	:	1020;	%  pushi 32 % 
+02e	:	f006;	%  bor  % 
+02f	:	2FF1;	%  push 4081 % 
+030	:	1001;	%  pushi 1 % 
+031	:	f001;	%  sub  % 
+032	:	f013;	%  dup  % 
+033	:	3FF1;	%  pop 4081 % 
+034	:	9000;	%  pushpc  % 
+035	:	8000;	%  st  % 
+036	:	43D7;	%  jmp delay_10 % 
+037	:	2FF1;	%  push 4081 % 
+038	:	1001;	%  pushi 1 % 
+039	:	f001;	%  sub  % 
+03a	:	f013;	%  dup  % 
+03b	:	3FF1;	%  pop 4081 % 
+03c	:	9000;	%  pushpc  % 
+03d	:	8000;	%  st  % 
+03e	:	419D;	%  jmp LCDclear % 
+03f	:	1001;	%  pushi 1 % 
+040	:	3FEE;	%  pop count % 
+041	:	0000;	% L1: nop  % 
+042	:	1001;	%  pushi forever % 
+043	:	50DE;	%  jz L2 % 
+044	:	103E;	%  pushi 62 % 
+045	:	1072;	%  pushi 114 % 
+046	:	1065;	%  pushi 101 % 
+047	:	1074;	%  pushi 116 % 
+048	:	106E;	%  pushi 110 % 
+049	:	1065;	%  pushi 101 % 
+04a	:	1006;	%  pushi 6 % 
+04b	:	2FF1;	%  push 4081 % 
+04c	:	1001;	%  pushi 1 % 
+04d	:	f001;	%  sub  % 
+04e	:	f013;	%  dup  % 
+04f	:	3FF1;	%  pop 4081 % 
+050	:	9000;	%  pushpc  % 
+051	:	8000;	%  st  % 
+052	:	42D8;	%  jmp putstr % 
+053	:	2FF1;	%  push 4081 % 
+054	:	1001;	%  pushi 1 % 
+055	:	f001;	%  sub  % 
+056	:	f013;	%  dup  % 
+057	:	3FF1;	%  pop 4081 % 
+058	:	9000;	%  pushpc  % 
+059	:	8000;	%  st  % 
+05a	:	42F5;	%  jmp gethex % 
+05b	:	100A;	%  pushi 10 % 
+05c	:	2FF1;	%  push 4081 % 
+05d	:	1001;	%  pushi 1 % 
+05e	:	f001;	%  sub  % 
+05f	:	f013;	%  dup  % 
+060	:	3FF1;	%  pop 4081 % 
+061	:	9000;	%  pushpc  % 
+062	:	8000;	%  st  % 
+063	:	43C2;	%  jmp putchar % 
+064	:	100D;	%  pushi 13 % 
+065	:	2FF1;	%  push 4081 % 
+066	:	1001;	%  pushi 1 % 
+067	:	f001;	%  sub  % 
+068	:	f013;	%  dup  % 
+069	:	3FF1;	%  pop 4081 % 
+06a	:	9000;	%  pushpc  % 
+06b	:	8000;	%  st  % 
+06c	:	43C2;	%  jmp putchar % 
+06d	:	2FF1;	%  push 4081 % 
+06e	:	1001;	%  pushi 1 % 
+06f	:	f001;	%  sub  % 
+070	:	f013;	%  dup  % 
+071	:	3FF1;	%  pop 4081 % 
+072	:	9000;	%  pushpc  % 
+073	:	8000;	%  st  % 
+074	:	436F;	%  jmp puthex % 
+075	:	1020;	%  pushi 32 % 
+076	:	2FF1;	%  push 4081 % 
+077	:	1001;	%  pushi 1 % 
+078	:	f001;	%  sub  % 
+079	:	f013;	%  dup  % 
+07a	:	3FF1;	%  pop 4081 % 
+07b	:	9000;	%  pushpc  % 
+07c	:	8000;	%  st  % 
+07d	:	43C2;	%  jmp putchar % 
+07e	:	2FEE;	%  push count % 
+07f	:	2FF1;	%  push 4081 % 
+080	:	1001;	%  pushi 1 % 
+081	:	f001;	%  sub  % 
+082	:	f013;	%  dup  % 
+083	:	3FF1;	%  pop 4081 % 
+084	:	9000;	%  pushpc  % 
+085	:	8000;	%  st  % 
+086	:	436F;	%  jmp puthex % 
+087	:	100A;	%  pushi 10 % 
+088	:	2FF1;	%  push 4081 % 
+089	:	1001;	%  pushi 1 % 
+08a	:	f001;	%  sub  % 
+08b	:	f013;	%  dup  % 
+08c	:	3FF1;	%  pop 4081 % 
+08d	:	9000;	%  pushpc  % 
+08e	:	8000;	%  st  % 
+08f	:	43C2;	%  jmp putchar % 
+090	:	100D;	%  pushi 13 % 
+091	:	2FF1;	%  push 4081 % 
+092	:	1001;	%  pushi 1 % 
+093	:	f001;	%  sub  % 
+094	:	f013;	%  dup  % 
+095	:	3FF1;	%  pop 4081 % 
+096	:	9000;	%  pushpc  % 
+097	:	8000;	%  st  % 
+098	:	43C2;	%  jmp putchar % 
+099	:	2FEE;	%  push count % 
+09a	:	1001;	%  pushi 1 % 
+09b	:	f000;	%  add  % 
+09c	:	3FEE;	%  pop count % 
+09d	:	1080;	%  pushi position_line1 % 
+09e	:	2FF1;	%  push 4081 % 
+09f	:	1001;	%  pushi 1 % 
+0a0	:	f001;	%  sub  % 
+0a1	:	f013;	%  dup  % 
+0a2	:	3FF1;	%  pop 4081 % 
+0a3	:	9000;	%  pushpc  % 
+0a4	:	8000;	%  st  % 
+0a5	:	40DE;	%  jmp LCDputchar % 
+0a6	:	2FEE;	%  push count % 
+0a7	:	2FF1;	%  push 4081 % 
+0a8	:	1001;	%  pushi 1 % 
+0a9	:	f001;	%  sub  % 
+0aa	:	f013;	%  dup  % 
+0ab	:	3FF1;	%  pop 4081 % 
+0ac	:	9000;	%  pushpc  % 
+0ad	:	8000;	%  st  % 
+0ae	:	4164;	%  jmp LCDputhex % 
+0af	:	1120;	%  pushi 288 % 
+0b0	:	2FF1;	%  push 4081 % 
+0b1	:	1001;	%  pushi 1 % 
+0b2	:	f001;	%  sub  % 
+0b3	:	f013;	%  dup  % 
+0b4	:	3FF1;	%  pop 4081 % 
+0b5	:	9000;	%  pushpc  % 
+0b6	:	8000;	%  st  % 
+0b7	:	40DE;	%  jmp LCDputchar % 
+0b8	:	1044;	%  pushi 68 % 
+0b9	:	1043;	%  pushi 67 % 
+0ba	:	104C;	%  pushi 76 % 
+0bb	:	1074;	%  pushi 116 % 
+0bc	:	1073;	%  pushi 115 % 
+0bd	:	1065;	%  pushi 101 % 
+0be	:	1074;	%  pushi 116 % 
+0bf	:	1007;	%  pushi 7 % 
+0c0	:	2FF1;	%  push 4081 % 
+0c1	:	1001;	%  pushi 1 % 
+0c2	:	f001;	%  sub  % 
+0c3	:	f013;	%  dup  % 
+0c4	:	3FF1;	%  pop 4081 % 
+0c5	:	9000;	%  pushpc  % 
+0c6	:	8000;	%  st  % 
+0c7	:	4145;	%  jmp LCDputstr % 
+0c8	:	10C0;	%  pushi position_line2 % 
+0c9	:	2FF1;	%  push 4081 % 
+0ca	:	1001;	%  pushi 1 % 
+0cb	:	f001;	%  sub  % 
+0cc	:	f013;	%  dup  % 
+0cd	:	3FF1;	%  pop 4081 % 
+0ce	:	9000;	%  pushpc  % 
+0cf	:	8000;	%  st  % 
+0d0	:	40DE;	%  jmp LCDputchar % 
+0d1	:	2FEE;	%  push count % 
+0d2	:	1001;	%  pushi 1 % 
+0d3	:	f001;	%  sub  % 
+0d4	:	2FF1;	%  push 4081 % 
+0d5	:	1001;	%  pushi 1 % 
+0d6	:	f001;	%  sub  % 
+0d7	:	f013;	%  dup  % 
+0d8	:	3FF1;	%  pop 4081 % 
+0d9	:	9000;	%  pushpc  % 
+0da	:	8000;	%  st  % 
+0db	:	4164;	%  jmp LCDputhex % 
+0dc	:	4042;	%  jmp L1 % 
+0dd	:	0000;	% L2: nop  % 
+0de	:	0000;	% L3: nop  % 
+0df	:	d001;	%  in LCDin % 
+0e0	:	f011;	%  bnot  % 
+0e1	:	1001;	%  pushi writeDoneMask % 
+0e2	:	f005;	%  band  % 
+0e3	:	50E6;	%  jz L4 % 
+0e4	:	40DF;	%  jmp L3 % 
+0e5	:	0000;	% L4: nop  % 
+0e6	:	1010;	%  pushi 16 % 
+0e7	:	1007;	%  pushi 7 % 
+0e8	:	f003;	%  shl  % 
+0e9	:	1000;	%  pushi 0 % 
+0ea	:	f006;	%  bor  % 
+0eb	:	1200;	%  pushi writeStrobeMask % 
+0ec	:	f006;	%  bor  % 
+0ed	:	f006;	%  bor  % 
+0ee	:	e001;	%  out LCDout % 
+0ef	:	0000;	%  nop  % 
+0f0	:	1010;	%  pushi 16 % 
+0f1	:	1007;	%  pushi 7 % 
+0f2	:	f003;	%  shl  % 
+0f3	:	1000;	%  pushi 0 % 
+0f4	:	f006;	%  bor  % 
+0f5	:	e001;	%  out LCDout % 
+0f6	:	2FF1;	%  push 4081 % 
+0f7	:	7000;	%  ld  % 
+0f8	:	2FF1;	%  push 4081 % 
+0f9	:	1001;	%  pushi 1 % 
+0fa	:	f000;	%  add  % 
+0fb	:	3FF1;	%  pop 4081 % 
+0fc	:	1002;	%  pushi 2 % 
+0fd	:	f000;	%  add  % 
+0fe	:	9001;	%  poppc  % 
+0ff	:	1000;	% LCDinit: pushi 0 % 
+100	:	e001;	%  out LCDout % 
+101	:	1400;	%  pushi LCDreset % 
+102	:	e001;	%  out LCDout % 
+103	:	1400;	%  pushi LCDreset % 
+104	:	e001;	%  out LCDout % 
+105	:	1186;	%  pushi 390 % 
+106	:	1007;	%  pushi 7 % 
+107	:	f003;	%  shl  % 
+108	:	1050;	%  pushi 80 % 
+109	:	f006;	%  bor  % 
+10a	:	2FF1;	%  push 4081 % 
+10b	:	1001;	%  pushi 1 % 
+10c	:	f001;	%  sub  % 
+10d	:	f013;	%  dup  % 
+10e	:	3FF1;	%  pop 4081 % 
+10f	:	9000;	%  pushpc  % 
+110	:	8000;	%  st  % 
+111	:	43D7;	%  jmp delay_10 % 
+112	:	1010;	%  pushi 16 % 
+113	:	1007;	%  pushi 7 % 
+114	:	f003;	%  shl  % 
+115	:	1000;	%  pushi 0 % 
+116	:	f006;	%  bor  % 
+117	:	e001;	%  out LCDout % 
+118	:	1027;	%  pushi 39 % 
+119	:	1007;	%  pushi 7 % 
+11a	:	f003;	%  shl  % 
+11b	:	1008;	%  pushi 8 % 
+11c	:	f006;	%  bor  % 
+11d	:	2FF1;	%  push 4081 % 
+11e	:	1001;	%  pushi 1 % 
+11f	:	f001;	%  sub  % 
+120	:	f013;	%  dup  % 
+121	:	3FF1;	%  pop 4081 % 
+122	:	9000;	%  pushpc  % 
+123	:	8000;	%  st  % 
+124	:	43D7;	%  jmp delay_10 % 
+125	:	1400;	%  pushi LCDreset % 
+126	:	1010;	%  pushi 16 % 
+127	:	1007;	%  pushi 7 % 
+128	:	f003;	%  shl  % 
+129	:	1000;	%  pushi 0 % 
+12a	:	f006;	%  bor  % 
+12b	:	f006;	%  bor  % 
+12c	:	e001;	%  out LCDout % 
+12d	:	0000;	%  nop  % 
+12e	:	1010;	%  pushi 16 % 
+12f	:	1007;	%  pushi 7 % 
+130	:	f003;	%  shl  % 
+131	:	1000;	%  pushi 0 % 
+132	:	f006;	%  bor  % 
+133	:	e001;	%  out LCDout % 
+134	:	0000;	% L5: nop  % 
+135	:	d001;	%  in LCDin % 
+136	:	f011;	%  bnot  % 
+137	:	1001;	%  pushi writeDoneMask % 
+138	:	f005;	%  band  % 
+139	:	513C;	%  jz L6 % 
+13a	:	4135;	%  jmp L5 % 
+13b	:	0000;	% L6: nop  % 
+13c	:	2FF1;	%  push 4081 % 
+13d	:	7000;	%  ld  % 
+13e	:	2FF1;	%  push 4081 % 
+13f	:	1001;	%  pushi 1 % 
+140	:	f000;	%  add  % 
+141	:	3FF1;	%  pop 4081 % 
+142	:	1002;	%  pushi 2 % 
+143	:	f000;	%  add  % 
+144	:	9001;	%  poppc  % 
+145	:	3004;	% LCDputstr: pop 4 % 
+146	:	0000;	% L7: nop  % 
+147	:	2004;	%  push 4 % 
+148	:	1000;	%  pushi 0 % 
+149	:	f00e;	%  gt  % 
+14a	:	515B;	%  jz L8 % 
+14b	:	1100;	%  pushi printable % 
+14c	:	f000;	%  add  % 
+14d	:	2FF1;	%  push 4081 % 
+14e	:	1001;	%  pushi 1 % 
+14f	:	f001;	%  sub  % 
+150	:	f013;	%  dup  % 
+151	:	3FF1;	%  pop 4081 % 
+152	:	9000;	%  pushpc  % 
+153	:	8000;	%  st  % 
+154	:	40DE;	%  jmp LCDputchar % 
+155	:	2004;	%  push 4 % 
+156	:	1001;	%  pushi 1 % 
+157	:	f001;	%  sub  % 
+158	:	3004;	%  pop 4 % 
+159	:	4147;	%  jmp L7 % 
+15a	:	0000;	% L8: nop  % 
+15b	:	2FF1;	%  push 4081 % 
+15c	:	7000;	%  ld  % 
+15d	:	2FF1;	%  push 4081 % 
+15e	:	1001;	%  pushi 1 % 
+15f	:	f000;	%  add  % 
+160	:	3FF1;	%  pop 4081 % 
+161	:	1002;	%  pushi 2 % 
+162	:	f000;	%  add  % 
+163	:	9001;	%  poppc  % 
+164	:	3006;	% LCDputhex: pop 6 % 
+165	:	1005;	%  pushi 5 % 
+166	:	3004;	%  pop 4 % 
+167	:	1010;	%  pushi 16 % 
+168	:	3005;	%  pop 5 % 
+169	:	0000;	% L9: nop  % 
+16a	:	2004;	%  push 4 % 
+16b	:	1000;	%  pushi 0 % 
+16c	:	f00e;	%  gt  % 
+16d	:	5194;	%  jz L12 % 
+16e	:	2006;	%  push 6 % 
+16f	:	2005;	%  push 5 % 
+170	:	f004;	%  shr  % 
+171	:	100F;	%  pushi 15 % 
+172	:	f005;	%  band  % 
+173	:	f013;	%  dup  % 
+174	:	100A;	%  pushi 10 % 
+175	:	f00f;	%  lt  % 
+176	:	517B;	%  jz L10 % 
+177	:	1030;	%  pushi zero % 
+178	:	f000;	%  add  % 
+179	:	4180;	%  jmp L11 % 
+17a	:	0000;	% L10: nop  % 
+17b	:	100A;	%  pushi 10 % 
+17c	:	f001;	%  sub  % 
+17d	:	1061;	%  pushi a % 
+17e	:	f000;	%  add  % 
+17f	:	0000;	% L11: nop  % 
+180	:	1100;	%  pushi printable % 
+181	:	f000;	%  add  % 
+182	:	2FF1;	%  push 4081 % 
+183	:	1001;	%  pushi 1 % 
+184	:	f001;	%  sub  % 
+185	:	f013;	%  dup  % 
+186	:	3FF1;	%  pop 4081 % 
+187	:	9000;	%  pushpc  % 
+188	:	8000;	%  st  % 
+189	:	40DE;	%  jmp LCDputchar % 
+18a	:	2004;	%  push 4 % 
+18b	:	1001;	%  pushi 1 % 
+18c	:	f001;	%  sub  % 
+18d	:	3004;	%  pop 4 % 
+18e	:	2005;	%  push 5 % 
+18f	:	1004;	%  pushi 4 % 
+190	:	f001;	%  sub  % 
+191	:	3005;	%  pop 5 % 
+192	:	416A;	%  jmp L9 % 
+193	:	0000;	% L12: nop  % 
+194	:	2FF1;	%  push 4081 % 
+195	:	7000;	%  ld  % 
+196	:	2FF1;	%  push 4081 % 
+197	:	1001;	%  pushi 1 % 
+198	:	f000;	%  add  % 
+199	:	3FF1;	%  pop 4081 % 
+19a	:	1002;	%  pushi 2 % 
+19b	:	f000;	%  add  % 
+19c	:	9001;	%  poppc  % 
+19d	:	1080;	% LCDclear: pushi position_line1 % 
+19e	:	2FF1;	%  push 4081 % 
+19f	:	1001;	%  pushi 1 % 
+1a0	:	f001;	%  sub  % 
+1a1	:	f013;	%  dup  % 
+1a2	:	3FF1;	%  pop 4081 % 
+1a3	:	9000;	%  pushpc  % 
+1a4	:	8000;	%  st  % 
+1a5	:	40DE;	%  jmp LCDputchar % 
+1a6	:	1120;	%  pushi 288 % 
+1a7	:	2FF1;	%  push 4081 % 
+1a8	:	1001;	%  pushi 1 % 
+1a9	:	f001;	%  sub  % 
+1aa	:	f013;	%  dup  % 
+1ab	:	3FF1;	%  pop 4081 % 
+1ac	:	9000;	%  pushpc  % 
+1ad	:	8000;	%  st  % 
+1ae	:	40DE;	%  jmp LCDputchar % 
+1af	:	1120;	%  pushi 288 % 
+1b0	:	2FF1;	%  push 4081 % 
+1b1	:	1001;	%  pushi 1 % 
+1b2	:	f001;	%  sub  % 
+1b3	:	f013;	%  dup  % 
+1b4	:	3FF1;	%  pop 4081 % 
+1b5	:	9000;	%  pushpc  % 
+1b6	:	8000;	%  st  % 
+1b7	:	40DE;	%  jmp LCDputchar % 
+1b8	:	1120;	%  pushi 288 % 
+1b9	:	2FF1;	%  push 4081 % 
+1ba	:	1001;	%  pushi 1 % 
+1bb	:	f001;	%  sub  % 
+1bc	:	f013;	%  dup  % 
+1bd	:	3FF1;	%  pop 4081 % 
+1be	:	9000;	%  pushpc  % 
+1bf	:	8000;	%  st  % 
+1c0	:	40DE;	%  jmp LCDputchar % 
+1c1	:	1120;	%  pushi 288 % 
+1c2	:	2FF1;	%  push 4081 % 
+1c3	:	1001;	%  pushi 1 % 
+1c4	:	f001;	%  sub  % 
+1c5	:	f013;	%  dup  % 
+1c6	:	3FF1;	%  pop 4081 % 
+1c7	:	9000;	%  pushpc  % 
+1c8	:	8000;	%  st  % 
+1c9	:	40DE;	%  jmp LCDputchar % 
+1ca	:	1120;	%  pushi 288 % 
+1cb	:	2FF1;	%  push 4081 % 
+1cc	:	1001;	%  pushi 1 % 
+1cd	:	f001;	%  sub  % 
+1ce	:	f013;	%  dup  % 
+1cf	:	3FF1;	%  pop 4081 % 
+1d0	:	9000;	%  pushpc  % 
+1d1	:	8000;	%  st  % 
+1d2	:	40DE;	%  jmp LCDputchar % 
+1d3	:	1120;	%  pushi 288 % 
+1d4	:	2FF1;	%  push 4081 % 
+1d5	:	1001;	%  pushi 1 % 
+1d6	:	f001;	%  sub  % 
+1d7	:	f013;	%  dup  % 
+1d8	:	3FF1;	%  pop 4081 % 
+1d9	:	9000;	%  pushpc  % 
+1da	:	8000;	%  st  % 
+1db	:	40DE;	%  jmp LCDputchar % 
+1dc	:	1120;	%  pushi 288 % 
+1dd	:	2FF1;	%  push 4081 % 
+1de	:	1001;	%  pushi 1 % 
+1df	:	f001;	%  sub  % 
+1e0	:	f013;	%  dup  % 
+1e1	:	3FF1;	%  pop 4081 % 
+1e2	:	9000;	%  pushpc  % 
+1e3	:	8000;	%  st  % 
+1e4	:	40DE;	%  jmp LCDputchar % 
+1e5	:	1120;	%  pushi 288 % 
+1e6	:	2FF1;	%  push 4081 % 
+1e7	:	1001;	%  pushi 1 % 
+1e8	:	f001;	%  sub  % 
+1e9	:	f013;	%  dup  % 
+1ea	:	3FF1;	%  pop 4081 % 
+1eb	:	9000;	%  pushpc  % 
+1ec	:	8000;	%  st  % 
+1ed	:	40DE;	%  jmp LCDputchar % 
+1ee	:	1120;	%  pushi 288 % 
+1ef	:	2FF1;	%  push 4081 % 
+1f0	:	1001;	%  pushi 1 % 
+1f1	:	f001;	%  sub  % 
+1f2	:	f013;	%  dup  % 
+1f3	:	3FF1;	%  pop 4081 % 
+1f4	:	9000;	%  pushpc  % 
+1f5	:	8000;	%  st  % 
+1f6	:	40DE;	%  jmp LCDputchar % 
+1f7	:	1120;	%  pushi 288 % 
+1f8	:	2FF1;	%  push 4081 % 
+1f9	:	1001;	%  pushi 1 % 
+1fa	:	f001;	%  sub  % 
+1fb	:	f013;	%  dup  % 
+1fc	:	3FF1;	%  pop 4081 % 
+1fd	:	9000;	%  pushpc  % 
+1fe	:	8000;	%  st  % 
+1ff	:	40DE;	%  jmp LCDputchar % 
+200	:	1120;	%  pushi 288 % 
+201	:	2FF1;	%  push 4081 % 
+202	:	1001;	%  pushi 1 % 
+203	:	f001;	%  sub  % 
+204	:	f013;	%  dup  % 
+205	:	3FF1;	%  pop 4081 % 
+206	:	9000;	%  pushpc  % 
+207	:	8000;	%  st  % 
+208	:	40DE;	%  jmp LCDputchar % 
+209	:	1120;	%  pushi 288 % 
+20a	:	2FF1;	%  push 4081 % 
+20b	:	1001;	%  pushi 1 % 
+20c	:	f001;	%  sub  % 
+20d	:	f013;	%  dup  % 
+20e	:	3FF1;	%  pop 4081 % 
+20f	:	9000;	%  pushpc  % 
+210	:	8000;	%  st  % 
+211	:	40DE;	%  jmp LCDputchar % 
+212	:	1120;	%  pushi 288 % 
+213	:	2FF1;	%  push 4081 % 
+214	:	1001;	%  pushi 1 % 
+215	:	f001;	%  sub  % 
+216	:	f013;	%  dup  % 
+217	:	3FF1;	%  pop 4081 % 
+218	:	9000;	%  pushpc  % 
+219	:	8000;	%  st  % 
+21a	:	40DE;	%  jmp LCDputchar % 
+21b	:	1120;	%  pushi 288 % 
+21c	:	2FF1;	%  push 4081 % 
+21d	:	1001;	%  pushi 1 % 
+21e	:	f001;	%  sub  % 
+21f	:	f013;	%  dup  % 
+220	:	3FF1;	%  pop 4081 % 
+221	:	9000;	%  pushpc  % 
+222	:	8000;	%  st  % 
+223	:	40DE;	%  jmp LCDputchar % 
+224	:	1120;	%  pushi 288 % 
+225	:	2FF1;	%  push 4081 % 
+226	:	1001;	%  pushi 1 % 
+227	:	f001;	%  sub  % 
+228	:	f013;	%  dup  % 
+229	:	3FF1;	%  pop 4081 % 
+22a	:	9000;	%  pushpc  % 
+22b	:	8000;	%  st  % 
+22c	:	40DE;	%  jmp LCDputchar % 
+22d	:	1120;	%  pushi 288 % 
+22e	:	2FF1;	%  push 4081 % 
+22f	:	1001;	%  pushi 1 % 
+230	:	f001;	%  sub  % 
+231	:	f013;	%  dup  % 
+232	:	3FF1;	%  pop 4081 % 
+233	:	9000;	%  pushpc  % 
+234	:	8000;	%  st  % 
+235	:	40DE;	%  jmp LCDputchar % 
+236	:	10C0;	%  pushi position_line2 % 
+237	:	2FF1;	%  push 4081 % 
+238	:	1001;	%  pushi 1 % 
+239	:	f001;	%  sub  % 
+23a	:	f013;	%  dup  % 
+23b	:	3FF1;	%  pop 4081 % 
+23c	:	9000;	%  pushpc  % 
+23d	:	8000;	%  st  % 
+23e	:	40DE;	%  jmp LCDputchar % 
+23f	:	1120;	%  pushi 288 % 
+240	:	2FF1;	%  push 4081 % 
+241	:	1001;	%  pushi 1 % 
+242	:	f001;	%  sub  % 
+243	:	f013;	%  dup  % 
+244	:	3FF1;	%  pop 4081 % 
+245	:	9000;	%  pushpc  % 
+246	:	8000;	%  st  % 
+247	:	40DE;	%  jmp LCDputchar % 
+248	:	1120;	%  pushi 288 % 
+249	:	2FF1;	%  push 4081 % 
+24a	:	1001;	%  pushi 1 % 
+24b	:	f001;	%  sub  % 
+24c	:	f013;	%  dup  % 
+24d	:	3FF1;	%  pop 4081 % 
+24e	:	9000;	%  pushpc  % 
+24f	:	8000;	%  st  % 
+250	:	40DE;	%  jmp LCDputchar % 
+251	:	1120;	%  pushi 288 % 
+252	:	2FF1;	%  push 4081 % 
+253	:	1001;	%  pushi 1 % 
+254	:	f001;	%  sub  % 
+255	:	f013;	%  dup  % 
+256	:	3FF1;	%  pop 4081 % 
+257	:	9000;	%  pushpc  % 
+258	:	8000;	%  st  % 
+259	:	40DE;	%  jmp LCDputchar % 
+25a	:	1120;	%  pushi 288 % 
+25b	:	2FF1;	%  push 4081 % 
+25c	:	1001;	%  pushi 1 % 
+25d	:	f001;	%  sub  % 
+25e	:	f013;	%  dup  % 
+25f	:	3FF1;	%  pop 4081 % 
+260	:	9000;	%  pushpc  % 
+261	:	8000;	%  st  % 
+262	:	40DE;	%  jmp LCDputchar % 
+263	:	1120;	%  pushi 288 % 
+264	:	2FF1;	%  push 4081 % 
+265	:	1001;	%  pushi 1 % 
+266	:	f001;	%  sub  % 
+267	:	f013;	%  dup  % 
+268	:	3FF1;	%  pop 4081 % 
+269	:	9000;	%  pushpc  % 
+26a	:	8000;	%  st  % 
+26b	:	40DE;	%  jmp LCDputchar % 
+26c	:	1120;	%  pushi 288 % 
+26d	:	2FF1;	%  push 4081 % 
+26e	:	1001;	%  pushi 1 % 
+26f	:	f001;	%  sub  % 
+270	:	f013;	%  dup  % 
+271	:	3FF1;	%  pop 4081 % 
+272	:	9000;	%  pushpc  % 
+273	:	8000;	%  st  % 
+274	:	40DE;	%  jmp LCDputchar % 
+275	:	1120;	%  pushi 288 % 
+276	:	2FF1;	%  push 4081 % 
+277	:	1001;	%  pushi 1 % 
+278	:	f001;	%  sub  % 
+279	:	f013;	%  dup  % 
+27a	:	3FF1;	%  pop 4081 % 
+27b	:	9000;	%  pushpc  % 
+27c	:	8000;	%  st  % 
+27d	:	40DE;	%  jmp LCDputchar % 
+27e	:	1120;	%  pushi 288 % 
+27f	:	2FF1;	%  push 4081 % 
+280	:	1001;	%  pushi 1 % 
+281	:	f001;	%  sub  % 
+282	:	f013;	%  dup  % 
+283	:	3FF1;	%  pop 4081 % 
+284	:	9000;	%  pushpc  % 
+285	:	8000;	%  st  % 
+286	:	40DE;	%  jmp LCDputchar % 
+287	:	1120;	%  pushi 288 % 
+288	:	2FF1;	%  push 4081 % 
+289	:	1001;	%  pushi 1 % 
+28a	:	f001;	%  sub  % 
+28b	:	f013;	%  dup  % 
+28c	:	3FF1;	%  pop 4081 % 
+28d	:	9000;	%  pushpc  % 
+28e	:	8000;	%  st  % 
+28f	:	40DE;	%  jmp LCDputchar % 
+290	:	1120;	%  pushi 288 % 
+291	:	2FF1;	%  push 4081 % 
+292	:	1001;	%  pushi 1 % 
+293	:	f001;	%  sub  % 
+294	:	f013;	%  dup  % 
+295	:	3FF1;	%  pop 4081 % 
+296	:	9000;	%  pushpc  % 
+297	:	8000;	%  st  % 
+298	:	40DE;	%  jmp LCDputchar % 
+299	:	1120;	%  pushi 288 % 
+29a	:	2FF1;	%  push 4081 % 
+29b	:	1001;	%  pushi 1 % 
+29c	:	f001;	%  sub  % 
+29d	:	f013;	%  dup  % 
+29e	:	3FF1;	%  pop 4081 % 
+29f	:	9000;	%  pushpc  % 
+2a0	:	8000;	%  st  % 
+2a1	:	40DE;	%  jmp LCDputchar % 
+2a2	:	1120;	%  pushi 288 % 
+2a3	:	2FF1;	%  push 4081 % 
+2a4	:	1001;	%  pushi 1 % 
+2a5	:	f001;	%  sub  % 
+2a6	:	f013;	%  dup  % 
+2a7	:	3FF1;	%  pop 4081 % 
+2a8	:	9000;	%  pushpc  % 
+2a9	:	8000;	%  st  % 
+2aa	:	40DE;	%  jmp LCDputchar % 
+2ab	:	1120;	%  pushi 288 % 
+2ac	:	2FF1;	%  push 4081 % 
+2ad	:	1001;	%  pushi 1 % 
+2ae	:	f001;	%  sub  % 
+2af	:	f013;	%  dup  % 
+2b0	:	3FF1;	%  pop 4081 % 
+2b1	:	9000;	%  pushpc  % 
+2b2	:	8000;	%  st  % 
+2b3	:	40DE;	%  jmp LCDputchar % 
+2b4	:	1120;	%  pushi 288 % 
+2b5	:	2FF1;	%  push 4081 % 
+2b6	:	1001;	%  pushi 1 % 
+2b7	:	f001;	%  sub  % 
+2b8	:	f013;	%  dup  % 
+2b9	:	3FF1;	%  pop 4081 % 
+2ba	:	9000;	%  pushpc  % 
+2bb	:	8000;	%  st  % 
+2bc	:	40DE;	%  jmp LCDputchar % 
+2bd	:	1120;	%  pushi 288 % 
+2be	:	2FF1;	%  push 4081 % 
+2bf	:	1001;	%  pushi 1 % 
+2c0	:	f001;	%  sub  % 
+2c1	:	f013;	%  dup  % 
+2c2	:	3FF1;	%  pop 4081 % 
+2c3	:	9000;	%  pushpc  % 
+2c4	:	8000;	%  st  % 
+2c5	:	40DE;	%  jmp LCDputchar % 
+2c6	:	1120;	%  pushi 288 % 
+2c7	:	2FF1;	%  push 4081 % 
+2c8	:	1001;	%  pushi 1 % 
+2c9	:	f001;	%  sub  % 
+2ca	:	f013;	%  dup  % 
+2cb	:	3FF1;	%  pop 4081 % 
+2cc	:	9000;	%  pushpc  % 
+2cd	:	8000;	%  st  % 
+2ce	:	40DE;	%  jmp LCDputchar % 
+2cf	:	2FF1;	%  push 4081 % 
+2d0	:	7000;	%  ld  % 
+2d1	:	2FF1;	%  push 4081 % 
+2d2	:	1001;	%  pushi 1 % 
+2d3	:	f000;	%  add  % 
+2d4	:	3FF1;	%  pop 4081 % 
+2d5	:	1002;	%  pushi 2 % 
+2d6	:	f000;	%  add  % 
+2d7	:	9001;	%  poppc  % 
+2d8	:	3004;	% putstr: pop 4 % 
+2d9	:	0000;	% L13: nop  % 
+2da	:	2004;	%  push 4 % 
+2db	:	1000;	%  pushi 0 % 
+2dc	:	f00e;	%  gt  % 
+2dd	:	52EC;	%  jz L14 % 
+2de	:	2FF1;	%  push 4081 % 
+2df	:	1001;	%  pushi 1 % 
+2e0	:	f001;	%  sub  % 
+2e1	:	f013;	%  dup  % 
+2e2	:	3FF1;	%  pop 4081 % 
+2e3	:	9000;	%  pushpc  % 
+2e4	:	8000;	%  st  % 
+2e5	:	43C2;	%  jmp putchar % 
+2e6	:	2004;	%  push 4 % 
+2e7	:	1001;	%  pushi 1 % 
+2e8	:	f001;	%  sub  % 
+2e9	:	3004;	%  pop 4 % 
+2ea	:	42DA;	%  jmp L13 % 
+2eb	:	0000;	% L14: nop  % 
+2ec	:	2FF1;	%  push 4081 % 
+2ed	:	7000;	%  ld  % 
+2ee	:	2FF1;	%  push 4081 % 
+2ef	:	1001;	%  pushi 1 % 
+2f0	:	f000;	%  add  % 
+2f1	:	3FF1;	%  pop 4081 % 
+2f2	:	1002;	%  pushi 2 % 
+2f3	:	f000;	%  add  % 
+2f4	:	9001;	%  poppc  % 
+2f5	:	1000;	% gethex: pushi 0 % 
+2f6	:	3FCD;	%  pop n % 
+2f7	:	1000;	%  pushi 0 % 
+2f8	:	3FCC;	%  pop shift_factor % 
+2f9	:	1000;	%  pushi 0 % 
+2fa	:	3FCB;	%  pop result_num % 
+2fb	:	2FF1;	%  push 4081 % 
+2fc	:	1001;	%  pushi 1 % 
+2fd	:	f001;	%  sub  % 
+2fe	:	f013;	%  dup  % 
+2ff	:	3FF1;	%  pop 4081 % 
+300	:	9000;	%  pushpc  % 
+301	:	8000;	%  st  % 
+302	:	43A6;	%  jmp getchar % 
+303	:	0000;	% L15: nop  % 
+304	:	f013;	%  dup  % 
+305	:	100D;	%  pushi 13 % 
+306	:	f00b;	%  ne  % 
+307	:	5325;	%  jz L16 % 
+308	:	f013;	%  dup  % 
+309	:	1FCE;	%  pushi in_str % 
+30a	:	2FCD;	%  push n % 
+30b	:	f000;	%  add  % 
+30c	:	f01f;	%  over  % 
+30d	:	8000;	%  st  % 
+30e	:	f017;	%  drop  % 
+30f	:	2FF1;	%  push 4081 % 
+310	:	1001;	%  pushi 1 % 
+311	:	f001;	%  sub  % 
+312	:	f013;	%  dup  % 
+313	:	3FF1;	%  pop 4081 % 
+314	:	9000;	%  pushpc  % 
+315	:	8000;	%  st  % 
+316	:	43C2;	%  jmp putchar % 
+317	:	2FCD;	%  push n % 
+318	:	1001;	%  pushi 1 % 
+319	:	f000;	%  add  % 
+31a	:	3FCD;	%  pop n % 
+31b	:	2FF1;	%  push 4081 % 
+31c	:	1001;	%  pushi 1 % 
+31d	:	f001;	%  sub  % 
+31e	:	f013;	%  dup  % 
+31f	:	3FF1;	%  pop 4081 % 
+320	:	9000;	%  pushpc  % 
+321	:	8000;	%  st  % 
+322	:	43A6;	%  jmp getchar % 
+323	:	4304;	%  jmp L15 % 
+324	:	0000;	% L16: nop  % 
+325	:	f017;	%  drop  % 
+326	:	2FCD;	%  push n % 
+327	:	1000;	%  pushi 0 % 
+328	:	f00e;	%  gt  % 
+329	:	5365;	%  jz L22 % 
+32a	:	0000;	% L17: nop  % 
+32b	:	2FCD;	%  push n % 
+32c	:	1000;	%  pushi 0 % 
+32d	:	f00e;	%  gt  % 
+32e	:	5364;	%  jz L21 % 
+32f	:	2FCD;	%  push n % 
+330	:	1001;	%  pushi 1 % 
+331	:	f001;	%  sub  % 
+332	:	3FCD;	%  pop n % 
+333	:	1FCE;	%  pushi in_str % 
+334	:	2FCD;	%  push n % 
+335	:	f000;	%  add  % 
+336	:	7000;	%  ld  % 
+337	:	f013;	%  dup  % 
+338	:	103A;	%  pushi 58 % 
+339	:	f00f;	%  lt  % 
+33a	:	533F;	%  jz L18 % 
+33b	:	1030;	%  pushi 48 % 
+33c	:	f001;	%  sub  % 
+33d	:	4344;	%  jmp L19 % 
+33e	:	0000;	% L18: nop  % 
+33f	:	1061;	%  pushi 97 % 
+340	:	f001;	%  sub  % 
+341	:	100A;	%  pushi 10 % 
+342	:	f000;	%  add  % 
+343	:	0000;	% L19: nop  % 
+344	:	3004;	%  pop 4 % 
+345	:	2004;	%  push 4 % 
+346	:	1000;	%  pushi 0 % 
+347	:	f00f;	%  lt  % 
+348	:	2004;	%  push 4 % 
+349	:	100F;	%  pushi 15 % 
+34a	:	f00e;	%  gt  % 
+34b	:	f009;	%  or  % 
+34c	:	5358;	%  jz L20 % 
+34d	:	1FFF;	%  pushi -1 % 
+34e	:	2FF1;	%  push 4081 % 
+34f	:	7000;	%  ld  % 
+350	:	2FF1;	%  push 4081 % 
+351	:	1001;	%  pushi 1 % 
+352	:	f000;	%  add  % 
+353	:	3FF1;	%  pop 4081 % 
+354	:	1002;	%  pushi 2 % 
+355	:	f000;	%  add  % 
+356	:	9001;	%  poppc  % 
+357	:	0000;	% L20: nop  % 
+358	:	2004;	%  push 4 % 
+359	:	2FCC;	%  push shift_factor % 
+35a	:	f003;	%  shl  % 
+35b	:	2FCB;	%  push result_num % 
+35c	:	f000;	%  add  % 
+35d	:	3FCB;	%  pop result_num % 
+35e	:	2FCC;	%  push shift_factor % 
+35f	:	1004;	%  pushi 4 % 
+360	:	f000;	%  add  % 
+361	:	3FCC;	%  pop shift_factor % 
+362	:	432B;	%  jmp L17 % 
+363	:	0000;	% L21: nop  % 
+364	:	0000;	% L22: nop  % 
+365	:	2FCB;	%  push result_num % 
+366	:	2FF1;	%  push 4081 % 
+367	:	7000;	%  ld  % 
+368	:	2FF1;	%  push 4081 % 
+369	:	1001;	%  pushi 1 % 
+36a	:	f000;	%  add  % 
+36b	:	3FF1;	%  pop 4081 % 
+36c	:	1002;	%  pushi 2 % 
+36d	:	f000;	%  add  % 
+36e	:	9001;	%  poppc  % 
+36f	:	3006;	% puthex: pop 6 % 
+370	:	1005;	%  pushi 5 % 
+371	:	3004;	%  pop 4 % 
+372	:	1010;	%  pushi 16 % 
+373	:	3005;	%  pop 5 % 
+374	:	0000;	% L23: nop  % 
+375	:	2004;	%  push 4 % 
+376	:	1000;	%  pushi 0 % 
+377	:	f00e;	%  gt  % 
+378	:	539D;	%  jz L26 % 
+379	:	2006;	%  push 6 % 
+37a	:	2005;	%  push 5 % 
+37b	:	f004;	%  shr  % 
+37c	:	100F;	%  pushi 15 % 
+37d	:	f005;	%  band  % 
+37e	:	f013;	%  dup  % 
+37f	:	100A;	%  pushi 10 % 
+380	:	f00f;	%  lt  % 
+381	:	5386;	%  jz L24 % 
+382	:	1030;	%  pushi zero % 
+383	:	f000;	%  add  % 
+384	:	438B;	%  jmp L25 % 
+385	:	0000;	% L24: nop  % 
+386	:	100A;	%  pushi 10 % 
+387	:	f001;	%  sub  % 
+388	:	1061;	%  pushi a % 
+389	:	f000;	%  add  % 
+38a	:	0000;	% L25: nop  % 
+38b	:	2FF1;	%  push 4081 % 
+38c	:	1001;	%  pushi 1 % 
+38d	:	f001;	%  sub  % 
+38e	:	f013;	%  dup  % 
+38f	:	3FF1;	%  pop 4081 % 
+390	:	9000;	%  pushpc  % 
+391	:	8000;	%  st  % 
+392	:	43C2;	%  jmp putchar % 
+393	:	2004;	%  push 4 % 
+394	:	1001;	%  pushi 1 % 
+395	:	f001;	%  sub  % 
+396	:	3004;	%  pop 4 % 
+397	:	2005;	%  push 5 % 
+398	:	1004;	%  pushi 4 % 
+399	:	f001;	%  sub  % 
+39a	:	3005;	%  pop 5 % 
+39b	:	4375;	%  jmp L23 % 
+39c	:	0000;	% L26: nop  % 
+39d	:	2FF1;	%  push 4081 % 
+39e	:	7000;	%  ld  % 
+39f	:	2FF1;	%  push 4081 % 
+3a0	:	1001;	%  pushi 1 % 
+3a1	:	f000;	%  add  % 
+3a2	:	3FF1;	%  pop 4081 % 
+3a3	:	1002;	%  pushi 2 % 
+3a4	:	f000;	%  add  % 
+3a5	:	9001;	%  poppc  % 
+3a6	:	0000;	% L27: nop  % 
+3a7	:	d000;	%  in serialIn % 
+3a8	:	1010;	%  pushi 16 % 
+3a9	:	1007;	%  pushi 7 % 
+3aa	:	f003;	%  shl  % 
+3ab	:	1000;	%  pushi 0 % 
+3ac	:	f006;	%  bor  % 
+3ad	:	f005;	%  band  % 
+3ae	:	f012;	%  not  % 
+3af	:	53B2;	%  jz L28 % 
+3b0	:	43A7;	%  jmp L27 % 
+3b1	:	0000;	% L28: nop  % 
+3b2	:	d000;	%  in serialIn % 
+3b3	:	10FF;	%  pushi dataMask % 
+3b4	:	f005;	%  band  % 
+3b5	:	1200;	%  pushi readDoneMask % 
+3b6	:	e000;	%  out serialOut % 
+3b7	:	1000;	%  pushi 0 % 
+3b8	:	e000;	%  out serialOut % 
+3b9	:	2FF1;	%  push 4081 % 
+3ba	:	7000;	%  ld  % 
+3bb	:	2FF1;	%  push 4081 % 
+3bc	:	1001;	%  pushi 1 % 
+3bd	:	f000;	%  add  % 
+3be	:	3FF1;	%  pop 4081 % 
+3bf	:	1002;	%  pushi 2 % 
+3c0	:	f000;	%  add  % 
+3c1	:	9001;	%  poppc  % 
+3c2	:	0000;	% L29: nop  % 
+3c3	:	d000;	%  in serialIn % 
+3c4	:	1400;	%  pushi xmitBusyMask % 
+3c5	:	f005;	%  band  % 
+3c6	:	53C9;	%  jz L30 % 
+3c7	:	43C3;	%  jmp L29 % 
+3c8	:	0000;	% L30: nop  % 
+3c9	:	1100;	%  pushi xmitEnableMask % 
+3ca	:	f006;	%  bor  % 
+3cb	:	e000;	%  out serialOut % 
+3cc	:	1000;	%  pushi 0 % 
+3cd	:	e000;	%  out serialOut % 
+3ce	:	2FF1;	%  push 4081 % 
+3cf	:	7000;	%  ld  % 
+3d0	:	2FF1;	%  push 4081 % 
+3d1	:	1001;	%  pushi 1 % 
+3d2	:	f000;	%  add  % 
+3d3	:	3FF1;	%  pop 4081 % 
+3d4	:	1002;	%  pushi 2 % 
+3d5	:	f000;	%  add  % 
+3d6	:	9001;	%  poppc  % 
+3d7	:	3004;	% delay_10: pop 4 % 
+3d8	:	0000;	% L31: nop  % 
+3d9	:	2004;	%  push 4 % 
+3da	:	1000;	%  pushi 0 % 
+3db	:	f00e;	%  gt  % 
+3dc	:	53F0;	%  jz L34 % 
+3dd	:	2004;	%  push 4 % 
+3de	:	1001;	%  pushi 1 % 
+3df	:	f001;	%  sub  % 
+3e0	:	3004;	%  pop 4 % 
+3e1	:	1037;	%  pushi 55 % 
+3e2	:	3005;	%  pop 5 % 
+3e3	:	0000;	% L32: nop  % 
+3e4	:	2005;	%  push 5 % 
+3e5	:	1000;	%  pushi 0 % 
+3e6	:	f00e;	%  gt  % 
+3e7	:	53EE;	%  jz L33 % 
+3e8	:	2005;	%  push 5 % 
+3e9	:	1001;	%  pushi 1 % 
+3ea	:	f001;	%  sub  % 
+3eb	:	3005;	%  pop 5 % 
+3ec	:	43E4;	%  jmp L32 % 
+3ed	:	0000;	% L33: nop  % 
+3ee	:	43D9;	%  jmp L31 % 
+3ef	:	0000;	% L34: nop  % 
+3f0	:	2FF1;	%  push 4081 % 
+3f1	:	7000;	%  ld  % 
+3f2	:	2FF1;	%  push 4081 % 
+3f3	:	1001;	%  pushi 1 % 
+3f4	:	f000;	%  add  % 
+3f5	:	3FF1;	%  pop 4081 % 
+3f6	:	1002;	%  pushi 2 % 
+3f7	:	f000;	%  add  % 
+3f8	:	9001;	%  poppc  % 
+END ;	

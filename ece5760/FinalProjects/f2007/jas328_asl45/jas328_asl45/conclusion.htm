@@ -1,0 +1,66 @@
+<title>ECE 576 - SimpleGPU</title>
+
+<head><style>
+a:link {color: #6666CC; text-decoration: overline; }     /* unvisited link */
+a:visited {color: #666666; text-decoration: overline; }  /* visited link */
+a:hover {color: #222222; text-decoration: underline; }   /* mouse over link */
+a:active {color: #5555FF; text-decoration: overline; }   /* selected link */ 
+</style></head>
+
+<body bgcolor="#DDDDDD">
+
+<table style="border-width: 15pt; border-collapse: separate; " ><tr><td colspan=2>
+
+<table width=759><tr><td align=center style="border: 1px solid black; padding: 1em; background-color: white;">
+<b><big><big><big>SimpleGPU</big>
+<br>ECE 576 - Fall 2007</big>
+<br>John Sicilia (jas328) & Austin Lu (asl45)
+</td></tr></table>
+
+</td></tr>
+<tr><td width=150 valign=top>
+<table width=150><tr><td valign=top style="border: 1px solid black; padding: 1em; background-color: white; height=700;"> 
+<p><a href="index.htm">Home</a>
+<p><a href="intro.htm">Introduction</a>
+<p><a href="sdesign.htm">Software Design</a>
+<p><a href="hdesign.htm">Hardware Design</a>
+<p><a href="results.htm">Results</a>
+<p><a href="issues.htm">Issues</a>
+<p><a href="conclusion.htm">Conclusion</a>
+<p><a href="pics.htm">More Pictures</a>
+<br><br><br><br><br><br><br>
+</td></tr></table>
+
+</td><td valign=top>
+<table width=600 ><tr><td style="border: 1px solid black; padding: 1em; background-color: white;">
+<b><big><big>Conclusion</big></big></b><br><br>
+
+<p>We were able to create hardware that would take and draw polygons, and a microcontroller that most works with perspective transforms. We reached 20 fps with one polygon, and have 10 fps with decent quality and little artifacting with six moving polygons.  
+
+<p>We used Terasic verilog code for the subunits like the VGA controller, and Bruce Land’s template for the overarching structure. The math was found in the public domain, which we converted to Matlab to test concepts. Finally we had to convert our Matlab code to C and verilog. 
+
+<p>Unresolved issues that we faced were a lack of memory to hold a large Z-buffer and a second large buffer to hold a copy of SRAM for the VGA to read to. Had we more available memory, we certainly could have seen higher refresh rates and less noise on screen. Secondly, faster polygon calculations could have been attained by streamlining our code more, or perhaps adding a second, dedicated microcontroller to perform floating point calculations. In the end, we decided against this approach because of time and size constraints.
+
+<p>Our final output worked well, however. We met our expectations in a number of area of design. Our hardware did Z-buffering and depth calculations beautifully. The only benchmark it fell short on was speed, and that was mainly due to a lack of memory. On the microcontroller side, we were able to mostly get the perspective transforms working.. though, once again, the speed at which it was calculating left something to be desired. 
+
+<p>Features that we had planned on adding, but later abandoned due to time constraints were texturing and lighting. Since textures could be loaded into flash memory, it was not infeasible to map the textures onto the polygon. Compared to the mathematical work invovled in depth and point-inside-polygon calculations, it would not have taken too much additional logic. Similarly, lighting would only require a calculation from the point to nearby lightsources to figure out how much to lighten or darken the pixel. Both of these features would really have just been modifications to the data being outputted, and can be performed in the future as extensions to this core. Either addition would require very little change to the pipeline itself.
+
+<p>Our ultimate goal of this project was to create a system that could allow a programmer to make a very simple 3-D game, and let supporting software and hardware perform all the perspective and VGA work needed. While we were not really able to implement a full game, a programmer could spin or move around in a three-dimensional room with very little computation on the user-end of things. 
+
+<p><big>References</big>
+
+<p>CS559: Computer Graphics at University of Wisconsin, <a style="text-decoration: underline;" href="../../../../../../../../www.cs.wisc.edu/graphics/Courses/559-f2004/default.htm">lectures 10-12</a>
+
+<p>Rogers, David. <u>Procedural Elements for Computer Graphics</u>. New York: 1985.
+
+<p><i>Determining Whether A Point Is Inside A Complex Polygon</i>. <a style="text-decoration: underline;" href="../../../../../../../../alienryderflex.com/polygon">http://alienryderflex.com/polygon</a>. Last accessed 30 November 2007.
+
+<p><i>Sutherland-Hodgman Polygon Clipper.</i> <a style="text-decoration: underline;" href="../../../../../../../../hpcc.engin.umich.edu/CFD/users/charlton/Thesis/html/node90.html">http://hpcc.engin.umich.edu/CFD/users/charlton/Thesis/html/node90.html</a>. Last accessed 30 November 2007.
+
+
+	
+
+</td></tr></table>
+
+
+</td></tr></table>

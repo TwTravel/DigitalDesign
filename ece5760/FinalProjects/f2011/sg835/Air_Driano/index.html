@@ -1,0 +1,84 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+		<title>Air Driano</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<meta name="description" content="Designed and developed by Codify Design Studio - codifydesign.com" />
+		<link rel="stylesheet" type="text/css" href="stylesheet.css" />
+		<script type="text/javascript" src="SpryAssets/SpryAccordion.js"></script>
+		<link href="SpryAssets/SpryAccordion.css" rel="stylesheet" type="text/css" />
+	</head>
+<body>
+		<div class="container"> 
+		  <div class="bannerArea">
+		    <div class="toplogo"><a href="index.html"><img src="images/logo.jpg" width="697" height="161" border="0" /></a><a href="images/IMG_7730.jpg"><img src="images/IMG_7730_2.jpg" width="209" height="161" /></a></div>
+			<ul class="bannerNav">
+					<li><a href="index.html" >INTRODUCTION</a></li>
+					<li><a href="design.html" >DESIGN</a></li>
+					<li><a href="results.html" >RESULTS</a></li>
+					<li><a href="ack.html" >ACKNOWLEDGEMENT</a></li>
+                    <li><a href="ref.html" >REFERENCES</a></li>
+                    <li><a href="codes.html" >CODE</a></li>
+                    <li><a href="contact.html" >CONTACT US</a></li>
+		    </ul>
+			
+		  </div>
+			<div class="navigationArea">
+			  <div id="SpryAccordion1" class="Accordion" tabindex="0">
+					<div class="AccordionPanel">
+						<div class="AccordionPanelTab">Motivation</div>
+						<div class="AccordionPanelContent">
+						  <div class="acontent">
+						    <h2 ALIGN="JUSTIFY">For the final project we wanted to combine the concepts learnt so far in the previous labs as well as try something new. We thought of using the camera for this lab in order to understand how we can process video signals using FPGA. We also tried using the drum synthesis module that we designed in the previous lab and generate piano sound synthesis	on	a	similar	way.	The	challenges involved in this lab to integrate so many modules together and to detect skin precisely interested us more and motivated us to perform this project.</h2>
+						  </div>
+						</div>
+					</div>
+                    <div class="AccordionPanel">
+						<div class="AccordionPanelTab">Abstract</div>
+						<div class="AccordionPanelContent">
+							<div class="acontent">
+							  <h2 ALIGN="JUSTIFY">In this project, we built a system that detects the position of fingers on a sheet of paper using a camera and play a sound depending on the position. The camera was used to detect the skin and thus track movement of the fingers on the paper. The output of the camera could be seen on the VGA screen. The keyboard for piano and drum was also displayed on the VGA screen. Depending on the hit position of the finger the appropriate sound would then be played using sound synthesis for piano and drum. Thus we integrated all to give us an &quot;Air Piano and Drum&quot;.</h2>
+						  </div>
+						</div>
+					</div>
+					<div class="AccordionPanel">
+						<div class="AccordionPanelTab">Design Overview</div>
+					  <div class="AccordionPanelContent">
+						  <div class="acontent">
+							<h2 ALIGN="JUSTIFY">Our design consisted of mainly three modules. The first module is the main module that reads from the camera and detects our hand. We used colour averaging in order to accurately detect the skin. This module also generates keys on the VGA screen that enables us to see how the keys are pressed. The second module generates piano sound using Karplus-Strong algorithm. The third module generates drum sound using Leap-Frog algorithm and wave equations. Since we wanted both the instruments to be played at the same time, we used two DE2 boards each running the code for the two instruments. Thus we used two cameras to detect the hand movements from two different persons and according play the sound, one for piano and other for the drum.</h2>
+							<h2 ALIGN="JUSTIFY">For more details please on the design, please click on the 'Design' tab above.</h2>
+					    </div>
+						</div>
+					</div>
+					<div class="AccordionPanel"></div>	
+				</div>
+			</div>
+			<div class="contentArea">
+			  <div style="clear:both;"><p align="center"><a href="images/IMG_7703.jpg"><img src="images/IMG_7703.jpg" width="200" height="142" /></a><a href="images/IMG_7707.jpg"><img src="images/IMG_7707.jpg" width="200" height="142" /></a><a href="images/IMG_7711.jpg"><img src="images/IMG_7711.jpg" width="200" height="142" /><a href="images/IMG_7711.jpg"></a><a href="images/IMG_3093.jpg"><img src="images/IMG_3093.jpg" width="200" height="142" /></a></p></div>
+			</div>
+			<div style="clear:both;"></div>
+				
+		
+		<div class="footerArea">
+				
+					    <div class="copyright">
+					      <div align="right">
+					        <table width="846" height="24" border="0">
+					          <tr>
+					            <td width="423"><em>Project by Sandeep Gangundi, Xiyu Wang and Marc Vaz</em></td>
+					            <td width="423"><div align="right"><em>Webpage designed by Sandeep Gangundi</em></div></td>
+				              </tr>
+				            </table>
+					        <p>&nbsp;</p>
+<p>&nbsp;</p>
+                          </div>
+				        </div>
+</div></div>
+		
+		<script type="text/javascript">
+		<!--
+			var SpryAccordion1 = new Spry.Widget.Accordion("SpryAccordion1", {useFixedPanelHeights:false, defaultPanel:0});
+		//-->
+		</script>
+	</body>
+</html>
