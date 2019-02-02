@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<preferences>
+ <debug showDebugMenu="0" />
+ <systemtable filter="All Interfaces">
+  <columns>
+   <connections preferredWidth="175" />
+   <irq preferredWidth="47" />
+  </columns>
+ </systemtable>
+ <library
+   expandedCategories="Library/Basic Functions,Library,Project,Library/Basic Functions/On Chip Memory" />
+ <window width="1644" height="1097" x="51" y="23" />
+ <generation block_symbol_file="0" />
+</preferences>

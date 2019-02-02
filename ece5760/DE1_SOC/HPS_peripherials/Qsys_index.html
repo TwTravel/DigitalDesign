@@ -1,0 +1,122 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Qsys</title>
+</head>
+
+<body>
+<h2 align="center">Using Qsys<br />
+  with DE1-SoC
+  <br />
+Cornell ece5760<br />
+</h2>
+<ul>
+</ul>
+<h3>Qsys Overview</h3>
+<p>Qsys is a bus design tool integrated with <a href="../Qsys_description/quartus_qsys_tool.PNG">Quartus Prime</a>:</p>
+<ul>
+  <li>Qsys allows connections to the Intel/Altera Avalon bus and provides bridges to the HPS via AXI bus. </li>
+  <li>Qsys <a href="../Qsys_description/Qsys_vs_sopc.PNG">hides details</a> of bus width, timing, arbitration, and domain bridges to make design easier.  </li>
+  <li>We are going to use Qsys as a memory-mapped, or address-mapped, system between the HPS, Altera-supplied IP, and student written Bus Masters. </li>
+  <li>Qsys designs can be heirarchical. For instance, the University Program Computer bus can be opened in Qsys, and so can many of the components that make up the Computer. <br />
+  The <a href="../Qsys_description/video_subsystem_top.PNG">VGA_subsystem</a> is one component of the Computer that can be <a href="../Qsys_description/video_subsystem_contents.PNG">opened</a> in Qsys to expose internal bus structure. </li>
+  <li>The full description of Qsys is in <a href="../../../../../../https@www.altera.com/content/dam/altera-www/global/en_US/pdfs/literature/hb/qts/qts_qii5v1.pdf">Chapter 5 of a giant Quartus Hanbook Vol 1</a>.</li>
+  <li>A <em>Qsys master</em> can generate data, addresses and bus requests. </li>
+  <li>A <em>Qsys slave</em> responds to bus requests aimed at its address to send or receive data. </li>
+  <li>The actual bus timing is not simple, so bus acknowlegment handshaking must be done in every device connected to the bus. For prewritten modules (e.g. video subsystem or PIO port) handshaking is already done. When you write a<em> bus-master</em> you must do the handshaking.</li>
+  <li>Memory-mapped transactions between masters and slaves are encapsulated in packets and transmitted on a network that carries the packets between masters and slaves. The command network transports read and write command packets from master interfaces to slave interfaces. The response network transports response packets from slave interfaces to master interfaces (1). </li>
+  <li>It is possible to make your own modules compatable with Qsys. <br />
+  The process is describled in a <a href=",">tutorial_16.0</a>, <a href="../Making_Qsys_Components_15_0.pdf">tutorial_15.0</a> (<a href="../Qsys_description/Qsys_tutorial.v">code</a>).</li>
+</ul>
+<p>The memory map for the HPS defines two large blocks of memory: <br />
+  -- one block for the h2f_axi_master  at <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">ARM base address 0xC0000000</span> (see<a href="../Qsys_description/HPS_base_adddresses.png"> table 1-2</a> in <a href="../HPS_INTRO_54001.pdf">HPS intro</a>)<br />
+-- one block for the h2f_lw_axi_master at <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">ARM base address 0xFF200000 </span><br />
+These are coded in the <a href="../DE1_soc_computer/Chopped_2/address_map_arm_brl4.h">address header file.</a> The file also has specific peripheral offsets which must <em>match</em> the Qsys assignments.<br />
+Specific Avalon devices are then designated as offsets from these base addresses. <br />
+--
+The offsets are specified in Qsys in  the address Base column. <br />
+-- 
+Each different Avalon master (vertical connection line) has its own address offsets, independent of other masters.<br />
+--
+The light weight axi master is used for relatively slow peripherials and can do around 700,000 transactions/sec. <br />
+--
+The main axi master is about 10 times faster.</p>
+<p>Qsys signals have types and widths. This allows for error checking, explicit handling of clock signals, width conversion, and more. A single component can include any number of these interfaces and can also include multiple instances of the same interface type. Details are explained in (2).<br />
+Qsys signals are specified as: </p>
+<ul>
+  <li>Clock   -- For point-to-point connections of the form <em>clock out –&gt; clock in</em></li>
+  <li>Reset -- For point-to-point connections between reset sources and  reset sinks.</li>
+  <li>Avalon MM signals -- For Avalon-MM masters and slaves that  communicate using memory-mapped read and write commands. We will use mostly MM devices.</li>
+  <li>Avalon ST signals --  Interface that supports the unidirectional flow of data, including multiplexed streams, packets, and DSP data.</li>
+  <li>Tristate -- An interface to support connections to off-chip peripherals. </li>
+  <li>Conduit --   You can use the conduit interface type  to define a custom collection of  signals that do not fit into any other interface category. <br />
+  Conduits are also used to <em>export signals to the FPGA</em> from a Qsys component to the top-level Verilog design (see below).</li>
+</ul>
+<p>Qsys can use a <em>conduit</em> to generate specification for connection directly to the FPGA fabric. When the generate command is given in Qsys, Verilog is produced, including a module which is inserted into the top-level design module. For example, the signals marked as <em>exported</em> in Qsys for the <a href="../Qsys_description/video_subsystem_top.PNG">Video subsystem</a> show up as connections in the generated module. A <a href="../Qsys_description/Qsys_generated_module.PNG">small part</a> of the generated module shows the exported video connnections which attach to  the FPGA fabric.</p>
+<p>Each Qsys bus connection has a settable arbitration priority. Right-click anywhere on the  System Contents  tab, and click  Show Arbitration  Shares. The<a href="../Qsys_description/arbitration.png"> connection panel displays the arbitration priority</a> of each master for  each slave to which it is connected. By default, Qsys assigns arbitration priority 1  for each connected master-slave pair. The highest numeric value receives the highest priority. When multiple masters request access to a fixed priority arbitrated slave, the arbiter gives the master with the highest priority first access to the slave. See <a href="../../../../../../https@www.altera.com/content/dam/altera-www/global/en_US/pdfs/literature/hb/qts/qts_qii5v1.pdf">Quartus Handbook</a> page 7-18 for more details.</p>
+<h3>Qsys Modules</h3>
+<p>There are dozens of predefined modules for Qsys. The <a href="../Qsys_description/module_menu.PNG">menu</a> in the upper-left corner shows the installed modules. Many of the modules are described in the <a href="../embedded_ip_users_guide.pdf">Embedded IP Users Guide</a>. Right-clicking on the module name in the menu will give options for inserting into the design and also for a link to documentation. Sometimes the documentation link is the datasheet, sometimes it is in the Component Folder. For instance, a parallel I/O port (PIO) which provides data <em>from</em> the HPS <em>to</em> the FPGA is an <strong><em>output</em></strong>! To get the PIO datasheet, right-click the module name and in the pop-up menu, select <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">details&gt;datasheet</span>. Some other modules require that you follow the path <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">details&gt;open_component_folder </span>to get the datasheet.<br />
+Some of the modules are listed here.</p>
+<ul>
+  <li>Cyclone5 Hard Processor -- <a href="../Qsys_description/HPS_menu.PNG">ARMv7 HPS</a> -- <a href="../HPS_INTRO_54001.pdf">Introduction</a>, <a href="../cv_5_HPS_tech_ref.pdf">reference manual</a></li>
+  <li>Parallel Port-- <a href="../Qsys_description/PIO_menu.png">Parallel I/O port</a> -- <a href="../embedded_ip_users_guide.pdf">Embedded IP Users Guide</a> chapter 12 -- <a href="../Parallel_Port.pdf">University program PIO</a><br />
+    Each PIO core can provide up to 32 I/O port lines. An <em>output</em> is a connection from the HPS to the FPGA.<br />
+    The HPS or other bus-master controls the PIO ports by reading and writing the register-mapped Avalon-MM interface. Under control of the host, the PIO core captures data on its inputs and drives data to its outputs. When the PIO ports are connected directly to I/O pins, the host can tristate the pins by writing control registers in the PIO core. </li>
+  <li>UART -- <a href="../Qsys_description/serial_menu.png">Universal Asynch receive/transmit serial</a> -- <a href="../embedded_ip_users_guide.pdf">Embedded IP Users Guide</a> chapter 8 -- <a href="../RS232.pdf">University Program UART</a><br />
+  The UART core implements communication via serial character streams between an bus-master on an Altera FPGA and an external device. The core implements the RS-232 protocol timing, and provides adjustable baud rate, parity, stop, and data bits, and optional RTS/CTS flow control signals. The feature set is configurable, allowing designers to implement just the necessary functionality for a given system. The core provides an Avalon Memory-Mapped (Avalon-MM) slave interface that allows Avalon-MM master peripherals  to communicate with the core simply by reading and writing control and data registers.  </li>
+  <li>SPI -- <a href="../Qsys_description/serial_menu.png">Serial Peripherial Interface</a> -- <a href="../embedded_ip_users_guide.pdf">Embedded IP Users Guide</a> chapter 10<br />
+  SPI is an industry-standard serial protocol commonly used in embedded systems to connect microprocessors to a variety of off-chip sensor, conversion, memory, and control devices. The SPI core  implements the SPI protocol and provides an Avalon Memory-Mapped (Avalon- MM) interface on the back end. The SPI core can implement either the master or slave protocol. When configured as a master, the SPI core can control up to 32 independent SPI slaves. The width of the receive and transmit registers are configurable between 1 and 32 bits.  The SPI core provides an interrupt output that can flag an interrupt whenever a transfer completes.  </li>
+  <li>Memory -- <a href="../Qsys_description/memory_menu.PNG">RAM, FIFO in M10K blocks</a> --  <a href="../embedded_ip_users_guide.pdf">Embedded IP Users Guide</a> chapter 16  <br />
+  The on-chip FIFO memory core buffers data and provides flow control in an Qsys Builder system. The core can operate with a single clock or with separate clocks for the input and output ports. it does not support burst read or write.  </li>
+  <li><a href="../Qsys_description/DSP_menu.png">DSP</a> -- 
+    <ul>
+      <li><a href="../ug_cic.pdf">CIC</a> -- <span data-dita-outputclass="ID-000000c4"> cascaded integrator-comb  filte</span>r</li>
+      <li><a href="../ug_fir_compiler_ii.pdf">FIR</a> -- finite impulse response (I wrote <a href="../../DE2/fpgaDSP.html">IIR</a> and DDS-NCO)</li>
+      <li><a href="../ug_fft.pdf">FFT</a></li>
+      <li> <a href="../ug_nco.pdf">NCO</a></li>
+      <li>2D-FIR</li>
+    </ul>
+  </li>
+  <li><a href="../Qsys_description/Univ_pgm_menu.PNG">University Program</a> -- collection of modules aimed specifically at DE1-SoC board
+    <ul>
+      <li><a href="../Parallel_Port.pdf">Parallel Port</a></li>
+      <li><a href="../RS232.pdf">UART</a></li>
+      <li><a href="../Audio_core.pdf">Audio Core</a></li>
+      <li><a href="../Video_core.pdf">Video Core</a></li>
+      <li>ADC controller -- <a href="../DE1-SoC_ADC_Controller.pdf">ADC users guide</a></li>
+      <li><a href="../Digital_Accelerometer.pdf">Accelerometer</a> and <a href="../Accelerometer_SPI_Mode.pdf">SPI mode</a></li>
+      <li><a href="../Avalon_to_External_Bus_Bridge.pdf">Avalon Bus_slave</a></li>
+      <li>Avalon Bus-master -- see below for details</li>
+    </ul>
+  </li>
+</ul>
+<h3>Qsys Video examples</h3>
+<ul>
+  <li><a href="../../../../../../https@www.youtube.com/watch@v=35vDSIS-LOI">Introduction to Qsys</a> but not specific to HPS</li>
+  <li>You may find <a href="../../../../../../https@www.youtube.com/watch@v=8BehnPg8IvM">this video</a> useful to show how to attach devices in Qsys. The video connects HPS to clocks, plus FPGA devices.</li>
+  <li>More detail on configuring <a href="../../../../../../https@www.youtube.com/watch@v=RTmDgNXIwKQ">HPS-FPGA bridges</a> in Altera SoCs.</li>
+</ul>
+<h3>Avalon Bus-master </h3>
+<p>The Bus-master we are using is more formally known as External Bus to Avalon Bridge (EBAB). <br />
+  The video bus-master on the <a href="Bus_master_slave_index.html">Bus-master page</a> can be summarized with the three-part image below which is: <br />
+  1. a schematic of the generic EBAB; <br />
+  2. what the EBAB looks like in Qsys;  <br />
+  3. the interface verilog that Qsys generates for connection to your actual controller. <br />
+  Your actual controller is written in Verilog and will consist of at least two states. The first state generates the bus_addr (pixel location), bus_byte_enable (one byte write), bus_write (write strobe), and bus_write_data (pixel color), then sets the state machine to the second state. The second state waits for the bus_ack, then sets the state machine back to the first state. This particular bus-master does not read data from the bus. The audio bus-master on the <a href="DSP_index.html">DSP page</a> reads and writes data. When you put a bus-master onto the bus, you need to specify the data width and address range in a <a href="../Qsys_description/bus_master_details.PNG">dialog box</a>, which you get by double-clicking the module name on the Qsys interface.<br />
+<img src="../Qsys_description/bus_master_example.png" alt=""/> </p>
+<p>The full <a href="../HPS_FPGA/master_peripheral/EBAB_VGA/vga_EBAB.PNG">Qsys layout</a> for the video bus-master shows the other connections needed for operation. The clock and reset input are connected to system clock/reset outputs. The module <em>avalon_master</em> is connected to the memory which holds the image, because the addresses we are generating are aimed at video memory. The on-chip RAM is dual ported, with the EBAB  connected to the s1 port, and the s2 port  connected to video controller. The EBAB master bus is also attached to SDRAM, but I am not sure why. The display is incomplete if this is left disconnected.<br />
+</p>
+<hr />
+<p>References</p>
+<p>(1) <a href="../qsys_interconnect.pdf">Qsys Interconnect</a></p>
+<p>(2) <a href="../../../../../../https@www.altera.com/content/dam/altera-www/global/en_US/pdfs/literature/manual/mnl_avalon_spec.pdf">Avalon Interface Specs</a></p>
+<p>(3) <a href="../External_Bus_to_Avalon_Bridge.pdf">External bus to Avalon Bridge</a></p>
+<p>(4) <a href="../../../../../../https@www.altera.com/content/dam/altera-www/global/en_US/pdfs/literature/hb/nios2/qts_qii55014.pdf">Embedded Peripheral IP User Guide</a></p>
+<hr />
+<p>Copyright Cornell University 
+  <!-- #BeginDate format:Am1 -->February 1, 2019<!-- #EndDate -->
+</p>
+<p>&nbsp;</p>
+</body>
+</html>

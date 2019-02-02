@@ -1,0 +1,118 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>FPGA/HPS communication</title>
+</head>
+
+<body>
+<h2 align="center">DE1-SoC:
+ARM HPS and FPGA<br />
+Addresses and Communication
+<br />
+Cornell ece5760</h2>
+<p><br />
+</p>
+<hr />
+<p><strong>DMA from HPS to FPGA</strong></p>
+<p>Memory-mapped transfer from the HPS to FPGA using standard C assignment seems to top out at around seven million 32-bit transctions per second for either read or write. This corresponds to 28 million bytes/sec or about 7% of the advertised bus bandwidth of around 400 Mbyte/sec. Writing directly to mmaped HPS on-chip memory is only about twice as fast, or 13 million writes/second, so my guess is that the rate is partly C overhead, and partly cache access time. Writing directly to an array in MMU managed SDRAM gives read/write rates ten times higher.</p>
+<p>A DMA controller in the FPGA, and attached through Qsys to the HPS AXI-slave, can transfer data from HPS on-chip memory to sram on the FPGA at least 10 times faster. However, a DMA controller on the FPGA has to know what absolute memory addresses to use for transfer. The HPS has 64Kbytes of on-chip memory (<a href="../cv_5_HPS_tech_ref.pdf">Hardware Technical Ref</a> Table 12-1) which does not seem to be touched by Linux. The  64Kbytes of on-chip ram starts at address <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">0xffff0000</span> and ends at <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">0xffffffff</span>. This memory can be used as a target for the DMA master. This DMA approach was motivated by a project by <a href="../../../../../../https@github.com/robertofem/CycloneVSoC-examples/tree/master/Linux-applications/DMA_transfer_FPGA_DMAC">robertofem</a> (Roberto Fernandez Molanes, robertofem@gmail.com). <a href="../../../../../../https@www.altera.com/content/dam/altera-www/global/en_US/pdfs/literature/an/an-cv-av-soc-ddg.pdf">Cyclone V and Arria V SoC Device Design Guidelines</a> was useful for optimization.</p>
+<p>The <a href="../HPS_FPGA/DMA/HPS_to_FPGA/qsys_layout.PNG">Qsys layout</a> has:</p>
+<ul>
+  <li> HPS system and a PLL clock as usual.</li>
+  <li>DMA controller with three ports: 
+    <ul>
+      <li>There is a read-master port connected to the AXI-slave on the HPS which can access all of the HPS address space. <br />
+      This is used to read the HPS on-chip memory. </li>
+      <li>There is a write-master port connected to one port of a dual-port SRAM block. <br />
+      The DMA operation copies the data from the read-master to the write-master. </li>
+      <li>There is a control port used to set up the DMA transfer connected to the AXI-lightweight-master so that the HPS can set up the transfer. Opening the DMA block dialog allows you to set the max length transfer, and on the &quot;advanced&quot; tab set the the transaction width. I chose &quot;word&quot; (32-bits).</li>
+    </ul>
+  </li>
+  <li>SRAM memory block configured to be 32-bit by 16384 words, which is about 13% of M10K block memory. There are two ports. 
+    <ul>
+      <li>The first is attached to the DMA write-master. Data is thus tranferred from the HPS by the DMA read-master to the DMA write-master to the first FPGA sram port. </li>
+      <li>The second port is attached to the HPS AXI-master at beginning address <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">0x08000000</span>, so that the data transfer can be checked by reading back to the HPS. In production, this port would probably be exported to the FPGA fabric.</li>
+    </ul>
+  </li>
+</ul>
+<p>The <a href="../HPS_FPGA/DMA/HPS_to_FPGA/DE1_SoC_Computer.v">top-level verilog module</a> does nothing by instantiate the Qsys generated system and connect it to i/o pins. <br />
+In a real application, there would be verilog code to use the data arriving from the HPS. (<a href="../HPS_FPGA/DMA/HPS_to_FPGA/DMA_test.zip">ZIP</a> of project)</p>
+<p>The <a href="../HPS_FPGA/DMA/HPS_to_FPGA/DMA_1.c"><strong>HPS code</strong></a> is mostly instrumentation to see how fast everything is happening. The code measures read/write rate for sdram, then for HPS on-chip memory, then code-driven read/write rate for sram on the FPGA, then sets up the DMA transfer and measures the read/write rates. Chapter 25 of the <a href="../../../../../../https@www.altera.com/en_US/pdfs/literature/ug/ug_embedded_ip.pdf">Embedded Peripherals IP User Guide</a> section 25.4.3, tables <a href="../HPS_FPGA/DMA/HPS_to_FPGA/DMA_table_223.PNG">223</a>, <a href="../HPS_FPGA/DMA/HPS_to_FPGA/DMA_table_224.PNG">224</a>, and <a href="../HPS_FPGA/DMA/HPS_to_FPGA/DMA_table_225.PNG">225</a> show how to set up the DMA control registers. A <a href="../HPS_FPGA/DMA/HPS_to_FPGA/DMA_set_up_code.PNG">code snippet</a> shows that the read-master is going to start at the beginning of HPS on-chip ram, the write-master is going to start at the beginning of FPGA sram, the transfer will be 4 bytes wide, and the control word sets the configuration to word transfers, stopping on a byte count. </p>
+<p>The putty capture below shows Four different read/write operations for an array of size 10000. </p>
+<ol>
+  <li>The first is just a baseline to see how fast the HPS program can access Linux-managed SDRAM memory. <br />
+    About 500 million bytes/sec</li>
+  <li> The second is a baseline to see how fast the HPS program can access HPS onchip memory using mmap. <br />
+    (see<a href="../../../../../../https@forums.xilinx.com/t5/Embedded-Linux/memory-read-is-very-slow-when-using-mmap/td-p/634756"> memory read is very slow when using mmap()</a>)<br />
+    About 60 million bytes/sec
+  </li>
+  <li>The third cycle shows that per-element memory access from the HPS to the FPGA. <br />
+    About 28 million bytes/sec
+  </li>
+  <li>The fourth gives the DMA write rate from HPS onchip to FPGA SRAM.<br />
+    About 266 million bytes/sec.
+    This is about 10 times faster than the HPS driven write, and is a reasonable transfer rate.<br />
+    The read back from FPGA to the HPS is still slow because the FPGA SRAM is mmaped to do the read.
+    <br />
+    <img src="../HPS_FPGA/DMA/HPS_to_FPGA/putty1.PNG" alt=""/></li>
+</ol>
+<p><strong>DMA  bidirectional HPS &lt;--&gt;FPGA</strong></p>
+<p>The <a href="../HPS_FPGA/DMA/BiDirectional/Qsys_layout.PNG">Qsys was modified</a> to include two DMA controllers connected so that data can be copied from HPS-to-FPGA and/or FPGA-to-HPS. The only connection differences are reversing the read and write bus-masters for the second DMA. (<a href="../HPS_FPGA/DMA/BiDirectional/DMA_test_two_way.zip">ZIP</a>)</p>
+<p>The <a href="../HPS_FPGA/DMA/BiDirectional/DMA_2.c">HPS code</a> was expanded to define the two DMA transfer controls, and to print the data transfer rates in each direction. The transfer rates are symmetric and both around 270 MBytes/sec. The rate limiting step is loading and reading the onchip RAM on the HPS. For 10000 32-bit transfers, the FPGA DMA read/writes each took 150 microceconds, but loading/reading the onchip memory took 730 and 550 microseconds respectively.<br />
+<img src="../HPS_FPGA/DMA/BiDirectional/putty1.PNG" width="420" height="361" alt=""/></p>
+<p>The next step in optimizing the <a href="../HPS_FPGA/DMA/BiDirectional/DMA_3.c">HPS code</a> is to replace the load/read loops with memcpy. Interesting to find out the memcpy is faster with no optimization turned on. The first image is from the program using memcpy compiled with -O3 option, the second with -O0. The direct read/write to SDRAM slows down. Also notice in the second screen dump that direct FPGA sram write takes 1330 microseconds. The DMA read/write takes 300 microseconds, but the overhead of loading the buffer makes the total about 1000 microseconds, not really much faster. (array of size 10000). The DMA transfer rate is about 270 MBytes/sec, but the net transfer rate (including data copy to buffer onship RAM) is about 77 MBytes/sec.<br />
+<img src="../HPS_FPGA/DMA/BiDirectional/putty_O3.PNG" width="397" height="356" alt=""/><img src="../HPS_FPGA/DMA/BiDirectional/putty_O0.PNG" width="398" height="360" alt=""/></p>
+<hr />
+<p><strong>Memory-Mapped FIFO </strong></p>
+<p>It is useful to have a structured interface between the HPS and hardware on the FPGA. The FIFOs described can do about 2 million reads or writes per second from the HPS to the FPGA. The Qsys FIFO module is described in the<a href="../embedded_ip_users_guide.pdf"><em> Embedded Peripherals IP User Guide</em></a>, chapter 15 and 16. A shorter introduction is <a href="../../../../../../https@www.intel.com/content/dam/www/programmable/us/en/pdfs/literature/hb/nios2/qts_qii55002.pdf"><em>On-Chip FIFO Memory Core</em></a>, where you should look at the <em>Avalon-MM Write Slave to Avalon-MM Read Slave</em> version.</p>
+<p>-- <strong>HPS to FPGA FIFO with feedback via SRAM scratchpad</strong><br />
+  This example is a step toward full FIFO serial communication between HPS and FPGA. The <a href="../HPS_FPGA/FIFO/HPS_to_FPGA/Qsys.PNG">Qsys layout</a> defines a dual port FIFO with input driven from the HPS bus and input status connected to the HPS light-weight bus. FIFO output is exported to the FPGA fabric to be used by a state machine which takes a word from the FIFO, copies it the the SRAM scratchpad. The SRAM scratchpad is also dual port. The state machine writes SRAM via an exported interface, while the HPS uses a Qsys bus connection to read it. The FPGA state machine repeatedly queries the FIFO status until there is a valid entry then adds one, and copies the result to the SRAM. The HPS test program queries the user for a value, waits for a flag set by the state machine to indicate there is valid data in the SRAM, then prints it. (<a href="../HPS_FPGA/FIFO/HPS_to_FPGA/FIFO_1.c">HPS program</a>, <a href="../HPS_FPGA/FIFO/HPS_to_FPGA/DE1_SoC_Computer.v">top-level</a>, <a href="../HPS_FPGA/FIFO/HPS_to_FPGA/FIFO_loopback_1.zip">ZIP</a>) </p>
+<p>--<strong> Full FIFO communication: HPS-to-FPGA and FPGA-to-HPS</strong><br />
+This example generates <a href="../HPS_FPGA/FIFO/FIFO_write_read/Qsys.PNG">two FIFOs in Qsys</a>, one each for two-way communication with the HPS. The <a href="../HPS_FPGA/FIFO/FIFO_write_read/Qsys_fifo_dialog.PNG">FIFO dialog</a> sets up a depth of 256 words, but you could clearly increase this, if necessary. In the dialog, make sure that <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">Allow Backpressure</span> is turned off. One port of each FIFO is exported the the FPGA fabric, where you build state machines to use the data from the FIFO. For this loop-back example, the HPS-to-FPGA receive state machine waits for data in the FIFO, then reads the data word into a buffer and sets a ready flag. The <em>csr-register</em> used to wait is the <em>istatus</em> register, so that only bit 0 (full) and bit 1 (empty) are read. The FPGA-to-HPS state machine waits for space in the FPGA-to-HPS FIFO then writes the data to the FIFO and clears the ready flag. Timing for the FIFO read/write is not specified in the users manual! <em>The HPS-to-FPGA read operation takes TWO cycles but the read-enable line can only be held high for ONE cycle</em>. Holding it high for two cycles results in two reads. The HPS program asks the user for the number of items to send (0&lt;N&lt;500), reads the fill-level of each of the FIFOs, then <a href="../HPS_FPGA/FIFO/FIFO_write_read/putty_5.PNG">prints out the returned values</a> and fill levels. Note that for N greater than 256, using block-write, that the FPGA-to-HPS FIFO will fill, then stall, while the HPS-to-FPGA FIFO keeps filling. The performance is about 1.1 MegaWords/sec (4.4 MByte/sec), round trip to the FPGA. This is consistent with requiring about four bus operations/value sent/received (check write FIFO, write, check read FIFO, read).  Eliminating the write-check gives about 1.7 MegaWords/sec.<br />
+(<a href="../HPS_FPGA/FIFO/FIFO_write_read/FIFO_2.c">HPS program</a>, <a href="../HPS_FPGA/FIFO/FIFO_write_read/DE1_SoC_Computer.v">top-level</a>, <a href="../HPS_FPGA/FIFO/FIFO_write_read/FIFO_loopback.zip">ZIP</a>)<br />
+Note that the nonblocking read/write macros in the HPS program are not well tested. <br />
+If you use nonblocking read/write that you <em>must check</em> the return value for success.<br />
+The first six macros read out the state of the read/write FIFOs.
+</p>
+<pre>#define WRITE_FIFO_FILL_LEVEL (*FIFO_write_status_ptr)
+#define READ_FIFO_FILL_LEVEL  (*FIFO_read_status_ptr)
+#define WRITE_FIFO_FULL	   ((*(FIFO_write_status_ptr+1))& 1 ) 
+#define WRITE_FIFO_EMPTY	  ((*(FIFO_write_status_ptr+1))& 2 ) 
+#define READ_FIFO_FULL		  ((*(FIFO_read_status_ptr+1)) & 1 )
+#define READ_FIFO_EMPTY	  ((*(FIFO_read_status_ptr+1)) & 2 )
+// arg a is data to be written
+#define FIFO_WRITE_BLOCK(a)	  {while (WRITE_FIFO_FULL){WAIT};FIFO_WRITE=a;}
+// arg a is data to be written, arg b is success/fail of write: b==1 means success
+#define FIFO_WRITE_NOBLOCK(a,b) {b=!WRITE_FIFO_FULL; if(!WRITE_FIFO_FULL)FIFO_WRITE=a; }
+// arg a is data read
+#define FIFO_READ_BLOCK(a)	  {while (READ_FIFO_EMPTY){WAIT};a=FIFO_READ;}
+// arg a is data read, arg b is success/fail of read: b==1 means success
+#define FIFO_READ_NOBLOCK(a,b) {b=!READ_FIFO_EMPTY; if(!READ_FIFO_EMPTY)a=FIFO_READ;}</pre>
+<hr />
+<p><strong>First steps in programming the FPGA (obsolete)</strong>:</p>
+<p><strong>FPGA Programming abstraction for Linux using absolute hardware addresses</strong></p>
+<p>The main abstraction from the programming view is to  map virtual addresses used by Linux during program execution to physical addresses of memory mapped peripherials. I assume that we are running with <code>root</code> privileges. Opening the device <a href="../../../../../../linux.die.net/man/4/mem"><code>/dev/mem</code></a> and then using<code> <a href="../../../../../../man7.org/linux/man-pages/man2/mmap.2.html">mmap</a></code>gives access to physical addresses in a limited range determined by the mmap parameters. The <a href="test_led.c">code example</a> attempts to blink the HPS LED and read the switch directly attached to port GPIO1bits 24 and 25 respectively. All device addresses are from the <a href="../cv_5_HPS_tech_ref.pdf">HPS Technical Reference Manual</a>. The switch read works, but the LED does not blink. The code was downloaded using copy/paste to the <code>vi</code> editor, then compiled  from the console command line with a simple <code>gcc test_led.c -o test_led</code>.</p>
+<p><strong>-- Speed test the HPS-to-FPGA bus<br />
+</strong>If the MSEL switches are set correctly (5'b01010) then the default boot process loads the <code>DE1_SoC_Computer.rbf</code> config file (in<code> /home/root</code>) to the FPGA. Running the increment_led program (part of the UP Linux image in <code>/home/root/increment_leds</code>) controls the red LEDs attached to the FPGA side. A <a href="speed.c">slightly modified version</a> of the demo code increments the FPGA red LEDs as fast as possible. Using the <code>DE1_SoC_Computer.rbf</code> included with the UP Linux image, the max toggle speed 830 KHz, so one add and loop takes 600 nSec, which seems slow. Replacing the register increment with a C variable increment, which is then loaded into the register, doubles the toggle speed to 1.61 MHz, for a loop time of 300 nSec. This implies that the bus transactions are dominating execution speed. Avalon bus speed in this case is 50 MHz, or 20 nSec. The transaction must take about 15 bus cycles to transfer a word from the AXI-to-Avalon bus and Avalon-to-parallel i/o port. (But see below for higher speed connect).</p>
+<p><strong>-- First steps in controlling the FPGA</strong>.<br />
+  This example uses serial control on the ARM to set hex digits and led count rate on the FPGA. Two 32-bit parallel ports were added (using QSYS) to the my_first_ hps_fpga example on the DE1-SoC_v.5.0.1_HWrevF_SystemCD. The parallel otuput ports were wired to a small amount of verilog to blink the red LEDs and to drive the first 4 7-seg digits. The QSYS layout made it easy to add a port, and the exported i/o signal bus is named in the verilog header generated by QSYS. If the parallel port is named <code>pio_test</code>, then the exported signal name is <code>pio_test_external_connection</code>, and the signal which appears in the *.v file is <code>pio_test_external_connection_export</code>. The signal is added to the top-level <code>soc-system</code> module instance.<br />
+  <code>soc_system u0 (<br />
+    // === added BRL4 ===<br />
+    .pio_led_external_connection_export	  (count_control),<br />
+    .pio_test_external_connection_export   (hex_control),<br />
+    // === end add ===<br />
+    .memory_mem_a                          ( HPS_DDR3_ADDR),                          //          memory.mem_a<br />
+    .memory_mem_ba                         ( HPS_DDR3_BA),                         //                .mem_ba<br />
+    .memory_mem_ck .....</code></p>
+<p>The offsets for the LEDs and hex digits used in the C code are the offsets specfied in the <a href="../HPS_FPGA/pio_test/qsys.PNG">QSYS layout</a>.<br />
+  The <a href="../HPS_FPGA/pio_test/count_4feb16.c">C code</a>, <a href="../HPS_FPGA/pio_test/ghrd_top.v">top-level module</a>, and <a href="../HPS_FPGA/pio_test/soc_system_2pio.qar">Quartus archive</a>. <br />
+  A slightly cleaner version puts the hex-digit decoding into hardware and simplifies the C program. <br />
+  The <a href="../HPS_FPGA/pio_test_2/count_5F5feb16.c">C code,</a> <a href="../HPS_FPGA/pio_test_2/ghrd_top.v">top-level module</a>, and <a href="../HPS_FPGA/pio_test_2/soc_system_2pio2.qar">Quartus archive</a>. The QSYS layout is unchanged</p>
+<h3>&nbsp;</h3>
+<hr />
+<p>Copyright Cornell University 
+  <!-- #BeginDate format:Am1 -->January 25, 2019<!-- #EndDate -->.</p>
+<p>&nbsp;</p>
+</body>
+</html>

@@ -1,0 +1,25 @@
+wire [39:0] counter;
+assign LEDR = counter[30:21];
+count_test ct(counter, CLOCK_50, ~KEY[0]);
+endmodule
+
+/////////////////
+// test module //
+/////////////////
+module count_test(count_out, clock, reset);
+//
+output [39:0]	count_out;
+input clock, reset;
+wire [39:0] count_out ;
+reg [39:0] count ;
+//
+assign count_out = count ;
+always @(posedge clock) begin
+	if (reset) begin
+		count <= 0;
+	end
+	else begin
+		count <= count + 40'd1 ;
+	end
+end
+endmodule

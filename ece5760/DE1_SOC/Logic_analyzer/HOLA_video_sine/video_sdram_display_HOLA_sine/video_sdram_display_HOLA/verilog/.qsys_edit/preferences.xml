@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<preferences>
+ <debug showDebugMenu="0" />
+ <systemtable filter="All Interfaces">
+  <columns>
+   <connections preferredWidth="191" />
+   <irq preferredWidth="47" />
+  </columns>
+ </systemtable>
+ <library
+   expandedCategories="Project,Library/Basic Functions,Library/Basic Functions/On Chip Memory,Library" />
+ <window width="1478" height="1040" x="218" y="0" />
+</preferences>

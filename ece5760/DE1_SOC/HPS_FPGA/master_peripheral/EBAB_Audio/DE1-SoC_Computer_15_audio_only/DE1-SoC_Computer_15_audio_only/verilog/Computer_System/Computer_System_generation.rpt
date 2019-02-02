@@ -1,0 +1,113 @@
+Info: Starting: Create block symbol file (.bsf)
+Info: qsys-generate G:\DE1-SoC_Computer_15_audio_only\verilog\Computer_System.qsys --block-symbol-file --output-directory=G:\DE1-SoC_Computer_15_audio_only\verilog\Computer_System --family="Cyclone V" --part=5CSEMA5F31C6
+Progress: Loading verilog/Computer_System.qsys
+Progress: Reading input file
+Progress: Adding ARM_A9_HPS [altera_hps 15.0]
+Progress: Parameterizing module ARM_A9_HPS
+Progress: Adding AV_Config [altera_up_avalon_audio_and_video_config 15.0]
+Progress: Parameterizing module AV_Config
+Progress: Adding Audio_Subsystem [Audio_Subsystem 1.0]
+Progress: Parameterizing module Audio_Subsystem
+Progress: Adding Bus_master_audio [altera_up_external_bus_to_avalon_bridge 15.0]
+Progress: Parameterizing module Bus_master_audio
+Progress: Adding System_PLL [altera_up_avalon_sys_sdram_pll 15.0]
+Progress: Parameterizing module System_PLL
+Progress: Building connections
+Progress: Parameterizing connections
+Progress: Validating
+Progress: Done reading input file
+Info: Computer_System.ARM_A9_HPS: HPS Main PLL counter settings: n = 0  m = 73
+Info: Computer_System.ARM_A9_HPS: HPS peripherial PLL counter settings: n = 0  m = 39
+Warning: Computer_System.ARM_A9_HPS: "Configuration/HPS-to-FPGA user 0 clock frequency" (desired_cfg_clk_mhz) requested 100.0 MHz, but only achieved 97.368421 MHz
+Warning: Computer_System.ARM_A9_HPS: "QSPI clock frequency" (desired_qspi_clk_mhz) requested 400.0 MHz, but only achieved 370.0 MHz
+Warning: Computer_System.ARM_A9_HPS: 1 or more output clock frequencies cannot be achieved precisely, consider revising desired output clock frequencies.
+Info: ip-generate succeeded.
+Info: Finished: Create block symbol file (.bsf)
+Info: 
+Info: Starting: Create HDL design files for synthesis
+Info: qsys-generate G:\DE1-SoC_Computer_15_audio_only\verilog\Computer_System.qsys --synthesis=VERILOG --output-directory=G:\DE1-SoC_Computer_15_audio_only\verilog\Computer_System\synthesis --family="Cyclone V" --part=5CSEMA5F31C6
+Progress: Loading verilog/Computer_System.qsys
+Progress: Reading input file
+Progress: Adding ARM_A9_HPS [altera_hps 15.0]
+Progress: Parameterizing module ARM_A9_HPS
+Progress: Adding AV_Config [altera_up_avalon_audio_and_video_config 15.0]
+Progress: Parameterizing module AV_Config
+Progress: Adding Audio_Subsystem [Audio_Subsystem 1.0]
+Progress: Parameterizing module Audio_Subsystem
+Progress: Adding Bus_master_audio [altera_up_external_bus_to_avalon_bridge 15.0]
+Progress: Parameterizing module Bus_master_audio
+Progress: Adding System_PLL [altera_up_avalon_sys_sdram_pll 15.0]
+Progress: Parameterizing module System_PLL
+Progress: Building connections
+Progress: Parameterizing connections
+Progress: Validating
+Progress: Done reading input file
+Info: Computer_System.ARM_A9_HPS: HPS Main PLL counter settings: n = 0  m = 73
+Info: Computer_System.ARM_A9_HPS: HPS peripherial PLL counter settings: n = 0  m = 39
+Warning: Computer_System.ARM_A9_HPS: "Configuration/HPS-to-FPGA user 0 clock frequency" (desired_cfg_clk_mhz) requested 100.0 MHz, but only achieved 97.368421 MHz
+Warning: Computer_System.ARM_A9_HPS: "QSPI clock frequency" (desired_qspi_clk_mhz) requested 400.0 MHz, but only achieved 370.0 MHz
+Warning: Computer_System.ARM_A9_HPS: 1 or more output clock frequencies cannot be achieved precisely, consider revising desired output clock frequencies.
+Info: Computer_System: Generating Computer_System "Computer_System" for QUARTUS_SYNTH
+Warning: ARM_A9_HPS.f2h_irq0: Cannot connect clock for irq_mapper.sender
+Warning: ARM_A9_HPS.f2h_irq0: Cannot connect reset for irq_mapper.sender
+Warning: ARM_A9_HPS.f2h_irq1: Cannot connect clock for irq_mapper_001.sender
+Warning: ARM_A9_HPS.f2h_irq1: Cannot connect reset for irq_mapper_001.sender
+Info: ARM_A9_HPS: "Running  for module: ARM_A9_HPS"
+Info: ARM_A9_HPS: HPS Main PLL counter settings: n = 0  m = 73
+Info: ARM_A9_HPS: HPS peripherial PLL counter settings: n = 0  m = 39
+Warning: ARM_A9_HPS: "Configuration/HPS-to-FPGA user 0 clock frequency" (desired_cfg_clk_mhz) requested 100.0 MHz, but only achieved 97.368421 MHz
+Warning: ARM_A9_HPS: "QSPI clock frequency" (desired_qspi_clk_mhz) requested 400.0 MHz, but only achieved 370.0 MHz
+Warning: ARM_A9_HPS: 1 or more output clock frequencies cannot be achieved precisely, consider revising desired output clock frequencies.
+Info: ARM_A9_HPS: "Computer_System" instantiated altera_hps "ARM_A9_HPS"
+Info: AV_Config: Starting Generation of Audio and Video Config
+Info: AV_Config: "Computer_System" instantiated altera_up_avalon_audio_and_video_config "AV_Config"
+Info: Audio_Subsystem: "Computer_System" instantiated Audio_Subsystem "Audio_Subsystem"
+Info: Bus_master_audio: Starting Generation of External Bus to Avalon Bridge
+Info: Bus_master_audio: "Computer_System" instantiated altera_up_external_bus_to_avalon_bridge "Bus_master_audio"
+Info: System_PLL: "Computer_System" instantiated altera_up_avalon_sys_sdram_pll "System_PLL"
+Info: avalon_st_adapter: Inserting error_adapter: error_adapter_0
+Info: avalon_st_adapter_001: Inserting error_adapter: error_adapter_0
+Info: mm_interconnect_0: "Computer_System" instantiated altera_mm_interconnect "mm_interconnect_0"
+Info: irq_mapper: "Computer_System" instantiated altera_irq_mapper "irq_mapper"
+Info: irq_mapper_001: "Computer_System" instantiated altera_irq_mapper "irq_mapper_001"
+Info: rst_controller: "Computer_System" instantiated altera_reset_controller "rst_controller"
+Info: fpga_interfaces: "ARM_A9_HPS" instantiated altera_interface_generator "fpga_interfaces"
+Info: hps_io: "ARM_A9_HPS" instantiated altera_hps_io "hps_io"
+Info: Audio: Starting Generation of Audio Controller
+Info: Audio: "Audio_Subsystem" instantiated altera_up_avalon_audio "Audio"
+Info: Audio_PLL: "Audio_Subsystem" instantiated altera_up_avalon_audio_pll "Audio_PLL"
+Info: sys_pll: "System_PLL" instantiated altera_pll "sys_pll"
+Info: reset_from_locked: "System_PLL" instantiated altera_up_avalon_reset_from_locked_signal "reset_from_locked"
+Info: Bus_master_audio_avalon_master_translator: "mm_interconnect_0" instantiated altera_merlin_master_translator "Bus_master_audio_avalon_master_translator"
+Info: Audio_Subsystem_audio_slave_translator: "mm_interconnect_0" instantiated altera_merlin_slave_translator "Audio_Subsystem_audio_slave_translator"
+Info: ARM_A9_HPS_h2f_lw_axi_master_agent: "mm_interconnect_0" instantiated altera_merlin_axi_master_ni "ARM_A9_HPS_h2f_lw_axi_master_agent"
+Info: Bus_master_audio_avalon_master_agent: "mm_interconnect_0" instantiated altera_merlin_master_agent "Bus_master_audio_avalon_master_agent"
+Info: Audio_Subsystem_audio_slave_agent: "mm_interconnect_0" instantiated altera_merlin_slave_agent "Audio_Subsystem_audio_slave_agent"
+Info: Audio_Subsystem_audio_slave_agent_rsp_fifo: "mm_interconnect_0" instantiated altera_avalon_sc_fifo "Audio_Subsystem_audio_slave_agent_rsp_fifo"
+Info: router: "mm_interconnect_0" instantiated altera_merlin_router "router"
+Info: router_002: "mm_interconnect_0" instantiated altera_merlin_router "router_002"
+Info: router_003: "mm_interconnect_0" instantiated altera_merlin_router "router_003"
+Info: router_004: "mm_interconnect_0" instantiated altera_merlin_router "router_004"
+Info: ARM_A9_HPS_h2f_lw_axi_master_wr_limiter: "mm_interconnect_0" instantiated altera_merlin_traffic_limiter "ARM_A9_HPS_h2f_lw_axi_master_wr_limiter"
+Info: Reusing file G:/DE1-SoC_Computer_15_audio_only/verilog/Computer_System/synthesis/submodules/altera_avalon_sc_fifo.v
+Info: Audio_Subsystem_audio_slave_burst_adapter: "mm_interconnect_0" instantiated altera_merlin_burst_adapter "Audio_Subsystem_audio_slave_burst_adapter"
+Info: Reusing file G:/DE1-SoC_Computer_15_audio_only/verilog/Computer_System/synthesis/submodules/altera_merlin_address_alignment.sv
+Info: Reusing file G:/DE1-SoC_Computer_15_audio_only/verilog/Computer_System/synthesis/submodules/altera_avalon_st_pipeline_base.v
+Info: cmd_demux: "mm_interconnect_0" instantiated altera_merlin_demultiplexer "cmd_demux"
+Info: cmd_demux_002: "mm_interconnect_0" instantiated altera_merlin_demultiplexer "cmd_demux_002"
+Info: cmd_mux: "mm_interconnect_0" instantiated altera_merlin_multiplexer "cmd_mux"
+Info: cmd_mux_001: "mm_interconnect_0" instantiated altera_merlin_multiplexer "cmd_mux_001"
+Info: Reusing file G:/DE1-SoC_Computer_15_audio_only/verilog/Computer_System/synthesis/submodules/altera_merlin_arbitrator.sv
+Info: rsp_demux: "mm_interconnect_0" instantiated altera_merlin_demultiplexer "rsp_demux"
+Info: rsp_demux_001: "mm_interconnect_0" instantiated altera_merlin_demultiplexer "rsp_demux_001"
+Info: rsp_mux: "mm_interconnect_0" instantiated altera_merlin_multiplexer "rsp_mux"
+Info: Reusing file G:/DE1-SoC_Computer_15_audio_only/verilog/Computer_System/synthesis/submodules/altera_merlin_arbitrator.sv
+Info: rsp_mux_002: "mm_interconnect_0" instantiated altera_merlin_multiplexer "rsp_mux_002"
+Info: Reusing file G:/DE1-SoC_Computer_15_audio_only/verilog/Computer_System/synthesis/submodules/altera_merlin_arbitrator.sv
+Info: avalon_st_adapter: "mm_interconnect_0" instantiated altera_avalon_st_adapter "avalon_st_adapter"
+Info: border: "hps_io" instantiated altera_interface_generator "border"
+Info: audio_pll: "Audio_PLL" instantiated altera_pll "audio_pll"
+Info: error_adapter_0: "avalon_st_adapter" instantiated error_adapter "error_adapter_0"
+Info: Computer_System: Done "Computer_System" with 40 modules, 116 files
+Info: ip-generate succeeded.
+Info: Finished: Create HDL design files for synthesis

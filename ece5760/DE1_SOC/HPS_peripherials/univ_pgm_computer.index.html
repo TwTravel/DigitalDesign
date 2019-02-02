@@ -1,0 +1,168 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Univ computer graphics</title>
+</head>
+
+<body>
+<h2 align="center">DE1-SoC:
+  University Computer<br />
+  Graphics, audio, IPC<br />
+Cornell ece5760</h2>
+<p>&nbsp;</p>
+<h3>University Program DE1-SoC_Computer_15_1</h3>
+<p>
+  
+  <a href="../DE1_soc_computer/VGA_speed_test/VGA_test_image.jpg"><img src="../DE1_soc_computer/VGA_speed_test/VGA_test_image.jpg" width="164" height="121" alt="test image"  align="left" /></a>
+  This <a href="../DE1_soc_computer/VGA_speed_test/DE1_SoC_Computer.qar">computer system</a> includes support for ARM, Nios, video, audio, and many other items. I converted some code from bare-metal to Linux to run on the UP-Linux distribution. First test is to get VGA display running and test the writing speed. I did a minor reorganization of the <a href="../DE1_soc_computer/VGA_speed_test/address_map_arm_brl4.h">address map file</a> and converted <a href="../DE1_soc_computer/VGA_speed_test/media_brl4.c">one C example</a> to just run the VGA, and update 10,000 pixels as fast as possible.The update takes 1.8 mSec, so the effective pixel writing rate is about 5.5 million pixels/sec. The example also defines a line-drawing routine, but does NOT check pixel bounds. If you write outside the screen bounds, the program <em>segfaults</em>. The image to the left shows one update frame (at 320x340 resolution)..<br clear="left" />
+  <a href="../DE1_soc_computer/VGA_random_rects/20160223_130856.jpg"><img src="../DE1_soc_computer/VGA_random_rects/20160223_130856.jpg" width="165" height="124" alt="random rects" align="left"/></a>The <a href="../DE1_soc_computer/VGA_random_rects/media_brl4_2.c">code was modified</a> to write random rectangles. The write-rate is too fast to see, but the colors are nice.<br />
+  (at 320x340 resolution). Colors are 16 bit: top 5 bits red, middle 6 green, lower 5 blue.<br clear="left" />
+  <strong><br />
+  --Converting DE1-SoC_Computer_15_1 to 640x480, 8-bit color</strong><br />
+  
+  <a href="../DE1_soc_computer/VGA_640x480/20160225_132433.jpg"><img src="../DE1_soc_computer/VGA_640x480/20160225_132433.jpg" width="166" height="129" alt="640x480" align="left"/></a>
+  The <a href="../../LABS/s2016/video_core-use_notes.html">directions</a> written by Shiva Rajagopal for Qsys 640x480 converstion worked for <a href="../DE1_soc_computer/VGA_640x480/DE1_SoC_Computer_640_480.qar">this system</a>. (<a href="../DE1_soc_computer/VGA_640x480/DE1-SoC_Computer_15_640.zip">system ZIP</a>) The span of the addresses in the <a href="../DE1_soc_computer/VGA_640x480/address_map_arm_brl4.h">virtual-to-real memory map</a> had to be doubled. and, of course, the addressing and colors of pixels had to be modified in the <a href="../DE1_soc_computer/VGA_640x480/media_brl4_3.c">main program</a>. The size of the character buffer was not changed. The color encoding is now 8-bit with top 3 bits red, next 3 green, lower 2 bits blue.<br />
+  <code>VGA_line(0, 0, 320, 240, 0xe0) ; // red 3-bits<br />
+  VGA_line(639, 0, 320, 240, 0x1c) ; // green 3-bits<br />
+  VGA_line(639, 479, 320, 240, 0x03) ; // blue</code><code> 2-bits</code><br  clear="left"/>
+  The design was very slow to generate (Qsys) and compile (Quartus). It took around an hour (on my 5 year old machine). Next step is to speed it up. Chopping out the Nios CPUs and some of the support, but leaving the video in/out and audio reduces the generate time to 5 minutes and the compile time to about 22 minutes. (<a href="../DE1_soc_computer/chopped_1/DE1_SoC_Computer_chopped_1.qar">archive</a>). Stripping out the rest of the LED and switch i/o and removing the video-input funciton reduces the compile time to 18 minutes.
+<p><strong>A better chopped down system</strong> keeps the LEDs, switches, 640x480 video out, and audio. The design is partitioned (Assigments&gt;<a href="../DE1_soc_computer/Chopped_2/partition.PNG">Design Partitions Window)</a> so that the DE1-SoC computer is in its own partition. Two other partitions are <em>top</em> and the <em>hex display</em> modules. On my new computer (4 core, 32 GB memory, SSD, July 2016), this takes 12 minutes for a full compile. A small change to the hex display partition takes about 8.5 minutes to recompile. A small C code tests the hex display partition. (<a href="../DE1_soc_computer/Chopped_2/hex_count.c">C code</a>, <a href="../DE1_soc_computer/Chopped_2/address_map_arm_brl4.h">address header</a>, <a href="../DE1_soc_computer/Chopped_2/DE1-SoC_Computer_15_640_current.zip">project ZIP</a>). 
+<p><strong>-- Mandelbrot set on VGA/HPS</strong> <strong>, 8-bit color</strong><br />
+  <a href="../DE1_soc_computer/VGA_mandelbrot/mandelbrot_set.jpg"><img src="../DE1_soc_computer/VGA_mandelbrot/mandelbrot_set_small.jpg" width="175" height="133" alt="" align="left"/></a>  This example is a base-line implementation of a <a href="../DE1_soc_computer/VGA_mandelbrot/mandelbrot_video_2.c">mandelbrot solver</a> which displays using the DE1-SoC computer system explained above. It computes a 640x480 approximation with a maximum of 1000 iterations in about 3.4 seconds, using level -O2 compiler optimization. The code computes about 23 million complex iterations/sec (40 cycles/iteration). The colors are approximately logarithmic in number of iterations at that point. <a href="../DE1_soc_computer/VGA_mandelbrot/mandelbrot_set.jpg">Image</a>. The total number of iterations for all points on the screen and total execution time are displayed. Also included is a routine to erase all text on the screen. Use the sof file from the &quot;<em>better chopped down system</em>&quot; above. Converting the code to 4:28 fixed point arithmetic lowers the time to 2.02 seconds, or about 39 million iterations/sec. Detecting circular regions of the slowest areas (in blue) and just setting the count to maximum in those regions lowers the drawing time to 0.85 seconds. <a href="../DE1_soc_computer/VGA_mandelbrot/mandelbrot_video_fix.c"><strong>Code</strong></a><br  clear="left"/>
+<p><strong>-- Conway's game of life on VGA/HPS
+  , 8-bit color</strong><br />
+  <a href="../DE1_soc_computer/VGA_Conway_life/screen.jpg"><img src="../DE1_soc_computer/VGA_Conway_life/screen_small.jpg" width="200" height="149" alt=""  align="left"/></a>The <a href="../../../../../../https@en.wikipedia.org/wiki/Conway's_Game_of_Life">game of life</a> is a 2D, totalistic, cellular automaton which is compute-universal.  The <a href="../DE1_soc_computer/VGA_Conway_life/life_video.c">HPS program</a> displays using the DE1-SoC computer system explained above. 
+It computes a 640x480 cell automaton at approximately 14 frames/sec, using level -O2 compiler optimization. This corresponds to about 4.25 million cell updates/sec. The slow step here is writing the pixels to the frame buffer, which is limited by the bus rate to about 5 million/sec. If you <a href="../DE1_soc_computer/VGA_Conway_life/life_video_2.c">modify the code</a> to be smarter about writing pixels, the speed goes as high as 60 frames/sec, or about 18 million cells/sec, <em>but</em> <em>will depend on the specific content of the screen</em>. More cell state changes will slow down execution. Use the sof file from the &quot;<em>better chopped down system</em>&quot; above.<br  clear="left"/>
+<p>-- <strong>Graphics primitives on VGA/HPS, 8-bit color</strong><br />
+<a href="../DE1_soc_computer/VGA_graphics_primitives/VGA_graphics_test2.jpg"><img src="../DE1_soc_computer/VGA_graphics_primitives/VGA_graphics_test2_small.jpg" width="182" height="140" alt=""  align="left"/></a>A few more 2D drawing primitives were added to draw:<br />
+points, lines (general, fast vertical, fast horizontal), filled circles, circles, filled rectangles and rectangle edges. <br />
+As above, color is 8-bit, resolution is 640x480. Text is drawn in white only. Also, there is a routine to clear text from the frame buffer. Clearing the image plane is done by writing a large, black, filled rectangle. Use the sof file from the &quot;<em>better chopped down system</em>&quot; above.<br />
+<strong><a href="../DE1_soc_computer/VGA_graphics_primitives/graphics_video.c">Code</a></strong><br clear="left"/>
+<p>-- <strong>Color chooser on VGA/HPS, 8-bit color</strong><br />
+  <a href="../DE1_soc_computer/VGA_graphics_primitives/color_picker_2.jpg"><img src="../DE1_soc_computer/VGA_graphics_primitives/color_picker_2_small.jpg" width="162" height="120" alt=""  align="left"/></a>
+  I  wrote a <a href="../DE1_soc_computer/VGA_graphics_primitives/color_picker.jpg"><strong>color chooser</strong></a> that lays out a grid of all the possible 8-bit colors in hexidecimal order , then prompts you for the location and index of up to four different colors for comparison in a larger patch. You get the index by adding the column and row numbers for a given color. Ordering is [red 7:5, green 4:2, blue 1:0] . You set the location of the larger patch as an integer 0-3. <strong><a href="../DE1_soc_computer/VGA_graphics_primitives/color_picker_video.c">Code</a></strong>.<br />
+  Reordering the color patches to make four 64-patch red-green planes, with increading blue content makes a <a href="../DE1_soc_computer/VGA_graphics_primitives/color_picker_2.jpg">nicer display</a>. The hex equivalent is displayed on each patch. <strong><a href="../DE1_soc_computer/VGA_graphics_primitives/color_picker_video_2.c">Code</a></strong>. <br  clear="left"/>
+<p>-- <strong>Video input from NTSC to VGA, 8-bit color</strong><br />
+The board supports NTSC/PAL input through a <em>Video Input subsystem</em> in Qsys. A camera is attached to the yellow composite video jack. Several modifications need to be done to the Qsys layout and top-level module to make this work at 640x480 resolution. In the Video Input Subsystem:<ul>
+  <li>Video_in_rgb_resampler module changed to output 8-bit rgb</li>
+  <li>Video_in_clipper module set to 8-bit, 1-plane</li>
+  <li>Video_in_scaler module set to 640x480 with width scale 0.5, height scale 2.0, 8-bits, 1-plane</li>
+  <li>Video_in_DMA module set to 640x480, 8-bits, 1-plane</li>
+  </ul>
+
+<a href="../DE1_soc_computer/Video_input/20170214_085328.jpg"><img src="../DE1_soc_computer/Video_input/20170214_085328_small.jpg" width="192" height="150" alt="" align="left"/></a>
+<p>In the top-level module the video input signals need to be defined as given in the reference design, but the <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">TD_RESET_N</span> signal is not correctly generated by the supplied IP, so a line was added to the top-level <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">assign TD_RESET_N = SW[1];</span> . The switch may need to be cycled at power-up to enable the system. Turning off the switch freezes the video capture. Also, the system would not start unless the edge-detect option was transiently turned on by a <a href="../DE1_soc_computer/Video_input/enable_video_input.c">HPS program. </a>The HPS program also reads and displays the 8-bit color of the pixel at video input location 160x120, the middle of the input image. I do not know yet why there are two copies of the camera image displayed.<br />
+  (<a href="../DE1_soc_computer/Video_input/DE1_SoC_Computer.v">top-level</a>, <a href="../DE1_soc_computer/Video_input/verilog.zip">project ZIP</a>).<br clear="left"/>
+
+<hr />
+<h3>Converting video to SDRAM -- 640x480 8-bit and 16-bit color</h3>
+<p>-- <strong>Video input from NTSC to on-chip-memory, then to SDRAM VGA using HPS, in 8-bit color<br />
+  </strong>The Qsys layout can be modified so that video input goes to on-chip, dual-port SRAM, while the VGA display is refreshed from SDRAM. It is then possible to use the HPS to copy pixels from the video-in SRAM to the display buffer SDRAM, or just use the pixels for computation on the HPS.  Changes to the Qsys layout:
+<ul>
+  <li>The VGA subsystem 
+    <ul>
+      <li>Inside the VGA subsystem, the vga_pixel_dma module has the address modifed to 0x00000000, the base of SDRAM.</li>
+      <li>Output from the dma controller in the top-level Qsys is disconnected from on-chip-sram</li>
+      <li>The AXI-bus master remains connected to SDRAM so that the HPS can read/write VGA screen</li>
+    </ul>
+  </li>
+  <li>The Video_in subsystem
+    <ul>
+      <li>Inside the Video_in subsystem, the video_in DMA controller is set to address 0x08000000, with size 320x240<br />
+        This address corrresponds to the Qsys bus address of on-chip RAM.
+      </li>
+      <li>Output from the dma controller is routed to port s1 of the on-chip-sram</li>
+      <li>The AXI-bus master is connected to port s2 of the on-chip-sram</li>
+    </ul>
+  </li>
+</ul>
+<p><a href="../DE1_soc_computer/Video_input/video_in_to_sram/20170220_110429.jpg"><img src="../DE1_soc_computer/Video_input/video_in_to_sram/20170220_110429_small.jpg" width="201" height="150" alt=""  align="left"/></a>A HPS program can read/write the video_in RAM and the VGA display SDRAM to copy the pixels from video in to display. There are new functions to support the read/write. As before, switch SW[1] must be UP for the video input to run. Using the HPS (instead of an Avalon bus-master) is inefficient use of the bus, but is useful for testing. A slight timing error results a one pixel ripple in the video input diaplay. (<a href="../DE1_soc_computer/Video_input/video_in_to_sram/enable_video_input_3.c">HPS code</a>, <a href="../DE1_soc_computer/Video_input/video_in_to_sram/computer_15_640_video_mod.zip">project ZIP</a>). Down in the lower-left corner, the time readout gives the copy-time of about 30 fps. The color indicator reads white, which is the one-pixel dot on my neck, inserted by the program at (160,120) in the video-in buffer.<br clear="left"/>
+
+<p><strong>-- Video VGA 640x480 displayed from SDRAM, in 16-bit color.</strong><br />
+A stripped down display system uses SDRAM as a frame buffer. <br />
+The <strong><a href="../DE1_soc_computer/VGA_16bit_color/DE1_SoC_Computer.v">top level Verilog</a></strong> only connects the Qsys exported signals to the i/o pins and has no other logic. <br />
+The <a href="../DE1_soc_computer/VGA_16bit_color/Qsys_top.PNG"><strong>Qsys layout</strong></a> is modified to support 16 bit color. The Qsys modifications:
+<ul>
+      <li>Inside the VGA subsystem
+        <ul>
+          <li> The <a href="../DE1_soc_computer/VGA_16bit_color/pixel_dma_controller.PNG">vga_pixel_dma module</a>:
+            <ul>
+          <li> has the address modifed to 0x00000000, the base of SDRAM.</li>
+              <li>address mode changed to <em>consecutive</em>.</li>
+              <li>color space 16-bit.</li>
+            </ul>
+          </li>
+          <li>The <a href="../DE1_soc_computer/VGA_16bit_color/dual_clock_fifo.PNG">dual-clock fifo module</a> has color bits changed to 16-bits.</li>
+          <li>The <a href="../DE1_soc_computer/VGA_16bit_color/resampler.PNG">RGB resampler</a> is changed to 16-bit input.</li>
+        </ul>
+      </li>
+      <li>Output from the VGA DMA controller in the <a href="../DE1_soc_computer/VGA_16bit_color/Qsys_top.PNG">top-level Qsys</a> is disconnected from on-chip-sram<br />
+      and connected only to SDRAM.</li>
+      <li>The AXI-bus, HPS master remains connected to SDRAM so that the HPS can read/write VGA screen.<br />
+        The  AXI-bus master base address is <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">C000_0000.</span> This address is used in the<a href="../DE1_soc_computer/VGA_16bit_color/C_program_addresses.PNG"> HPS C-program</a> to produce<br />
+        high-speed i/o to the FPGA.
+        <br />
+      The 64 Mbyte of SDRAM is at AXI-bus master address <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">C000_0000 to C3ff_ffff</span>. </li>
+      <li>The light-weight AXI-bus base address is<span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace"> FF20_0000</span>. This address is used in the<a href="../DE1_soc_computer/VGA_16bit_color/C_program_addresses.PNG"> HPS C-program</a> to produce<br />
+low-speed control i/o to the FPGA. <br />
+        The 
+      light-weight AXI-bus base address of the AVConfig module is<span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace"> FF20_3000 to FF20_300f</span>.</li>
+      <li>Note that the exported signals in Qsys become i/o ports in the Qsys-generated computer-system module.<br />
+      For example, the <a href="../DE1_soc_computer/VGA_16bit_color/Qsys_VGA.PNG">exported VGA conduit</a> becomes <a href="../DE1_soc_computer/VGA_16bit_color/VGA_signals_exported.PNG">i/o ports</a> in the computer-system module instantiation to control the monitor. </li>
+      <li>The Qsys-generated computer-system module can be found in a sub-directory of your project directory named something like <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">Computer_System</span>.  
+      But usually you are going to just add or delete a few lines from the existing module instatiation i/o interface.</li>
+</ul>
+<p>The HPS pixel writing macro is modifed to allow 16-bit writes to the bus, and uses the <em>consecutive</em> format:<br />
+/<span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">/ pixel macro<br />#define VGA_PIXEL(x,y,color) do{\<br />	int  *pixel_ptr ;\<br />	pixel_ptr = (int*)((char *)vga_pixel_ptr + (((y)*640+(x))&lt;&lt;1)) ; \<br />	*(short *)pixel_ptr = (color);\<br />} while(0)</span>
+</p>
+    <p>Defined graphics routines are</p>
+    <pre>
+void VGA_text (int, int, char *); // (x_position 0-79, line_position 0-59, pointer_to_string)
+void VGA_text_clear(); // clears whole text buffer, but not graphics
+void VGA_box (int, int, int, int, short); // (corner1_x, corner1_y, corner2_x, corner2_y, color)
+void VGA_line(int, int, int, int, short) ; // (point1_x, point1_y, point2_x, point2_y, color)
+void VGA_disc (int, int, int, short); // (center_x, center_y, radius, color)</pre>
+    <p> Color coding  is 16-Bit RGB. This format uses 5 bits for red, and 6 bits for green and 5 bits for blue. <br />
+      If R and B are 5-bit integers and G is a 6-bit integer then<span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace"> color = B+(G&lt;&lt;5)+(R&lt;&lt;11);</span><br />
+      <img src="../DE1_soc_computer/VGA_16bit_color/RGB.PNG" width="585" height="68" alt=""/>      <br />
+</p>
+    <p>A color-picker program allows you to specify R, G, B values, displays the color in the lower right, and shows 2D slices through the 3D RGB space, axis aligned, which include the specifed (R,G,B) point. The top slice is the red-green plane, the middle is blue-green, and bottom is blue-red plane. Three examples are shown below through points black (0,0,0) , medium gray (15,31,15), and white (31,63,31).The HPS perfrormance program linked below prompts for color mask values to set ranges for RGB, then draws 1000 discs with  random colors constrained by the RGB masks.<br />
+    <a href="../DE1_soc_computer/VGA_16bit_color/black_sections.jpg"><img src="../DE1_soc_computer/VGA_16bit_color/black_sections.jpg" width="314" height="241" alt=""/></a> <a href="../DE1_soc_computer/VGA_16bit_color/gray_sections.jpg"><img src="../DE1_soc_computer/VGA_16bit_color/gray_sections.jpg" width="336" height="241" alt=""/></a><a href="../DE1_soc_computer/VGA_16bit_color/white_sections.jpg"><img src="../DE1_soc_computer/VGA_16bit_color/white_sections.jpg" width="325" height="241" alt=""/></a></p>
+    <p>(<a href="../DE1_soc_computer/VGA_16bit_color/VGA_16bit_2.c">HPS color picker</a>, <a href="../DE1_soc_computer/VGA_16bit_color/VGA_16bit_1.c">HPS performance measure</a>, <a href="../DE1_soc_computer/VGA_16bit_color/computer_640_16bit_video.zip">ZIP</a>)</p>
+    <p>The graphics primitives were converted to 16-bit color (<a href="../DE1_soc_computer/VGA_16bit_color/graphics_video_16bit.c">HPS program</a>). <br />
+      This program assumes the 16-bit hardware used above.<br />
+    <a href="../DE1_soc_computer/VGA_16bit_color/20170504_113542.jpg"><img src="../DE1_soc_computer/VGA_16bit_color/20170504_113542.jpg" width="449" height="320" alt=""/></a> </p>
+    <hr />
+<p><strong>HPS Interprocess Communication for video and audio</strong>
+<p><strong>--Using two ARM processors to write video and play a tone.</strong><br />
+  Starting one process to write to the video buffer as fast as possible, and keep the audio FIFO filled, failed above about 8000 pixels per loop, where the FIFO could be filled in each loop if there was space. The easy solution is to start two processes, which are migrated by Linux onto the two processors with both running at full speed. (<a href="../DE1_soc_computer/Audio_video/DE1_SoC_Computer_audio_video.qar">Quartus archive</a>, <a href="../DE1_soc_computer/Audio_video/media_brl4_4.c">combined audio/videocode</a> which failed at high write-rates). The <a href="../DE1_soc_computer/Audio_video/media_brl4_4_audio.c">audio code</a> required the math library for sine wave synthesis, which requires compile with the <code>-lm </code>option. The <a href="../DE1_soc_computer/Audio_video/media_brl4_4_video.c">video code</a> is unchanged. And the <a href="../DE1_soc_computer/Audio_video/address_map_arm_brl4.h">address header</a>.
+<p>-- <strong>Using two ARM processors with IPC to display time while writing video and playing a tone.</strong><br />
+ Starting two processes to maximize bandwidth, requires communication between the processes. This example uses the fixed audio synthesis frequency (48 KHz) to drive a timer/counter which then uses<em> shared memory IPC </em>(interprocess communication) to display the time on the VGA.  The both the <a href="../DE1_soc_computer/Audio_video/media_brl4_5_audio.c">audio</a> and  <a href="../DE1_soc_computer/Audio_video/media_brl4_5_video.c">video</a> code were attached to the same shared memory segment using <code>shmget</code> and <code>shmat</code>. As before, the audio code required the math library for sine wave synthesis, which requires compile with the <code>-lm </code>option.  (<a href="../DE1_soc_computer/Audio_video/DE1_SoC_Computer_audio_video.qar">Quartus archive</a>, <a href="../DE1_soc_computer/Audio_video/address_map_arm_brl4.h">address header</a>). <br />
+ <strong>Use the sof file from the &quot;<em>better chopped down system</em>&quot; above.</strong><br />
+ -- A minor modification of both the <a href="../DE1_soc_computer/Audio_video/media_brl4_6_audio.c">audio</a> and <a href="../DE1_soc_computer/Audio_video/media_brl4_6_video.c">video</a> code plays a one-octave scale on the audio side and displays the time and frequency on the video side.
+ <br />
+ -- Cleaning up both the <a href="../DE1_soc_computer/Audio_video/media_brl4_7_audio.c">audio</a> and <a href="../DE1_soc_computer/Audio_video/media_brl4_7_video.c">video</a> code puts pixel limit error checking in the video draw routines and better naming in audio program.
+ <br />
+ -- Adding a <a href="../DE1_soc_computer/VGA_random_disks/20160503_083424.jpg">disk function</a><a href="../DE1_soc_computer/VGA_random_disks/20160503_081104.mp4"> (video)</a> to the <a href="../DE1_soc_computer/VGA_random_disks/media_brl4_8_video.c">video code</a> makes particle systems nicer.
+ <br />
+-- The <a href="../DE1_soc_computer/Audio_video/media_brl4_7_audio_drum.c"><strong>audio code</strong></a> was modified to support a finite difference drum scheme. The drum coded is a linear system with coefficients chosen so that cheap fixed-point shifts could be used to generate the 32-bit sound samples at 48Ksamples/sec. At -O3 optimization, I could just fit a 30x30 FDTD drum into the 20.8 microsecond systhesis time frame. If a more general drum tension is simulated with amplitude-dependent tension, then the size drops to about 24x24 grid points. See also<a href="../../LABS/s2018/lab2_drum.html"> 2018 lab 2</a>.<br />
+<hr />
+<p>References:</p>
+<p><a href="../index.html">DE1-SOC</a> literature list</p>
+<p><a href="../../../eceprojectsland/STUDENTPROJ/2014to2015/ayk33/Independent_Study.pdf">Using the DE1-SOC FPGA</a> by Ahmed Kamel </p>
+<p><a href="../../../eceprojectsland/STUDENTPROJ/2014to2015/ayk33/index.html">Stereoscopic Depth on an FPGA via OpenCL</a> by Ahmed Kamel and Aashish Agarwal</p>
+<p><a href="../../../eceprojectsland/STUDENTPROJ/2015to2016/sm893_mkp53/Final%20Report%20ECE%204999.pdf">Running Linux on DE1-SOC</a> by MANISH PATEL and SYED TAHMID MAHBUB</p>
+<p><a href="../../FinalProjects/s2015/spp66_aa2264_ayk33/spp66_aa2264_ayk33/spp66_aa2264_ayk33/FPGA_ARM.html">OpenCL on DE1-SOC</a> Sahil P Potnis (<a href="mailto:spp66@cornell.edu">spp66@cornell.edu)</a> Aashish Agarwal (<a href="mailto:aa2264@cornell.edu">aa2264@cornell.edu</a>) Ahmed Kamel (<a href="mailto:ayk33@cornell.edu">ayk33@cornell.edu</a>)</p>
+<p><a href="../../../../../../ftp@ftp.altera.com/up/pub/Altera_Material/15.1/University_Program_IP_Cores/Audio_Video/Audio.pdf">Audio Core</a> (Qsys University Program 15.1) <a href="../Audio_core.pdf">local copy</a></p>
+<p><a href="../../../../../../ftp@ftp.altera.com/up/pub/Altera_Material/15.1/University_Program_IP_Cores/Audio_Video/Video.pdf">Video Core</a> (Qsys University Program 15.1) <a href="../Video_core.pdf">local copy</a></p>
+<p>Analog input Core  (Qsys University Program 15.1) <a href="../ADC_Controller.pdf">local copy</a></p>
+<p><a href="../External_Bus_to_Avalon_Bridge.pdf">External to Avalon Bus Master</a> (<em>external</em> here means<em> <strong>in the FPGA</strong></em>, but not in the Qsys bus structure)</p>
+<p><a href="../Avalon_to_External_Bus_Bridge.pdf">Avalon to External Bus Slave</a> (<em>external</em> here means<em> <strong>in the FPGA</strong></em>, but not in the Qsys bus structure)</p>
+<hr />
+<p>Copyright Cornell University 
+  <!-- #BeginDate format:Am1 -->January 30, 2019<!-- #EndDate -->
+</p>
+<p>&nbsp;</p>
+</body>
+</html>

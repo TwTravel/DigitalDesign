@@ -1,0 +1,14 @@
+
+State Machine - |DE1_SoC_Computer|mlab_state
+Name mlab_state.0011 mlab_state.0010 mlab_state.0001 mlab_state.0000 
+mlab_state.0000 0 0 0 0 
+mlab_state.0001 0 0 1 1 
+mlab_state.0010 0 1 0 1 
+mlab_state.0011 1 0 0 1 
+
+State Machine - |DE1_SoC_Computer|sram_state
+Name sram_state.0011 sram_state.0010 sram_state.0001 sram_state.0000 
+sram_state.0000 0 0 0 0 
+sram_state.0001 0 0 1 1 
+sram_state.0010 0 1 0 1 
+sram_state.0011 1 0 0 1 

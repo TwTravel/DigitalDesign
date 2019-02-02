@@ -1,0 +1,69 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>IP library</title>
+</head>
+
+<body>
+<h2 align="center">Using IP Library<br />
+  with DE1-SoC
+  <br />
+Cornell ece5760<br />
+</h2>
+<ul>
+</ul>
+<h3>Library Overview</h3>
+<p>The Quartus   Prime software installation includes the Intel FPGA IP library (1). The library alllows you to specify in detail how your Verilog should map to <a href="../cyclone5_handbook.pdf">specific hardware on the FPGA</a>. For instance, there is support for several types on memory which can be mapped to Logic Elements, or MLAB, or M10K blocks. You can find the installed  IP Catalog on the menu ( Tools ➤ IP Catalog ) to efficiently parameterize and generate synthesis and simulation files for your custom IP variation (2). Each different IP core has a users guide with all the details you need to make it work. Generally, you navigate a series of dialog boxes to set up the core, then include the generated module in your project, and instatiate it in the top-level module.<br />
+The Intel FPGA IP library includes the following types of IP cores: </p>
+<ul>
+  <li> Basic functions 
+    <ul>
+      <li><a href="../IP_library/IP_basic_arith_list.PNG">Arithmetic</a> 
+        <ul>
+          <li><a href="../ug_cordic.pdf">CORDIC</a></li>
+          <li>MAC</li>
+          <li> <a href="../ug_altfp_mfug.pdf">floating point</a>, including many functions</li>
+          <li>complex multiply -- <a href="../IP_library/altmult_complex_config_1.PNG">config dialog 1</a>, <a href="../IP_library/altmult_complex_config_2.PNG">config dialog 2</a>, <a href="../IP_library/altmult_complex_config_3.PNG">config dialog 3</a>, <a href="../IP_library/altmult_complex_config_4.PNG">config dialog 4</a>,</li>
+        </ul>
+      </li>
+      <li>Clocks and <a href="../ug_altpll.pdf">PLLs</a></li>
+      <li><a href="../IP_library/IP_basic_memory_list.PNG">Memory</a> -- <a href="../ug_ram_rom.pdf">users guide</a>
+  <ul>
+    <li>RAM</li>
+    <li>2-port RAM -- <a href="../IP_library/ram_config_1.PNG">config1</a>, <a href="../IP_library/ram_config_2.PNG">2</a>, <a href="../IP_library/ram_config_3.PNG">3</a>, <a href="../IP_library/ram_config_5.PNG">5</a>, <a href="../IP_library/ram_config_6.PNG">6</a>, <a href="../IP_library/ram_config_7.PNG">7</a>, <a href="../IP_library/ram_config_10.PNG">10</a></li>
+    <li>ROM, </li>
+    <li><a href="../lpm_shiftreg.pdf">shift registers</a>, </li>
+    <li><a href="../ug_fifo.pdf">FIFO</a></li>
+  </ul>
+      </li>
+    </ul>
+  </li>
+  <li><a href="../IP_library/IP_DSP_list.PNG">DSP functions</a>
+  -- seems to duplicate Qsys functions.  </li>
+  <li>Interface protocols 
+  -- seems to duplicate Qsys functions.  </li>
+  <li>Low power functions 
+  -- seems to duplicate Qsys functions.  </li>
+  <li>Memory interfaces and controllers 
+  -- seems to duplicate Qsys functions.  </li>
+  <li>Processors and peripherals
+  -- seems to duplicate Qsys functions.  </li>
+</ul>
+<p><strong>OpenCL</strong></p>
+<p>A higher level interface to the FPGA is being developed which is consistent with the <a href="../../../../../../https@www.khronos.org/opencl/default.htm">OpenCL 1.0 standard</a>.</p>
+<p>DE1-SoC OpenCL <a href="../DE1SOC_OpenCL_v02.pdf">users manual</a> from <a href="../../../../../../www.terasic.com.tw/cgi-bin/page/archive.pl@Language=English&CategoryNo=167&No=836&PartNo=4">Terasic page</a></p>
+<p>Intel/Altera OpenCL <a href="../../../../../../https@www.altera.com/en_US/pdfs/literature/hb/opencl-sdk/aocl_programming_guide.pdf">programming guide</a><br />
+</p>
+<hr />
+<p>References</p>
+<p>(1) <a href="../../../../../../https@www.altera.com/en_US/pdfs/literature/ug/ug_intro_to_megafunctions.pdf">IP libarary Intro</a></p>
+<p>(2) <a href="../../../../../../https@www.altera.com/support/literature/lit-ip.html">Intel/Altera IP page</a></p>
+<p>&nbsp;</p>
+<hr />
+<p>Copyright Cornell University 
+  <!-- #BeginDate format:Am1 -->February 9, 2017<!-- #EndDate -->
+</p>
+<p>&nbsp;</p>
+</body>
+</html>

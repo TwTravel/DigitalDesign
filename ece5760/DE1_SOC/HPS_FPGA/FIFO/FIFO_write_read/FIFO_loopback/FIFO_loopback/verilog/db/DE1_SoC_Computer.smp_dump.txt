@@ -1,0 +1,11 @@
+
+State Machine - |DE1_SoC_Computer|FPGA_to_HPS_state
+Name FPGA_to_HPS_state.00000100 
+FPGA_to_HPS_state.00000000 0 
+FPGA_to_HPS_state.00000100 1 
+
+State Machine - |DE1_SoC_Computer|HPS_to_FPGA_state
+Name HPS_to_FPGA_state.00000000 HPS_to_FPGA_state.00000100 HPS_to_FPGA_state.00000010 
+HPS_to_FPGA_state.00000000 0 0 0 
+HPS_to_FPGA_state.00000010 1 0 1 
+HPS_to_FPGA_state.00000100 1 1 0 

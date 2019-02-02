@@ -1,0 +1,34 @@
+
+State Machine - |DE1_SoC_Computer|logic_analyser:la1|trigger_state
+Name 
+trigger_state.00000000 
+
+State Machine - |DE1_SoC_Computer|logic_analyser:la1|control_state
+Name control_state.11001100 control_state.11001011 control_state.11001010 control_state.11001001 control_state.11001000 control_state.00001111 control_state.00001110 control_state.00001101 control_state.00001100 control_state.00001011 control_state.00001010 control_state.00001001 control_state.00001000 control_state.00000111 control_state.00000110 control_state.00000101 control_state.00000100 control_state.00000010 control_state.00000001 control_state.00000000 control_state.01100100 
+control_state.00000000 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 
+control_state.00000001 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 0 
+control_state.00000010 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 1 0 
+control_state.00000100 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 1 0 
+control_state.00000101 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 1 0 
+control_state.00000110 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 1 0 
+control_state.00000111 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 1 0 
+control_state.00001000 0 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 1 0 
+control_state.00001001 0 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 1 0 
+control_state.00001010 0 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 1 0 
+control_state.00001011 0 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 1 0 
+control_state.00001100 0 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 1 0 
+control_state.00001101 0 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 1 0 
+control_state.00001110 0 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 1 0 
+control_state.00001111 0 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 
+control_state.01100100 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 1 
+control_state.11001000 0 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 
+control_state.11001001 0 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 
+control_state.11001010 0 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 
+control_state.11001011 0 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 
+control_state.11001100 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 0 
+
+State Machine - |DE1_SoC_Computer|logic_analyser:la1|analyser_state
+Name analyser_state.00000010 analyser_state.00000000 analyser_state.00000011 
+analyser_state.00000000 0 0 0 
+analyser_state.00000010 1 1 0 
+analyser_state.00000011 0 1 1 

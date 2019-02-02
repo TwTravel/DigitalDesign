@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<preferences>
+ <debug showDebugMenu="0" />
+ <systemtable filter="All Interfaces">
+  <columns>
+   <connections preferredWidth="223" />
+   <irq preferredWidth="47" />
+  </columns>
+ </systemtable>
+ <library
+   expandedCategories="Library,Library/Basic Functions/DMA,Project,Library/Basic Functions" />
+ <window width="1674" height="1193" x="62" y="7" />
+ <generation block_symbol_file="0" />
+</preferences>

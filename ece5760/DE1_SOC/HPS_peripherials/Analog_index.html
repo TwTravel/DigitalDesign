@@ -1,0 +1,49 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>ADC/DAC</title>
+</head>
+
+<body>
+<h2 align="center">DE1-SoC<br />
+  ADC and DAC capabilities
+  <br />
+Cornell ece5760<br />
+</h2>
+<ul>
+</ul>
+<h3>ADC</h3>
+<p>-- Wolfson <a href="../Wolfson-WM8731-audio-CODEC.pdf">WM8731</a> Audio Codec Line-in: 2 channels, 16-24 bits, 96 Ksamples/sec, bandwidth ~30Hz to 20 kHz.<br />
+See also the Audio Core manual below. The examples on the <a href="DSP_index.html">DSP page</a> show how to set up the Audio ADC and read the waveform from a Qsus bus-master. The <em>HPS Interprocess Communication for video and audio</em> and <em>HPS to/from PC UDP communication</em> examples on the <a href="univ_pgm_computer.index.html">DE1-SoC computer page</a> shows how to set up the Audio ADC from the HPS. The data type is 2's complement integers. If you are using a 16-bit interface, think of the numbers as 1:15 fixed point (corresponding to +/-1 volt). If you use 32-bit, think of the numbers as 1:31 fixed point, but the lowest 16 bits are meaningless.</p>
+<p>-- Linear Tech <a href="../2308fc.pdf">LTC2308</a> ADC: 8 channels, 12-bit, 500 Ksamples/sec.<br />
+  See also the ADC Core manual below.<br />
+Note that the Quartus 15 University ADC <em>does not work</em> with the revision F DE1-SoC. You must use Quartus 16 version. </p>
+<p>&nbsp;</p>
+<h3>DAC</h3>
+<p>-- Analog Devices <a href="../ADV7123.pdf">ADV7123 DAC</a>: Triple 10-Bit High Speed Video, 140 Msamples/sec on each channel.<br />
+This device is designed for VGA DAC, but can be set up for continuous waveforms by bypassing Qsys. The third example on the old <a href="../../NiosII_C/index.html">Nios2 GCC page</a> shows how to set up the DAC. The code to output a sawtooth wave is quite simple. Note that the three color channels are not impedance protected, and if connected to ground through less than 50 ohms will be instantly destroyed!<br />
+</p>
+<pre>//make a direct digital systnesis accumulator   
+always @ (posedge CLOCK_50) begin 		
+    DDS_accum &lt;= DDS_accum + DDS_incr ; 	
+end 	
+//use the VGA DAC for an audio signal  	
+assign VGA_R =  DDS_accum[31:22]; //10-bits 	
+assign VGA_SYNC_N = 1; 	
+assign VGA_BLANK_N = 1; 	
+assign VGA_CLK = CLOCK_50; </pre>
+<p>--  Wolfson <a href="../Wolfson-WM8731-audio-CODEC.pdf">WM8731</a> Audio Codec Line-out: 2 channels, 16-24 bits, 96 Ksamples/sec, bandwidth ~1Hz to 20 kHz.<br />
+See also the Audio Core manual below. The examples on the <a href="DSP_index.html">DSP page</a> show how to set up the Audio DAC and write the waveform from a Qsus bus-master. The <em>HPS Interprocess Communication for video and audio</em> and <em>HPS to/from PC UDP communication</em> examples on the <a href="univ_pgm_computer.index.html">DE1-SoC computer page</a> shows how to set up the Audio DAC from the HPS. The data type is 2's complement integers. If you are using a 16-bit interface, think of the numbers as 1:15 fixed point (corresponding to +/-1 volt). If you use 32-bit, think of the numbers as 1:31 fixed point, but the lowest 16 bits are meaningless.</p>
+<p>-- Any number of PWM channels using i/o pins. <br />
+With a counter frequency of 50 MHz, and 8-bit analog resolution, the effective sample rate is 195 Ksamples/sec. This is fast enough to generate ~15 KHz sine waves. You could use all of the i/o pins to generate over 40 channels. with just a couple of lines of Verilog for each channel.</p>
+<hr />
+<p><a href="../Audio_core.pdf">Audio Core</a> </p>
+<p><a href="../ADC_Controller_for_DE_Series_Boards(1).pdf">ADC core</a></p>
+<hr />
+<p>Copyright Cornell University 
+  <!-- #BeginDate format:Am1 -->May 4, 2017<!-- #EndDate -->
+</p>
+<p>&nbsp;</p>
+</body>
+</html>

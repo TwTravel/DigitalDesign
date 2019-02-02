@@ -1,0 +1,112 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Floating Point</title>
+</head>
+
+<body>
+<h2 align="center">Cyclone5 DE1-SoC:
+  <br />
+  Light-weight Floating Point<br />
+Cornell ece5760<br />
+</h2>
+<ul>
+</ul>
+<h3>Floating Point Programming </h3>
+<p>IEEE754 floating point is very stable, well thought out, and expensive to run on small FPGAs. Full IEEE 754 floating point (FP) uses a lot of hardware resource on the   FPGA. For parallel DSP it would be nice to have a simpler, narrow word   FP. Some papers (Fang, et.al., Tong, et.al., Ehliar, et.al.) suggest   that only 9 to 11 bits of fraction is enough for video or audio   encoding, as long as there is sufficient dynamic range supplied by the   exponent. Students have written 18-bit fraction systems that fit well into one-half a Cyclone5 DSP unit for multiply and takes one cycle for a floating multiply and two for an floating add.</p>
+<p>A student (<span tabindex="0" aria-label="Mark Eiding &lt;mje56@cornell.edu&gt;. Press the Enter key to open the contact card." role="button" autoid="_pe_a"><a href="../../FinalProjects/s2015/mje56_bwc65/mje56_bwc65/mje56_bwc65/index.html">Mark Eiding</a>, 2015) made an 18-bit fraction system for faster inverse square root (for gravity calculations) based on a system by <a href="../../FinalProjects/f2010/ss868/ss868/index.html">Skyler Schneider</a>, 2010. </span>See the <a href="../../FloatingPoint/index.html">DE2-115 floating point page</a> for more details.</p>
+<ul>
+  <li>Functions: floating add, floating multiply, and reciprocal square root</li>
+  <li>Format:<br />
+    <code>bit 26: Sign (0: pos, 1: neg) <br />
+      bits[25:18]: Exponent (unsigned)<br />
+      bits[17:0]:  Fraction (unsigned) <br />
+      (-1)^SIGN * 2^(EXP-127) * (1+.FRAC) </code></li>
+  <li>Since denorms are not allowed, the high order bit in the fraction is <br />
+  always <code>1</code>, and does not need to be stored. </li>
+  <li>Example: <code>-25.0<br />
+    ((-1)**1) * (1.100100000000000000) * (2**(131-127))<br />
+    -1     *      1.5625            *      16<br />
+    1 10000011 100100000000000000 (Note that the integer part of 1.1001 is not actually stored)<br />
+    0x60E4000 </code></li>
+  <li>If the exponent is zero then the value should be treated as zero independent of the mantissa</li>
+</ul>
+<p>I ported Mark's system to the Cyclone5 and (hopefully) fixed one small bug. For testing, the adder and multiplier were instantiated on the Cyclone5, attached to  <a href="../Floating_Point/fp_test_qsys.PNG">Qsys PIO bus-slaves</a> which attach to the HPS light-weight bus. This connection allowed the HPS to test the floating hardware. The HPS program sends two 27-bit floats to the floating hardware, and receives back one float or integer. The HPS program also prints the float, hex and integer equilavents of the output. The top-level Verilog module uses switch settings on the board to choose which arithmetic module is attached to the output bus-slave. Switches are also used to set the shift-factor for <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">FpShift</span>.<br />
+(<a href="../Floating_Point/fp_test_1.c">HPS program</a>, <a href="../Floating_Point/DE1_SoC_Computer.v">top-level</a>, <a href="../Floating_Point/computer_15_640_fp.zip">ZIP</a>)</p>
+<p>A simpler test program just copies the two adder arguments to shared sram, then adds them in a short state machine arranged to check the timing of the combinatorial floating adder module (<span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">FpAdd_c</span>). The HPS program also prints the total transaction time on the VGA for the bus transactions. The VGA bus-master is still in the <a href="../../FloatingPoint/FP_DDA/adder_test/Qsys_layout.PNG">Qsys description</a>, but is unused in this example. (<a href="../../FloatingPoint/FP_DDA/adder_test/FP_DDA_test1.c">HPS program</a>, <a href="../../FloatingPoint/FP_DDA/adder_test/FP_adder_combo_test.v">top-level</a> verilog, <a href="../../FloatingPoint/FP_DDA/adder_test/FP_DDA_test_adder.zip">ZIP</a>). The verilog has switch settings to choose number of cycles required for addition, but one cycle, at 50MHz, seems to work for the combinational adder. Actually, you can chain up to three additions in one cycle of 50MHz. The FPGA resource used for one floating point combinatorial adder is about 550 ALMs.<br />
+</p>
+<table width="78%" border="1">
+  <tbody>
+    <tr>
+      <td width="44%" style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">FpAdd(clock, fp_in1, fp_in2, fp_sum)</td>
+      <td width="56%"> Floating add with two-cycle pipeline, I modified the underflow flag calculation, because there seemed to be an error when subtacting two nearly equal numbers. (Mark Eiding)</td>
+    </tr>
+    <tr>
+      <td style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">FpAdd_c(fp_in1, fp_in2, fp_sum)</td>
+      <td>Floating add (combinatorial), modified from above. Seems to work at 50MHz clock.  (Mark Eiding code, pipeline removed)<br />
+      Requires 550 ALMs. Three chained adds/50MHz clock.</td>
+    </tr>
+    <tr>
+      <td style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">FpMul(fp_in1, fp_in2, fp_product)</td>
+      <td> <p>Floating multiply using combinatorial circuit.  (Mark Eiding)<br />
+Requires about 80 ALMs and one DSP unit.</p></td>
+    </tr>
+    <tr>
+      <td style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">FpInvSqrt(fp_in, fp_reciprocal_root)</td>
+      <td><a href="../../../../../../en.wikipedia.org/wiki/Fast_inverse_square_root">Floating reciprocal square root</a> with five cycle pipeline. One more multiply converts inverse square root to square root, or to reciprocal.  (Mark Eiding)</td>
+    </tr>
+    <tr>
+      <td style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">FpNegate(fp_in, -fp_in)</td>
+      <td>Floating sign negation. Flips the sign bit.</td>
+    </tr>
+    <tr>
+      <td style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">FpAbs(fp_in, |fp_in|)</td>
+      <td> Absolute value. Zeros the sign bit. </td>
+    </tr>
+    <tr>
+      <td style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">FpCompare(fp_in1, fp_in2, in1&gt;=in2)</td>
+      <td>Returns either less-than or greater-than-or-equal, but you should <a href="../../../../../../floating-point-gui.de/errors/comparison/default.htm">read this</a>. output is 1-bit binary.</td>
+    </tr>
+    <tr>
+      <td style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">FpShift(fp_in, 8_bit_in, fp_shifted_in)</td>
+      <td> Floating shift for fast multiply by powers of two. In1 is a float, shifted by a 8-bit, 2's complement value in in2. Positive in2 gives left_shift. Just increment/decrement the exponent. NO bounds checking on exponent overflow/underflow!</td>
+    </tr>
+    <tr>
+      <td style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">Int2Fp(integer_in, fp_out)</td>
+      <td>Convert 16-bit, 2's complement integer to float format.</td>
+    </tr>
+    <tr>
+      <td style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">Fp2Int(fp_in, integer_out)</td>
+      <td>Convert float to 16-bit 2's complment integer (+/-32767) with saturation. Truncates fractions.</td>
+    </tr>
+    <tr>
+      <td style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">The following conversion <br />
+      utilities run on HPS:</td>
+      <td>-----------------------------------------------------------------</td>
+    </tr>
+    <tr>
+      <td style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace"><pre>unsigned int floatToReg27(float)</pre></td>
+      <td> Takes a C float and converts to 27-bit format for output to FPGA hardware modules</td>
+    </tr>
+    <tr>
+      <td style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace"><pre>float reg27ToFloat(unsigned int) </pre></td>
+      <td>Takes a 27-bit value from a FPGA input and converts to a standard C float.</td>
+    </tr>
+  </tbody>
+</table>
+<p>&nbsp;</p>
+<hr />
+<p>An <a href="../../FloatingPoint/index.html">older page</a> shows a 9-bit floating point system that I wrote.</p>
+<p>Fang Fang, Tsuhan Chen, Rob A. Rutenbar, <em>Lightweight floating-point arithmetic: Case study of inverse discrete cosine transform</em>, EURASIP J. Sig. Proc.; Special Issue on Applied Implementation of DSP and Communication Systems(2002)</p>
+<p>Fang Fang, Tsuhan Chen, and Rob A. Rutenbar, <em>FLOATING-POINT BIT-WIDTH OPTIMIZATION FOR LOW-POWER SIGNAL PROCESSING APPLICATIONS</em>, http://amp.ece.cmu.edu/Publication/Fang/icassp02_Fang.pdf (2002) </p>
+<p>Jonathan Ying Fai Tong, David Nagle, Rob. A. Rutenbar, <em>Reducing power by optimizing the necessary precision/range of floating-point arithmetic</em>,   IEEE Transactions on Very Large Scale Integration (VLSI) Systems,   Volume 8 , Issue 3 (2000) Special section on low-power electronics and   design Pages: 273 - 285 </p>
+<p>Eilert, J. Ehliar, A. Dake Liu, <em>Using low precision floating point numbers to reduce memory cost for MP3 decoding</em>, IEEE 6th Workshop on Multimedia Signal Processing, 2004 : 29 Sept.-1 Oct. 2004 page(s): 119- 122</p>
+<p><a href="../../../../../../https@randomascii.wordpress.com/category/floating-point/default.htm">Thoughts on floating point</a></p>
+<hr />
+<p>Copyright Cornell University 
+  <!-- #BeginDate format:Am1 -->January 25, 2019<!-- #EndDate -->
+</p>
+<p>&nbsp;</p>
+</body>
+</html>

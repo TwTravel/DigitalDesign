@@ -1,0 +1,227 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>Memory</title>
+<style type="text/css">
+<!--
+.style1 {font-weight: bold}
+-->
+</style>
+</head>
+
+<body>
+<h2 align="center">DE1-SoC<br>
+  FPGA memory examples<br>
+ECE 5760 Cornell University </h2>
+ <p><br>
+ The memory systems of Altera Cyclone5 FPGAs have various features and limitations.<br>
+I will not talk about the HPS side here, only the FPGA side. <br>
+Memory systems include:</p>
+ <ul>
+   <li>M10K blocks on <a href="../CycloneV_SE_A5.PNG">Cyclone5 SE A5</a><br>
+     There are about 390 blocks (~3900 Kbits), each capable 
+   of holding:<br>
+   1-bit x 8K, 2-bit x 4K, 
+   4-bit x 2K,  
+   5-bit x 2K, 8-bit x 1K, 10-bit x 1K, 16-bit x 512, 20-bit x 512, 32-bit x 256, 40-bit x 256.<br>
+   If you instantiate bigger memorys, blocks will be concantenated to build the bigger memory.
+   <br>
+     There are pipeline registers on data, address, write-enable, so a M10K block read takes 2-cycles, but can be pipelined.<br>
+     Dual port read/write is supported.   </li>
+   <li>MLAB blocks<br>
+     Up to about 480 blocks, each holding 16, 18 or 20 words
+     of 32-bit data. <br>
+     MLAB does not support true dual-port RAM   <br>
+     MLAB supports continuos reads. For  example, when you write a data at the  write clock rising edge and after the  write operation is complete, <br>
+   you see the  written data at the output port without  the need for a read clock rising edge.   </li>
+   <li>Logic Element Registers<br>
+     Up to 128,000 bits of memory, but this uses general logic elements very quickly.
+   </li>
+   <li>Qsys-attached startic RAM (M10K blocks)<br>
+     Easy to use, bus attached memory, which can be accessed from FPGA and HPS
+       <br>
+       Size is configured
+   in Qsys and uses the pool of available M10K blocks.</li>
+   <li>Qsys-attached external SDRAM<br>
+     Easy to use, bus attached memory, which can be accessed from FPGA and HPS.<br>
+     There is ONE actual external SDRAM available on this board.
+     <br>
+     Configured as 32 Mwords of 16-bit memory
+   (64 MB)</li>
+ </ul>
+<p>These are explained in several documents. <br>
+   I have tried here to show specific examples of memory use in realistic state machine schemes. Refer to:</p>
+ <ul>
+   <li>Altera <a href="../../../../../../www.altera.com/literature/hb/qts/qts_qii51007.pdf">Recommended HDL Coding Styles</a> section on Inferring Memory Functions from HDL Code.</li>
+   <li><a href="../../../../../../www.altera.com/literature/hb/qts/qts_qii51006.pdf">Recommended Design Practices</a> for FPGAs: Latches, clocks, metastability.</li>
+   <li><a href="../../../../../../www.altera.com/literature/manual/stx_cookbook.pdf">Advanced Synthesis Cookbook</a> All kinds of cool mathmatical and logical structures.</li>
+   <li>CycloneV Memory Blocks: M10K memory</li>
+   <li><a href="../ug_ram_rom.pdf">Internal Memory (RAM and ROM) Users Guide</a></li>
+   <li>On-Chip Memory Implementations Using Cyclone Memory Blocks</li>
+ </ul>
+ <hr>
+<strong>M10k/MLAB on Cyclone 5.</strong>
+ <p>The <a href="../HDL_style_qts_qii51007.pdf">HDL style Guide</a> suggest the following code to infer M10K or MLAB blocks<br>
+ <img src="sram_mlab_example/Example_12_16.PNG" width="644" height="392" alt=""/></p>
+ <p>Timing diagrams:</p>
+ <p><a href="M10k_timing_diagram.JPG"><img src="M10k_timing_diagram.JPG" width="547" height="531" alt=""/></a></p>
+ <p>You can set up M10K blocks in at least 3 ways:</p>
+ <ul>
+   <li>Infer the block memory directly from Verilog   
+     <ul>
+       <li>See <a href="../HDL_style_qts_qii51007.pdf">HDL style Guide</a></li>
+       <li><span anon="no">Mohammad Dohadwala</span> wrote the following to construct a 512 word 18-bit memory in one M10K block. <br>
+         This code<em> simulates correctly</em> in Modelsim because he wrote a single-cycle delay in the read enable signal.<br>
+         <strong>For <em>synthesis</em> you would use the version in HDL style guide 12.16 above, not this code.</strong><br>
+<pre>module RAM_512_18(
+	output reg signed [17:0] q,
+	input signed [17:0] data,
+	input [8:0] wraddress, rdaddress,
+	input wren, rden, clock
+);
+
+	reg [8:0] read_address_reg;
+	reg signed [17:0] mem [511:0];
+	reg rden_reg;
+	
+	always @ (posedge clock)
+	begin
+		if (wren) 
+			mem[wraddress] <= data;
+	end
+	always @ (posedge clock) begin
+		if (rden_reg)
+			q <= mem[read_address_reg];
+		read_address_reg <= rdaddress;
+		rden_reg <= rden;
+	end
+	
+endmodule </pre></li>
+     </ul>
+   </li>
+   <li>Use synthesis <em>comments</em> in Verilog to force memory allocation
+     <ul>
+       <li><a href="../../../../../../quartushelp.altera.com/15.0/mergedProjects/hdl/vlog/vlog_file_dir.htm">Synthesis attributes</a></li>
+       <li><a href="../../../../../../quartushelp.altera.com/15.0/mergedProjects/hdl/vlog/vlog_file_dir_ram.htm">RAM synthesis attribute</a></li>
+     </ul>
+   </li>
+   <li>Use the Altera IP library <a href="../IP_library/IP_basic_memory_list.PNG">Memory</a> -- <a href="../ug_ram_rom.pdf">users guide</a>. There is some evidence that the simulation code<br>
+     generated by the IP handler does not correctly handle the one-cycle read delay in M10K blocks.
+     <br>
+     <ul>
+       <li>RAM</li>
+       <li>2-port RAM -- <a href="../IP_library/ram_config_1.PNG">config1</a>, <a href="../IP_library/ram_config_2.PNG">2</a>, <a href="../IP_library/ram_config_3.PNG">3</a>, <a href="../IP_library/ram_config_5.PNG">5</a>, <a href="../IP_library/ram_config_6.PNG">6</a>, <a href="../IP_library/ram_config_7.PNG">7</a>, <a href="../IP_library/ram_config_10.PNG">10</a></li>
+       <li>ROM, </li>
+       <li><a href="../lpm_shiftreg.pdf">shift registers</a>, </li>
+       <li><a href="../ug_fifo.pdf">FIFO</a></li>
+     </ul>
+   </li>
+ </ul>
+ <hr>
+ <p><strong>Memory block Example -- Qsys sram and MLAB</strong></p>
+ <p>This example simultaneously tests the floating point routines, shares a M10K between HPS and FPGA, and uses a MLAB block to increment a counter. The <a href="sram_mlab_example/sram_setup_dialog.PNG">M10K block</a> is instantiated in <a href="sram_mlab_example/sram_connections.PNG">Qsys</a> as dual port memory with two clocks, system clock, and an <a href="sram_mlab_example/Qsys_clock_bridge.png">50MHz clock</a>. One slave port is hooked to the <a href="sram_mlab_example/Qsys_HPS_master.png">HPS bus</a> and the other port is exported to the FPGA fabric. These exported signals appear in the computer system template as:</p>
+<pre>// SRAM shared block with HPS
+	.onchip_sram_s1_address               (sram_address),               
+	.onchip_sram_s1_clken                 (sram_clken),                 
+	.onchip_sram_s1_chipselect            (sram_chipselect),            
+	.onchip_sram_s1_write                 (sram_write),                 
+	.onchip_sram_s1_readdata              (sram_readdata),              
+	.onchip_sram_s1_writedata             (sram_writedata),             
+	.onchip_sram_s1_byteenable            (4'b1111),  </pre>
+ <p>The state machine in Verilog can read/write to  the same block as the HPS, which thus acts as a communication channel. The program running on the HPS writes floating point values into the sram. The sram state machine reads the memory location in sram, then write back the value to another address, which is read by the HPS program and printed. There is a separate state machine which read/writes an MLAB block. The <a href="sram_mlab_example/fitter_ram_summary.PNG">fitter ram summary (line 8)</a> shows that the following code inferred an MLAB block. Note that I forced it with the synthesis directive. The MLAB timing is the same as M10K blocks. A read takes two cycles.</p>
+ <pre>//============================================================
+// MLAB module for testing
+//============================================================
+module MLAB_20_32(
+	output reg signed [31:0] q,
+	input  [31:0] data,
+	input [7:0] readaddr, writeaddr,
+	input wren, clock
+);
+
+	reg [7:0] read_address_reg;
+	// force MLAB ram style
+	reg signed [31:0] mem [19:0] /* synthesis ramstyle = "no_rw_check, MLAB" */;
+	
+	always @ (posedge clock)
+	begin
+		if (wren) begin
+			mem[writeaddr] <= data;
+		end
+		q <= mem[readaddr];
+	end
+endmodule </pre>
+ <p>The MLAB state machine reads an address, then writes back the (read_value)+1, and copies the count to the red LEDs. <br>
+ (<a href="sram_mlab_example/fp_test_2.c">HPS program</a>, <a href="sram_mlab_example/DE1_SoC_Computer.v">top-level</a>, <a href="sram_mlab_example/computer_15_640_video_fp.zip">ZIP</a>) </p>
+ <pre>//=======================================================
+// MLAB state machine
+//=======================================================
+wire [31:0] mlab_readdata ;
+reg [31:0] mlab_writedata, mlab_data_buffer ;
+reg [7:0] mlab_address; 
+reg mlab_write ;
+reg [3:0] mlab_state ;
+
+MLAB_20_32 mlab1(
+	.q(mlab_readdata),
+	.data(mlab_writedata),
+	.readaddr(mlab_address), 
+	.writeaddr(mlab_address),
+	.wren(mlab_write), 
+	.clock(CLOCK_50)
+);
+
+// readout for memory state
+assign LEDR = mlab_data_buffer[31:23] ;
+
+// memory based counter
+// reads/writes counter for display
+always @(posedge CLOCK_50) begin
+	//set up read
+	if (mlab_state == 4'd0) begin
+		mlab_address <= 8'd0 ;
+		mlab_write <= 1'b0 ;
+		mlab_state <= 4'd1 ;
+	end
+	// wait -- required for read
+	if (mlab_state == 4'd1) begin
+		mlab_state <= 4'd2 ;
+	end
+	// do the read
+	if (mlab_state == 4'd2) begin
+		mlab_data_buffer <= mlab_readdata ;
+		mlab_write <= 1'b0 ;
+		mlab_state <= 4'd3 ;
+	end 
+	// set up write
+	if (mlab_state == 4'd3) begin
+		mlab_address <= 8'd0 ;
+		mlab_writedata <= mlab_data_buffer + 32'd1 ;
+		mlab_write <= 1'b1 ;
+		mlab_state <= 4'd0 ;
+	end 
+end</pre>
+ <hr>
+ <p><strong>Memory block Example -- Qsys sram, M10K block, and MLAB</strong></p>
+ <p>This <a href="sram_M10K_MLAB_example/DE1_SoC_Computer.v">Verilog modification</a> of the project above reads two numbers from the Qsys sram (connected to HPS and the FPGA fabric) and computes the floating point sum of the contents of sram address=1 and address=2, when the data flag in Qsys sram address=0 is set to one. The sum is copied into an M10K block, then back into the Qsys sram, address=3. This roundabout scheme exercises read/write in M10K blocks. An MLAB block is still counting, as above.</p>
+ <p>The RAM synthesis summary shows that two blocks were created, and that the clever compiler figured out that I only used 4 locations of the M10K block.<br>
+ <img src="sram_M10K_MLAB_example/ram_synth_summary.PNG" width="948" height="184" alt=""/> </p>
+ <p>The HPS program is the same as above and produces this console. <br>
+ The <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">1 1 0</span> on the command line writes a 1 to location zero to trigger the addition and write-back.<br>
+ The location zero always reads zero because it is zeroed by the FPGA state machine before the write statement executes.
+ </p>
+ <p><img src="sram_M10K_MLAB_example/console_screen.PNG" width="404" height="399" alt=""/></p>
+ <hr>
+ <p><strong>FIFO between HPS and FPGA</strong></p>
+ <p>There is a Qsys <a href="../../../../../../https@www.altera.com/content/dam/altera-www/global/en_US/pdfs/literature/hb/nios2/qts_qii55002.pdf">FIFO module</a> (chapter 14) available that could make a good interface between the HPS and FPGA.</p>
+ <p>&nbsp;</p>
+ <p>&nbsp;</p>
+ <p>&nbsp;</p>
+ <p>&nbsp;</p>
+ <p>&nbsp;</p>
+ <p>&nbsp;</p>
+<p
+</body>
+</html>

@@ -1,0 +1,14 @@
+// !!!PACKED VGA MEMORY!!!
+#define VGA_PIXEL(x,y,color) do{\
+	char  *pixel_ptr ;\
+	pixel_ptr = (char *)vga_pixel_ptr + ((y)*640) + (x) ;\
+	*(char *)pixel_ptr = (color);\
+} while(0)
+
+// x/y memory
+#define VGA_PIXEL(x,y,color) do{\
+	char  *pixel_ptr ;\
+	pixel_ptr = (char *)vga_pixel_ptr + ((y)<<10) + (x) ;\
+	*(char *)pixel_ptr = (color);\
+} while(0)
+

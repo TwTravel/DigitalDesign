@@ -1,0 +1,44 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>pThreads HPS</title>
+</head>
+
+<body>
+<h2 align="center">DE1-SoC:
+  ARM HPS pThreads<br />
+Cornell ece5760</h2>
+<p>&nbsp;</p>
+<h3>HPS pthreads Programming </h3>
+<p>POSIX pthreads are a light-weight addition to Linux processes that allow many threads to execute independently within one process. The threads are scheduled by the kernel and seem to use the multiprocessor environment well. There are many good resources available to learn pthreads. I liked the <a href="../../../../../../https@computing.llnl.gov/tutorials/pthreads/default.htm">LLNL tutorial</a>. Also the <a href="../../../../../../www.cs.cmu.edu/afs/cs/academic/class/15492-f07/www/pthreads.html">CMU tutorial</a>. The HPS GCC recognizes pthreads if you include the <code>-pthread</code> flag on the compile command. Examples from the LLNL site (slightly cleaned up) show how to <a href="../HPS_FPGA/pThreads/thread_create.c">create threads</a> and <a href="../HPS_FPGA/pThreads/thread_mutex_cond.c">use mutex and condition variables</a>. The create example shows that thread creation and execution are async with respect to execution of main. The mutex/condtion example implements two counting threads incrementing the same counter and checking for a certain count. When that count is reached, the count thread signals the condition variable of the watch thread, which prints a message, then the count threads continue on, to their max count. </p>
+<p><strong>-- Threaded: Keyboard input, console print, counter</strong><br />
+  -- This <a href="../HPS_FPGA/pThreads/thread_keyboard.c">example</a> uses a thread to read the console keyboard, another thread to print what was just typed and zero a counter, and one or two more threads to increment the counter. There is a condition variable which indicates when the print is done and next input can begin (using the shared buffer) and a condition variable wich indicates when the input is done and the print can begin. Clearly, one of them has to be signaled initially for the system to come out of deadlock. This is accomplished (somewhat crudely) by waiting one second and signalling the condition variable.<em> <br />
+    --
+    Semaphores are POSIX defined, but not part of pthreads.</em> Including semaphore operations makes<strong> <a href="../HPS_FPGA/pThreads/thread_keyboard_sem.c">the code</a></strong> more readable to me, and makes initialization better defined. With one count thread, and full mutex protection of the count and text buffer, the system will support about 10 million/sec counts while the keyboard and display threads take very small cpu time. <br />
+  --
+  With two count threads, and full mutex protection of the count and text buffer, and using the default scheduling, the system will support about 5 million/sec because the scheduler puts the two heavy performance threads on <em>different processors</em> and the mutex operations are apparently slow across processors! A small modification of <strong><a href="../HPS_FPGA/pThreads/thread_keyboard_sem_affinity.c">the code</a></strong> to include <code>pthread_setaffinity_np</code> forces the two counting threads onto one processor. The two threads on one processor can count at the same rate as one thread (of course). </p>
+<p><strong>--Threaded: Matlab to UDP Audio</strong><br />
+The two-process code from the UDP audio modified from the <a href="univ_pgm_computer.index.html">University Computer and UDP</a> page<em><br />
+Matlab &gt;udp&gt; ARM receive process &gt;ipc&gt; ARM fpga process &gt;bus&gt; FPGA audio FIFO</em> <br />
+was converted to two threads running in a single process. <a href="../HPS_FPGA/pThreads/thread_udp.c">The code</a> requires the the FPGA <a href="../HPS_FPGA/pThreads/address_map_arm_brl4.h">address header</a> file. To use this you have to load the correct DE1-SoC computer <code>sof</code> file to the FPGA using the QuartusPrime programmer (<a href="../DE1_soc_computer/chopped_1/DE1_SoC_Computer_chopped_1.qar">archive</a>). Running the <a href="../HPS_FPGA/pThreads/UDP_audio_thread.m">Matlab script</a> triggers playback of the <a href="../HPS_FPGA/pThreads/AllDigits8khz.WAV">audio segment</a> by sending a start/reset command to the UDP thread, which then initializes the shared buffer. The Matlab script then blasts audio samples in UDP packets as fast as it can. The sample buffer only holds about 8 seconds of sound at 8 Ksamples/sec. The buffer shared between the two threads is protected by a <em>mutex</em>. After 128 samples have be received, the <code>write_fpga</code> thread fills a FIFO on the FPGA as fast as it can. The FIFO only holds 128 audio samples playing at 48 kHz, so it needs to be filled at least every 3 milliseconds. The thread attempts to fill it every time there is space in the FIFO.</p>
+<hr />
+<h3>&nbsp;</h3>
+<hr />
+<p>References:</p>
+<p><a href="../index.html">DE1-SOC</a> literature list</p>
+<p><a href="../../../eceprojectsland/STUDENTPROJ/2014to2015/ayk33/Independent_Study.pdf">Using the DE1-SOC FPGA</a> by Ahmed Kamel </p>
+<p><a href="../../../eceprojectsland/STUDENTPROJ/2014to2015/ayk33/index.html">Stereoscopic Depth on an FPGA via OpenCL</a> by Ahmed Kamel and Aashish Agarwal</p>
+<p><a href="../../../eceprojectsland/STUDENTPROJ/2015to2016/sm893_mkp53/Final%20Report%20ECE%204999.pdf">Running Linux on DE1-SOC</a> by MANISH PATEL and SYED TAHMID MAHBUB</p>
+<p><a href="../../FinalProjects/s2015/spp66_aa2264_ayk33/spp66_aa2264_ayk33/spp66_aa2264_ayk33/FPGA_ARM.html">OpenCL on DE1-SOC</a> Sahil P Potnis (<a href="mailto:spp66@cornell.edu">spp66@cornell.edu)</a> Aashish Agarwal (<a href="mailto:aa2264@cornell.edu">aa2264@cornell.edu</a>) Ahmed Kamel (<a href="mailto:ayk33@cornell.edu">ayk33@cornell.edu</a>)</p>
+<p><a href="../../../../../../ftp@ftp.altera.com/up/pub/Altera_Material/15.1/University_Program_IP_Cores/Audio_Video/Audio.pdf">Audio Core</a> (Qsys University Program 15.1) <a href="../Audio_core.pdf">local copy</a></p>
+<p><a href="../../../../../../ftp@ftp.altera.com/up/pub/Altera_Material/15.1/University_Program_IP_Cores/Audio_Video/Video.pdf">Video Core</a> (Qsys University Program 15.1) <a href="../Video_core.pdf">local copy</a></p>
+<p><a href="../External_Bus_to_Avalon_Bridge.pdf">External to Avalon Bus Master</a> (<em>external</em> here means<em> <strong>in the FPGA</strong></em>, but not in the Qsys bus structure)</p>
+<p><a href="../Avalon_to_External_Bus_Bridge.pdf">Avalon to External Bus Slave</a> (<em>external</em> here means<em> <strong>in the FPGA</strong></em>, but not in the Qsys bus structure)</p>
+<hr />
+<p>Copyright Cornell University 
+  <!-- #BeginDate format:Am1 -->December 19, 2016<!-- #EndDate -->
+</p>
+<p>&nbsp;</p>
+</body>
+</html>

@@ -1,0 +1,17 @@
+Partition Merge Status : Successful - Fri May 25 13:40:35 2018
+Quartus II 64-Bit Version : 15.0.0 Build 145 04/22/2015 SJ Full Version
+Revision Name : DE1_SoC_Computer
+Top-level Entity Name : DE1_SoC_Computer
+Family : Cyclone V
+Logic utilization (in ALMs) : 3,406 / 32,070 ( 11 % )
+Total registers : 4200
+Total pins : 368 / 457 ( 81 % )
+Total virtual pins : 32
+Total block memory bits : 112,384 / 4,065,280 ( 3 % )
+Total DSP Blocks : 6 / 87 ( 7 % )
+Total HSSI RX PCSs : 0
+Total HSSI PMA RX Deserializers : 0
+Total HSSI TX PCSs : 0
+Total HSSI PMA TX Serializers : 0
+Total PLLs : 2 / 6 ( 33 % )
+Total DLLs : 1 / 4 ( 25 % )

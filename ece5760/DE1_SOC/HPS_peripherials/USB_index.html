@@ -1,0 +1,32 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>USB HPS</title>
+</head>
+
+<body>
+<h2 align="center">DE1-SoC:
+  ARM HPS USB<br />
+Cornell ece5760<br />
+</h2>
+<ul>
+</ul>
+<h3>HPS USB Programming </h3>
+<p>--<strong>Using the USB mouse</strong><br />
+  As explained in <a href="../../../../../../stackoverflow.com/questions/11451618/how-do-you-read-the-mouse-button-state-from-dev-input-mice">stackoverflow,</a> the mouse information is in<code> /dev/input/mice</code>. Reading and parsing the three bytes of information is straighforward. The <a href="USB/mouse_test.c">test program</a> just prints whatever the mouse sensors read. The x,y information returned is a delta_x and delta_y. In a real application, the mouse should be read at a known rate and the speed scaled, then (usually) numerically integrated to give position on the screen. In this test program, the mouse-read blocks. You may need to add code to make the device non-blocking. </p>
+<pre>//needed for nonblocking read()
+int flags = fcntl(fd, F_GETFL, 0);
+fcntl(fd, F_SETFL, flags | O_NONBLOCK); </pre>
+<p>--<strong>Reading keyboard keycodes</strong><br />
+  As explained in <a href="../../../../../../www.thelinuxdaily.com/2010/05/grab-raw-keyboard-input-from-event-device-node-devinputevent/default.htm">The Linux Daily</a>, keyboard keycodes can be read from <code>/dev/input/eventx</code>. Where 'x' is some digit. The program <br />
+  <a href="USB/keyboard.c">keyboard.c</a> requires you to input the device location as a parameter, then 
+  prints keycodes. </p>
+<h3>&nbsp;</h3>
+<hr />
+<p>Copyright Cornell University 
+  <!-- #BeginDate format:Am1 -->February 2, 2017<!-- #EndDate -->
+</p>
+<p>&nbsp;</p>
+</body>
+</html>

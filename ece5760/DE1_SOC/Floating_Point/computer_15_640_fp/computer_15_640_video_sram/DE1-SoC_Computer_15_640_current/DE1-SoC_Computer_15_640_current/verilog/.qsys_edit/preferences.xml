@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<preferences>
+ <debug showDebugMenu="0" />
+ <systemtable filter="All Interfaces">
+  <columns>
+   <connections preferredWidth="207" />
+   <irq preferredWidth="47" />
+  </columns>
+ </systemtable>
+ <library
+   expandedCategories="Library/University Program,Library/Processors and Peripherals,Library/Qsys Interconnect,Library/University Program/Clock,Project,Library/System,Library/Basic Functions/Clocks; PLLs and Resets,Library/Basic Functions,Library/Processors and Peripherals/Peripherals,Library" />
+ <window width="1644" height="1097" x="51" y="23" />
+</preferences>

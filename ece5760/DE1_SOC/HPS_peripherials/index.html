@@ -1,0 +1,264 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>HPS programming</title>
+</head>
+
+<body>
+<h2 align="center">DE1-SoC:
+  ARM HPS and FPGA<br />
+Cornell ece5760</h2>
+<p>The programming model I wish to use in ece5760 is LINUX running on the ARM processors, talking to hardware on the FPGA through Qsys. <br />
+I would prefer not to use design automation tools, like OpenCL, but stay at the level of the Qsys module interconnect, with custom FPGA hardware. <br />
+This page documents my first attempts at understanding the programming model.</p>
+<h3>Standalone programming of HPS using native GCC in UP linux.</h3>
+<p>The ARM cpus are completely capable of running <a href="../../../../../../https@gcc.gnu.org/onlinedocs/gcc/default.htm">GCC</a> to communicate with either native HPS peripherials or with the FPGA.<br />
+You compile from the command line with the <a href="../../../../../../man7.org/linux/man-pages/man1/gcc.1.html">usual Linux syntax</a>. Some projects require  compile flags which are noted below.<br />
+The document <a href="../DE1-SoC-UP-Linux/Linux.pdf">Using Linux on the DE1-SoC</a> shows how to install and use the UP <a href="../DE1-SoC-UP-Linux/linux_sdcard_image.zip">LINUX 2016 image</a> (old <a href="../DE1-SoC-UP-Linux/DE1-SoC-UP-Linux.tgz">LINUX image</a>). <br />
+The rest of this page assumes this version of Linux.
+<br />
+<br />
+Setting up the UP Linux environment:</p>
+<ul>
+  <li> <strong>Before connecting internet:</strong>
+    <ul>
+      <li><em>Remember: People write malware for Linux! Practice safe computing!</em></li>
+      <li><strong>Login as <em>root</em> using the serial terminal connection and PuTTY</strong></li>
+      <li><strong>Put a strong password on the root account</strong> using <code>passwd</code></li>
+      <li><strong>Disable the linaro account</strong> using <code>passwd linaro -l</code> </li>
+      <li>You should not shut down the system by just turning off the power.<br />
+        <em>To avoid corrupting the file system use:</em><strong><br />
+        <code>shutdown -h now</code></strong> </li>
+      <li>To reboot use: <code>reboot</code> </li>
+    </ul>
+  </li>
+  <li>Cornell requires a fixed, registered MAC address in order to use DHCP. To set this up:
+    <ul>
+      <li>At the Linux prompt do<code><em> ifconfig</em></code> and copy the MAC address to <br />
+        https://dnsdb.cit.cornell.edu/dnsdb-cgi/mycomputers.cgi </li>
+      <li>Every time you start the board you must execute<br />
+        <code>ifconfig eth0 down<br />
+          ifconfig eth0 hw ether &lt;mac addr&gt;<br />
+          ifconfig eth0 up<br />
+      /etc/init.d/networking restart </code><br />
+        Where <code>&lt;mac addr&gt;</code> the the address you registered <br />
+      put these commands in<code> /etc/rc.local</code> so that they are executed on startup</li>
+      <li>The DHCP server should then assign you an IP address</li>
+      <li>If networking does not start then execute<code> dhclient eth0</code></li>
+    </ul>
+  </li>
+  <li>Cornell may require you to use a static address for security</li>
+  <ul>
+    <li>The Cornell <a href="../../../../../../www.it.cornell.edu/services/tenspace/about.cfm">10space system</a> should be used for any FPGA on the internet</li>
+    <li>If you use a static address (e.g. Cornell 10-space) then you may need to specify <br />
+      an address and 
+      a router address in <code>/etc/network/interfaces</code> Add:<br />
+      <code>auto eth0<br />
+    iface eth0 inet static<br />
+      hwaddress ether &lt;mac addr&gt;     </code><code><br />
+      address 10.236.xx.xx<br />
+      netmask 255.255.255.0<br />
+      gateway 10.236.xx.1<br />
+      dns-nameservers 132.236.56.250 128.253.180.2 192.35.82.50    </code><br />
+    </li>
+    <li>With a static address, you may need to add DNS servers. <br />
+      Edit <code>/etc/resolv.conf</code> to add the lines:<br />
+      <code>nameserver 132.236.56.250<br />
+      nameserver 128.253.180.2<br />
+      nameserver 192.35.82.50</code><br />
+      Then execute 
+      <code>/etc/init.d/networking restart </code><br />
+    </li>
+  </ul>
+  <li>Secure Shell login
+    <ul>
+      <li>At the Linux prompt do <br />
+        <code>sudo apt-get install  openssh-server</code></li>
+      <li>Use <code>passwd</code> to add a password to <code>root</code> if you have not already done this!</li>
+      <li>Make sure that PuTTY and PSFTP are installed on the Windows machine</li>
+      <li>Use PuTTY to SSH to the ARM. <br />
+        --
+      Open the IP address assigned by DHCP (Find address using <code>ifconfig</code>)<br />
+      -- OR use the static address assigned to you 
+      </li>
+      <li>Use PSFTP to move files to/from the ARM (use <code>help</code> command)</li>
+    </ul>
+  </li>
+  <li>GCC
+    <ul>
+      <li><a href="../../../../../../man7.org/linux/man-pages/man1/gcc.1.html">man page</a></li>
+      <li>To use math library include <code>-lm</code> option on the command line and <code>&lt;math.h&gt;</code> in the code</li>
+      <li>To use pThreads include the <code>-pthread </code>option on the command line <code>&lt;pthread.h&gt;</code> in the code</li>
+    </ul>
+  </li>
+  <li>Utilities
+    <ul>
+      <li><code><strong>taskset</strong></code> allows you to place a process on either ARM processor.<br />
+        However, Linux attempts to migrate processes to load balance if you do nothing.
+      </li>
+      <li><code><strong>htop</strong> (sudo apt-get install htop)</code> shows you what is running and on which processor.</li>
+      <li><code><strong>clamav</strong></code> is an antivirus program you should install using  <code>apt-get install clamav</code><br />
+        Then you can update the virus database
+      by using <code>freshclam</code><br />
+      and scan the file system using <code>clamscan (options)</code>      
+      <ul>
+        <li><em>But</em> if the update fails with a locked database then<br />
+          <code>sudo /etc/init.d/clamav-freshclam stop<br />
+            sudo freshclam -v<br />
+            sudo /etc/init.d/clamav-freshclam start </code><br />
+        </li>
+      </ul>
+      </li>
+      <li><code><strong>ntp</strong></code> sets network time. get it with <code>apt-get install ntp</code><br />
+        You need to edit <code>/etc/ntp.conf</code> to include the line<br />
+        <code>server ntp0.cornell.edu</code><br />
+        Service starts up after a  minute or so.
+          <br />
+      Occasionally I need to restart <code>sudo service ntp restart</code> </li>
+      <li><code><strong>apt-get</strong></code> sometimes fails with the error &quot;<code>Problem with MergeList</code> ...&quot; <br />
+        Apparently this is due to a correpted database so<br />
+        <code>sudo rm -vf /var/lib/apt/lists/* <br />
+        sudo apt-get update</code><br />
+        Then try again
+<br />
+      </li>
+    </ul>
+  </li>
+</ul>
+<h3>HPS USB Programming </h3>
+<p>--<strong>Using the USB mouse</strong><br />
+  As explained in <a href="../../../../../../stackoverflow.com/questions/11451618/how-do-you-read-the-mouse-button-state-from-dev-input-mice">stackoverflow,</a> the mouse information is in<code> /dev/input/mice</code>. Reading and parsing the three bytes of information is straighforward. <br />
+  The <a href="USB/mouse_test.c">test program</a> just prints whatever the mouse sensors read. In a real application, the mouse should be read at a known rate and the speed scaled,<br />
+  then (usually) numerically integrated to give position. </p>
+<p>--<strong>Reading keyboard keycodes</strong><br />
+  As explained in <a href="../../../../../../www.thelinuxdaily.com/2010/05/grab-raw-keyboard-input-from-event-device-node-devinputevent/default.htm">The Linux Daily</a>, keyboard keycodes can be read from <code>/dev/input/eventx</code>. Where 'x' is some digit. The program <br />
+  <a href="USB/keyboard.c">keyboard.c</a> requires you to input the device location as a parameter, then 
+  prints keycodes. </p>
+<h3>HPS pthreads Programming </h3>
+<p>POSIX pthreads are a light-weight addition to Linux processes that allow many threads to execute independently within one process. The threads are scheduled by the kernel and seem to use the multiprocessor environment well. There are many good resources available to learn pthreads. I liked the <a href="../../../../../../https@computing.llnl.gov/tutorials/pthreads/default.htm">LLNL tutorial</a>. Also the <a href="../../../../../../www.cs.cmu.edu/afs/cs/academic/class/15492-f07/www/pthreads.html">CMU tutorial</a>. The HPS GCC recognizes pthreads if you include the <code>-pthread</code> flag on the compile command. Examples from the LLNL site (slightly cleaned up) show how to <a href="../HPS_FPGA/pThreads/thread_create.c">create threads</a> and <a href="../HPS_FPGA/pThreads/thread_mutex_cond.c">use mutex and condition variables</a>. The create example shows that thread creation and execution are async with respect to execution of main. The mutex/condtion example implements two counting threads incrementing the same counter and checking for a certain count. When that count is reached, the count thread signals the condition variable of the watch thread, which prints a message, then the count threads continue on, to their max count. </p>
+<p><strong>-- Threaded: Keyboard input, console print, counter</strong><br />
+  -- This <a href="../HPS_FPGA/pThreads/thread_keyboard.c">example</a> uses a thread to read the console keyboard, another thread to print what was just typed and zero a counter, and one or two more threads to increment the counter. There is a condition variable which indicates when the print is done and next input can begin (using the shared buffer) and a condition variable wich indicates when the input is done and the print can begin. Clearly, one of them has to be signaled initially for the system to come out of deadlock. This is accomplished (somewhat crudely) by waiting one second and signalling the condition variable.<em> <br />
+    --
+    Semaphores are POSIX defined, but not part of pthreads.</em> Including semaphore operations makes<strong> <a href="../HPS_FPGA/pThreads/thread_keyboard_sem.c">the code</a></strong> more readable to me, and makes initialization better defined. With one count thread, and full mutex protection of the count and text buffer, the system will support about 10 million/sec counts while the keyboard and display threads take very small cpu time. <br />
+  --
+  With two count threads, and full mutex protection of the count and text buffer, and using the default scheduling, the system will support about 5 million/sec because the scheduler puts the two heavy performance threads on <em>different processors</em> and the mutex operations are apparently slow across processors! A small modification of <strong><a href="../HPS_FPGA/pThreads/thread_keyboard_sem_affinity.c">the code</a></strong> to include <code>pthread_setaffinity_np</code> forces the two counting threads onto one processor. The two threads on one processor can count at the same rate as one thread (of course). </p>
+<p><strong>--Threaded: Matlab to UDP Audio</strong><br />
+The two-process code from the UDP audio from the section lower on the page<em><br />
+Matlab &gt;udp&gt; ARM receive process &gt;ipc&gt; ARM fpga process &gt;bus&gt; FPGA audio FIFO</em> <br />
+was converted to two threads running in a single process. <a href="../HPS_FPGA/pThreads/thread_udp.c">The code</a> requires the the FPGA <a href="../HPS_FPGA/pThreads/address_map_arm_brl4.h">address header</a> file. To use this you have to load the correct DE1-SoC computer <code>sof</code> file to the FPGA using the QuartusPrime programmer (<a href="../DE1_soc_computer/chopped_1/DE1_SoC_Computer_chopped_1.qar">archive</a>). Running the <a href="../HPS_FPGA/pThreads/UDP_audio_thread.m">Matlab script</a> triggers playback of the <a href="../HPS_FPGA/pThreads/AllDigits8khz.WAV">audio segment</a> by sending a start/reset command to the UDP thread, which then initializes the shared buffer. The Matlab script then blasts audio samples in UDP packets as fast as it can. The sample buffer only holds about 8 seconds of sound at 8 Ksamples/sec. The buffer shared between the two threads is protected by a <em>mutex</em>. After 128 samples have be received, the <code>write_fpga</code> thread fills a FIFO on the FPGA as fast as it can. The FIFO only holds 128 audio samples playing at 48 kHz, so it needs to be filled at least every 3 milliseconds. The thread attempts to fill it every time there is space in the FIFO.</p>
+<hr />
+<h3>FPGA Programming abstraction for Linux using absolute hardware addresses</h3>
+<p>The main abstraction from the programming view is to  map virtual addresses used by Linux during program execution to physical addresses of memory mapped peripherials. I assume that we are running with <code>root</code> privileges. Opening the device <a href="../../../../../../linux.die.net/man/4/mem"><code>/dev/mem</code></a> and then using<code> <a href="../../../../../../man7.org/linux/man-pages/man2/mmap.2.html">mmap</a> </code>gives access to physical addresses in a limited range determined by the mmap parameters. The <a href="test_led.c">code example</a> attempts to blink the HPS LED and read the switch directly attached to port GPIO1bits 24 and 25 respectively. All device addresses are from the <a href="../cv_5_HPS_tech_ref.pdf">HPS Technical Reference Manual</a>. The switch read works, but the LED does not blink. The code was downloaded using copy/paste to the <code>vi</code> editor, then compiled  from the console command line with a simple <code>gcc test_led.c -o test_led</code>.</p>
+<p><strong>--Speed test the HPS-to-FPGA bus<br />
+</strong>If the MSEL switches are set correctly (5'b01010) then the default boot process loads the <code>DE1_SoC_Computer.rbf</code> config file (in<code> /home/root</code>) to the FPGA. Running the increment_led program (part of the UP Linux image in <code>/home/root/increment_leds</code>) controls the red LEDs attached to the FPGA side. A <a href="speed.c">slightly modified version</a> of the demo code increments the FPGA red LEDs as fast as possible. Using the <code>DE1_SoC_Computer.rbf</code> included with the UP Linux image, the max toggle speed 830 KHz, so one add and loop takes 600 nSec, which seems slow. Replacing the register increment with a C variable increment, which is then loaded into the register, doubles the toggle speed to 1.61 MHz, for a loop time of 300 nSec. This implies that the bus transactions are dominating execution speed. Avalon bus speed in this case is 50 MHz, or 20 nSec. The transaction must take about 15 bus cycles to transfer a word from the AXI-to-Avalon bus and Avalon-to-parallel i/o port. (But see below for higher speed connect).</p>
+<p><strong>--First steps in controlling the FPGA</strong>.<br />
+This example uses serial control on the ARM to set hex digits and led count rate on the FPGA. Two 32-bit parallel ports were added (using QSYS) to the my_first_ hps_fpga example on the DE1-SoC_v.5.0.1_HWrevF_SystemCD. The parallel otuput ports were wired to a small amount of verilog to blink the red LEDs and to drive the first 4 7-seg digits. The QSYS layout made it easy to add a port, and the exported i/o signal bus is named in the verilog header generated by QSYS. If the parallel port is named <code>pio_test</code>, then the exported signal name is <code>pio_test_external_connection</code>, and the signal which appears in the *.v file is <code>pio_test_external_connection_export</code>. The signal is added to the top-level <code>soc-system</code> module instance.<br />
+<code>soc_system u0 (<br />
+// === added BRL4 ===<br />
+.pio_led_external_connection_export	  (count_control),<br />
+.pio_test_external_connection_export   (hex_control),<br />
+// === end add ===<br />
+.memory_mem_a                          ( HPS_DDR3_ADDR),                          //          memory.mem_a<br />
+.memory_mem_ba                         ( HPS_DDR3_BA),                         //                .mem_ba<br />
+.memory_mem_ck .....</code></p>
+<p>The offsets for the LEDs and hex digits used in the C code are the offsets specfied in the <a href="../HPS_FPGA/pio_test/qsys.PNG">QSYS layout</a>.<br />
+  The <a href="../HPS_FPGA/pio_test/count_4feb16.c">C code</a>, <a href="../HPS_FPGA/pio_test/ghrd_top.v">top-level module</a>, and <a href="../HPS_FPGA/pio_test/soc_system_2pio.qar">Quartus archive</a>. <br />
+A slightly cleaner version puts the hex-digit decoding into hardware and simplifies the C program. <br />
+The <a href="../HPS_FPGA/pio_test_2/count_5F5feb16.c">C code,</a> <a href="../HPS_FPGA/pio_test_2/ghrd_top.v">top-level module</a>, and <a href="../HPS_FPGA/pio_test_2/soc_system_2pio2.qar">Quartus archive</a>. The QSYS layout is unchanged</p>
+<hr />
+<h3>University Program DE1-SoC_Computer_15_1
+</h3>
+<p>
+  
+  <a href="../DE1_soc_computer/VGA_speed_test/VGA_test_image.jpg"><img src="../DE1_soc_computer/VGA_speed_test/VGA_test_image.jpg" width="164" height="121" alt="test image"  align="left" /></a>
+  This <a href="../DE1_soc_computer/VGA_speed_test/DE1_SoC_Computer.qar">computer system</a> includes support for ARM, Nios, video, audio, and many other items. I converted some code from bare-metal to Linux to run on the UP-Linux distribution. First test is to get VGA display running and test the writing speed. I did a minor reorganization of the <a href="../DE1_soc_computer/VGA_speed_test/address_map_arm_brl4.h">address map file</a> and converted <a href="../DE1_soc_computer/VGA_speed_test/media_brl4.c">one C example</a> to just run the VGA, and update 10,000 pixels as fast as possible.The update takes 1.8 mSec, so the effective pixel writing rate is about 5.5 million pixels/sec. The example also defines a line-drawing routine, but does NOT check pixel bounds. If you write outside the screen bounds, the program <em>segfaults</em>. The image to the left shows one update frame (at 320x340 resolution)..<br clear="left" />
+  <a href="../DE1_soc_computer/VGA_random_rects/20160223_130856.jpg"><img src="../DE1_soc_computer/VGA_random_rects/20160223_130856.jpg" width="165" height="124" alt="random rects" align="left"/></a>The <a href="../DE1_soc_computer/VGA_random_rects/media_brl4_2.c">code was modified</a> to write random rectangles. The write-rate is too fast to see, but the colors are nice.<br />
+  (at 320x340 resolution). Colors are 16 bit: top 5 bits red, middle 6 green, lower 5 blue.<br clear="left" />
+  <strong><br />
+  --Converting DE1-SoC_Computer_15_1 to 640x480 </strong>
+  <br />
+  
+  <a href="../DE1_soc_computer/VGA_640x480/20160225_132433.jpg"><img src="../DE1_soc_computer/VGA_640x480/20160225_132433.jpg" width="166" height="129" alt="640x480" align="left"/></a>
+  The <a href="../../LABS/s2016/video_core-use_notes.html">directions</a> written by Shiva Rajagopal for Qsys 640x480 converstion worked for <a href="../DE1_soc_computer/VGA_640x480/DE1_SoC_Computer_640_480.qar">this system</a>. (<a href="../DE1_soc_computer/VGA_640x480/DE1-SoC_Computer_15_640.zip">system ZIP</a>) The span of the addresses in the <a href="../DE1_soc_computer/VGA_640x480/address_map_arm_brl4.h">virtual-to-real memory map</a> had to be doubled. and, of course, the addressing and colors of pixels had to be modified in the <a href="../DE1_soc_computer/VGA_640x480/media_brl4_3.c">main program</a>. The size of the character buffer was not changed. The color encoding is now 8-bit with top 3 bits red, next 3 green, lower 2 bits blue.<br />
+  <code>VGA_line(0, 0, 320, 240, 0xe0) ; // red 3-bits<br />
+  VGA_line(639, 0, 320, 240, 0x1c) ; // green 3-bits<br />
+  VGA_line(639, 479, 320, 240, 0x03) ; // blue</code><code> 2-bits</code><br  clear="left"/>
+  The design was very slow to generate (Qsys) and compile (Quartus). It took around an hour (on my 5 year old machine). Next step is to speed it up. Chopping out the Nios CPUs and some of the support, but leaving the video in/out and audio reduces the generate time to 5 minutes and the compile time to about 22 minutes. (<a href="../DE1_soc_computer/chopped_1/DE1_SoC_Computer_chopped_1.qar">archive</a>). Stripping out the rest of the LED and switch i/o and removing the video-input funciton reduces the compile time to 18 minutes.
+<p><strong>A better chopped down system</strong> keeps the LEDs, switches, 640x480 video out, and audio. The design is partitioned so that the DE1-SoC computer is in its own partition. Two other partitions are <em>top</em> and the <em>hex display</em> modules. On my new computer (4 core, 32 GB memory, SSD, July 2016), this takes 12 minutes for a full compile. A small change to the hex display partition takes about 8.5 minutes to recompile. A small C code tests the hex display partition. (<a href="../DE1_soc_computer/Chopped_2/hex_count.c">C code</a>, <a href="../DE1_soc_computer/Chopped_2/address_map_arm_brl4.h">address header</a>, <a href="../DE1_soc_computer/Chopped_2/DE1-SoC_Computer_15_640_current.zip">project ZIP</a>).
+<p><strong>-- Mandelbrot set on VGA/HPS</strong><br />
+  <a href="../DE1_soc_computer/VGA_mandelbrot/mandelbrot_set.jpg"><img src="../DE1_soc_computer/VGA_mandelbrot/mandelbrot_set_small.jpg" width="175" height="133" alt="" align="left"/></a>  <br />
+This example is a base-line implementation of a <a href="../DE1_soc_computer/VGA_mandelbrot/mandelbrot_video_2.c">mandelbrot solver</a> which displays using the DE1-SoC computer system explained above. It computes a 640x480 approximation with a maximum of 1000 interactions in about 3.4 seconds, using level -O2 compiler optimization. The code computes about 23 million complex iterations/sec (40 cycles/iteration). The colors are approximately logarithmic in number of iterations at that point. <a href="../DE1_soc_computer/VGA_mandelbrot/mandelbrot_set.jpg">Image</a>. The total number of iterations for all points on the screen and total execution time are displayed. Also included is a routine to erase all text on the screen. <br  clear="left"/>
+<p><strong>-- Conway's game of life on VGA/HPS
+  </strong><br />
+  <a href="../DE1_soc_computer/VGA_Conway_life/screen.jpg"><img src="../DE1_soc_computer/VGA_Conway_life/screen_small.jpg" width="200" height="149" alt=""  align="left"/></a>The <a href="../../../../../../https@en.wikipedia.org/wiki/Conway's_Game_of_Life">game of life</a> is a 2D, totalistic, cellular automaton which is compute-universal.  The <a href="../DE1_soc_computer/VGA_Conway_life/life_video.c">HPS program</a> displays using the DE1-SoC computer system explained above. 
+It computes a 640x480 cell automaton at approximately 14 frames/sec, using level -O2 compiler optimization. This corresponds to about 4.25 million cell updates/sec. The slow step here is writing the pixels to the frame buffer, which is limited by the bus rate to about 5 million/sec. If you <a href="../DE1_soc_computer/VGA_Conway_life/life_video_2.c">modify the code</a> to be smarter about writing pixels, the speed goes as high as 60 frames/sec, or about 18 million cells/sec, <em>but</em> <em>will depend on the specific content of the screen</em>. More cell state changes will slow down execution.<br  clear="left"/>
+<p>-- <strong>Using two ARM processors to write video and play a tone.</strong><br />
+  Starting one process to write to the video buffer as fast as possible, and keep the audio FIFO filled, failed above about 8000 pixels per loop, where the FIFO could be filled in each loop if there was space. The easy solution is to start two processes, which are migrated by Linux onto the two processors with both running at full speed. (<a href="../DE1_soc_computer/Audio_video/DE1_SoC_Computer_audio_video.qar">Quartus archive</a>, <a href="../DE1_soc_computer/Audio_video/media_brl4_4.c">combined audio/videocode</a> which failed at high write-rates). The <a href="../DE1_soc_computer/Audio_video/media_brl4_4_audio.c">audio code</a> required the math library for sine wave synthesis, which requires compile with the <code>-lm </code>option. The <a href="../DE1_soc_computer/Audio_video/media_brl4_4_video.c">video code</a> is unchanged. And the <a href="../DE1_soc_computer/Audio_video/address_map_arm_brl4.h">address header</a>.
+<p>-- <strong>Using two ARM processors with IPC to display time while writing video and playing a tone.</strong><br />
+ Starting two processes to maximize bandwidth, requires communication between the processes. This example uses the fixed audio synthesis frequency (48 KHz) to drive a timer/counter which then uses<em> shared memory IPC </em>(interprocess communication) to display the time on the VGA.  The both the <a href="../DE1_soc_computer/Audio_video/media_brl4_5_audio.c">audio</a> and  <a href="../DE1_soc_computer/Audio_video/media_brl4_5_video.c">video</a> code were attached to the same shared memory segment using <code>shmget</code> and <code>shmat</code>. As before, the audio code required the math library for sine wave synthesis, which requires compile with the <code>-lm </code>option.  (<a href="../DE1_soc_computer/Audio_video/DE1_SoC_Computer_audio_video.qar">Quartus archive</a>, <a href="../DE1_soc_computer/Audio_video/address_map_arm_brl4.h">address header</a>). <br />
+ -- A minor modification of both the <a href="../DE1_soc_computer/Audio_video/media_brl4_6_audio.c">audio</a> and <a href="../DE1_soc_computer/Audio_video/media_brl4_6_video.c">video</a> code plays a one-octave scale on the audio side and displays the time and frequency on the video side.
+ <br />
+ -- Cleaning up both the <a href="../DE1_soc_computer/Audio_video/media_brl4_7_audio.c">audio</a> and <a href="../DE1_soc_computer/Audio_video/media_brl4_7_video.c">video</a> code puts pixel limit error checking in the video draw routines and better naming in audio program.
+ <br />
+ -- Adding a <a href="../DE1_soc_computer/VGA_random_disks/20160503_083424.jpg">disk function</a><a href="../DE1_soc_computer/VGA_random_disks/20160503_081104.mp4"> (video)</a> to the <a href="../DE1_soc_computer/VGA_random_disks/media_brl4_8_video.c">video code</a> makes particle systems nicer.
+ <br />
+<h3>HPS to/from PC UDP communication</h3>
+<p>--<strong>UDP communication from ARM to outside world</strong><br />
+  Sending information to/from the FPGA via the ARM ethernet would be useful for a number of projects. The first code modifies the audio generation code to send the current note being played across a UDP connection to Matlab running on a desk machine. The <a href="../DE1_soc_computer/UDP_comm/media_brl4_8_audio.c">ARM code</a> opens a socket on port 9090 (do not use ports below 1024) and sends data once/sec to the port. The <a href="../DE1_soc_computer/UDP_comm/UDP_receive.m">Matlab code</a> running on the PC opens a UDP object, then just listens and echos the string to the command window. The code is based on the useful UDP material at <a href="../../../../../../www.linuxhowtos.org/C_C++/socket.htm">linuxhowtos.org</a>, particularly <a href="../../../../../../www.linuxhowtos.org/data/6/server_udp.c">server_udp.c.</a>
+<p><strong>--UDP communication from outside world to ARM</strong><br />
+Sending slow (human rate) commands to a program can be done by setting up a non-blocking UDP receive function. Each time through the main event loop, the program checks for a valid packet. The <a href="../DE1_soc_computer/UDP_comm/UDP_send.m">Matlab code</a> asks the human for a sine wave frequency and sends the number to the ARM. The <a href="../DE1_soc_computer/UDP_comm/media_brl4_9_audio.c">ARM audio code</a> computes the DDS increment for the frequency and sends the samples to the audio codec FIFO and the <a href="../DE1_soc_computer/UDP_comm/media_brl4_9_video.c">video process</a>.
+<p><strong>--UDP audio  from Matlab &gt;udp&gt; ARM &gt;bus&gt; FPGA audio FIFO</strong><br />
+Sending audio rate packets from <a href="../DE1_soc_computer/UDP_comm/UDP_sound/UDP_send_music_echo.m">Matlab code</a> is fairly easy, but setting up a ACK function for sync is not because the Matlab UDP receive function is too slow. The result is an unsynced system that works most of the time, but has to be tuned with a spin-wait loop in Matlab. To further reduce overhead, eight audio samples were sent in each packet by matlab. At the <a href="../DE1_soc_computer/UDP_comm/UDP_sound/media_brl4_10_audio.c">ARM code</a> end, the eight samples were duplicated 6 times each to expand the sample rate to 48 KHz, the default audio rate of the <a href="../../../../../../ftp@ftp.altera.com/up/pub/Altera_Material/15.1/University_Program_IP_Cores/Audio_Video/Audio.pdf">Qsys audio core</a>. The main loop makes sure there is enough space in the FIFO for 48 samples, reads a packet, and loads the FIFO. <a href="../DE1_soc_computer/UDP_comm/UDP_sound/AllDigits8khz.WAV">Audio example file</a>. The <a href="../DE1_soc_computer/UDP_comm/UDP_sound/media_brl4_10_video.c">video process</a> records elapsed time of audio using memory shared with the audio process.
+<p><strong>--UDP audio  from Matlab &gt;udp&gt; ARM receive process &gt;ipc&gt; ARM fpga process &gt;bus&gt; FPGA audio FIFO</strong><br />
+  Decoupling the packet receive from the audio-rate FIFO operation results in more robust timing. The <a href="../DE1_soc_computer/UDP_comm/UDP_sound/media_brl4_audio_udp_ipc.c">ARM receive process</a> listens for packets and fills a buffer much faster than <a href="../DE1_soc_computer/UDP_comm/UDP_sound/UDP_audio_ipc.m">Matlab</a> can send the packets. The buffer is shared with a <a href="../DE1_soc_computer/UDP_comm/UDP_sound/media_brl4_audio_fpga_ipc.c">second process</a>, which reads the buffer and fills the audio FIFO at 48 Ksamples/sec. An <code>int</code> buffer of length 2<sup>16</sup> can hold 8 seconds of sound. The FIFO filling process waits for samples to appear in the receive process. The receive process waits for a start/reset command from Matlab. Matlab is sending about 2700 packets/sec each with eight 32-bit audio samples.
+<hr />
+<h3>Avalon bus-master peripheral driving bus-slaves (with HPS read-out and control)</h3>
+<p><strong>-- External bus to Avalon Bridge</strong><br />
+  Student generated modules will need to be Avalon bus-slaves when controlled by the HPS, but under some conditions will need to be bus-masters. For instance, building a module which writes directly to the VGA interface would require a bus-master ability. The first example uses the University Progam<span style="font-size: medium; font-style: normal; font-weight: normal;"> <a href="../External_Bus_to_Avalon_Bridge.pdf">External Bus to Avalon Bridge</a></span> (EBAB) module as a bus-master which addresses either the LEDs or the HEX display to display numbers set on the toggle switches, and with a write-enable using <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace; font-size: medium;">~KEY[0]</span>. The <a href="../HPS_FPGA/master_peripheral/SW_LED_1/hex_read.c">HPS C-code</a> reads and displays the SW and KEY peripherials. The <a href="../HPS_FPGA/master_peripheral/SW_LED_1/Qsys_switches_LEDs.PNG">Qsys layout</a> has just the HPS, parallel ports for the LEDs, HEX display, switches, and buttons, and the EBAB module. The LEDs and HEX display are hooked to the 
+external-to-avalon
+master. The SW and KEY are hooked to the HPS h2f_lw_axi_master. (<a href="../HPS_FPGA/master_peripheral/SW_LED_1/DE1_SoC_Computer.v">top-level</a>, <a href="../HPS_FPGA/master_peripheral/SW_LED_1/hex_decoder.v">hex decoder</a>, <a href="../HPS_FPGA/master_peripheral/SW_LED_1/DE1-SoC_avalon_master.zip">project ZIP</a>). This code ignores the Avalon ACK bit and does not read any data.
+<p><strong>-- Controlling the bus-master from the HPS</strong><br />
+  In the second example, the HPS uses a <a href="../HPS_FPGA/master_peripheral/HEX_LED_HPS_address/master_addr.c">keyboard command interface</a> to choose the HEX or LED device address which is used by the EBAB. The FPGA side has a small state machine which counts time and uses the EBAB to display the count on the HEX or LED devices. The state machine also handles the bus-write setup and waits for the Avalon bus ACK. The <a href="../HPS_FPGA/master_peripheral/HEX_LED_HPS_address/Qsys_addr_control.PNG">Qsys layout</a> converts the switch PIO into an output getting data from the HPS light-weight bus. This new output is used for the device address by the EBAB. (<a href="../HPS_FPGA/master_peripheral/HEX_LED_HPS_address/DE1_SoC_Computer.v">top-level</a>, <a href="../HPS_FPGA/master_peripheral/HEX_LED_HPS_address/DE1-SoC_avalon_master_addr_cntl.zip">project ZIP</a>). This example is a model of how a hardware computational unit might be controlled by the HPS and interact with other bus-attached peripherials. The bus transaction from EBAB to HEX display PIO takes two cycles (write, ACK). I tested up to 100 MHz state machine rate, for a bus rate of 50 million/sec. <br />
+  -- 
+The logical sequence is: A C-program outputs a bus address to the h2f_lw_axi_master address (of the ARM) which is mapped to a PIO unit on the Avalon bus. The PIO unit exports the address value to the FPGA fabric, which also contains the EBAB. The EBAB uses the address (from the PIO) to set its own write address back onto the Avalon bus.
+<p><strong>-- Multiple bus-masters to one bus-slave</strong><br />
+  The Qsys bus generator constructs arbitration hardware for various configurations of masters and slaves. I wanted to test the operation of multiple bus-masters talking to one bus-slave. The previous example was extended to have two EBAB units, one controlled as before with its bus address controlled by a<a href="../HPS_FPGA/master_peripheral/Two_masters/master_addr.c"> C program</a>. The other was set to always write to the HEX display. The phase of the write-clock was set up so that they write at different times. Each bus-master counts  at different rates. The counts are displayed on the HEX displays and for bus-master one, on the LEDs, when chosen. The <a href="../HPS_FPGA/master_peripheral/Two_masters/Qsys_layout.PNG">Qsys layout</a> shows that both the EBAB masters connect to the HEX display. (<a href="../HPS_FPGA/master_peripheral/Two_masters/DE1_SoC_Computer.v">top-level</a>, <a href="../HPS_FPGA/master_peripheral/Two_masters/DE1-SoC_avalon_two_master.zip">project ZIP</a>).
+  <br />
+  --
+A modification of the <a href="../HPS_FPGA/master_peripheral/Two_masters/Fast_version/DE1_SoC_Computer.v">top-level module</a> changes the bus request rate to 3.1 MHz, uses the SW input to set the delay between bus write-requests, and puts the two write-requests and the two ACK bits on the GPIO_0 port for view on an oscilloscope. If the separation is zero <em>and</em> addresses are set to the same bus_slave, <em>then</em> one write-request is stretched to <a href="../HPS_FPGA/master_peripheral/Two_masters/Fast_version/two_write_enable_one_addr.bmp">two cycles</a> (top trace) while the bus is busy with the other. If two different bus-slaves are addressed by the two bus-masters, <em>or</em> the time between write-requests is  one cycle or more, <em>then</em> there is no collision and the write-requests are each <a href="../HPS_FPGA/master_peripheral/Two_masters/Fast_version/two_write_enable_two_addr.bmp">one state-machine cycle</a> long. Synchronization in the bus-master state machines depends on reading the ACK bits returned from the Avalon bus. Which write-request actually gets stretched, when they are on the same cycle, seems to be randomly determined by race-conditions.
+<p><strong>-- VGA  display bus_master with HPS/FPGA mixed graphics source</strong><br />
+  A bus-master to control video display is useful for many projects. Interfacing to the University video suite is challanging because the documentation is scattered or non-existant. The <a href="../HPS_FPGA/master_peripheral/EBAB_VGA/vga_EBAB.PNG">Qsys layout</a> shows the connections to the bus-master at the bottom. You can see in the Qsys layout that both SDRAM and on-chip RAM are used. Both are necessary, but I am not sure how they are related. The interface I finally came up with can write pixels at about 6.1 megapixels/sec, at 640x480 resolution.  I had to phase-lock the write cycle to the <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">VGA_BLANK_N</span> signal to avoid confilct with the VGA read cycle. I am not sure why the <a href="../HPS_FPGA/master_peripheral/EBAB_VGA/media_video_master.c">HPS program</a> does not need to do that. The demo hardware writes a large blue rectangle a the top of the screen (as a background for text drawn by the HPS), then a slowly moving, 8-bit color map, then a diagonal line, and leaves a space at the bottom of the screen for a rectangle drawn by the HPS. The Avalon bus handles contention between the HPS and my bus-master so that graphics from the FPGA fabric can be merged with HPS graphics by simply writing the pixels. In this example, the text overlay is controlled only by the HPS. (<a href="../HPS_FPGA/master_peripheral/EBAB_VGA/DE1_SoC_Computer.v">top-level module</a>, <a href="../HPS_FPGA/master_peripheral/EBAB_VGA/DE1-SoC_video_bus_master.zip">project ZIP</a>, <a href="../HPS_FPGA/master_peripheral/EBAB_VGA/text_screen.jpg">test image</a>). There is a slight VGA sync artifact on this version. <br />
+  -- 
+  Changing one line of code eliminates the sync artifact, but lowers the write rate to 2.8 megapixels/sec. The condition for starting a write operation goes from<br />
+  <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">if (state==0 &amp;&amp; ~VGA_BLANK_N) begin</span><br />
+  to<br />
+  <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">if (state==0 &amp;&amp; (~VGA_VS | ~VGA_HS)) begin</span><br />
+making the start condition tighter and leaving a little slack before the next VGA read so that it does not contend with the second cycle of the write. The problem occurs because the blanking interval end is tested on the first write-cycle, but the write process takes two cycles, thus overlapping the first VGA read, whereas the vertical and horiztal sync pulses are narrower.<br />
+-- If we could make the write condition less restricitve, but still shorter than the blanking pulse we could recover much of the write rate, but avoid the sync jitter artifact. By detecting the start of the vertical and horizontal sync pulses we can stretch the pulses to get the performance back up to over 6 megapixels/second. A revised<a href="../HPS_FPGA/master_peripheral/EBAB_VGA/Improved_top_level/DE1_SoC_Computer.v"> top-level module</a> does this with stable sync performance.
+<p>-- <strong> VGA  display bus_master with FPGA graphics state machine source</strong><br />
+  In this example, the display bus-master gets pixel color information from a true dual-port, M10K block, RAM based state machine. The graphics are trivial vertical lines, with x position chosen by the DE1-SoC switches and the color by two of the push buttons. Pushing button zero loads the switch and button information to the drawing state machine which populates M10K RAM with the 2-bit pixel colors for the line. The bus-master state machine moves all the pixels in the M10K RAM to VGA display memory by converting the two-bit M10K state to 8-bit color and putting the data on the Avalon bus. Since the M10K RAM is dual ported, the line-writing state machine and bus_master state machine can access memory at the same time. In general for high performance, you would not want to draw every pixel every time like this example does. (<a href="../DE1_soc_computer/VGA_state_machine/DE1_SoC_Computer.v">top-level module</a>, <a href="../DE1_soc_computer/VGA_state_machine/DE1-SoC_video_only_local_memory.zip">ZIP</a>)
+<p><strong>-- Audio output bus_master</strong><br />
+  This bus_master state machine reads the FIFO status of the <a href="../Audio_core.pdf">University Program audio interface</a>, and if there is sufficient space in the FIFO, computes a new DDS sinewave sample and inserts it into the left and right audio channel FIFOs. The <a href="../HPS_FPGA/master_peripheral/EBAB_Audio/qsys_layout.PNG">Qsys layout</a> shows the relatively simple connections. The audio bus_master <em>avalon_master</em> is connected to the audio subsystem <em>avalon_slave</em> input. The design leaves the HPS interface in place, but contention between the two bus-masters for audio channels means that you can use one or the other (but see below for sharing the audio left/right channels). The state machine sets up the FIFO status read, then waits for the ACK. IF there is space in the FIFO, a new DDS sample is computed and written to the left channel, then waits for the ACK.
+The right channel is then written. Both channels must be written for the audio interface to work. Waiting for space in the FIFO effectively phase-locks the state machine to the audio-rate clock for sound systhesis (<a href="../HPS_FPGA/master_peripheral/EBAB_Audio/DE1_SoC_Computer.v">top_level_module</a>, <a href="../HPS_FPGA/master_peripheral/EBAB_Audio/DE1-SoC_Computer_15_audio_only.zip">project ZIP</a>).
+<br />
+-- If the audio bus-master hardware only checks that status of the left channel FIFO and only loads the left channel FIFO, and the HPS only 
+checks that status of the right channel FIFO and only loads the right channel FIFO, then both can write to the audio at the same time. Since nothing is played by the audio interface unless there is data for each channel, the shorter duration channel determines play time. In this example, a WAV file is read by Matlab and samples sent by UDP to the HPS, which runs a thread to watch the UDP connection, and another thread to load the right channel. The hardware audio bus-master loads the left channel FIFO, then stalls until the HPS thread starts filling the right channel FIFO. (<a href="../HPS_FPGA/master_peripheral/EBAB_Audio/EBAB_and_HPS/UDP_audio_thread.m">matlab program</a>, <a href="../HPS_FPGA/master_peripheral/EBAB_Audio/EBAB_and_HPS/thread_udp_right_channel.c">HPS program</a>, <a href="../HPS_FPGA/master_peripheral/EBAB_Audio/EBAB_and_HPS/DE1_SoC_Computer.v">top-level module</a>). The result is that the hardware plays a tone on the left channel during the time that the HPS program loads the right channel. Note that the hardware bus-master checks the top eight bits of the FIFO status word, while the HPS program checks the next eight bits (see section 4.1 of the <a href="../Audio_core.pdf">Audio Core manual</a>). The LEDR display is connected to the left channel FIFO status. When both sources are filling the FIFOs, you can see the contention by the variability of the FIFO depth, but actual audio play not affected.
+<hr />
+<p>References:</p>
+<p><a href="../index.html">DE1-SOC</a> literature list</p>
+<p><a href="../../../eceprojectsland/STUDENTPROJ/2014to2015/ayk33/Independent_Study.pdf">Using the DE1-SOC FPGA</a> by Ahmed Kamel </p>
+<p><a href="../../../eceprojectsland/STUDENTPROJ/2014to2015/ayk33/index.html">Stereoscopic Depth on an FPGA via OpenCL</a> by Ahmed Kamel and Aashish Agarwal</p>
+<p><a href="../../../eceprojectsland/STUDENTPROJ/2015to2016/sm893_mkp53/Final%20Report%20ECE%204999.pdf">Running Linux on DE1-SOC</a> by MANISH PATEL and SYED TAHMID MAHBUB</p>
+<p><a href="../../FinalProjects/s2015/spp66_aa2264_ayk33/spp66_aa2264_ayk33/spp66_aa2264_ayk33/FPGA_ARM.html">OpenCL on DE1-SOC</a> Sahil P Potnis (<a href="mailto:spp66@cornell.edu">spp66@cornell.edu)</a> Aashish Agarwal (<a href="mailto:aa2264@cornell.edu">aa2264@cornell.edu</a>) Ahmed Kamel (<a href="mailto:ayk33@cornell.edu">ayk33@cornell.edu</a>)</p>
+<p><a href="../../../../../../ftp@ftp.altera.com/up/pub/Altera_Material/15.1/University_Program_IP_Cores/Audio_Video/Audio.pdf">Audio Core</a> (Qsys University Program 15.1) <a href="../Audio_core.pdf">local copy</a></p>
+<p><a href="../../../../../../ftp@ftp.altera.com/up/pub/Altera_Material/15.1/University_Program_IP_Cores/Audio_Video/Video.pdf">Video Core</a> (Qsys University Program 15.1) <a href="../Video_core.pdf">local copy</a></p>
+<p><a href="../External_Bus_to_Avalon_Bridge.pdf">External to Avalon Bus Master</a> (<em>external</em> here means<em> <strong>in the FPGA</strong></em>, but not in the Qsys bus structure)</p>
+<p><a href="../Avalon_to_External_Bus_Bridge.pdf">Avalon to External Bus Slave</a> (<em>external</em> here means<em> <strong>in the FPGA</strong></em>, but not in the Qsys bus structure)</p>
+<hr />
+<p>Copyright Cornell University 
+  <!-- #BeginDate format:Am1 -->August 22, 2016<!-- #EndDate -->
+</p>
+<p>&nbsp;</p>
+</body>
+</html>

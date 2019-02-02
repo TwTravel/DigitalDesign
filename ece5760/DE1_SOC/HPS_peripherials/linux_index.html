@@ -1,0 +1,234 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Linux on HPS</title>
+</head>
+
+<body>
+<h2 align="center">DE1-SoC:
+  ARM HPS Linux<br />
+Cornell ece5760</h2>
+<p>The programming model I wish to use in ece5760 is LINUX running on the ARM processors, talking to hardware on the FPGA through Qsys. <br />
+I would prefer not to use design automation tools, like OpenCL, but stay at the level of the Qsys module interconnect, with custom FPGA hardware. <br />
+</p>
+<strong>Standalone programming of HPS using native GCC in UP linux.</strong>
+<ul>
+  <li>To start, you will use the UP <a href="../DE1-SoC-UP-Linux/linux_sdcard_image.zip">LINUX 2016 image</a>. The rest of this page assumes this version of Linux.  
+    <ul>
+      <li>If you are working with a windows machine, The sections 2.1 and 2.2 <a href="../DE1-SoC-UP-Linux/Linux.pdf">Using Linux on the DE1-SoC</a> <br />
+        shows how to install Linux on an SDcard. </li>
+      <li>If you are working from a Mac, then you probably want to use <a href="../../../../../../www.tweaking4all.com/software/macosx-software/macosx-apple-pi-baker/default.htm">ApplePiBaker</a> </li>
+    </ul>
+  </li>
+<li>On the bottom of the DE1-SoC is an MSEL switch.<br />
+  <em>Do not modify the switch setting unless you cannot program the FPGA from the USB blaster. </em><br />
+  If necesary, set MSEL to<span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace"> 010101</span> (left to right), see <a href="../DE1-SoC_User_manualv.1.2.2_revE.pdf">DE1-Soc Users Manual</a> page 12-13 </li>
+<li>Once Linux is running on the HPS: 
+  <ul>
+    <li>Log in using the board serial connection as explained in section 2.3 of <a href="../DE1-SoC-UP-Linux/Linux.pdf">Using Linux on the DE1-SoC</a>   <br />
+      but use PSFTP or MobaXterm to transfer files, not the USB drive explained in section 2.4
+        <br />
+        (after you install a SSH client, see below)
+    </li>
+    <li>To configure the FPGA, we will not use the scheme described in Section 3, but rather download<br />
+      configuration using the USB blaster interface from Quartus Prime.
+    </li>
+    <li>Compile C code as explained in section 4, 4.1, 4.3 and 4.4  of <a href="../DE1-SoC-UP-Linux/Linux.pdf">Using Linux on the DE1-SoC</a>
+    </li>
+    <li>If you have never used Linux, you may want to look at:
+      <ul>
+        <li><a href="../../../../../../www.makeuseof.com/tag/an-a-z-of-linux-40-essential-commands-you-should-know/default.htm">40 linux commands</a>.</li>
+        <li>Beginners guide <a href="../../../../../../www.techspot.com/guides/835-linux-command-line-basics/default.htm">part 1</a>, <a href="../../../../../../www.techspot.com/guides/844-linux-command-line-part-ii/default.htm">part 2</a>, </li>
+        <li><a href="../../../../../../ryanstutorials.net/linuxtutorial/default.htm">Linux tutorial</a></li>
+        <li><a href="../../../../../../www.tecmint.com/linux-network-configuration-and-troubleshooting-commands/default.htm">Network</a></li>
+      </ul>
+    </li>
+    </ul>
+</li>
+</ul>
+<strong>Setting up the UP Linux environment:
+</p>
+</strong>
+<ul>
+  <li><strong>Before doing anything else:</strong>
+    <ul>
+      <li><em>Remember: People write malware for Linux! Practice safe computing!</em></li>
+      <li><strong>Login as <em>root</em> using the serial terminal connection and PuTTY</strong> (on Mac use Terminal) </li>
+      <li><strong>Put a strong password on the root account</strong> using <code>passwd</code></li>
+      <li><strong>Disable the linaro account</strong> using <code>passwd linaro -l</code> </li>
+      <li>You should <strong>not</strong> shut down the system by just turning off the power.<br />
+        <em>To avoid corrupting the file system use:</em><strong><br />
+        <code>shutdown -h now</code></strong> </li>
+      <li>To reboot use: <code>reboot</code> </li>
+    </ul>
+  </li>
+  <li>Editing on the HPS
+    <ul>
+      <li>Usually you will edit source code on a PC, then transfer the code to the HPS<br />
+      using <a href="../../../../../../https@mobaxterm.mobatek.net/default.htm">MobaXterm</a> or SFTP </li>
+      <li>But sometimes small edits (e.g. config files) are done on the HPS. Editors:
+        <ul>
+          <li>vi -- it is on every linux system. <a href="../../../../../../https@www.cs.colostate.edu/helpdocs/vi.html">commands</a>. <br />
+          You just have to <em>remember</em> the state (command/insert) of the editor.</li>
+          <li>vim -- very much like vi <a href="../../../../../../tnerual.eriogerg.free.fr/vimqrc.html">commands</a>, but the state of the editor is indicated. <br />
+            To download: <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">apt-get install vim</span><br />
+          </li>
+          <li><a href="../../../../../../https@en.wikipedia.org/wiki/GNU_nano">GNU nano</a> -- slightly less cryptic than vi, more <a href="../../../../../../https@www.nano-editor.org/dist/v2.0/nano.html">commands</a>, and <a href="../../../../../../www.howtogeek.com/howto/42980/the-beginners-guide-to-nano-the-linux-command-line-text-editor/default.htm">users guide</a><br />
+          When mouse support has been configured and enabled, a single mouse click places the cursor at the indicated position. Clicking a second time in the same position toggles the mark to start a selection range. Clicking in the shortcut list executes the selected shortcut. The mouse will work on the console when gpm is running (which seems to be the default). Invoke mouse with <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">nano -m</span></li>
+          <li><a href="../../../../../../https@www.gnu.org/software/emacs/default.htm">GNU emacs</a> -- bewildering. This is not an editor, it is a way of life.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>In the lab you will connect to the internet <em>using a wired system</em>, <br />
+  and we will require you to use a static address for security</li>
+  <ul>
+    <li>The Cornell <a href="../../../../../../https@it.cornell.edu/dns/what-10-space-and-what-does-it-do">10space system</a> will be used for any FPGA on the internet in the lab.</li>
+    <li>The Cornell 10space system is <strong>not reachable from wireless devices</strong>!</li>
+    <li>The MAC address and IP address are locked down and must match. <br />
+    You will use a static address assigned to your group. You may not use another group's addresses.</li>
+    <li>You will need to specify an MAC address, IP address, and 
+      a router address in <code>/etc/network/interfaces</code> <br />
+      Add:<br />
+      <code>auto eth0<br />
+    iface eth0 inet static<br />
+      hwaddress ether 12:34:56:78:90:yy     </code><code><br />
+      address 10.253.17.xx<br />
+      netmask 255.255.255.0<br />
+      gateway 10.253.17.1<br />
+      dns-nameservers 132.236.56.250 128.253.180.2 192.35.82.50    </code><br />
+    </li>
+    <li>With a static address, you may need to add DNS servers. <br />
+      Edit <code>/etc/resolv.conf</code> to add the lines:<br />
+      <code>nameserver 132.236.56.250<br />
+      nameserver 128.253.180.2<br />
+      nameserver 192.35.82.50</code><br />
+      Then execute 
+    <code>/etc/init.d/networking restart <br />
+    </code>If you get a eth0 error, then <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">reboot</span><br />
+    </li>
+  </ul>
+  <li>Secure Shell login
+    <ul>
+      <li>When networking is up, then at the Linux prompt do <br />
+        <code>sudo apt-get install  openssh-server</code></li>
+      <li>You may need to do <code>sudo apt-get update</code> before installing any packages</li>
+      <li>Use <code>passwd</code> to add a password to <code>root</code> if you have not already done this!</li>
+      <li>Make sure that PuTTY and PSFTP are installed on the Windows machine (on Mac use Terminal) </li>
+      <li>Use PuTTY to SSH to the ARM. <br />
+        --
+      Open the IP address assigned by DHCP (Find address using <code>ifconfig</code>)<br />
+      -- OR use the static address assigned to you 
+      </li>
+      <li>Use PSFTP to move files to/from the ARM (use <code>help</code> command)</li>
+      <li>The Cornell 10space system is <strong>not reachable from wireless devices</strong>!</li>
+    </ul>
+  </li>
+  <li>GCC
+    <ul>
+      <li>The ARM cpus are completely capable of running <a href="../../../../../../https@gcc.gnu.org/onlinedocs/gcc/default.htm">GCC</a> to communicate with either native HPS peripherials or with the FPGA.<br />
+You compile from the command line with the <a href="../../../../../../man7.org/linux/man-pages/man1/gcc.1.html">usual Linux syntax</a>. Some projects require  compile flags which are noted below.</li>
+      <li><a href="../../../../../../man7.org/linux/man-pages/man1/gcc.1.html">man page</a></li>
+      <li>Compile  code as explained in section 4, 4.1, 4.3 and 4.4  of <a href="../DE1-SoC-UP-Linux/Linux.pdf">Using Linux on the DE1-SoC</a> </li>
+      <li>Minumum compile command is<span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace"> gcc source.c -o executable_file_name</span></li>
+      <li>To use math library include <code>-lm</code> option on the command line and <code>&lt;math.h&gt;</code> in the code</li>
+      <li>To use pThreads include the <code>-pthread </code>option on the command line <code>&lt;pthread.h&gt;</code> in the code</li>
+    </ul>
+  </li>
+  <li>Utilities
+    <ul>
+      <li><code><strong>taskset</strong></code> allows you to place a process on either ARM processor.<br />
+        However, Linux attempts to migrate processes to load balance if you do nothing.
+      </li>
+      <li><code><strong>htop</strong> (sudo apt-get install htop)</code> shows you what is running and on which processor.</li>
+      <li><code><strong>clamav</strong></code> is an antivirus program you might install using  <code>apt-get install clamav</code><br />
+        Then you can update the virus database
+      by using <code>freshclam</code><br />
+      and scan the file system using <code>clamscan (options)</code>      
+      <ul>
+        <li><em>But</em> if the update fails with a locked database then<br />
+          <code>sudo /etc/init.d/clamav-freshclam stop<br />
+            sudo freshclam -v<br />
+            sudo /etc/init.d/clamav-freshclam start </code><br />
+        </li>
+      </ul>
+      </li>
+      <li><code><strong>ntp</strong></code> sets network time. get it with <code>apt-get install ntp</code><br />
+        You need to edit <code>/etc/ntp.conf</code> to include the line<br />
+        <code>server ntp0.cornell.edu</code><br />
+        Service starts up after a  minute or so.
+          <br />
+      Occasionally I need to restart <code>sudo service ntp restart</code> </li>
+      <li><code><strong>apt-get</strong></code> sometimes fails with the error &quot;<code>Problem with MergeList</code> ...&quot; <br />
+        Apparently this is due to a correpted database so<br />
+        <code>sudo rm -vf /var/lib/apt/lists/* <br />
+        sudo apt-get update</code><br />
+        Then try again</li>
+    </ul>
+  </li>
+  <li>Mount a USB flash drive
+    <ul>
+      <li>Plug it in, then look for something like <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">sda1</span> in<span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace"> /dev</span></li>
+      <li><span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">cd</span> to <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">/mnt</span></li>
+      <li><span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">mkdir sda1</span></li>
+      <li style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">mount /dev/sda1 /mnt/sda1</li>
+      <li>To eject the drive: <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">umount /dev/sda1</span></li>
+    </ul>
+  </li>
+  <li>Backup
+    <ul>
+      <li>SD cards fail. Backup your good image, or you will do all the work again.</li>
+      <li>On windows, Win32 disk imager can be used to READ an image from the SD card.</li>
+      <li>On Mac, use <a href="../../../../../../www.tweaking4all.com/software/macosx-software/macosx-apple-pi-baker/default.htm">ApplePiBaker</a></li>
+    </ul>
+  </li>
+  <li>General
+    <ul>
+      <li><a href="../../../../../../www.makeuseof.com/tag/an-a-z-of-linux-40-essential-commands-you-should-know/default.htm">40 linux commands</a></li>
+      <li><a href="../../../../../../https@docs.python.org/2.7/tutorial/default.htm">Python2.7</a> is installed in this distribution. <br />
+      Python supports mmap, so you should be able to get to the FPGA, but is <a href="../../../../../../https@translate.google.com/translate@hl=en&sl=ja&u=http_3A_2F_2Fqiita.com_2Fjiuya_2Fitems_2F101db690f0de5cd2e501&prev=search">probably slow</a>.</li>
+    </ul>
+  </li>
+  <li><em><strong>Do not use this networking method in the lab.</strong></em><br />
+    If you connect to internet using Cornell DHCP, then Cornell requires a fixed, registered MAC address in order to use DHCP. <br />
+    Since the board boots with a different MAC address every time you, have to fix the MAC address.
+    <br />
+Note that if you get hit with malware, Cornell will throw you off the net!<br />
+<em><strong>Do not use this in the lab.</strong></em> Use this only if you buy your own board and use in your own facility. <br />
+To set this up:
+<ul>
+  <li>At the Linux prompt do<code><em> ifconfig</em></code> and copy the MAC address to <br />
+    https://dnsdb.cit.cornell.edu/dnsdb-cgi/mycomputers.cgi </li>
+  <li>Every time you start the board you must execute<br />
+    <code>ifconfig eth0 down<br />
+      ifconfig eth0 hw ether &lt;mac addr&gt;<br />
+      ifconfig eth0 up<br />
+      /etc/init.d/networking restart </code><br />
+    Where <code>&lt;mac addr&gt;</code> the the address you registered <br />
+    put these commands in<code> /etc/rc.local</code> so that they are executed on startup</li>
+  <li>The DHCP server should then assign you an IP address</li>
+  <li>If networking does not start then execute<code> dhclient eth0</code><br />
+  </li>
+</ul>
+  </li>
+</ul>
+<h3>&nbsp;</h3>
+<hr />
+<p>References:</p>
+<p><a href="../index.html">DE1-SOC</a> literature list</p>
+<p><a href="../../../eceprojectsland/STUDENTPROJ/2014to2015/ayk33/Independent_Study.pdf">Using the DE1-SOC FPGA</a> by Ahmed Kamel </p>
+<p><a href="../../../eceprojectsland/STUDENTPROJ/2014to2015/ayk33/index.html">Stereoscopic Depth on an FPGA via OpenCL</a> by Ahmed Kamel and Aashish Agarwal</p>
+<p><a href="../../../eceprojectsland/STUDENTPROJ/2015to2016/sm893_mkp53/Final%20Report%20ECE%204999.pdf">Running Linux on DE1-SOC</a> by MANISH PATEL and SYED TAHMID MAHBUB</p>
+<p><a href="../../FinalProjects/s2015/spp66_aa2264_ayk33/spp66_aa2264_ayk33/spp66_aa2264_ayk33/FPGA_ARM.html">OpenCL on DE1-SOC</a> Sahil P Potnis (<a href="mailto:spp66@cornell.edu">spp66@cornell.edu)</a> Aashish Agarwal (<a href="mailto:aa2264@cornell.edu">aa2264@cornell.edu</a>) Ahmed Kamel (<a href="mailto:ayk33@cornell.edu">ayk33@cornell.edu</a>)</p>
+<p><a href="../../../../../../ftp@ftp.altera.com/up/pub/Altera_Material/15.1/University_Program_IP_Cores/Audio_Video/Audio.pdf">Audio Core</a> (Qsys University Program 15.1) <a href="../Audio_core.pdf">local copy</a></p>
+<p><a href="../../../../../../ftp@ftp.altera.com/up/pub/Altera_Material/15.1/University_Program_IP_Cores/Audio_Video/Video.pdf">Video Core</a> (Qsys University Program 15.1) <a href="../Video_core.pdf">local copy</a></p>
+<p><a href="../External_Bus_to_Avalon_Bridge.pdf">External to Avalon Bus Master</a> (<em>external</em> here means<em> <strong>in the FPGA</strong></em>, but not in the Qsys bus structure)</p>
+<p><a href="../Avalon_to_External_Bus_Bridge.pdf">Avalon to External Bus Slave</a> (<em>external</em> here means<em> <strong>in the FPGA</strong></em>, but not in the Qsys bus structure)</p>
+<p> (old <a href="../DE1-SoC-UP-Linux/DE1-SoC-UP-Linux.tgz">LINUX image</a>)</p>
+<hr />
+<p>Copyright Cornell University 
+  <!-- #BeginDate format:Am1 -->February 1, 2019<!-- #EndDate --></p>
+<p>&nbsp;</p>
+</body>
+</html>

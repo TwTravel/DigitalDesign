@@ -1,0 +1,95 @@
+# # File gsaved with Nlview version 6.3.8  2013-12-19 bk=1.2992 VDI=34 GEI=35
+# 
+preplace inst Computer_System.VGA_Subsystem.VGA_Pixel_FIFO -pg 1
+preplace inst Computer_System.ARM_A9_HPS.fpga_interfaces -pg 1
+preplace inst Computer_System.Bus_master_video -pg 1 -lvl 6 -y 190
+preplace inst Computer_System.VGA_Subsystem -pg 1 -lvl 2 -y 2030
+preplace inst Computer_System.ARM_A9_HPS.arm_a9_0 -pg 1
+preplace inst Computer_System.VGA_Subsystem.VGA_Pixel_DMA -pg 1
+preplace inst Computer_System.ARM_A9_HPS.axi_ocram -pg 1
+preplace inst Computer_System.ARM_A9_HPS.clkmgr -pg 1
+preplace inst Computer_System.ARM_A9_HPS.arm_a9_1 -pg 1
+preplace inst Computer_System.ARM_A9_HPS.clk_0 -pg 1
+preplace inst Computer_System.VGA_Subsystem.VGA_Char_Buffer -pg 1
+preplace inst Computer_System.ARM_A9_HPS.wd_timer0 -pg 1
+preplace inst Computer_System.ARM_A9_HPS.hps_io -pg 1
+preplace inst Computer_System.ARM_A9_HPS.wd_timer1 -pg 1
+preplace inst Computer_System.ARM_A9_HPS.f2s_periph_ref_clk -pg 1
+preplace inst Computer_System.ARM_A9_HPS.i2c0 -pg 1
+preplace inst Computer_System.ARM_A9_HPS.qspi -pg 1
+preplace inst Computer_System.ARM_A9_HPS.i2c1 -pg 1
+preplace inst Computer_System.ARM_A9_HPS.i2c2 -pg 1
+preplace inst Computer_System.VGA_Subsystem.VGA_Alpha_Blender -pg 1
+preplace inst Computer_System.ARM_A9_HPS.uart0 -pg 1
+preplace inst Computer_System.ARM_A9_HPS.i2c3 -pg 1
+preplace inst Computer_System.ARM_A9_HPS.uart1 -pg 1
+preplace inst Computer_System.VGA_Subsystem.Sys_Clk -pg 1
+preplace inst Computer_System.ARM_A9_HPS -pg 1 -lvl 5 -y 50
+preplace inst Computer_System.ARM_A9_HPS.L2 -pg 1
+preplace inst Computer_System.VGA_Subsystem.VGA_PLL.reset_from_locked -pg 1
+preplace inst Computer_System.System_PLL.reset_from_locked -pg 1
+preplace inst Computer_System.ARM_A9_HPS.fpgamgr -pg 1
+preplace inst Computer_System.ARM_A9_HPS.eosc1 -pg 1
+preplace inst Computer_System.ARM_A9_HPS.gpio0 -pg 1
+preplace inst Computer_System.VGA_Subsystem.VGA_PLL.video_pll -pg 1
+preplace inst Computer_System.ARM_A9_HPS.eosc2 -pg 1
+preplace inst Computer_System.ARM_A9_HPS.gpio1 -pg 1
+preplace inst Computer_System.ARM_A9_HPS.gpio2 -pg 1
+preplace inst Computer_System.Onchip_SRAM -pg 1 -lvl 4 -y 1240
+preplace inst Computer_System.VGA_Subsystem.VGA_Pixel_RGB_Resampler -pg 1
+preplace inst Computer_System.System_PLL -pg 1 -lvl 1 -y 1920
+preplace inst Computer_System.ARM_A9_HPS.usb0 -pg 1
+preplace inst Computer_System.ARM_A9_HPS.axi_sdram -pg 1
+preplace inst Computer_System.Pixel_DMA_Addr_Translation -pg 1 -lvl 2 -y 1410
+preplace inst Computer_System.ARM_A9_HPS.usb1 -pg 1
+preplace inst Computer_System.AV_Config -pg 1 -lvl 4 -y 590
+preplace inst Computer_System.ARM_A9_HPS.dcan0 -pg 1
+preplace inst Computer_System.ARM_A9_HPS.dcan1 -pg 1
+preplace inst Computer_System.ARM_A9_HPS.nand0 -pg 1
+preplace inst Computer_System.ARM_A9_HPS.sdrctl -pg 1
+preplace inst Computer_System.ARM_A9_HPS.spim0 -pg 1
+preplace inst Computer_System.ARM_A9_HPS.rstmgr -pg 1
+preplace inst Computer_System.ARM_A9_HPS.spim1 -pg 1
+preplace inst Computer_System.ARM_A9_HPS.hps_io.border -pg 1
+preplace inst Computer_System.ARM_A9_HPS.l3regs -pg 1
+preplace inst Computer_System.VGA_Subsystem.VGA_Controller -pg 1
+preplace inst Computer_System.SDRAM -pg 1 -lvl 4 -y 1600
+preplace inst Computer_System.ARM_A9_HPS.timer -pg 1
+preplace inst Computer_System.ARM_A9_HPS.timer0 -pg 1
+preplace inst Computer_System.VGA_Subsystem.VGA_Dual_Clock_FIFO -pg 1
+preplace inst Computer_System.ARM_A9_HPS.f2s_sdram_ref_clk -pg 1
+preplace inst Computer_System.ARM_A9_HPS.arm_gic_0 -pg 1
+preplace inst Computer_System.ARM_A9_HPS.timer1 -pg 1
+preplace inst Computer_System.System_PLL.sys_pll -pg 1
+preplace inst Computer_System.ARM_A9_HPS.timer2 -pg 1
+preplace inst Computer_System.clock_bridge_0 -pg 1 -lvl 1 -y 210
+preplace inst Computer_System.ARM_A9_HPS.sdmmc -pg 1
+preplace inst Computer_System.ARM_A9_HPS.timer3 -pg 1
+preplace inst Computer_System.ARM_A9_HPS.bridges -pg 1
+preplace inst Computer_System.ARM_A9_HPS.gmac0 -pg 1
+preplace inst Computer_System.ARM_A9_HPS.gmac1 -pg 1
+preplace inst Computer_System.ARM_A9_HPS.sysmgr -pg 1
+preplace inst Computer_System.VGA_Subsystem.VGA_PLL -pg 1
+preplace inst Computer_System -pg 1 -lvl 1 -y 40 -regml 8 -regy -20
+preplace inst Computer_System.ARM_A9_HPS.dma -pg 1
+preplace netloc EXPORT<net_container>Computer_System</net_container>(SLAVE)Computer_System.system_pll_ref_clk,(SLAVE)System_PLL.ref_clk) 1 0 1 NJ
+preplace netloc EXPORT<net_container>Computer_System</net_container>(SLAVE)clock_bridge_0.in_clk,(SLAVE)Computer_System.clock_bridge_0_in_clk) 1 0 1 NJ
+preplace netloc POINT_TO_POINT<net_container>Computer_System</net_container>(MASTER)Pixel_DMA_Addr_Translation.master,(SLAVE)VGA_Subsystem.pixel_dma_control_slave) 1 1 2 460 1970 850
+preplace netloc EXPORT<net_container>Computer_System</net_container>(SLAVE)System_PLL.ref_reset,(SLAVE)Computer_System.system_pll_ref_reset) 1 0 1 NJ
+preplace netloc FAN_OUT<net_container>Computer_System</net_container>(SLAVE)AV_Config.clk,(SLAVE)SDRAM.clk,(MASTER)System_PLL.sys_clk,(SLAVE)Pixel_DMA_Addr_Translation.clock,(SLAVE)ARM_A9_HPS.f2h_axi_clock,(SLAVE)Onchip_SRAM.clk2,(SLAVE)VGA_Subsystem.sys_clk,(SLAVE)ARM_A9_HPS.h2f_axi_clock,(SLAVE)ARM_A9_HPS.h2f_lw_axi_clock) 1 1 4 420 620 NJ 620 1180 560 1720
+preplace netloc FAN_OUT<net_container>Computer_System</net_container>(SLAVE)Bus_master_video.clk,(MASTER)clock_bridge_0.out_clk,(SLAVE)Onchip_SRAM.clk1) 1 1 5 NJ 220 NJ 220 1140 540 NJ 540 2180
+preplace netloc EXPORT<net_container>Computer_System</net_container>(SLAVE)Computer_System.vga_pll_ref_reset,(SLAVE)VGA_Subsystem.vga_pll_ref_reset) 1 0 2 NJ 2180 NJ
+preplace netloc EXPORT<net_container>Computer_System</net_container>(SLAVE)Computer_System.vga_pll_ref_clk,(SLAVE)VGA_Subsystem.vga_pll_ref_clk) 1 0 2 NJ 2160 NJ
+preplace netloc EXPORT<net_container>Computer_System</net_container>(SLAVE)Computer_System.bus_master_video_external_interface,(SLAVE)Bus_master_video.external_interface) 1 0 6 NJ 200 NJ 200 NJ 200 NJ 200 NJ 220 NJ
+preplace netloc EXPORT<net_container>Computer_System</net_container>(SLAVE)Computer_System.sdram,(SLAVE)SDRAM.wire) 1 0 4 NJ 1670 NJ 1670 NJ 1670 NJ
+preplace netloc EXPORT<net_container>Computer_System</net_container>(SLAVE)ARM_A9_HPS.memory,(SLAVE)Computer_System.memory) 1 0 5 NJ 160 NJ 160 NJ 160 NJ 160 NJ
+preplace netloc EXPORT<net_container>Computer_System</net_container>(SLAVE)Computer_System.vga,(SLAVE)VGA_Subsystem.vga) 1 0 2 NJ 2140 NJ
+preplace netloc FAN_OUT<net_container>Computer_System</net_container>(MASTER)ARM_A9_HPS.h2f_lw_axi_master,(SLAVE)AV_Config.avalon_av_config_slave,(SLAVE)Pixel_DMA_Addr_Translation.slave,(SLAVE)VGA_Subsystem.char_buffer_control_slave) 1 1 5 480 600 NJ 600 1120 520 NJ 520 2140
+preplace netloc EXPORT<net_container>Computer_System</net_container>(SLAVE)Computer_System.onchip_sram_s1,(SLAVE)Onchip_SRAM.s1) 1 0 4 NJ 1330 NJ 1330 NJ 1330 NJ
+preplace netloc EXPORT<net_container>Computer_System</net_container>(SLAVE)ARM_A9_HPS.hps_io,(SLAVE)Computer_System.hps_io) 1 0 5 NJ 100 NJ 100 NJ 100 NJ 100 NJ
+preplace netloc EXPORT<net_container>Computer_System</net_container>(SLAVE)AV_Config.external_interface,(SLAVE)Computer_System.av_config) 1 0 4 NJ 640 NJ 640 NJ 640 NJ
+preplace netloc INTERCONNECT<net_container>Computer_System</net_container>(SLAVE)SDRAM.s1,(MASTER)ARM_A9_HPS.h2f_axi_master,(MASTER)VGA_Subsystem.pixel_dma_master,(MASTER)Bus_master_video.avalon_master,(SLAVE)Onchip_SRAM.s2,(SLAVE)VGA_Subsystem.char_buffer_slave) 1 1 6 500 1990 850 1990 1160 1230 NJ 1230 2200 180 2650
+preplace netloc EXPORT<net_container>Computer_System</net_container>(MASTER)System_PLL.sdram_clk,(MASTER)Computer_System.sdram_clk) 1 1 7 NJ 1950 NJ 1950 NJ 1950 NJ 1950 NJ 1950 NJ 1950 NJ
+preplace netloc INTERCONNECT<net_container>Computer_System</net_container>(SLAVE)AV_Config.reset,(SLAVE)Bus_master_video.reset,(SLAVE)Onchip_SRAM.reset2,(SLAVE)VGA_Subsystem.sys_reset,(SLAVE)Onchip_SRAM.reset1,(MASTER)System_PLL.reset_source,(MASTER)ARM_A9_HPS.h2f_reset,(SLAVE)Pixel_DMA_Addr_Translation.reset,(SLAVE)SDRAM.reset) 1 1 5 440 1310 NJ 1310 1200 580 NJ 580 2160
+levelinfo -pg 1 0 190 3010
+levelinfo -hier Computer_System 200 270 670 1100 1540 1950 2430 2900 2920

@@ -1,0 +1,21 @@
+# # File gsaved with Nlview version 6.3.8  2013-12-19 bk=1.2992 VDI=34 GEI=35
+# 
+preplace inst Audio_Subsystem.Audio -pg 1 -lvl 2 -y 130
+preplace inst Audio_Subsystem.Sys_Clk -pg 1 -lvl 1 -y 90
+preplace inst Audio_Subsystem -pg 1 -lvl 1 -y 40 -regy -20
+preplace inst Audio_Subsystem.Audio_PLL.audio_pll -pg 1
+preplace inst Audio_Subsystem.Audio_PLL.reset_from_locked -pg 1
+preplace inst Audio_Subsystem.Audio_PLL -pg 1 -lvl 2 -y 50
+preplace netloc EXPORT<net_container>Audio_Subsystem</net_container>(SLAVE)Audio_PLL.ref_clk,(SLAVE)Audio_Subsystem.audio_pll_ref_clk) 1 0 2 NJ 60 NJ
+preplace netloc EXPORT<net_container>Audio_Subsystem</net_container>(SLAVE)Sys_Clk.clk_in,(SLAVE)Audio_Subsystem.sys_clk) 1 0 1 NJ
+preplace netloc EXPORT<net_container>Audio_Subsystem</net_container>(SLAVE)Audio_Subsystem.audio,(SLAVE)Audio.external_interface) 1 0 2 NJ 180 NJ
+preplace netloc EXPORT<net_container>Audio_Subsystem</net_container>(SLAVE)Audio_Subsystem.audio_irq,(SLAVE)Audio.interrupt) 1 0 2 NJ 200 NJ
+preplace netloc POINT_TO_POINT<net_container>Audio_Subsystem</net_container>(MASTER)Sys_Clk.clk,(SLAVE)Audio.clk) 1 1 1 380
+preplace netloc EXPORT<net_container>Audio_Subsystem</net_container>(SLAVE)Sys_Clk.clk_in_reset,(SLAVE)Audio_Subsystem.sys_reset) 1 0 1 NJ
+preplace netloc POINT_TO_POINT<net_container>Audio_Subsystem</net_container>(SLAVE)Audio.reset,(MASTER)Sys_Clk.clk_reset) 1 1 1 340
+preplace netloc EXPORT<net_container>Audio_Subsystem</net_container>(SLAVE)Audio_Subsystem.audio_slave,(SLAVE)Audio.avalon_audio_slave) 1 0 2 NJ 160 NJ
+preplace netloc EXPORT<net_container>Audio_Subsystem</net_container>(MASTER)Audio_Subsystem.audio_reset,(MASTER)Audio_PLL.reset_source) 1 2 1 NJ
+preplace netloc EXPORT<net_container>Audio_Subsystem</net_container>(SLAVE)Audio_PLL.ref_reset,(SLAVE)Audio_Subsystem.audio_pll_ref_reset) 1 0 2 NJ 80 NJ
+preplace netloc EXPORT<net_container>Audio_Subsystem</net_container>(MASTER)Audio_PLL.audio_clk,(MASTER)Audio_Subsystem.audio_clk) 1 2 1 NJ
+levelinfo -pg 1 0 130 720
+levelinfo -hier Audio_Subsystem 140 170 460 620

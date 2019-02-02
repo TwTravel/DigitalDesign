@@ -1,0 +1,209 @@
+/*
+WARNING: Do NOT edit the input and output ports in this file in a text
+editor if you plan to continue editing the block that represents it in
+the Block Editor! File corruption is VERY likely to occur.
+*/
+/*
+Copyright (C) 1991-2015 Altera Corporation. All rights reserved.
+Your use of Altera Corporation's design tools, logic functions 
+and other software and tools, and its AMPP partner logic 
+functions, and any output files from any of the foregoing 
+(including device programming or simulation files), and any 
+associated documentation or information are expressly subject 
+to the terms and conditions of the Altera Program License 
+Subscription Agreement, the Altera Quartus II License Agreement,
+the Altera MegaCore Function License Agreement, or other 
+applicable license agreement, including, without limitation, 
+that your use is for the sole purpose of programming logic 
+devices manufactured by Altera and sold by Altera or its 
+authorized distributors.  Please refer to the applicable 
+agreement for further details.
+*/
+(header "symbol" (version "1.1"))
+(symbol
+	(rect 0 0 416 448)
+	(text "Audio_Subsystem" (rect 155 -1 230 11)(font "Arial" (font_size 10)))
+	(text "inst" (rect 8 432 20 444)(font "Arial" ))
+	(port
+		(pt 0 72)
+		(input)
+		(text "audio_ADCDAT" (rect 0 0 69 12)(font "Arial" (font_size 8)))
+		(text "audio_ADCDAT" (rect 4 61 76 72)(font "Arial" (font_size 8)))
+		(line (pt 0 72)(pt 160 72)(line_width 1))
+	)
+	(port
+		(pt 0 88)
+		(input)
+		(text "audio_ADCLRCK" (rect 0 0 76 12)(font "Arial" (font_size 8)))
+		(text "audio_ADCLRCK" (rect 4 77 82 88)(font "Arial" (font_size 8)))
+		(line (pt 0 88)(pt 160 88)(line_width 1))
+	)
+	(port
+		(pt 0 104)
+		(input)
+		(text "audio_BCLK" (rect 0 0 51 12)(font "Arial" (font_size 8)))
+		(text "audio_BCLK" (rect 4 93 64 104)(font "Arial" (font_size 8)))
+		(line (pt 0 104)(pt 160 104)(line_width 1))
+	)
+	(port
+		(pt 0 136)
+		(input)
+		(text "audio_DACLRCK" (rect 0 0 76 12)(font "Arial" (font_size 8)))
+		(text "audio_DACLRCK" (rect 4 125 82 136)(font "Arial" (font_size 8)))
+		(line (pt 0 136)(pt 160 136)(line_width 1))
+	)
+	(port
+		(pt 0 176)
+		(input)
+		(text "audio_pll_ref_clk_clk" (rect 0 0 83 12)(font "Arial" (font_size 8)))
+		(text "audio_pll_ref_clk_clk" (rect 4 165 130 176)(font "Arial" (font_size 8)))
+		(line (pt 0 176)(pt 160 176)(line_width 1))
+	)
+	(port
+		(pt 0 216)
+		(input)
+		(text "audio_pll_ref_reset_reset" (rect 0 0 102 12)(font "Arial" (font_size 8)))
+		(text "audio_pll_ref_reset_reset" (rect 4 205 154 216)(font "Arial" (font_size 8)))
+		(line (pt 0 216)(pt 160 216)(line_width 1))
+	)
+	(port
+		(pt 0 256)
+		(input)
+		(text "audio_slave_address[1..0]" (rect 0 0 103 12)(font "Arial" (font_size 8)))
+		(text "audio_slave_address[1..0]" (rect 4 245 154 256)(font "Arial" (font_size 8)))
+		(line (pt 0 256)(pt 160 256)(line_width 3))
+	)
+	(port
+		(pt 0 272)
+		(input)
+		(text "audio_slave_chipselect" (rect 0 0 90 12)(font "Arial" (font_size 8)))
+		(text "audio_slave_chipselect" (rect 4 261 136 272)(font "Arial" (font_size 8)))
+		(line (pt 0 272)(pt 160 272)(line_width 1))
+	)
+	(port
+		(pt 0 288)
+		(input)
+		(text "audio_slave_read" (rect 0 0 70 12)(font "Arial" (font_size 8)))
+		(text "audio_slave_read" (rect 4 277 100 288)(font "Arial" (font_size 8)))
+		(line (pt 0 288)(pt 160 288)(line_width 1))
+	)
+	(port
+		(pt 0 304)
+		(input)
+		(text "audio_slave_write" (rect 0 0 70 12)(font "Arial" (font_size 8)))
+		(text "audio_slave_write" (rect 4 293 106 304)(font "Arial" (font_size 8)))
+		(line (pt 0 304)(pt 160 304)(line_width 1))
+	)
+	(port
+		(pt 0 320)
+		(input)
+		(text "audio_slave_writedata[31..0]" (rect 0 0 110 12)(font "Arial" (font_size 8)))
+		(text "audio_slave_writedata[31..0]" (rect 4 309 172 320)(font "Arial" (font_size 8)))
+		(line (pt 0 320)(pt 160 320)(line_width 3))
+	)
+	(port
+		(pt 0 376)
+		(input)
+		(text "sys_clk_clk" (rect 0 0 48 12)(font "Arial" (font_size 8)))
+		(text "sys_clk_clk" (rect 4 365 70 376)(font "Arial" (font_size 8)))
+		(line (pt 0 376)(pt 160 376)(line_width 1))
+	)
+	(port
+		(pt 0 416)
+		(input)
+		(text "sys_reset_reset_n" (rect 0 0 77 12)(font "Arial" (font_size 8)))
+		(text "sys_reset_reset_n" (rect 4 405 106 416)(font "Arial" (font_size 8)))
+		(line (pt 0 416)(pt 160 416)(line_width 1))
+	)
+	(port
+		(pt 0 120)
+		(output)
+		(text "audio_DACDAT" (rect 0 0 69 12)(font "Arial" (font_size 8)))
+		(text "audio_DACDAT" (rect 4 109 76 120)(font "Arial" (font_size 8)))
+		(line (pt 0 120)(pt 160 120)(line_width 1))
+	)
+	(port
+		(pt 416 72)
+		(output)
+		(text "audio_clk_clk" (rect 0 0 53 12)(font "Arial" (font_size 8)))
+		(text "audio_clk_clk" (rect 348 61 426 72)(font "Arial" (font_size 8)))
+		(line (pt 416 72)(pt 256 72)(line_width 1))
+	)
+	(port
+		(pt 416 112)
+		(output)
+		(text "audio_irq_irq" (rect 0 0 50 12)(font "Arial" (font_size 8)))
+		(text "audio_irq_irq" (rect 350 101 428 112)(font "Arial" (font_size 8)))
+		(line (pt 416 112)(pt 256 112)(line_width 1))
+	)
+	(port
+		(pt 416 152)
+		(output)
+		(text "audio_reset_reset" (rect 0 0 71 12)(font "Arial" (font_size 8)))
+		(text "audio_reset_reset" (rect 324 141 426 152)(font "Arial" (font_size 8)))
+		(line (pt 416 152)(pt 256 152)(line_width 1))
+	)
+	(port
+		(pt 0 336)
+		(output)
+		(text "audio_slave_readdata[31..0]" (rect 0 0 110 12)(font "Arial" (font_size 8)))
+		(text "audio_slave_readdata[31..0]" (rect 4 325 166 336)(font "Arial" (font_size 8)))
+		(line (pt 0 336)(pt 160 336)(line_width 3))
+	)
+	(drawing
+		(text "audio" (rect 130 43 290 99)(font "Arial" (color 128 0 0)(font_size 9)))
+		(text "ADCDAT" (rect 165 67 366 144)(font "Arial" (color 0 0 0)))
+		(text "ADCLRCK" (rect 165 83 372 176)(font "Arial" (color 0 0 0)))
+		(text "BCLK" (rect 165 99 354 208)(font "Arial" (color 0 0 0)))
+		(text "DACDAT" (rect 165 115 366 240)(font "Arial" (color 0 0 0)))
+		(text "DACLRCK" (rect 165 131 372 272)(font "Arial" (color 0 0 0)))
+		(text "audio_clk" (rect 257 43 568 99)(font "Arial" (color 128 0 0)(font_size 9)))
+		(text "clk" (rect 241 67 500 144)(font "Arial" (color 0 0 0)))
+		(text "audio_irq" (rect 257 83 568 179)(font "Arial" (color 128 0 0)(font_size 9)))
+		(text "irq" (rect 242 107 502 224)(font "Arial" (color 0 0 0)))
+		(text "audio_pll_ref_clk" (rect 60 147 222 307)(font "Arial" (color 128 0 0)(font_size 9)))
+		(text "clk" (rect 165 171 348 352)(font "Arial" (color 0 0 0)))
+		(text "audio_pll_ref_reset" (rect 46 187 206 387)(font "Arial" (color 128 0 0)(font_size 9)))
+		(text "reset" (rect 165 211 360 432)(font "Arial" (color 0 0 0)))
+		(text "audio_reset" (rect 257 123 580 259)(font "Arial" (color 128 0 0)(font_size 9)))
+		(text "reset" (rect 231 147 492 304)(font "Arial" (color 0 0 0)))
+		(text "audio_slave" (rect 92 227 250 467)(font "Arial" (color 128 0 0)(font_size 9)))
+		(text "address" (rect 165 251 372 512)(font "Arial" (color 0 0 0)))
+		(text "chipselect" (rect 165 267 390 544)(font "Arial" (color 0 0 0)))
+		(text "read" (rect 165 283 354 576)(font "Arial" (color 0 0 0)))
+		(text "write" (rect 165 299 360 608)(font "Arial" (color 0 0 0)))
+		(text "writedata" (rect 165 315 384 640)(font "Arial" (color 0 0 0)))
+		(text "readdata" (rect 165 331 378 672)(font "Arial" (color 0 0 0)))
+		(text "sys_clk" (rect 117 347 276 707)(font "Arial" (color 128 0 0)(font_size 9)))
+		(text "clk" (rect 165 371 348 752)(font "Arial" (color 0 0 0)))
+		(text "sys_reset" (rect 103 387 260 787)(font "Arial" (color 128 0 0)(font_size 9)))
+		(text "reset_n" (rect 165 411 372 832)(font "Arial" (color 0 0 0)))
+		(text " system " (rect 381 432 810 874)(font "Arial" ))
+		(line (pt 160 32)(pt 256 32)(line_width 1))
+		(line (pt 256 32)(pt 256 432)(line_width 1))
+		(line (pt 160 432)(pt 256 432)(line_width 1))
+		(line (pt 160 32)(pt 160 432)(line_width 1))
+		(line (pt 161 52)(pt 161 140)(line_width 1))
+		(line (pt 162 52)(pt 162 140)(line_width 1))
+		(line (pt 255 52)(pt 255 76)(line_width 1))
+		(line (pt 254 52)(pt 254 76)(line_width 1))
+		(line (pt 255 92)(pt 255 116)(line_width 1))
+		(line (pt 254 92)(pt 254 116)(line_width 1))
+		(line (pt 161 156)(pt 161 180)(line_width 1))
+		(line (pt 162 156)(pt 162 180)(line_width 1))
+		(line (pt 161 196)(pt 161 220)(line_width 1))
+		(line (pt 162 196)(pt 162 220)(line_width 1))
+		(line (pt 255 132)(pt 255 156)(line_width 1))
+		(line (pt 254 132)(pt 254 156)(line_width 1))
+		(line (pt 161 236)(pt 161 340)(line_width 1))
+		(line (pt 162 236)(pt 162 340)(line_width 1))
+		(line (pt 161 356)(pt 161 380)(line_width 1))
+		(line (pt 162 356)(pt 162 380)(line_width 1))
+		(line (pt 161 396)(pt 161 420)(line_width 1))
+		(line (pt 162 396)(pt 162 420)(line_width 1))
+		(line (pt 0 0)(pt 416 0)(line_width 1))
+		(line (pt 416 0)(pt 416 448)(line_width 1))
+		(line (pt 0 448)(pt 416 448)(line_width 1))
+		(line (pt 0 0)(pt 0 448)(line_width 1))
+	)
+)

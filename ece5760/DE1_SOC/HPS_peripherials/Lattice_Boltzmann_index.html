@@ -1,0 +1,85 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>Lattice Boltzmann</title>
+</head>
+
+<body>
+<h2 align="center">DE1-SoC:
+  <br />
+  Lattice Boltzmann <br />
+Cornell ece5760<br />
+</h2>
+<ul>
+</ul>
+<h3>Lattice Boltzmann</h3>
+<p>Lattice Boltzmann methods can be used to simulate fluid flow on a grid of cells. The goal is to parallelize the LB calculation onto the FPGA, but there are a few steps to do first. First figure out the algorithm and tune it in matlab. Then 'devectorize' into C. Then build FPGA hardware and parallelize. Nowicki and Claesen give one approach to implementing the FPGA hardware.</p>
+<p>The fluid flow is abstracted into continuous-valued densities, flowing in eight discrete directions from a given cell, with zero velocity flow as a ninth flow. Constrains are placed on the densities to conserve momentum and mass. At any time step, eight densities from neighboring cells stream into a cell where they 'collide', are mixed, then on the next time step, stream to new cells. The images below were taken from O'Brien 2008 to show the propagation and collision steps.</p>
+<p>Streaming: The distribution for a cell is copied to the eight cells around it. (from O'Brien 2008 )<br />
+  <img src="../Lattice_Boltzmann/d2q9_streaming.PNG" width="774" height="239" alt=""/><br />
+  Collision: Velocity distribution 
+  modeled after He and Luo (1997).<br />
+  <img src="../Lattice_Boltzmann/d2q9_collision.PNG" width="735" height="221" alt=""/></p>
+<p> Boundaries are handled by assuming 'no slip' conditions so that streams hitting a boundary cell are bounced back in the direction they came from. The image below is again from O'Brien 2008. Discrete streams that go into boudary cells are returned to the originating cell in the oppposite directions. <a href="../Lattice_Boltzmann/boundaries2.PNG">This slightly more detailed image</a> is from Nicolas Delbosc labeling the density vectors.<br />
+<img src="../Lattice_Boltzmann/boundaries.PNG" width="750" height="253" alt=""/></p>
+<p><strong>Matlab implementation</strong></p>
+<p>The <a href="../Lattice_Boltzmann/Lattice_Boltzman_paint.m">first code</a> is a mash-up of the three sources below. The overall framework is from Haslam, but modified to use the simpler (no division) update function of Nowicki and Claesen. The Palabos code was used to understand the scaling of various constants, partcularly the relaxation constant, omega. A frame from the <a href="../Lattice_Boltzmann/vonKarman.mp4">solution(mp4)</a> is shown below with a <a href="../../../../../../https@en.wikipedia.org/wiki/K_25C3_25A1rm_25C3_25A1n_vortex_street">von Karman vortex street</a> in the wake of the flat plate at x=100.</p>
+<p><img src="../Lattice_Boltzmann/Vortex_street.png" width="784" height="196" alt=""/><br />
+  Laminar flow past the flat plate at lower omega (higher dynamic viscosity).<br />
+<img src="../Lattice_Boltzmann/laminar.png" width="779" height="191" alt=""/></p>
+<p>The <a href="../Lattice_Boltzmann/Lattice_Boltzman_jet.m">second code</a> implements a jet which pushes fliud to the right in a zero velocity medium. <br />
+  The region has walls top/bottom and is toroidally connected left/right.<br />
+  There is also a particle (white disc) advected by the flow. (<a href="../Lattice_Boltzmann/jet.mp4">mp4</a>)<br />
+  Another version has <a href="../Lattice_Boltzmann/jet_100balls.mp4">100 advected particles</a>. (<a href="../../../../../../https@www.youtube.com/watch@v=KlpPrX3S0Dw&list=PLKcjQ_UFkrd7UcOVMm39A6VdMbWWq-e_c&index=25">youtube</a>)<br />
+<img src="../Lattice_Boltzmann/jet1.png" width="785" height="189" alt=""/><br />
+A <a href="../Lattice_Boltzmann/Lattice_Boltzman_jet_color.m">variant</a> injects particles continuously into the jet and surpresses the color coding of velocity. (<a href="../Lattice_Boltzmann/jet_black_advect.mp4">mp4</a>)(<a href="../../../../../../https@youtu.be/252TwSs7btA">youtube</a>)<br />
+One particle per time step is injected into the jet inlet, so the number maxes out at 40000 particles.
+<br />
+With bigger particles (<a href="../Lattice_Boltzmann/jet_black_advect_2.mp4">mp4</a>). <br />
+<img src="../Lattice_Boltzmann/jet_black_1.PNG" width="693" height="182" alt=""/></p>
+<p>A <a href="../Lattice_Boltzmann/Lattice_Boltzman_moving_source.m">moving velocity source</a> is a model for an interactive simulation or game. A velocity source is<br />
+moved along the x-direction with a source speed protional to the movment speed. <br />
+The code needs work for stability, but produces nice <a href="../../../../../../https@youtu.be/AYJGSJmglx4">animation</a>. I suspect that the distribution functions <br />
+for fluid speed from the source need work.<br />
+<img src="../Lattice_Boltzmann/moving_source2.png" width="680" height="204" alt=""/></p>
+<p>A <a href="../Lattice_Boltzmann/Lattice_Boltzman_cell.m">test code</a> implements a square region with a driven edge. A main vortex forms with two weak<br />
+  vortices in the upper corners.
+  Comparision with  plots in Perumala and Dassb suggests a <br />
+  Reynolds number of about 1000-2000. (<a href="../Lattice_Boltzmann/driven_lid.mp4">mp4</a>). The velocity pulse at the very beginning of the animation<br />
+  is a weak sound wave resulting from initial conditions.
+</p>
+<p><strong>C implementation</strong></p>
+<p>&nbsp;</p>
+<hr />
+<p><strong>References</strong></p>
+<p><a href="../../../../../../ieeexplore.ieee.org/stamp/stamp.jsp@arnumber=5724497">SoC  Architecture  for  Real-Time  Interactive  Painting  based  on  Lattice-Boltzmann</a><br />
+Domien  Nowicki,  Luc Claesen  <br />
+2010 17th IEEE International Conference on Electronics, Circuits and Systems <br />
+Year: 2010 Pages: 235 - 238, DOI: 10.1109/ICECS.2010.5724497</p>
+<p><a href="../../../../../../exolete.com/lbm/default.htm">Lattice Boltzmann Matlab Scripts</a><br />
+Iain Haslam, March 2006.</p>
+<p><a href="../../../../../../wiki.palabos.org/numerics_3Acodes">Lattice Boltzmann in various languages</a><br />
+  from 
+<a href="../../../../../../www.palabos.org/default.htm">Palabos is an open-source CFD solver based on the lattice Boltzmann method.</a></p>
+<p><a href="../../../../../../oaktrust.library.tamu.edu/bitstream/handle/1969.1/86068/OBrien.pdf@sequence=1">A FRAMEWORK FOR DIGITAL WATERCOLOR</a> <br />
+A Thesis  by  PATRICK O’BRIEN 2008, Texas A&amp;M University </p>
+<p><a href="../../../../../../https@link.springer.com/article/10.1023/B_3AJOSS.0000015179.12689.e4">Lattice  boltzmann  model  for the incompressible  navier-stokes  equation</a><br />
+  X.  He and L.-S.  Luo,  <br />  
+Journal  of  Statistical  Physics,  vol.  88,  no.  3,  pp. 927-944,  Aug 1997. </p>
+<p><a href="../../../../../../www.efm.leeds.ac.uk/~mnnd/web_presentation/villanova_2015/#/default.htm">Real-Time fluid Simulation<br />
+</a>Nicolas Delbosc; School of Mechanical Engineering University of Leeds, England </p>
+<p><a href="../../../../../../www.sciencedirect.com/science/article/pii/S0307904X12005252">Application of lattice Boltzmann method for incompressible viscous flows     </a><br />
+  D. Arumuga Perumala,  Anoop K. Dassb.<br />
+Applied Mathematical Modelling Volume 37, Issue 6, 15 March 2013, Pages 4075–4092  </p>
+<p><a href="../../../../../../onlinelibrary.wiley.com/doi/10.1002/cav.143/epdf">Simulation of miscible binary mixtures based on lattice Boltzmann method</a><br />
+  Hongbin Zhu , Xuehui Liu, Youquan Liu and Enhua Wu  <br />
+  COMPUTER ANIMATION AND VIRTUAL WORLDS Comp. Anim. Virtual Worlds 2006; 17 : 403–410  <br />
+</p>
+<hr />
+<p>Copyright Cornell University 
+  <!-- #BeginDate format:Am1 -->June 12, 2017<!-- #EndDate -->
+</p>
+<p>&nbsp;</p>
+</body>
+</html>

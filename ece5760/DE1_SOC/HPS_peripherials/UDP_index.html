@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>UDP</title>
+</head>
+
+<body>
+<h2 align="center">DE1-SoC UDP
+ <br />
+Cornell ece5760</h2>
+<p>&nbsp;</p>
+<h3>HPS  UDP communication</h3>
+<p>Linux on the DE1-SoC supports full  <a href="../../../../../../www.linfo.org/internet_protocol.html">IP</a> which supports <a href="../../../../../../www.linfo.org/udp.html">UDP</a> and <a href="../../../../../../www.linfo.org/tcp_ip.html">TCI/IP</a> utilities via ethernet.<br />
+  I have not used TCP. The examples below all use UDP.
+  <br />
+Setting up a UDP communication channel is nicely described at <a href="../../../../../../www.linuxhowtos.org/C_C++/socket.htm">Linux Howtos</a>.<br />
+Connections are specfied with a <a href="../../../../../../https@en.wikipedia.org/wiki/IP_address">IP address</a> and a <a href="../../../../../../https@docs.oracle.com/javase/tutorial/networking/sockets/definition.html">socket</a>, which results in a two-way communications channel.</p>
+<p><strong>Examples:</strong></p>
+<p>--<strong>UDP communication from HPS to outside world</strong> (ARM server)<br />
+  Sending information to/from the FPGA via the ARM ethernet would be useful for a number of projects. The first code modifies the audio generation code to send the current note being played across a UDP connection to Matlab running on a desk machine. The <a href="../DE1_soc_computer/UDP_comm/media_brl4_8_audio.c">ARM code</a> opens a socket on port 9090 (do not use ports below 1024) and <a href="../../../../../../https@linux.die.net/man/2/sendto">sends</a> data once/sec to the port. The <a href="../DE1_soc_computer/UDP_comm/UDP_receive.m">Matlab code</a> running on the PC opens a UDP object, then just listens and echos the string to the command window. The code is based on the useful UDP material at <a href="../../../../../../www.linuxhowtos.org/C_C++/socket.htm">linuxhowtos.org</a>, particularly <a href="../../../../../../www.linuxhowtos.org/data/6/server_udp.c">server_udp.c.</a>
+<p><strong>--UDP communication from outside world to HPS</strong> (ARM client)<br />
+Sending slow (human rate) commands to a program can be done by setting up a non-blocking UDP <a href="../../../../../../https@linux.die.net/man/2/recvfrom">receive</a> function. Each time through the main event loop, the program checks for a valid packet. The <a href="../DE1_soc_computer/UDP_comm/UDP_send.m">Matlab code</a> asks the human for a sine wave frequency and sends the number to the ARM. The <a href="../DE1_soc_computer/UDP_comm/media_brl4_9_audio.c">ARM audio code</a> computes the DDS increment for the frequency and sends the samples to the audio codec FIFO and the <a href="../DE1_soc_computer/UDP_comm/media_brl4_9_video.c">video process</a>.
+Use the sof file from the &quot;<em>better chopped down system</em>&quot; on the <a href="univ_pgm_computer.index.html">University Computer</a> page. 
+<p><strong>--UDP audio  from Matlab &gt;udp&gt; HPS &gt;bus&gt; FPGA audio FIFO</strong><br />
+Sending audio rate packets from <a href="../DE1_soc_computer/UDP_comm/UDP_sound/UDP_send_music_echo.m">Matlab code</a> is fairly easy, but setting up a ACK function for sync is not because the Matlab UDP receive function is too slow. The result is an unsynced system that works most of the time, but has to be tuned with a spin-wait loop in Matlab. To further reduce overhead, eight audio samples were sent in each packet by matlab. At the <a href="../DE1_soc_computer/UDP_comm/UDP_sound/media_brl4_10_audio.c">ARM code</a> end, the eight samples were duplicated 6 times each to expand the sample rate to 48 KHz, the default audio rate of the <a href="../../../../../../ftp@ftp.altera.com/up/pub/Altera_Material/15.1/University_Program_IP_Cores/Audio_Video/Audio.pdf">Qsys audio core</a>. The main loop makes sure there is enough space in the FIFO for 48 samples, reads a packet, and loads the FIFO. <a href="../DE1_soc_computer/UDP_comm/UDP_sound/AllDigits8khz.WAV">Audio example file</a>. The <a href="../DE1_soc_computer/UDP_comm/UDP_sound/media_brl4_10_video.c">video process</a> records elapsed time of audio using memory shared with the audio process.
+Use the sof file from the &quot;<em>better chopped down system</em>&quot; on the <a href="univ_pgm_computer.index.html">University Computer</a> page. 
+<p><strong>--UDP audio  from Matlab &gt;udp&gt; ARM receive process &gt;ipc&gt; ARM fpga process &gt;bus&gt; FPGA audio FIFO</strong><br />
+  Decoupling the packet receive from the audio-rate FIFO operation results in more robust timing. The <a href="../DE1_soc_computer/UDP_comm/UDP_sound/media_brl4_audio_udp_ipc.c">ARM receive process</a> listens for packets and fills a buffer much faster than <a href="../DE1_soc_computer/UDP_comm/UDP_sound/UDP_audio_ipc.m">Matlab</a> can send the packets. The buffer is shared with a <a href="../DE1_soc_computer/UDP_comm/UDP_sound/media_brl4_audio_fpga_ipc.c">second process</a>, which reads the buffer and fills the audio FIFO at 48 Ksamples/sec. An <code>int</code> buffer of length 2<sup>16</sup> can hold 8 seconds of sound. The FIFO filling process waits for samples to appear in the receive process. The receive process waits for a start/reset command from Matlab. Matlab is sending about 2700 packets/sec each with eight 32-bit audio samples.
+Use the sof file from the &quot;<em>better chopped down system</em>&quot; above. 
+<p>
+<hr />
+<p>References:</p>
+<p><a href="../index.html">DE1-SOC</a> literature list</p>
+<p><a href="../../../eceprojectsland/STUDENTPROJ/2014to2015/ayk33/Independent_Study.pdf">Using the DE1-SOC FPGA</a> by Ahmed Kamel </p>
+<p><a href="../../../eceprojectsland/STUDENTPROJ/2014to2015/ayk33/index.html">Stereoscopic Depth on an FPGA via OpenCL</a> by Ahmed Kamel and Aashish Agarwal</p>
+<p><a href="../../../eceprojectsland/STUDENTPROJ/2015to2016/sm893_mkp53/Final%20Report%20ECE%204999.pdf">Running Linux on DE1-SOC</a> by MANISH PATEL and SYED TAHMID MAHBUB</p>
+<p><a href="../../FinalProjects/s2015/spp66_aa2264_ayk33/spp66_aa2264_ayk33/spp66_aa2264_ayk33/FPGA_ARM.html">OpenCL on DE1-SOC</a> Sahil P Potnis (<a href="mailto:spp66@cornell.edu">spp66@cornell.edu)</a> Aashish Agarwal (<a href="mailto:aa2264@cornell.edu">aa2264@cornell.edu</a>) Ahmed Kamel (<a href="mailto:ayk33@cornell.edu">ayk33@cornell.edu</a>)</p>
+<p><a href="../../../../../../ftp@ftp.altera.com/up/pub/Altera_Material/15.1/University_Program_IP_Cores/Audio_Video/Audio.pdf">Audio Core</a> (Qsys University Program 15.1) <a href="../Audio_core.pdf">local copy</a></p>
+<p><a href="../../../../../../ftp@ftp.altera.com/up/pub/Altera_Material/15.1/University_Program_IP_Cores/Audio_Video/Video.pdf">Video Core</a> (Qsys University Program 15.1) <a href="../Video_core.pdf">local copy</a></p>
+<p>Analog input Core  (Qsys University Program 15.1) <a href="../ADC_Controller.pdf">local copy</a></p>
+<p><a href="../External_Bus_to_Avalon_Bridge.pdf">External to Avalon Bus Master</a> (<em>external</em> here means<em> <strong>in the FPGA</strong></em>, but not in the Qsys bus structure)</p>
+<p><a href="../Avalon_to_External_Bus_Bridge.pdf">Avalon to External Bus Slave</a> (<em>external</em> here means<em> <strong>in the FPGA</strong></em>, but not in the Qsys bus structure)</p>
+<hr />
+<p>Copyright Cornell University 
+  <!-- #BeginDate format:Am1 -->April 11, 2018<!-- #EndDate -->
+</p>
+<p>&nbsp;</p>
+</body>
+</html>

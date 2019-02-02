@@ -1,0 +1,219 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>FP_DDA</title>
+</head>
+
+<body>
+<h2>Floating Point DDA on FPGA<br>
+A modern <em>Analog</em>-style Computer</h2>
+<p>The <a href="../../../../../../en.wikipedia.org/wiki/Differential_Analyzer">Digital Differential Analyzer</a> (DDA)  is a device to directly compute the solution of differential equations. The DDA is a simulation of an <a href="../../../../../../www.play-hookey.com/analog/default.htm">analog computer</a>, and  is inherently parallel in operation. It can be mapped easily into an FPGA by defining mathematical integrators, adders, multipliers and other operations, then wiring them together to produce the desired dynamics. </p>
+<p>For more background on analog computers see:</p>
+<ul>
+  <li><a href="../../../../../../www.owlnet.rice.edu/~elec301/Projects99/anlgcomp/default.htm">Building an analog computer</a> (Rice) </li>
+  <li><a href="../../../../../../www.vaxman.de/analog_computing/analog_computing.html">Analog Computing</a> (Vaxman)</li>
+  <li><a href="../../DDA/HbkOfAnalogComputation_5-71.pdf">Handbook of Analog Computation</a> (EAI)</li>
+  <li><a href="../../../../../../www.adi.com/pdfs/Howe1June05.pdf">Fundamentals of the Analog Computer</a> (Howe)  </li>
+  <li><a href="../../../../../../archive.computerhistory.org/resources/text/Systron_Donner/SystronDonner.3300.1968.102646232.pdf">Educational Analog Computer</a> (Systron-Donner)</li>
+  <li><a href="../../DDA/feshman_notebook.jpg">Page from my freshman Physics lab notebook</a> showing coupled oscillator analysis on analog computer</li>
+</ul>
+<hr>
+<p>The general approach using DDAs will be to simulate a system of first-order differential equations, which can be nonlinear. <br>
+  Analog computers use operational amplifiers to do mathematical integration. <br>
+  We will use digital summers and registers. For any set of differential equations with state variables <code>v1</code> to <code>vm</code>: <code><br>
+  <br>
+dv1/dt = f1(t,v1,v2,v3,...vm) <br>
+dv2/dt = f2(t,v1,v2,v3,...vm)<br>
+dv3/dt = f3(t,v1,v2,v3,...vm)</code><br>
+...<br>
+<code>dvm/dt = fm(...) </code><br>
+<br>
+We will build the following circuitry to perform an Euler integration approximation to these equations in the form <br>
+<br>
+<code>v1(n+1) = v1(n) + dt*(f1(t,v1(n),v2(n),v3(n),...vm(n))<br>
+v2(n+1) = v2(n) + dt*(f2(t,v1(n),v2(n),v3(n),...vm(n))<br>
+v3(n+1) = v3(n) + dt*(f3(t,v1(n),v2(n),v3(n),...vm(n))<br>
+...<br>
+vm(n+1) = vm(n) + dt*(fm(...))</code><code><br> 
+  </code><br>
+  Where the variable values at time step <code>n</code> are updated to form the values at time step <code>n+1</code>. Each equation will require one Euler integrator. <br>
+The multiply may be replaced by a shift-right if <code>dt</code> is chosen to be a power of two. Most of the design complexity will be in calculating <code>F(t,V(n))</code>. <code>V(n)</code> is a vector of all the state variables. Later we will replace this with a more stable integrator.<br>
+  <img src="Integrator.png" width="554" height="219"> <br>
+</p>
+<p>We also need a number representation. I chose 18-bit mantissa, 8-bit exponent <a href="../HPS_peripherials/Floating_Point_index.html">floating point format</a> written by Mark Eiding and modified for Cyclone5 by me.</p>
+<ul>
+  <li>Functions: 
+    <ul>
+      <li>floating add (pipelined, combinatorial)</li>
+      <li>floating multiply -- combinatorial</li>
+      <li>reciprocal square root (5-stage pipeline)</li>
+      <li>negate -- invert the sign bit</li>
+      <li>absolute value -- zero the sign bit</li>
+      <li>shift -- just increment/decrement the exponent (but watch out for exponent==0)</li>
+      <li>integer-to-float, float-to-integer conversion -- 16-bit integer conversion</li>
+    </ul>
+  </li>
+  <li>Format:<br />
+    <code>bit 26: Sign (0: pos, 1: neg) <br />
+      bits[25:18]: Exponent (unsigned)<br />
+      bits[17:0]:  Fraction (unsigned) <br />
+      (-1)^SIGN * 2^(EXP-127) * (1+.FRAC) </code></li>
+  <li>Since denorms are not allowed, the high order bit in the fraction is <br />
+    always <code>1</code>, and does not need to be stored. </li>
+  <li>Example: <code>-25.0<br />
+    ((-1)**1) * (1.100100000000000000) * (2**(131-127))<br />
+    -1     *      1.5625            *      16<br />
+    1 10000011 100100000000000000 (Note that the integer part of 1.1001 is not actually stored)<br />
+    0x60E4000 </code></li>
+  <li>If the exponent is zero then the value should be treated as zero independent of the mantissa </li>
+</ul>
+<p> A few numbers are shown in the table below. </p>
+<table width="27%"  border="1">
+      <tr>
+        <td width="35%" height="50"><div align="center"><strong>Decimal number </strong></div></td>
+        <td width="65%"><div align="center">
+            <p><strong>27-bit floating<br>
+            </strong><strong>representation </strong></p>
+        </div></td>
+      </tr>
+      <tr>
+        <td height="31" align="center">2.0</td>
+        <td align="center">27'h2000000</td>
+      </tr>
+      <tr>
+        <td><div align="center">1.0</div></td>
+        <td><div align="center">27'h1fc0000</div></td>
+      </tr>
+      <tr>
+        <td><div align="center">0.5</div></td>
+        <td><div align="center">27'h1f80000</div></td>
+      </tr>
+      <tr>
+        <td><div align="center">0</div></td>
+        <td><div align="center">27'h0000000</div></td>
+      </tr>
+      <tr>
+        <td><div align="center">-0.5</div></td>
+        <td><div align="center">27'h5f80000 </div></td>
+      </tr>
+      <tr>
+        <td><div align="center">-1.0</div></td>
+        <td><div align="center">27'h5fc0000</div></td>
+      </tr>
+      <tr>
+        <td><div align="center">-2.0</div></td>
+        <td><div align="center">27'h6000000</div></td>
+      </tr>
+</table>
+
+<hr>
+<p><strong><a name="SecondOrderImpulse"></a>Second order system (<a href="../../../../../../en.wikipedia.org/wiki/Harmonic_oscillator#Damped.2C_driven_harmonic_oscillator">damped spring-mass oscillator</a>):</strong><br>
+  As an example, consider the linear, second-order differential equation resulting from a damped spring-mass system:<br>
+  <br>
+  <code>d<sup>2</sup>x/dt<sup>2</sup> = -k/m*x-d/m*(dx/dt)<br>
+  <br>
+  </code>where k is the spring constant, d the damping coefficient, m the mass, and x the displacement. We will simulate this by converting the second-order system into a coupled first-order system. If we let <code>v1=x</code> and<code> v2=dx/dt</code> then the second order equation is equivalent to <br>
+  <br>
+  <code>dv1/dt = v2<br>
+  dv2/dt = -k/m*v1-d/m*v2<br>
+  <br>
+  </code>These equations can be solved by wiring together two integrators, two multipliers and an adder as shown below. In the past this would have been done by using operational amplifiers  to compute each mathematical operation. Each integrator must be supplied with an initial condition. <code>The first pass of the<br>
+  <br>
+  </code><img src="SecondOrder.png" width="434" height="133"><br>
+  <br>
+Converting this diagram to run on the Cyclone5 requires control from the HPS, working along with the parallel solver on the FPGA side. In this first example, the HPS is setting up the constants, controlling reset, and controlling the analog_clock for each sample. One each sample clock, the solution is advanced one dt time-step by the parallel solver. The state of the system is maintained by the registers in the floating point integrators, while the rest of the modules are combinatorial. As seen below, the Euler method integrator uses a floating point shifter and an adder, for total size of about 550 ALMs. During testing a bug was found in the floating point shifter. The original version attempted to shift a zero value with unpredictable results. </p>
+<p style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">////////////////////////////////////////////////<br>
+  //// FP Euler integrator ///////////////////////<br>
+  ////////////////////////////////////////////////<br>
+  module fp_integrator(out,funct,InitialOut,dt,clk,reset);<br>
+output [26:0] out; 				//the state variable V<br>
+input  [26:0] funct;      //the dV/dt function<br>
+input  [7:0] dt ;				// in units of SHIFT-right<br>
+input clk, reset; 			// reset high<br>
+input  [26:0] InitialOut; //the initial state variable V<br>
+<br>
+wire	[26:0] out, funct_x_dt, new_v1 ;<br>
+reg 	[26:0] v1 ;<br>
+<br>
+always @ (posedge clk) <br>
+begin<br>
+if (reset==1) //reset <br>
+v1 &lt;= InitialOut ; // <br>
+else <br>
+v1 &lt;= new_v1 ; <br>
+end<br>
+// v1 = v1 + (funct&gt;&gt;dt)<br>
+FpShift times_dt(funct, dt, funct_x_dt); <br>
+FpAdd_c integrator_sum(v1, funct_x_dt, new_v1);<br>
+//<br>
+assign out = v1 ;<br>
+endmodule<br>
+//////////////////////////////////////////////////</p>
+<p>With an integrator, we can now code the two differential equations representing the factored second-order system above as<br>
+      <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">// form funct2 = (-v1xK_M -v2xD_M)<br>
+FpMul k_m(k_over_m, v1, k_m_x_v1);<br>
+FpMul d_m(d_over_m, v2, d_m_x_v2);<br>
+FpAdd_c fu2(k_m_x_v1, d_m_x_v2, funct2);<br>
+// wire the intergrators <br>
+// initial conditions of 1.0 and zero.<br>
+// dt is 2^(-9)
+<br>
+// module fp_integrator(out,input_funct,InitialOut,dt,clk,reset);<br>
+fp_integrator int1(v1, v2, 27'h1fc0000, 8'd9, Analog_Clock, Analog_reset);<br>
+fp_integrator int2(v2, funct2, 27'h0, 8'd9, Analog_Clock, Analog_reset);    </span></p>
+    <p>Time scaling the solution requires consideration of the value of <code>dt</code> and the analog_clock  rate. If the time step, dt=2<sup>-9</sup>, then 2<sup>9</sup> steps <em>must equal one time unit</em>.  For the damped spring-mass oscillator with a k/m=1.0, the solution advances one radian for every time unit (review the math). One cycle should therefore take 6.28*2<sup>9</sup> = 3215 solution steps. In the image below, the solution is ploted every 100 time steps, so there should be 32 points/cycle (there is). To get the actual frequency of the wave, you need to know how fast the solver is running. Currently the solver is running at about 22 time steps per microsecond on the FPGA, so the real period of the output sinewave is 3215/22=146 microseconds, or about 6800 Hz. The frequency (again: review mechanics) scales as sqrt(k/m). The top trace is the position, v1, and the bottom trace is the speed, v2 in the differential equations above. </p>
+    <p><a href="2nd_order_system/2nd_order_system_1.jpg"><img src="2nd_order_system/2nd_order_system_1.jpg" width="457" height="334" alt=""/></a></p>
+    <p>The design here is hard-coded with constants, dt, and  solution stride. The solution stride is defined as the number of solver steps between sending data to the HPS for plotting. The hard-coded constants are two floats and a 12-bit integer. The k/m and d/m are negated to save operations in the solution. 100 solution steps are performed between each point plotted by the HPS. The solution steps are performed with two-cycle timing, so the observed performance of 22Msamples/sec is just slightly slower than the max possible of 25Msamples/sec at 50MHz clock rate.<br>
+      <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">wire [26:0] k_over_m = 27'h5fc0000 ; // -1.0<br>
+wire [26:0] d_over_m = 27'h5ea6666 ; // -0.05<br>
+reg [11:0] stride=100;<br>
+reg [7:0] dt = 8'd9 ;      </span><br>
+(<a href="2nd_order_system/address_map_arm_brl4.h">address_header</a>, <a href="2nd_order_system/FP_DDA_2nd_order.c">HPS_code</a>, <a href="2nd_order_system/FP_DDA_2nd_order.v">top_level_verilog</a>, <a href="2nd_order_system/FP_DDA_video_sram.zip">ZIP_of_project</a>) The <a href="2nd_order_system/Qsys_layout.PNG">Qsys layout</a> is the same as the <em><br>
+VGA display using a bus_master as a GPU for the HPS. Display from SDRAM</em> on the <a href="../HPS_peripherials/Bus_master_slave_index.html">Qsys bus Master page</a>.<br>
+The second order system solver design uses 4102 ALMs, 3798 registers and 8 DSPs. Most of this hardware is used to run the Qsys interconnect fabric.
+<br>
+</p>
+    <p><strong>Second order system, <a href="../../../../../../https@en.wikipedia.org/wiki/Euler_method">Euler</a> integrator, with parameter control and compare to HPS solution</strong></p>
+    <p>The system was modifed to load k/m, d/m, dt, and stride from the HPS command line to the solver, solve the system on the FPGA, then again on the HPS, with accuracy and time comparison. The analytical solution is plotted in green. The FPGA solutions are in white, the HPS in red on the plot below. The vertical green line should mark exactly two cycles since beginning the solution. Using a dt=2<sup>-9</sup>, all three solutions match fairly well. Relative speed of the FPGA solution changes with stride, because of read-out overhead. In the first image, the stride shown is 25, the FPGA solution is about 25% faster. For a stride of 200 second image), the FPGA is twice as fast as the HPS solution. At the dt=2<sup>-12</sup> shown, the gain of the simulated solutions is a little low for both the FPGA and HPS. The third image shows a dt=2<sup>-9</sup>, with reasonable accuracy, and good performance. The second order system Euler solver, with parameter setting, uses 5167 ALMs, 3889 registers and 8 DSPs. Again, most of this hardware is used to run the Qsys interconnect fabric.
+ (<a href="2nd_order_system/parameter_set/FP_DDA_2nd_order_v2.c">HPS_code</a>, <a href="2nd_order_system/parameter_set/FP_DDA_2nd_order_v2.v">top_level_verilog</a>)<br>
+    <a href="2nd_order_system/2nd_order_system_compare_1.jpg"><img src="2nd_order_system/2nd_order_system_compare_1.jpg" width="358" height="260" alt=""/></a> <a href="2nd_order_system/2nd_order_system_compare_2.jpg"><img src="2nd_order_system/2nd_order_system_compare_2.jpg" width="355" height="260" alt=""/></a><a href="2nd_order_system/2nd_order_system_compare_3.jpg"><img src="2nd_order_system/2nd_order_system_compare_3.jpg" width="356" height="260" alt=""/></a></p>
+    <p><strong>Second order system, <a href="../../../../../../https@en.wikipedia.org/wiki/Heun's_method">Heun's Method</a> integrator, with parameter control and compare to HPS solution</strong></p>
+    <p>The simple Euler integrator above does not provide good accuracy with high d/m damping ratios, or for a wide range of dt. An improved Euler integrator (Heun's method) with better convergence was written. While Euler increases accuracy linearly with decreasing step size, Heun increases quadratically. The general procedure is:</p>
+    <ol>
+      <li>Form the slope for each variable at time=n<br>
+        kv1 = f1(v1(n), v2(n)) -- <code>dv1/dt = f1</code> = <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">v2</span><br>
+        kv2 = f2(v1(n), v2(n)) -- <code>dv2/dt = f2</code> =<span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace"> -k/m*v1 -d/m*v2</span></li>
+      <li>Estimate one step forward  for each variable by Euler integration<br>
+        v1t = v1 + dt*kv1<br>
+        v2t = v2 + dt*kv2</li>
+      <li>Form the slope for each variable at time=n+1 using the estimated variables<br>
+        mv1 = f1(v1t, v2t) -- <code>dv1/dt = f1</code> = <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">v2</span>t<br>
+        mv2 = f2(v1t, v2t) -- <code>dv2/dt = f2</code> =<span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace"> -k/m*v1t -d/m*v2t</span></li>
+      <li>Average the two slope estimates and step forward to get the new values of V.<br>
+        v1(n+1) = v1(n) + dt*(kv1 + mv1)/2<br>
+        v2(n+1) = v2(n) + dt*(kv2 + mv2)/2</li>
+    </ol>
+<p>The first step is to validate <a href="2nd_order_system/Heun/FP_DDA_2nd_order_heun_HPS.c">Heun's Method on the HPS</a>. The above procedure was coded and compared to Euler running on FPGA and the analytical solution running on the HPS. The image below shows a dt=2<sup>-5</sup>. The red and green curves are essentially identical, so Heun is as good as the exact solution with only 32 points/radian. Heun works fairly well down to 8 points/radian (dt=2<sup>-3</sup>), where Euler diverges (with this d/m=0.1). At small dt, Heun matches the exact solution to at least dt=2<sup>-13</sup>, while the Euler method has too low gain, particularly at high damping. At very low damping, the Euler solution diverges for dt bigger than dt=2<sup>-8</sup>.<br>
+<a href="2nd_order_system/Heun/2nd_order_compare_heun_euler.jpg"><img src="2nd_order_system/Heun/2nd_order_compare_heun_euler.jpg" width="379" height="260" alt=""/></a></p>
+<p>For the Heun Method hardware implementation we need:</p>
+    <ol>
+      <li>Compute each slope f1, f2 at time n<br>
+      -- For time=n use f1, f2 operations to form kv1 and kv2</li>
+      <li>An adder/scale module (vnt) to compute v1t, v2t (and pipeline vnt and kvn)<br>
+        -- Used to compute the next step.
+      </li>
+      <li>Compute each slope f1, f2 at time n+1 using the Euler approx in step 2<br>
+      --For time=n+1 use the f1, f2 operations to form mv1 and mv2</li>
+      <li>An Euler integrator to compute final values v1(n+1), v2(n+1)<br>
+        -- with function input 
+        kv1+mv1 or kv2+mv2<br>
+        -- 
+        dt(huen)=dt(euler)+1 to shift it, to form dt/2</li>
+    </ol>
+    <p>The extra operations necessary to do the two-step update drops the maximum solution rate to 12.5 million steps/sec, but with the extra wait-states, it is possible to fold the output to the HPS into the solution so that there is only a small stride-length related delay. The dt step size can be increased from dt=2<sup>-9</sup> to perhaps dt=2<sup>-4</sup>. The solution therefore has perhaps 16-32 times fewer steps, but each step takes twice as long as for Euler integration. We thus gain FPGA execution speed by about a factor of 20 or so, with better accuracy! The execution  time of the HPS code to plot the solution completely dominates the computation time. The images below use similar parameters to the Euler solutions above, but are solved much faster because the dt is bigger. Notice that the exact and Heun solutions overlap almost exactly. The second order system Heun solver, with parameter setting, uses 7619 ALMs, 4000 registers and 10 DSPs. Power estimate is 860 mW for FPGA and 1300 mW for HPS. Effective floating point operation rate is 200 Mflops, while the HPS for the same calculation is running at 300 Mflops (computation only: no plotting or communication). For strides greater than 8, the total elapsed time to plot the solutions is shorter for the FPGA solver. I think that this is becuase of the added overhead of the stride calculation in the HPS solution.<br>
+      (<a href="2nd_order_system/Heun/FP_DDA_2nd_order_heun.c">HPS_code</a>, <a href="2nd_order_system/Heun/FP_DDA_2nd_order_heun.v">top_level_verilog</a>)<br>
+    <a href="2nd_order_system/Heun/2nd_order_heun_solver1.jpg"><img src="2nd_order_system/Heun/2nd_order_heun_solver1.jpg" width="368" height="260" alt=""/></a> <a href="2nd_order_system/Heun/2nd_order_heun_solver2.jpg"><img src="2nd_order_system/Heun/2nd_order_heun_solver2.jpg" width="367" height="260" alt=""/></a></p>
+</body>
+</html>

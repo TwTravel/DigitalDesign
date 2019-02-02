@@ -1,0 +1,200 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+"http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+<title>Logic Analyzer HOLA</title></head>
+
+<body>
+<h2 align="center">DE1-SoC<br>
+  FPGA data logging<br>
+  Minimal logic analyser<br>
+ECE 5760 Cornell University </h2>
+ <p><br>
+ <strong>Viewing the state of the FPGA</strong></p>
+ <p>Debugging a FPGA design requires that you somehow view the internal state of the FPGA. Intel/Altera have some tools to do this</p>
+ <ul>
+   <li><strong>SignalTap</strong> is a logic analyser that Quartus can build on the FPGA with your design. <a href="../../../../../../ftp@ftp.altera.com/up/pub/Intel_Material/15.1/Tutorials/Verilog/SignalTap.pdf"><span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace"><br>
+   </span>SignalTap tutorial</a>. Also see the <a href="../../Quartus/Quartus_compile.html">Compile/Verify page</a>.</li>
+   <li><strong>SignalProbe</strong> is a scheme for bring signals out of the FPGA with very little (or no) recompile. <br />
+   Chapter 13 of <a href="../../../../../../https@www.altera.com/content/dam/altera-www/global/en_US/pdfs/literature/hb/qts/qts-qps-5v3.pdf">Quartus Prime Handbook Vol 3</a></li>
+   <li><strong>Bus Analyser Tool Kit</strong> (beta) helps you gain visibility into your Qsys interconnect based system.<br />
+     <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">Tools &gt; System Debugging Tools &gt; Bus analyzer</span> see http://www.alterawiki.com/wiki/Bus_Analyzer_Toolkit   </li>
+ </ul>
+<p><strong>A simple Logic Analyzer</strong> (HOmebrew Logic Analyzer -- <strong>HOLA</strong>)</p>
+<p>I wanted to build a very light-weight data logger that could be used as a logic analyser. The FPGA footprint should be minimal and the user interface completely determined by user code running on the HPS. Only the data aquisition and transfer to the HPS is defined. The data can be displayed as a text list, plotted as traces on the VGA, or exported to a spreadsheet.<br>
+   Specifications:</p>
+ <ul>
+   <li>About 1000 32-bit samples stored in real-time. This implies 4 M10k blocks used  (one port on Qsys bus, one port in the FPGA fabric). HOLA runs at 100 MHz. Of course, you can run it slower if your design requires it.</li>
+   <li>HOLA is  reset by pushing KEY[0]. Use this only if you manage to hang the analyser.</li>
+   <li>The number of samples taken before and after the trigger should be settable, with the sum equal to about 1000.</li>
+   <li>All data and setup is handled by the HPS. The HPS could draw  waveforms, print a few values, or use the data in any way. </li>
+   <li>All interaction with the HPS can be simply done in the command window, or a GUI could be written.<br>
+Control/handshaking communication is via one 2-port M10K block (one port on Qsys bus, one port in the FPGA fabric).<br>
+-- addr 0 -- new data? yes==1   -- This is used to tell the logic analyser that the HPS is sending new configuration data.<br>
+-- addr 1 -- allow capture to occur -- arm  the trigger<br>
+-- addr 2 -- trigger count (after trigger event) <br>
+-- addr 250 -- data capture complete == 1    -- This is used to tell the HPS that there is new logic data.<br>
+-- addr 251 -- addr_complete (sram addr of the trigger sample) <br>
+HPS sets trigger criterion -- two 32 bit words:<br>
+-- addr 254 -- dont care mask --  A &quot;1&quot; indicates that the bit in the match-word should be used. A &quot;0&quot; implies don't care in match-word<br>
+-- addr 255 -- actual match-word bits</li>
+   <li>Two of the 32 bits routable to external pins. (not yet implemented)</li>
+   <li>16 bits of the data word at trigger-time is displayed on the 7-seg display.</li>
+   <li>Flexible trigger set by the HPS. 
+     <ul>
+       <li>32 bit trigger source word -- from the device-under-test</li>
+       <li>32 bit trigger match-word -- specified by HPS</li>
+       <li>32 bit trigger mask -- specified by HPS. <br>
+       A &quot;1&quot; indicates that the bit in the match word should be used. <br>
+       A &quot;0&quot; implies don't care in match word</li>
+       <li>Trigger when <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">(ext_trigger_source &amp; trigger_mask) == (trigger_match_value &amp; trigger_mask)</span></li>
+     </ul>
+   </li>
+   <li>Connection to the design-under-test should be minimal: 
+     <ul>
+       <li>data input word -- any 32 bits concantnated from the DUT</li>
+       <li> trigger source word -- any 32 bits concantnated from the DUT, but will probably include part of the data input word.</li>
+       <li>Connection to DUT is thus done in Verilog with two assign statements.</li>
+     </ul>
+   </li>
+ </ul>
+ <p>To implement this, I used three state machines running at 100 MHz:</p>
+ <ul>
+   <li>The state machines are reset by pushing KEY[0]. Use this only if you manage to hang the analyser.</li>
+   <li>The data capture machine which logs one 32-bit word/cycle runs    all the time. The pre-trigger data collection means that the data logging has to be continuous, one word per cycle, until the trigger event. When the trigger event occurs, it grabs a set number more  samples, then signals the HPS and waits for the HPS to read the data. </li>
+   <li> The trigger state machine just trys to set the trigger on EACH cycle. But could be extends for multistep triggers.<br>
+   A trigger occures when the trigger condition is detected, <em>and</em> the HPS has armed the trigger.</li>
+   <li> The control state machine gets parameters from the HPS, arms the trigger,<br>
+   and when the    logic samples are logged, signals the HPS to dump them, then waits.</li>
+   <li>Total resource used was 5% of the ALM, 1% of on-board memory, and no DSP blocks (for the First implementation below). <br>
+   This includes the the Qsys bus interface to the HPS, which accounts for most of the 5% of ALM. <a href="Minimal_state/compile_summary.PNG">compile summary</a>.<br>
+   <strong><a href="Minimal_state/chip_planner_view.PNG">Chip planner</a></strong>, <strong><a href="Minimal_state/chip_planner_zoom1.PNG">Chip planner zoom</a></strong><a href="Minimal_state/chip_planner_zoom1.PNG"></a></li>
+ </ul>
+ <p><strong>First implementations of HOLA</strong></p>
+ <p>The HPS code transfers parameters, then just does a simple print out of 5 samples around the trigger. The verilog is set up with the data input to the logger being   a 32 bit counter running at 100 MHz. The data input the analyzer is<br>
+   <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">data_input = {count[31:0]}</span> . <br>
+   The trigger input is <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace"><br>
+   ext_trigger_source={KEY[3],count[30:0]}</span> <br>
+   where KEY[3] is logic-low when pushed. If the HPS sends a trigger mask of 0h80000000, and a trigger word of 0h00000000 then the trigger will happen when the button is pushed. If the HPS sends a trigger mask of 0h0000ffff, and a trigger word of 0h00001000 then the trigger will happen when the count is 0h1000.<br>
+ (<a href="Minimal_system/Logic_analyzer_1.c"><strong>HPS_code</strong></a><strong>, <a href="Minimal_system/Logic_analyser_1.v">verilog</a>, <a href="Minimal_system/Qsys_layout.PNG">Qsys_layout</a>, <a href="Minimal_system/Logic_analyser_1.zip">ZIP</a></strong>)</p>
+ <p>A slight modification of the DUT <strong><a href="Minimal_state/DUT_verilog.PNG">verilog code</a></strong> sets up with the data input   to the logger being  28 bits  of a 32 bit counter running at 100 MHz,   and 4 bits of counter state. The counter state merely sequences between 0,1,2 as a simple source. The data input the analyzer is<br>
+   <span style="font-family: 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', 'DejaVu Sans', Verdana, sans-serif">data_input = {DUT_state, count[27:0]} .</span><br>
+The trigger input is <br>
+<span style="font-family: 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', 'DejaVu Sans', Verdana, sans-serif">ext_trigger_source={KEY[3],count[30:0]}<br>
+</span>The HPS code is modified to parse the 32 bit data into count and state and show 10 samples before/after the trigger. The first image below shows the program output with count and state with a<span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace"> trigger_mask=FFFF and trigger_value=1000</span>. The second image shows program output with <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">trigger_mask=8000FFFF and trigger_value=1000</span>. The data capture occured when the count low 4 digits were 1000 <em>and</em> the button is pushed.<br>
+(<a href="Minimal_state/Logic_analyzer_2.c"><strong>HPS_code</strong></a><strong>, <a href="Minimal_state/Logic_analyser_1.v">verilog</a></strong>) </p>
+ <p><a href="Minimal_state/Putty1.PNG"><img src="Minimal_state/Putty1.PNG" alt="" width="367" height="255"/></a><a href="Minimal_state/Putty2.PNG"><img src="Minimal_state/Putty2.PNG" width="412" height="255" alt=""/></a></p>
+ <p><strong>Modularized version</strong><strong> of HOLA</strong></p>
+ <p>Rearranging the hardware to separate the logic analyser from the device-under-test makes a cleaner interface. <br>
+   The functionality is unchanged, as is the <a href="Minimal_system/Qsys_layout.PNG">Qsys layout</a>. <br>
+   There are two connections to the DUT,  connections to two SRAM modules on the Qsys bus, and a clock and reset. <br>
+   The formatted verilog for <a href="Modularized/dut.PNG">DUT</a>, <a href="Modularized/la_interface.PNG">analyser interface</a>, and <a href="Modularized/Qsys_code.PNG">Qsys interfaces</a>. (<a href="Modularized/Logic_analyser_2.v"><strong>Verilog</strong></a>) <br>
+   A modified version of the HPS code prints binary as well as the hex count and the state variable. (<strong><a href="Modularized/Logic_analyzer_3.c">HPS_code</a></strong>)<br>
+ <img src="Modularized/putty_binary.PNG" width="507" height="382" alt=""/>   </p>
+ <p><strong>Inserting   HOLA into your design</strong></p>
+ <p>There are just a few items to change to insert HOLA into your design:</p>
+ <ul>
+   <li>Change the data source (<span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">data_input</span>) to whatever signals you want to monitor.<br>
+   </li>
+   <li>Change the trigger source (<span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">ext_trigger_source</span>) to whatever the test condition requires.<br>
+   </li>
+   <li>Instantiate HOLA and the signals which connect it to two Qsys memory blocks.<br>
+     The exported memory block buses are connected to HOLA i/o ports.<br>
+   <a href="Modularized/la_interface.PNG">Example</a> of the first 3 bullets</li>
+   <li>Export the sdram clock in Qsys (if it is not exported).</li>
+   <li>Insert a <a href="Modularized/configure_analysis_ram.PNG">memory block</a> for data logging into the Qsys layout. <br>
+     Choose a bus address. I used 0h1000.<br>
+     Connect one port to the h2f_axi_master and export the other to the FPGA<br>
+     <a href="Minimal_system/Qsys_layout.PNG"></a>   </li>
+   <li>Insert a <a href="Modularized/configure_control_ram.PNG">memory block</a> for HOLA control into the Qsys layout. Choose a bus address<br>
+     Choose a bus address. I used 0h0000.     <br>
+Connect one port to the h2f_axi_master and export the other to the FPGA<br>
+Example of <a href="Minimal_system/Qsys_layout.PNG">Qsys layout</a> and the <a href="Modularized/Qsys_code.PNG">Qsys generated code</a>.</li>
+   <li>Make sure that the <a href="Modularized/HPS_defines.PNG">address defines</a> in the <a href="Modularized/Logic_analyzer_3.c">HPS code</a> match the addresses you choose<span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">.</span></li>
+ </ul>
+ <p>As an example, insert HOLA into simplified version of <em><br>
+ VGA display using a bus_master as a GPU for the HPS Display from SDRAM</em> project from the <a href="../HPS_peripherials/Bus_master_slave_index.html">bus-master page</a>. <br>
+ The goal is to be able to use the VGA as a graphic output for the logic analyzer.</p>
+ <ul>
+   <li>The bus-master, clock_bridge and sram are removed, leaving the sdram and video display hardware on the Qsys layout. </li>
+   <li>The HPS will write to sdram for video display. </li>
+   <li>The HOLA memories are then added at addresses 0x0800_0000 and 0x0800_1000. (<a href="HOLA_video/Qsys_layout.PNG">Qsys_layout</a>)</li>
+   <li>In the Qsys interface code (from Computer_System_inst.v), make sure to remove the old bus-master, clock_bridge and sram then<br>
+   add the two srams for HOLA. Also, the sdram_clk_clk is renamed.</li>
+   <li>Insert the logic analyser code and instantiate it as before in the <a href="HOLA_video/DE1_SoC_HOLA_VGA.v">Verilog</a>. (<a href="HOLA_video/video_sdram_display_HOLA.zip">ZIP</a>)<br>
+   Logic use is now 3200 ALM (10%), 6 DSP blocks (7%), and on-chip memory is 112,384 / 4,065,280 bits (3%). (<a href="HOLA_video/Chip_planner.PNG">chip layout</a>)   </li>
+   <li>Change the addresses of the HOLA memories in the <a href="HOLA_video/Logic_analyzer_5.c">HPS_code</a> to 0xC8000000 and 0xC8001000.<br>
+     Remember that  0xC0000000 is the base address of the h2f_axi_master, to which the bus offsets are added.</li>
+   <li>The minimal HPS code clears the VGA to dark blue, and writes a message in the lower-left corner,<br>
+     then drops into the main loop to read and <a href="HOLA_video/putty_data.PNG">print</a> the HOLA data. <br>
+   </li>
+ </ul>
+ <p><strong>Adding waveform plotting to HOLA</strong></p>
+ <p>Once the VGA interface is running, it is possible to add some graphics to HOLA. This example uses a <a href="HOLA_video_sine/DUT.PNG">DDS sinewave  generator</a> as the device-under-test. The clocked sine ROM adds a one cycle phase delay between the phase and the sine value. In the <a href="HOLA_video_sine/putty_zero_crossing.PNG">console image</a> you can see the trigger condition was set to zero and masked to the low-order 8-bits. You can also see the one cycle sine delay. This mask isolates the phase value from the <a href="HOLA_video_sine/HOLA_connection.PNG">verilog <em>data_input</em></a> to HOLA. The data_input is parsed into 16-bits of sine and 8-bits of phase for display on the VGA. As seen below, the green line is at the trigger value of zero phase in the first image. Setting the trigger <a href="HOLA_video_sine/putty_90_degrees.PNG">mask to 0xff and the trigger value to 0x40</a> produces a 90 degree phase shift at the trigger point, as seen in the second image.<br>
+   (<a href="HOLA_video_sine/Logic_analyzer_6.c">HPS_code</a>, <a href="HOLA_video_sine/DE1_SoC_HOLA_VGA_sine.v">verilog</a>, <a href="HOLA_video_sine/video_sdram_display_HOLA_sine.zip">ZIP</a>) (<a href="HOLA_video/Qsys_layout.PNG">Qsys_layout</a>)<br>
+ <a href="HOLA_video_sine/vga_1.jpg"><img src="HOLA_video_sine/vga_1.jpg" width="408" height="310" alt=""/></a> <a href="HOLA_video_sine/vga_2.jpg"><img src="HOLA_video_sine/vga_2.jpg" width="435" height="310" alt=""/></a></p>
+ <p><strong>Modularizing and simplifying the HPS interface to HOLA</strong></p>
+ <p>To make the system easier to use for debugging, the low level functions on the HPS were abstracted to five functions:</p>
+ <ul>
+   <li><span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">start_HOLA(trigger_mask, trigger_match_value)</span> arms the capture system on the FPGA and waits for a trigger event to occur which matches the masked trigger value. <br>
+     Trigger when <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">(<a href="HOLA_3_phase/HOLA_inputs.PNG">ext_trigger_source</a> &amp; trigger_mask) == (trigger_match_value &amp; trigger_mask)</span><br>
+     Data is returned in a 32-bit array called <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">logic_data</span>., The trigger position is array index 499. <br>
+   Nothing is done with the data. It is up to the calling program to use the data, perhaps using one of the routines below.</li>
+   <li><span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">end_HOLA</span> signals the FPGA that the HPS is done using the current data, and re-enables constant data logging.<br>
+     Call this after you have stored, plotted, or analysed
+   the data returned.</li>
+   <li><span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">print_binary_HOLA(begin, end, low_bit, bit_mask, *title) </span>prints a vector of the current data in hexidecimal and binary. Inputs:
+<ul>
+      <li>Number of samples before the trigger, expressed as a negative integer</li>
+       <li>Number of samples after the trigger, expressed as  positive integer </li>
+       <li>Base position (right-most bit) of the desired field in the 32-bit word from the FPGA</li>
+       <li>Width of the desired field, expressed as a bit-mask, e.g. 8-bits is 0xff <br>
+       The vector is trimed to the length of the bit_mask, rounded up to the next 4-bits.</li>
+       <li>Title of the data vector column, e.g. <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">char title_s[]=&quot;sine&quot;</span></li>
+     </ul>
+   </li>
+   <li><span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">print_HOLA(begin, end, low_bit, bit_mask, un/sign, *format, *title)</span>  prints a vector on the console. Inputs:
+     <ul>
+       <li>Number of samples before the trigger, expressed as a negative integer</li>
+       <li>Number of samples after the trigger, expressed as  positive integer </li>
+       <li>Base position (right-most bit) of the desired field in the 32-bit word from the FPGA</li>
+       <li>Width of the desired field, expressed as a bit-mask, e.g. 8-bits is 0xff </li>
+       <li>Signed/unsigned 'u' implies unsigned, 's' implies signed </li>
+       <li>A printf format string, e.g.<span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace"> char fmt_s[]=&quot;%03d %d &quot;</span>   , where the <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">%03d</span> formats the clock tick number       and <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">%d</span> is the desired format for the data vector </li>
+       <li>Title of the data vector column, e.g.      <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">char title_s[]=&quot;sine&quot;</span></li>
+     </ul>
+   </li>
+   <li><span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">draw_wave_HOLA(low_bit, bit_mask, sign, v_pos, v_scale, h_scale, color) </span>draws a time-series vector on the VGA display.
+     <ul>
+       <li>Base position (right-most bit) of the desired field in the 32-bit word from the FPGA</li>
+       <li>Width of the desired field, expressed as a bit-mask, e.g. 8-bits is 0xff</li>
+       <li>Signed/unsigned 'u' implies unsigned, 's' implies signed</li>
+       <li>Vertical position on the screen</li>
+       <li>Vertical scale represented as powers of two: A value of 2 means right-shift 2 bits; A value of -1 means left-shift 1 bit</li>
+       <li>Pixels/sample clock (hoizontal scale) can be 0,1,2,3,4: A value of 3 means 8 pixels/clock cycle</li>
+       <li>Color of the waveform. <a href="HOLA_video_modularized/VGA_defines.PNG">8-bit colors are defined</a> near the top of the program.</li>
+     </ul>
+   </li>
+ </ul>
+ <p>The <a href="HOLA_video_modularized/program_snippet.PNG">code</a> for many applications will just call the start routine, plot some data, and end. The example queries for a trigger_mask, trigger_value, and zoom factor, the plots the phase of a DDS system, the individual bits of the phase, and the resulting sinewave. Two zoom levels are shown below. Zoom level 0 plots 1 pixel/horizontal pixel. Zoom level 2 plots 4 pixels/horizontal pixel. The phase and sine vectors are also <a href="HOLA_video_modularized/putty.PNG">printed</a>.<br>
+   (<a href="HOLA_video_modularized/Logic_analyzer_7.c">HPS_code</a>, Verilog and zip is same as above) <br>
+   (<strong><a href="HOLA_video_modularized/Logic_analyzer_8.c">HPS_code</a></strong> <strong>with <a href="HOLA_video_modularized/binary_putty.PNG">binary print</a></strong>) <br>
+ <a href="HOLA_video_modularized/zoom0.jpg"><img src="HOLA_video_modularized/zoom0.jpg" width="409" height="290" alt=""/></a> <a href="HOLA_video_modularized/zoom2.jpg"><img src="HOLA_video_modularized/zoom2.jpg" width="434" height="290" alt=""/></a></p>
+ <p>As a template for testing the lab_1 ODE solver, this example plots four waveforms and the bit-wise expansion of one of the waveforms. The <a href="HOLA_3_phase/DUT.PNG">device-under-test</a> (DUT) was a 3-phase DDS sinewave generator. <a href="HOLA_3_phase/HOLA_inputs.PNG">Connections from the DUT to HOLA</a> consisted of a data word and a trigger word. Phase angle and the phase bits are plotted in red, while the three phase sine waves are plotted in white, yellow, and cyan. <br>
+   --
+   The first image has a trigger mask of <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">0x80000000</span> and trigger value of zero, so refering back to the <a href="HOLA_3_phase/HOLA_inputs.PNG">connections</a>, a trigger will occur when KEY3 is pushed. <br>
+   --
+   The second image trigger mask is <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">0xff</span>, which are the bits of the phase in the trigger word and a trigger value of zero. <strong>(<a href="HOLA_3_phase/DE1_SoC_HOLA_three_phase.v">Verilog</a>, <a href="HOLA_3_phase/video_display_HOLA_3_phase.zip">ZIP</a>, <a href="HOLA_3_phase/Logic_analyzer_three_phase.c">C code</a></strong>) <br>
+   -- A <a href="HOLA_3_phase/DUT_reset.PNG">slightly modified DUT</a> includes a DDS reset line from<span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace"> KEY[1]</span>, which is included in the <a href="HOLA_3_phase/HOLA_DUT_reset_inputs.PNG">external_trigger_source</a>. If you now choose a trigger_mask of <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">0x40000000</span> and trigger_match_value of <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">0x40000000</span> in the C code, then when you press the<span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace"> KEY[1]</span> DUT reset you get the third image. The phase stays at zero after the trigger because there is no way to remove your finger from the button in 5 microseconds. (<a href="HOLA_3_phase/DE1_SoC_HOLA_three_phase_DUT_reset.v">Verilog</a>)(<a href="HOLA_video/Qsys_layout.PNG">Qsys_layout</a>)<br>
+ <a href="HOLA_3_phase/trigger_on_key3.jpg"><img src="HOLA_3_phase/trigger_on_key3.jpg" width="394" height="260" alt=""/></a> <a href="HOLA_3_phase/trigger_on_phase0.jpg"><img src="HOLA_3_phase/trigger_on_phase0.jpg" width="380" height="260" alt=""/></a><a href="HOLA_3_phase/trigger_on_DUT_reset2.jpg"><img src="HOLA_3_phase/trigger_on_DUT_reset2.jpg" width="409" height="260" alt=""/></a></p>
+ <p><strong>Adding table file write to HOLA</strong></p>
+ <p>Using <a href="../../../../../../https@www.tldp.org/LDP/abs/html/io-redirection.html">LINUX file-redirect</a> it is easy to set up a utility that either prints a table to the terminal or saves it in a file. The utility allows you to format individual entries  to produce a CSV or tabbed table. The routine <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">print_table_HOLA</span> outputs to <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">stderr</span>. By default the device <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">stderr</span> is the console screen. At the command line when you start the analysis program you can redirect <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">stderr</span> to a file using<span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace"> ./executable_name 2&gt;file_name</span>. Using <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">./la10 2&gt;test.txt</span> the table shown in the screen dump below is now in a <a href="HOLA_3_phase/test.txt">file</a>. The <a href="HOLA_3_phase/HOLA_table_code.PNG">formatting code</a> for the table gives the details of how to parse the <span style="font-family: Consolas, 'Andale Mono', 'Lucida Console', 'Lucida Sans Typewriter', Monaco, 'Courier New', monospace">logic_data</span> vector read from the FPGA. The range of the sine functions is +/-63 because the verilog ROM table does not use the upper bit of the 16 bit table. The code uses the same Verilog as the example just above. (<strong><a href="HOLA_3_phase/HOLA_3_phase_improve_print.c">C code</a></strong>)<br>
+ <img src="HOLA_3_phase/HOLA_table_output.PNG" width="337" height="408" alt=""/> </p>
+ <p><strong>Adding real-time GPIO pin output for oscilloscope</strong></p>
+ <p>Two multiplexers were added to the verilog design to allow real-time monotoring of two bits of the logic analyser data input word. The two bits are output on two GPIO_0 pins so you can hook up a scope. The the ALM use count is 4440, about 14% of the FPGA. Each mux uses about 13 ALMs. The HPS code and Qsys are unchanged (<a href="HOLA_3_phase/DE1_SoC_HOLA_three_phase_DUT_gpio.v">Verilog</a>).</p>
+<p>Below you can see a black jumper hooked to <a href="../GPIO_headers_connection.png">GPIO0_0</a> and a white jumper hooked to <a href="../GPIO_headers.png">GPIO0_1</a>. The top  switches [10:5] chose bit 13 for channel 1 and switches [4:0] chose bit 14 for channel 2. The ringing on channel 1 is due to a misplaced ground connection. The screw-head in the lower right gives the better quality signal on channel 2.<br>
+  <a href="HOLA_3_phase/scope_connections.jpg"><img src="HOLA_3_phase/scope_connections.jpg" width="475" height="300" alt=""/></a> <img src="HOLA_3_phase/Scope_output.png" width="400" height="300" alt=""/></p>
+ <hr>
+<p>&nbsp;</p></body>
+</html>
